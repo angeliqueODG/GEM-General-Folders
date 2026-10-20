@@ -1,0 +1,235 @@
+{
+  "metadata": {
+    "filename": "poor-caching.json",
+    "filepath": "src/test/java/framework/advisor/templates/performance/poor-caching.json",
+    "version": "1.0.0",
+    "created": "2025-10-09",
+    "lastUpdated": "2025-10-09 06:45:00 PM CDT",
+    "author": "Greg Paskal",
+    "company": "MissionWares",
+    "methodology": "mAi™ (MissionWares® + AI)",
+    "description": "HTTP caching headers missing or misconfigured finding template with comprehensive guidance for all audiences including framework-specific implementation code, server configurations, and testing strategies to reduce server load, improve page load times, and minimize bandwidth usage by enabling browser and CDN caching for static and dynamic content.",
+    "aiGenerated": true,
+    "humanReviewed": false,
+    "reviewedBy": "Pending",
+    "approvedBy": "Pending",
+    "tags": ["caching", "cache-control", "etag", "performance", "bandwidth", "cdn", "optimization"],
+    "relatedFindings": ["SLOW_RESPONSE_TIME", "NO_HTTP_COMPRESSION", "HIGH_SERVER_LOAD", "POOR_CDN_CONFIG", "POOR_CORE_WEB_VITALS"],
+    "estimatedRemediationTime": "2-4 hours",
+    "businessImpact": "HIGH",
+    "complianceRequirements": ["Web Performance Best Practices", "Google Core Web Vitals", "CDN Best Practices"]
+  },
+  "findingId": "PERF-CACHE-001",
+  "findingType": "POOR_HTTP_CACHING",
+  "category": "PERFORMANCE",
+  "severity": "HIGH",
+  "cveReferences": [
+    "CWE-525"
+  ],
+  "understanding": {
+    "EXECUTIVE": {
+      "summary": "Your website has poor or missing caching configuration, forcing users to re-download unchanged resources on every visit, resulting in slow page loads, high server costs, and poor user experience.",
+      "businessRisk": "High risk of revenue loss through poor performance and excessive infrastructure costs. Without caching, every page view requires full resource downloads, creating 5-10x more server load and bandwidth usage. This increases hosting costs by $1000-$10,000/month for high-traffic sites. Users experience 2-4 second slower page loads on return visits (should be instant with caching). Each 1-second delay reduces conversions by 7% (Google). Return visitors (60-80% of traffic) get no speed benefit. Server capacity constraints limit scalability - need 5-10x more servers without caching. Poor Core Web Vitals harm SEO rankings. Competitors with proper caching gain significant performance advantage.",
+      "complianceImpact": "Google Core Web Vitals requirements penalize poor caching. Web performance best practices mandate efficient caching strategies. No direct regulatory compliance, but essential for professional web applications and SaaS platforms.",
+      "priority": "HIGH"
+    },
+    "PROJECT_MANAGER": {
+      "summary": "Missing or misconfigured HTTP caching headers cause resources to be re-downloaded on every page view instead of being cached by browsers and CDNs. Proper caching reduces repeat page load times by 80-90%.",
+      "timeline": "Should be addressed in current sprint. Implementation takes 2-4 hours including testing. Medium complexity - requires understanding different content types and appropriate cache durations. High priority for sites with return visitors or high traffic.",
+      "effort": "2-4 hours for implementation and testing. Minimal code changes - primarily configuration. Low risk change with massive performance impact. Additional 2-3 hours for CDN integration if applicable.",
+      "dependencies": [
+        "Access to web server or application configuration",
+        "Understanding of content update frequency",
+        "CDN configuration access if applicable",
+        "Staging environment for testing",
+        "Cache invalidation strategy for content updates"
+      ],
+      "blocking": [
+        "Performance SLA compliance",
+        "Core Web Vitals optimization",
+        "Server capacity planning",
+        "CDN effectiveness",
+        "Infrastructure cost reduction",
+        "Mobile user experience improvements"
+      ]
+    },
+    "DEVELOPER": {
+      "summary": "HTTP caching headers (Cache-Control, ETag, Last-Modified, Expires) are missing or misconfigured, preventing browsers and CDNs from caching resources effectively, causing unnecessary re-downloads of unchanged content.",
+      "technical": "HTTP caching uses response headers to control browser and CDN caching behavior. Key headers: Cache-Control (modern, flexible, recommended), Expires (legacy, specific date), ETag (content version tag for validation), Last-Modified (timestamp for validation). Cache-Control directives: max-age (cache duration in seconds), public (shareable by CDNs), private (user-specific, no CDN), no-cache (validate before use), no-store (never cache). Strategies: Immutable static assets (JS/CSS with hash filenames): Cache-Control: public, max-age=31536000, immutable (1 year). Static images: Cache-Control: public, max-age=2592000 (30 days). HTML pages: Cache-Control: public, max-age=3600 (1 hour) or no-cache with ETag. API responses: Cache-Control: private, max-age=300 (5 minutes) or no-cache. Cache validation: ETag (strong) uses content hash, Last-Modified (weak) uses timestamp. 304 Not Modified responses save bandwidth. Stale-while-revalidate allows serving stale content while updating. Cache busting: fingerprint filenames (app.a1b2c3.js) for assets, versioned API endpoints, query parameters (style.css?v=1.2).",
+      "vulnerability": "CWE-525 (Use of Web Browser Cache Containing Sensitive Information) - Improperly cached sensitive data can be exposed. Not caching is the opposite problem - performance degradation rather than security risk. However, lack of caching creates resource exhaustion vulnerability under load.",
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Web/HTTP/Caching",
+        "https://web.dev/http-cache/",
+        "https://tools.ietf.org/html/rfc7234",
+        "https://csswizardry.com/2019/03/cache-control-for-civilians/"
+      ]
+    },
+    "SECURITY_ENGINEER": {
+      "summary": "Missing caching configuration creates performance vulnerability through resource exhaustion and potential availability issues under load. Proper caching is defense-in-depth for availability and resilience.",
+      "vulnerability": "CWE-525 (Browser Cache Containing Sensitive Information) - primary concern is over-caching sensitive data. However, under-caching creates performance vulnerability leading to resource exhaustion. Without caching, application must serve 5-10x more requests, consuming server resources, bandwidth, and database connections. Under high load or DoS attack, lack of caching amplifies impact. Proper caching reduces attack surface by serving cached content instead of hitting origin servers.",
+      "attackVector": "Attacker exploits lack of caching to amplify resource exhaustion attacks. Every request hits origin servers instead of serving from cache. Repeated requests for same resources consume unnecessary server capacity. Combined with other vulnerabilities, creates availability risks. Not primary attack vector but contributes to system resilience. Proper caching improves availability under attack.",
+      "threatLevel": "LOW-MEDIUM - Primarily performance and availability concern. Main risk is degraded availability under load rather than direct exploit. However, critical for system resilience. Fix has minimal security downside if implemented correctly (avoid caching sensitive data). Recommended as defense-in-depth for availability.",
+      "mitigationUrgency": "Implement within 1-2 weeks. Medium complexity requiring careful configuration. Higher priority (immediate) if application has high traffic, return visitors, performance SLAs, or capacity constraints. Critical for CDN-enabled applications. Balance caching aggressiveness with content freshness requirements."
+    },
+    "OPS_INFRASTRUCTURE": {
+      "summary": "Web servers not configured with proper HTTP caching headers, causing browsers and CDNs to repeatedly fetch unchanged resources, creating 5-10x unnecessary server load and bandwidth consumption.",
+      "technical": "Caching should be configured at multiple levels: CDN edge (CloudFront, Cloudflare - serves 80-95% of requests), browser cache (serves repeat visits), reverse proxy cache (Varnish, Nginx - optional), application cache (Redis, Memcached - for dynamic content). Cache headers set at: CDN response headers policy, load balancer, web server (Nginx, Apache), or application code. Different content types need different strategies: Static assets with fingerprints (app.a1b2c3.js): max-age=31536000, immutable. Static images/fonts: max-age=2592000 (30 days). HTML: max-age=3600 (1 hour) or no-cache with ETag. JSON APIs: private, max-age=300 (5 minutes). User-specific content: private, no-cache, ETag. Cache invalidation strategies: filename versioning (preferred), cache headers with shorter TTL, manual purge (CDN), stale-while-revalidate. Monitor cache hit ratio (target: 80-95%), cache size, eviction rate.",
+      "scope": "All infrastructure serving HTTP responses: CDN (CloudFront, Cloudflare, Fastly), load balancers (ALB, Nginx), web servers (Nginx, Apache, IIS), application servers. Must be consistent across environments but different cache durations per environment (prod: long, staging: short). Affects all HTTP responses. Consider mobile clients with limited bandwidth as primary beneficiaries.",
+      "monitoring": "Monitor CDN cache hit ratio (target: 80-95% for static content, 40-60% for dynamic). Track cache hit/miss/bypass metrics. Measure origin server load reduction (should see 70-90% reduction). Monitor stale content serving (should be rare). Alert on cache hit ratio drops below 70%. Monitor cache size and eviction rates. Track bandwidth savings (should see 60-80% reduction). Use CDN analytics dashboards. Monitor 304 Not Modified response rates for validation caching."
+    },
+    "QA_TESTER": {
+      "summary": "Missing HTTP caching prevents validation that application delivers optimal performance for return visitors and prevents accurate performance testing of repeat page loads.",
+      "testImplication": "Cannot validate caching optimization. Performance testing tools (Lighthouse, WebPageTest) flag missing cache headers as critical issue. Repeat page load testing shows no improvement (should be 80-90% faster with caching). After caching enabled, must test cache hit rates, validation behavior (304 responses), and content freshness. Browser DevTools Network tab shows cache status (from disk cache, from memory cache).",
+      "riskIfNotFixed": "Poor Lighthouse performance scores. Google PageSpeed Insights cache policy audit failures. Core Web Vitals non-compliance (LCP affected for repeat views). Excessive origin server load. High infrastructure costs. CDN ineffectiveness (CDN can't cache without proper headers). User complaints about slow repeat page loads. Return visitor abandonment. Wasted bandwidth. Scalability constraints."
+    }
+  },
+  "actions": {
+    "DEVELOPER": {
+      "frameworks": {
+        "spring-boot": {
+          "code": "// Spring Boot - Configure HTTP caching headers\n// WebConfig.java\n\nimport org.springframework.context.annotation.Configuration;\nimport org.springframework.http.CacheControl;\nimport org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;\nimport org.springframework.web.servlet.config.annotation.WebMvcConfigurer;\nimport java.util.concurrent.TimeUnit;\n\n@Configuration\npublic class WebConfig implements WebMvcConfigurer {\n\n    @Override\n    public void addResourceHandlers(ResourceHandlerRegistry registry) {\n        // Static resources with fingerprinting (hash in filename)\n        // Cache for 1 year - safe because filename changes when content changes\n        registry.addResourceHandler(\"/static/**\")\n            .addResourceLocations(\"classpath:/static/\")\n            .setCacheControl(CacheControl\n                .maxAge(365, TimeUnit.DAYS)\n                .cachePublic()\n                .immutable());\n        \n        // Images and fonts - cache for 30 days\n        registry.addResourceHandler(\"/images/**\", \"/fonts/**\")\n            .addResourceLocations(\"classpath:/static/images/\", \"classpath:/static/fonts/\")\n            .setCacheControl(CacheControl\n                .maxAge(30, TimeUnit.DAYS)\n                .cachePublic());\n        \n        // Webjars (third-party libraries) - cache for 1 year\n        registry.addResourceHandler(\"/webjars/**\")\n            .addResourceLocations(\"classpath:/META-INF/resources/webjars/\")\n            .setCacheControl(CacheControl\n                .maxAge(365, TimeUnit.DAYS)\n                .cachePublic());\n    }\n}\n\n// For controller responses\nimport org.springframework.http.ResponseEntity;\nimport org.springframework.web.bind.annotation.*;\nimport org.springframework.http.HttpHeaders;\n\n@RestController\npublic class ApiController {\n    \n    // API endpoint with caching\n    @GetMapping(\"/api/data\")\n    public ResponseEntity<Data> getData() {\n        Data data = dataService.getData();\n        \n        // Cache for 5 minutes, private (not CDN-cacheable)\n        return ResponseEntity.ok()\n            .cacheControl(CacheControl\n                .maxAge(5, TimeUnit.MINUTES)\n                .cachePrivate())\n            .eTag(String.valueOf(data.hashCode())) // ETag for validation\n            .body(data);\n    }\n    \n    // API with conditional request support\n    @GetMapping(\"/api/users/{id}\")\n    public ResponseEntity<User> getUser(\n            @PathVariable Long id,\n            @RequestHeader(value = HttpHeaders.IF_NONE_MATCH, required = false) String ifNoneMatch) {\n        \n        User user = userService.getUser(id);\n        String etag = String.valueOf(user.hashCode());\n        \n        // If ETag matches, return 304 Not Modified\n        if (etag.equals(ifNoneMatch)) {\n            return ResponseEntity\n                .status(HttpStatus.NOT_MODIFIED)\n                .eTag(etag)\n                .build();\n        }\n        \n        // Return full response with ETag\n        return ResponseEntity.ok()\n            .cacheControl(CacheControl\n                .maxAge(10, TimeUnit.MINUTES)\n                .cachePrivate())\n            .eTag(etag)\n            .body(user);\n    }\n    \n    // HTML pages - short cache with revalidation\n    @GetMapping(\"/\")\n    public ResponseEntity<String> getHomePage() {\n        String html = templateEngine.process(\"home\", context);\n        \n        return ResponseEntity.ok()\n            .cacheControl(CacheControl\n                .maxAge(1, TimeUnit.HOURS)\n                .cachePublic()\n                .mustRevalidate())\n            .body(html);\n    }\n    \n    // User-specific content - don't cache or use private cache\n    @GetMapping(\"/dashboard\")\n    public ResponseEntity<Dashboard> getDashboard(@AuthenticationPrincipal User user) {\n        Dashboard dashboard = dashboardService.getDashboard(user);\n        \n        return ResponseEntity.ok()\n            .cacheControl(CacheControl\n                .noCache() // Always revalidate\n                .cachePrivate()) // Don't cache in CDN\n            .eTag(String.valueOf(dashboard.hashCode()))\n            .body(dashboard);\n    }\n    \n    // Sensitive data - never cache\n    @GetMapping(\"/api/payment-info\")\n    public ResponseEntity<PaymentInfo> getPaymentInfo() {\n        PaymentInfo info = paymentService.getInfo();\n        \n        return ResponseEntity.ok()\n            .cacheControl(CacheControl\n                .noStore() // Never cache anywhere\n                .noCache())\n            .body(info);\n    }\n}",
+          "testCode": "// JUnit test for caching headers\nimport org.junit.jupiter.api.Test;\nimport org.springframework.beans.factory.annotation.Autowired;\nimport org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;\nimport org.springframework.boot.test.context.SpringBootTest;\nimport org.springframework.test.web.servlet.MockMvc;\nimport org.springframework.test.web.servlet.MvcResult;\n\nimport static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;\nimport static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;\nimport static org.junit.jupiter.api.Assertions.*;\n\n@SpringBootTest\n@AutoConfigureMockMvc\npublic class CachingTest {\n\n    @Autowired\n    private MockMvc mockMvc;\n\n    @Test\n    public void staticResourcesShouldHaveLongCacheHeaders() throws Exception {\n        mockMvc.perform(get(\"/static/app.js\"))\n            .andExpect(status().isOk())\n            .andExpect(header().exists(\"Cache-Control\"))\n            .andExpect(header().string(\"Cache-Control\", \n                containsString(\"max-age=31536000\"))) // 1 year\n            .andExpect(header().string(\"Cache-Control\", \n                containsString(\"public\")));\n    }\n    \n    @Test\n    public void imagesShouldHaveMediumCacheHeaders() throws Exception {\n        mockMvc.perform(get(\"/images/logo.png\"))\n            .andExpect(status().isOk())\n            .andExpect(header().exists(\"Cache-Control\"))\n            .andExpect(header().string(\"Cache-Control\", \n                containsString(\"max-age=2592000\"))) // 30 days\n            .andExpect(header().string(\"Cache-Control\", \n                containsString(\"public\")));\n    }\n    \n    @Test\n    public void apiShouldHavePrivateCacheWithETag() throws Exception {\n        MvcResult result = mockMvc.perform(get(\"/api/data\"))\n            .andExpect(status().isOk())\n            .andExpect(header().exists(\"Cache-Control\"))\n            .andExpect(header().string(\"Cache-Control\", \n                containsString(\"private\")))\n            .andExpect(header().exists(\"ETag\"))\n            .andReturn();\n        \n        String etag = result.getResponse().getHeader(\"ETag\");\n        assertNotNull(etag);\n    }\n    \n    @Test\n    public void conditionalRequestShouldReturn304() throws Exception {\n        // First request to get ETag\n        MvcResult firstResult = mockMvc.perform(get(\"/api/users/1\"))\n            .andExpect(status().isOk())\n            .andReturn();\n        \n        String etag = firstResult.getResponse().getHeader(\"ETag\");\n        \n        // Second request with If-None-Match should return 304\n        mockMvc.perform(get(\"/api/users/1\")\n                .header(\"If-None-Match\", etag))\n            .andExpect(status().isNotModified())\n            .andExpect(header().string(\"ETag\", etag));\n    }\n    \n    @Test\n    public void sensitiveDataShouldNotBeCached() throws Exception {\n        mockMvc.perform(get(\"/api/payment-info\"))\n            .andExpect(status().isOk())\n            .andExpect(header().exists(\"Cache-Control\"))\n            .andExpect(header().string(\"Cache-Control\", \n                containsString(\"no-store\")))\n            .andExpect(header().string(\"Cache-Control\", \n                containsString(\"no-cache\")));\n    }\n    \n    @Test\n    public void htmlPagesShouldHaveShortCacheWithRevalidation() throws Exception {\n        mockMvc.perform(get(\"/\"))\n            .andExpect(status().isOk())\n            .andExpect(header().exists(\"Cache-Control\"))\n            .andExpect(header().string(\"Cache-Control\", \n                anyOf(\n                    containsString(\"max-age=3600\"),    // 1 hour\n                    containsString(\"must-revalidate\")\n                )));\n    }\n}",
+          "dependencies": "<!-- Spring Boot Web has built-in caching support -->\n<dependency>\n    <groupId>org.springframework.boot</groupId>\n    <artifactId>spring-boot-starter-web</artifactId>\n</dependency>",
+          "packageInstall": "mvn clean install"
+        },
+        "express-nodejs": {
+          "code": "// Express.js - Configure HTTP caching\nconst express = require('express');\nconst path = require('path');\nconst crypto = require('crypto');\n\nconst app = express();\n\n// Static files with long cache (1 year)\n// Assumes fingerprinted filenames (app.a1b2c3.js)\napp.use('/static', express.static('public', {\n  maxAge: '1y',           // Cache for 1 year\n  immutable: true,        // Tell browsers file never changes\n  setHeaders: (res, path) => {\n    res.set('Cache-Control', 'public, max-age=31536000, immutable');\n  }\n}));\n\n// Images and fonts - medium cache (30 days)\napp.use('/images', express.static('public/images', {\n  maxAge: '30d',\n  setHeaders: (res, path) => {\n    res.set('Cache-Control', 'public, max-age=2592000');\n  }\n}));\n\n// API endpoints with caching\napp.get('/api/data', (req, res) => {\n  const data = getData();\n  const etag = crypto.createHash('md5').update(JSON.stringify(data)).digest('hex');\n  \n  // Check If-None-Match header for conditional request\n  if (req.headers['if-none-match'] === etag) {\n    return res.status(304).end(); // Not Modified\n  }\n  \n  res.set({\n    'Cache-Control': 'private, max-age=300', // 5 minutes, private (no CDN)\n    'ETag': etag,\n    'Vary': 'Accept-Encoding'\n  });\n  \n  res.json(data);\n});\n\n// HTML pages - short cache with revalidation\napp.get('/', (req, res) => {\n  res.set({\n    'Cache-Control': 'public, max-age=3600, must-revalidate', // 1 hour\n    'Vary': 'Accept-Encoding'\n  });\n  \n  res.send('<html><body><h1>Home</h1></body></html>');\n});\n\n// User-specific content - private cache\napp.get('/dashboard', authenticateUser, (req, res) => {\n  const dashboard = getDashboard(req.user);\n  const etag = crypto.createHash('md5').update(JSON.stringify(dashboard)).digest('hex');\n  \n  // Check conditional request\n  if (req.headers['if-none-match'] === etag) {\n    return res.status(304).end();\n  }\n  \n  res.set({\n    'Cache-Control': 'private, no-cache', // Always revalidate\n    'ETag': etag\n  });\n  \n  res.json(dashboard);\n});\n\n// Sensitive data - never cache\napp.get('/api/payment-info', (req, res) => {\n  const info = getPaymentInfo();\n  \n  res.set({\n    'Cache-Control': 'no-store, no-cache, must-revalidate',\n    'Pragma': 'no-cache',\n    'Expires': '0'\n  });\n  \n  res.json(info);\n});\n\n// Middleware to add default caching headers\napp.use((req, res, next) => {\n  // Default: don't cache unless explicitly set\n  if (!res.get('Cache-Control')) {\n    res.set('Cache-Control', 'no-cache');\n  }\n  next();\n});\n\n// Helper: Generate ETag from content\nfunction generateETag(content) {\n  return crypto\n    .createHash('md5')\n    .update(typeof content === 'string' ? content : JSON.stringify(content))\n    .digest('hex');\n}\n\n// Advanced: Stale-while-revalidate\napp.get('/api/slow-data', async (req, res) => {\n  const data = await getSlowData();\n  const etag = generateETag(data);\n  \n  res.set({\n    // Serve stale content for 10 minutes while revalidating in background\n    'Cache-Control': 'max-age=300, stale-while-revalidate=600',\n    'ETag': etag\n  });\n  \n  res.json(data);\n});\n\napp.listen(3000);",
+          "testCode": "// Mocha/Chai test for caching\nconst request = require('supertest');\nconst { expect } = require('chai');\nconst app = require('../app');\n\ndescribe('HTTP Caching Tests', () => {\n  \n  it('should cache static files for 1 year', (done) => {\n    request(app)\n      .get('/static/app.js')\n      .expect(200)\n      .expect('Cache-Control', /max-age=31536000/)\n      .expect('Cache-Control', /public/)\n      .expect('Cache-Control', /immutable/)\n      .end(done);\n  });\n  \n  it('should include ETag for API responses', (done) => {\n    request(app)\n      .get('/api/data')\n      .expect(200)\n      .end((err, res) => {\n        if (err) return done(err);\n        \n        expect(res.headers).to.have.property('etag');\n        expect(res.headers['cache-control']).to.include('private');\n        \n        done();\n      });\n  });\n  \n  it('should return 304 Not Modified for conditional requests', (done) => {\n    // First request to get ETag\n    request(app)\n      .get('/api/data')\n      .expect(200)\n      .end((err, res) => {\n        if (err) return done(err);\n        \n        const etag = res.headers.etag;\n        \n        // Second request with If-None-Match\n        request(app)\n          .get('/api/data')\n          .set('If-None-Match', etag)\n          .expect(304)\n          .end(done);\n      });\n  });\n  \n  it('should not cache sensitive data', (done) => {\n    request(app)\n      .get('/api/payment-info')\n      .expect(200)\n      .end((err, res) => {\n        if (err) return done(err);\n        \n        expect(res.headers['cache-control']).to.include('no-store');\n        expect(res.headers['cache-control']).to.include('no-cache');\n        \n        done();\n      });\n  });\n  \n  it('should cache images for 30 days', (done) => {\n    request(app)\n      .get('/images/logo.png')\n      .expect(200)\n      .expect('Cache-Control', /max-age=2592000/)\n      .expect('Cache-Control', /public/)\n      .end(done);\n  });\n  \n  it('should set Vary header for compressed responses', (done) => {\n    request(app)\n      .get('/api/data')\n      .expect('Vary', /Accept-Encoding/)\n      .end(done);\n  });\n});",
+          "dependencies": "npm install express",
+          "packageInstall": "npm install"
+        },
+        "generic": {
+          "code": "# HTTP Caching Strategy Guide\n\n## Content Type Cache Strategies\n\n### 1. Static Assets with Fingerprints (app.a1b2c3.js)\nCache-Control: public, max-age=31536000, immutable\n# 1 year cache - safe because filename changes with content\n\n### 2. Images and Fonts\nCache-Control: public, max-age=2592000\n# 30 days cache\n\n### 3. HTML Pages\nCache-Control: public, max-age=3600, must-revalidate\n# 1 hour cache with revalidation\n\n### 4. JSON APIs (Public Data)\nCache-Control: public, max-age=300\nETag: \"abc123\"\n# 5 minutes cache with ETag validation\n\n### 5. JSON APIs (User-Specific)\nCache-Control: private, no-cache\nETag: \"xyz789\"\n# Private cache, always revalidate\n\n### 6. Sensitive Data\nCache-Control: no-store, no-cache, must-revalidate\nPragma: no-cache\nExpires: 0\n# Never cache\n\n## Cache-Control Directives\n\npublic        - Shareable by CDNs and proxies\nprivate       - User-specific, no CDN caching\nmax-age=N     - Cache for N seconds\nno-cache      - Revalidate before use\nno-store      - Never cache\nimmutable     - Content never changes\nmust-revalidate - Validate when stale\nstale-while-revalidate=N - Serve stale while updating\n\n## ETag Implementation\n\n# Generate ETag from content hash\nETag: \"md5-hash-of-content\"\n\n# Client sends on subsequent requests\nIf-None-Match: \"md5-hash-of-content\"\n\n# Server responds with 304 if unchanged\nHTTP/1.1 304 Not Modified\nETag: \"md5-hash-of-content\"",
+          "testCode": "# Test caching headers\ncurl -I https://your-domain.com/app.js\n\n# Look for:\nCache-Control: public, max-age=31536000\nETag: \"abc123\"\n\n# Test conditional request\ncurl -I -H 'If-None-Match: \"abc123\"' https://your-domain.com/app.js\n\n# Should return:\nHTTP/1.1 304 Not Modified",
+          "dependencies": "curl, browser DevTools",
+          "packageInstall": "# Usually pre-installed"
+        }
+      },
+      "verificationSteps": [
+        "1. Test static assets: curl -I https://your-domain.com/static/app.js",
+        "2. Verify Cache-Control: public, max-age=31536000, immutable",
+        "3. Test images: verify max-age=2592000 (30 days)",
+        "4. Test HTML: verify shorter cache (1 hour)",
+        "5. Test API: verify ETag header present",
+        "6. Test conditional request: curl -H 'If-None-Match: etag' returns 304",
+        "7. Open DevTools Network tab - reload page",
+        "8. Verify resources show 'from disk cache' or 'from memory cache'",
+        "9. Check CDN cache hit ratio (should be 80-95%)",
+        "10. Run Lighthouse - verify caching audit passes"
+      ],
+      "estimatedEffort": "3-4 hours"
+    },
+    "OPS_INFRASTRUCTURE": {
+      "servers": {
+        "nginx": {
+          "config": "# Nginx - Configure HTTP caching headers\n# /etc/nginx/nginx.conf or /etc/nginx/sites-available/your-site\n\nhttp {\n    # Map to set expires based on file type\n    map $sent_http_content_type $expires {\n        default                    off;\n        text/html                  1h;     # HTML - short cache\n        text/css                   1y;     # CSS with fingerprint\n        application/javascript     1y;     # JS with fingerprint\n        application/json           5m;     # JSON APIs\n        image/jpeg                 30d;    # Images\n        image/png                  30d;\n        image/gif                  30d;\n        image/webp                 30d;\n        image/svg+xml              30d;\n        font/woff                  1y;     # Fonts\n        font/woff2                 1y;\n    }\n    \n    server {\n        listen 443 ssl http2;\n        server_name your-domain.com;\n        \n        # Enable expires map\n        expires $expires;\n        \n        # Static files with fingerprints - long cache\n        location ~* \\.(?:css|js)$ {\n            expires 1y;\n            add_header Cache-Control \"public, immutable\";\n            add_header Vary \"Accept-Encoding\";\n        }\n        \n        # Images and fonts - medium cache\n        location ~* \\.(?:jpg|jpeg|gif|png|ico|svg|webp|woff|woff2|ttf|eot)$ {\n            expires 30d;\n            add_header Cache-Control \"public\";\n        }\n        \n        # HTML files - short cache with revalidation\n        location ~* \\.html$ {\n            expires 1h;\n            add_header Cache-Control \"public, must-revalidate\";\n        }\n        \n        # API endpoints - private cache with short TTL\n        location /api/ {\n            expires 5m;\n            add_header Cache-Control \"private\";\n            add_header Vary \"Accept-Encoding\";\n            \n            proxy_pass http://backend;\n            proxy_set_header Host $host;\n        }\n        \n        # User dashboard - no cache\n        location /dashboard {\n            add_header Cache-Control \"private, no-cache, must-revalidate\";\n            proxy_pass http://backend;\n        }\n        \n        # Sensitive endpoints - never cache\n        location /api/payment {\n            add_header Cache-Control \"no-store, no-cache, must-revalidate\";\n            add_header Pragma \"no-cache\";\n            add_header Expires \"0\";\n            proxy_pass http://backend;\n        }\n        \n        # Enable ETag generation\n        etag on;\n        \n        # If-Modified-Since support\n        if_modified_since before;\n    }\n}",
+          "reload": "sudo nginx -t && sudo nginx -s reload",
+          "verify": "# Test static assets\ncurl -I https://your-domain.com/static/app.js | grep -i cache-control\n\n# Test images\ncurl -I https://your-domain.com/images/logo.png | grep -i cache-control\n\n# Test HTML\ncurl -I https://your-domain.com/ | grep -i cache-control\n\n# Test ETag\ncurl -I https://your-domain.com/api/data | grep -i etag"
+        },
+        "apache": {
+          "config": "# Apache - Configure HTTP caching\n# /etc/apache2/sites-available/your-site.conf\n\n# Enable required modules:\n# a2enmod expires\n# a2enmod headers\n\n<VirtualHost *:443>\n    ServerName your-domain.com\n    \n    # Enable ETag\n    FileETag MTime Size\n    \n    <IfModule mod_expires.c>\n        ExpiresActive On\n        \n        # Default: no cache\n        ExpiresDefault \"access plus 0 seconds\"\n        \n        # HTML - short cache\n        ExpiresByType text/html \"access plus 1 hour\"\n        \n        # CSS and JS with fingerprints - long cache\n        ExpiresByType text/css \"access plus 1 year\"\n        ExpiresByType application/javascript \"access plus 1 year\"\n        ExpiresByType text/javascript \"access plus 1 year\"\n        \n        # Images - medium cache\n        ExpiresByType image/jpeg \"access plus 30 days\"\n        ExpiresByType image/png \"access plus 30 days\"\n        ExpiresByType image/gif \"access plus 30 days\"\n        ExpiresByType image/webp \"access plus 30 days\"\n        ExpiresByType image/svg+xml \"access plus 30 days\"\n        \n        # Fonts - long cache\n        ExpiresByType font/woff \"access plus 1 year\"\n        ExpiresByType font/woff2 \"access plus 1 year\"\n        \n        # JSON - short cache\n        ExpiresByType application/json \"access plus 5 minutes\"\n    </IfModule>\n    \n    <IfModule mod_headers.c>\n        # Add immutable for static assets\n        <FilesMatch \"\\.(css|js)$\">\n            Header set Cache-Control \"public, max-age=31536000, immutable\"\n            Header set Vary \"Accept-Encoding\"\n        </FilesMatch>\n        \n        # Images\n        <FilesMatch \"\\.(jpg|jpeg|png|gif|ico|svg|webp)$\">\n            Header set Cache-Control \"public, max-age=2592000\"\n        </FilesMatch>\n        \n        # HTML\n        <FilesMatch \"\\.html$\">\n            Header set Cache-Control \"public, max-age=3600, must-revalidate\"\n        </FilesMatch>\n        \n        # Sensitive locations - no cache\n        <LocationMatch \"/api/payment\">\n            Header set Cache-Control \"no-store, no-cache, must-revalidate\"\n            Header set Pragma \"no-cache\"\n            Header set Expires \"0\"\n        </LocationMatch>\n    </IfModule>\n</VirtualHost>",
+          "reload": "sudo a2enmod expires headers\nsudo apachectl configtest\nsudo systemctl reload apache2",
+          "verify": "curl -I https://your-domain.com/static/app.js | grep -E 'Cache-Control|ETag|Expires'"
+        },
+        "aws-cloudfront": {
+          "config": "# AWS CloudFront - Configure caching behavior\n\n# Method 1: AWS Console\n# 1. CloudFront > Distribution > Behaviors\n# 2. Edit Default behavior\n# 3. Set Cache Policy:\n#    - Managed-CachingOptimized (recommended)\n#    - Or create custom policy\n# 4. Set Origin Request Policy if needed\n# 5. Save and deploy\n\n# Method 2: CloudFormation\nResources:\n  CachePolicy:\n    Type: AWS::CloudFront::CachePolicy\n    Properties:\n      CachePolicyConfig:\n        Name: CustomCachePolicy\n        DefaultTTL: 86400        # 1 day\n        MaxTTL: 31536000         # 1 year\n        MinTTL: 0\n        ParametersInCacheKeyAndForwardedToOrigin:\n          EnableAcceptEncodingGzip: true\n          EnableAcceptEncodingBrotli: true\n          QueryStringsConfig:\n            QueryStringBehavior: none\n          HeadersConfig:\n            HeaderBehavior: none\n          CookiesConfig:\n            CookieBehavior: none\n  \n  Distribution:\n    Type: AWS::CloudFront::Distribution\n    Properties:\n      DistributionConfig:\n        DefaultCacheBehavior:\n          TargetOriginId: S3Origin\n          ViewerProtocolPolicy: redirect-to-https\n          CachePolicyId: !Ref CachePolicy\n          Compress: true\n        \n        # Static assets behavior - long cache\n        CacheBehaviors:\n          - PathPattern: \"static/*\"\n            TargetOriginId: S3Origin\n            ViewerProtocolPolicy: redirect-to-https\n            CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6  # Managed-CachingOptimized\n            Compress: true\n          \n          # API behavior - short cache\n          - PathPattern: \"api/*\"\n            TargetOriginId: APIOrigin\n            ViewerProtocolPolicy: redirect-to-https\n            CachePolicyId: 4135ea2d-6df8-44a3-9df3-4b5a84be39ad  # Managed-CachingDisabled\n            OriginRequestPolicyId: 216adef6-5c7f-47e4-b989-5492eafa07d3  # Managed-AllViewer\n\n# Method 3: Terraform\nresource \"aws_cloudfront_cache_policy\" \"custom\" {\n  name        = \"custom-cache-policy\"\n  default_ttl = 86400\n  max_ttl     = 31536000\n  min_ttl     = 0\n  \n  parameters_in_cache_key_and_forwarded_to_origin {\n    enable_accept_encoding_gzip   = true\n    enable_accept_encoding_brotli = true\n    \n    query_strings_config {\n      query_string_behavior = \"none\"\n    }\n    \n    headers_config {\n      header_behavior = \"none\"\n    }\n    \n    cookies_config {\n      cookie_behavior = \"none\"\n    }\n  }\n}\n\nresource \"aws_cloudfront_distribution\" \"main\" {\n  default_cache_behavior {\n    target_origin_id       = \"S3Origin\"\n    viewer_protocol_policy = \"redirect-to-https\"\n    cache_policy_id        = aws_cloudfront_cache_policy.custom.id\n    compress               = true\n  }\n  \n  # Additional behaviors for different paths...\n}",
+          "reload": "# Wait for CloudFront deployment (5-15 minutes)\naws cloudfront wait distribution-deployed --id DISTRIBUTION_ID\n\n# Check cache policy\naws cloudfront get-cache-policy --id POLICY_ID",
+          "verify": "# Test caching behavior\ncurl -I https://your-domain.com/static/app.js\n\n# Check CloudFront headers:\n# X-Cache: Hit from cloudfront (cached)\n# X-Cache: Miss from cloudfront (not cached)\n\n# View cache statistics\naws cloudfront get-distribution-statistics --id DIST_ID"
+        }
+      },
+      "rollbackPlan": "1. Backup configuration files before changes\n2. Document current cache settings\n3. If caching causes stale content issues:\n   - Reduce cache TTL (max-age)\n   - Add must-revalidate directive\n   - Implement cache invalidation\n4. For CDN: Purge/invalidate cache manually\n5. For web server: Reduce expires times, reload config\n6. Monitor for stale content complaints\n7. Adjust cache strategy based on content update frequency\n8. Can always disable caching entirely as last resort\n9. Most issues are stale content - solution is invalidation, not disabling",
+      "verificationSteps": [
+        "1. Test static assets: curl -I https://domain.com/app.js | grep Cache-Control",
+        "2. Verify long cache (1 year) for fingerprinted assets",
+        "3. Test images: verify 30-day cache",
+        "4. Test HTML: verify short cache (1 hour)",
+        "5. Test API: verify private cache with ETag",
+        "6. Test conditional requests: should return 304 Not Modified",
+        "7. Open DevTools Network tab, reload page",
+        "8. Verify resources show cache status (from disk/memory cache)",
+        "9. Check CDN cache hit ratio (target: 80-95%)",
+        "10. Monitor origin server load (should drop 70-90%)",
+        "11. Run Lighthouse - caching audit should pass",
+        "12. Test cache invalidation works when content updates"
+      ],
+      "estimatedEffort": "2-3 hours"
+    },
+    "QA_TESTER": {
+      "manualTests": [
+        {
+          "name": "Verify Cache Headers Present",
+          "steps": [
+            "1. Open DevTools (F12) Network tab",
+            "2. Navigate to site",
+            "3. Click on HTML document request",
+            "4. Check Response Headers",
+            "5. Verify Cache-Control header present",
+            "6. Check for ETag or Last-Modified headers",
+            "7. Test multiple resource types (HTML, CSS, JS, images)",
+            "8. Verify appropriate cache durations per content type"
+          ],
+          "expected": "Cache-Control header present on all responses. Static assets have max-age=31536000. Images have max-age=2592000. HTML has shorter cache (1 hour). ETag present for APIs."
+        },
+        {
+          "name": "Verify Browser Caching Works",
+          "steps": [
+            "1. Clear browser cache (Ctrl+Shift+Delete)",
+            "2. Open DevTools Network tab",
+            "3. Navigate to site - note load time and resource sizes",
+            "4. Reload page (Ctrl+R)",
+            "5. Check Size column for cached resources",
+            "6. Verify resources show 'from disk cache' or 'from memory cache'",
+            "7. Note dramatically faster load time",
+            "8. Test hard reload (Ctrl+Shift+R) - should bypass cache"
+          ],
+          "expected": "Second page load shows cached resources. Size column shows '(disk cache)' or '(memory cache)' instead of bytes. Load time 80-90% faster on repeat views. Hard reload re-fetches all resources."
+        },
+        {
+          "name": "Test Conditional Requests (304 Not Modified)",
+          "steps": [
+            "1. Use curl or DevTools to capture ETag from API response",
+            "2. Make second request with If-None-Match header",
+            "3. Verify server returns 304 Not Modified",
+            "4. Verify no response body sent (saves bandwidth)",
+            "5. Test with If-Modified-Since header",
+            "6. Verify 304 response for unchanged content",
+            "7. Update content, verify 200 response with new content",
+            "8. Verify new ETag in response"
+          ],
+          "expected": "Conditional requests return 304 Not Modified for unchanged content. Response includes ETag but no body. Changed content returns 200 with new ETag and full response body."
+        },
+        {
+          "name": "CDN Cache Hit Ratio Test",
+          "steps": [
+            "1. Access CDN analytics dashboard",
+            "2. Check cache hit ratio metrics",
+            "3. Verify hit ratio > 80% for static content",
+            "4. Check cache miss rate",
+            "5. Identify frequently missed resources",
+            "6. Test cache purge/invalidation functionality",
+            "7. Verify content updates after cache purge",
+            "8. Monitor cache performance over 24 hours"
+          ],
+          "expected": "CDN cache hit ratio 80-95% for static content. Cache miss rate < 20%. Resources with proper Cache-Control headers cached effectively. Cache purge works when content updated."
+        }
+      ],
+      "automatedTests": {
+        "tool": "Selenium WebDriver / Performance API",
+        "example": "// Selenium test for caching\nimport org.openqa.selenium.WebDriver;\nimport org.openqa.selenium.chrome.ChromeDriver;\nimport org.openqa.selenium.devtools.DevTools;\nimport org.openqa.selenium.devtools.v120.network.Network;\nimport org.testng.annotations.Test;\nimport org.testng.Assert;\n\n@Test\npublic void verifyCacheHeadersPresent() {\n    ChromeDriver driver = new ChromeDriver();\n    DevTools devTools = driver.getDevTools();\n    devTools.createSession();\n    \n    final String[] cacheControl = new String[1];\n    final String[] etag = new String[1];\n    \n    devTools.send(Network.enable(Optional.empty(), Optional.empty(), Optional.empty()));\n    \n    devTools.addListener(Network.responseReceived(), response -> {\n        Headers headers = response.getResponse().getHeaders();\n        cacheControl[0] = headers.get(\"cache-control\");\n        etag[0] = headers.get(\"etag\");\n    });\n    \n    driver.get(\"https://your-domain.com\");\n    \n    Assert.assertNotNull(cacheControl[0], \"Cache-Control header missing\");\n    Assert.assertTrue(cacheControl[0].contains(\"max-age\"), \"max-age directive missing\");\n    \n    driver.quit();\n}"
+      },
+      "verificationSteps": [
+        "1. Clear browser cache completely",
+        "2. Navigate to site with DevTools Network tab open",
+        "3. Verify Cache-Control headers on all resources",
+        "4. Reload page - verify cached resources load instantly",
+        "5. Check resource Size column shows cache status",
+        "6. Test conditional requests return 304 Not Modified",
+        "7. Run Lighthouse audit - caching policy passes",
+        "8. Test CDN cache hit ratio (if applicable)",
+        "9. Verify sensitive data NOT cached",
+        "10. Monitor for 24 hours - verify no stale content issues"
+      ],
+      "estimatedEffort": "3-4 hours"
+    }
+  }
+}

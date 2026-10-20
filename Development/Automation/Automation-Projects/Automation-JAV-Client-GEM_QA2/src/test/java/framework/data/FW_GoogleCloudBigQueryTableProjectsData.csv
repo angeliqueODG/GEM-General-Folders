@@ -1,0 +1,4 @@
+clientRefID,projectRefID,projectName,projectLeadName,projectLeadEmail,projectLeadPhone,projectLeadCountry,projectLeadTimezone,projectCreatedDate,projectUpdatedDate
+cid-a34d58c2-f086-4489-8a72-1fdb2e1033a5,pid-8762b98c-835d-4715-b029-39cfb41c5f5d,Muraho Sample Projects,Greg Paskal,Greg@GregPaskal.com,214-763-9063,USA,CST,2025-01-24T14:11:00Z,2025-01-24T14:11:00Z
+cid-ed7a50e6-3a71-4add-bbc0-a3afcf09d950,pid-adcb68e9-dcbb-4c8e-b5af-f3963edb88b4,Muraho Sample Projects,Giselle Aime Mutuyimana,Gisele@muraho.tech,,Rwanda,GMT+2,2025-05-19T16:00:00Z,2025-05-19T16:00:00Z
+cid-518e7c04-d9bd-4698-94be-0c5f5c3d3379,pid-8f2a5feb-eab6-4004-962b-df3eb1b52304,Portal,David Kubwayo,david@muraho.tech,,USA,EST,2024=01-01T01:00:00Z,2025=08-06T01:00:00Z

@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reading Guide - mAi™ Framework Documentation</title>
+<link rel="stylesheet" href="docs-style.css">
+<link rel="stylesheet" href="pagefind/pagefind-ui.css">
+<script src="pagefind/pagefind-ui.js"></script>
+</head>
+<body>
+<div class="layout">
+<nav class="sidebar" id="sidebar" data-pagefind-ignore></nav>
+<main class="main-content" data-pagefind-body>
+<h1 data-pagefind-meta="title">Complete Reading Guide</h1>
+<p class="subtitle">Linear, book-style path through framework documentation</p>
+
+<section class="content-section">
+<h2>About This Guide</h2>
+<p>This guide provides a <strong>linear, book-style path</strong> through the framework documentation. Unlike web-style navigation (jumping between hyperlinked pages), this guide presents a <strong>chapter-based structure</strong> for reading documentation from beginning to end.</p>
+
+<p><strong>Framework:</strong> mAi™ Automation Framework | <strong>Version:</strong> 2.0 | <strong>Total Documentation:</strong> 16 Files | <strong>Total Reading Time:</strong> 3-5 hours</p>
+</section>
+
+<section class="content-section">
+<h2>Choose Your Reading Speed</h2>
+<div class="card-grid">
+<div class="card">
+<h4>🚀 Quick Path</h4>
+<p><strong>60 minutes</strong></p>
+<ul>
+<li>Read summaries and code examples only</li>
+<li>Skip detailed explanations</li>
+<li>Focus on getting tests running fast</li>
+</ul>
+</div>
+<div class="card card-info">
+<h4>📚 Standard Path</h4>
+<p><strong>3 hours</strong> (Recommended)</p>
+<ul>
+<li>Read all core sections</li>
+<li>Skip optional deep-dive sections</li>
+<li>Best for most users</li>
+</ul>
+</div>
+<div class="card">
+<h4>🔬 Deep Dive</h4>
+<p><strong>5+ hours</strong></p>
+<ul>
+<li>Read everything including technical details</li>
+<li>Study all diagrams thoroughly</li>
+<li>Complete understanding of architecture</li>
+</ul>
+</div>
+</div>
+</section>
+
+<section class="content-section">
+<h2>Table of Contents</h2>
+
+<h3>Part 1: Introduction &amp; Setup (30-45 min)</h3>
+<ol>
+<li><a href="Home.html">Framework Introduction</a> - 10 min</li>
+<li><a href="Doc-Overview.html">Architecture Overview</a> - 15 min</li>
+<li><a href="Doc-Setup.html">Installation &amp; Setup</a> - 20 min</li>
+</ol>
+
+<h3>Part 2: Writing &amp; Running Tests (45-60 min)</h3>
+<ol start="4">
+<li><a href="Doc-Test-Development.html">Test Development</a> - 25 min</li>
+<li><a href="Doc-Test-Execution-VSCode.html">Test Execution</a> - 15 min</li>
+<li><a href="Diagram-Maven-to-first-Test-Case.html">Test Lifecycle Flow</a> - 15 min</li>
+</ol>
+
+<h3>Part 3: Advanced Features (60-90 min)</h3>
+<ol start="7">
+<li><a href="Doc-mAi-Advisor.html">mAi Advisor™ System</a> - 25 min</li>
+<li><a href="Doc-HTTP-Assessment.html">HTTP Security Assessment</a> - 25 min</li>
+<li><a href="Doc-Network-Diagnostics.html">Network Diagnostics</a> - 20 min</li>
+</ol>
+
+<h3>Part 4: Architecture Deep Dive (45-75 min)</h3>
+<ol start="10">
+<li><a href="Diagram-Architecture.html">Complete Architecture</a> - 20 min</li>
+<li><a href="Diagram-TestAssetsScanner.html">Test Discovery System</a> - 15 min</li>
+<li><a href="Diagram-Adding-data-to-datacollector.html">Data Collection Pipeline</a> - 20 min</li>
+</ol>
+
+<h3>Part 5: Cloud Integration (30-45 min)</h3>
+<ol start="13">
+<li><a href="Diagram-Automation-completed-to-Google_BigData.html">BigQuery Integration</a> - 15 min</li>
+<li><a href="Diagram-Advisor-Flow.html">mAi Advisor Workflow</a> - 10 min</li>
+<li><a href="Diagram-HTTP-Audit-Pipeline.html">HTTP Audit Pipeline</a> - 10 min</li>
+</ol>
+
+<h3>Part 6: Visual Reference (15-30 min)</h3>
+<ol start="16">
+<li><a href="Diagrams.html">Complete Diagram Index</a> - 15 min</li>
+</ol>
+</section>
+
+<section class="content-section">
+<h2>Part 1: Introduction &amp; Setup</h2>
+<p><em>Estimated Time: 30-45 minutes</em></p>
+
+<h3>Chapter 1: Framework Introduction</h3>
+<p><strong>File:</strong> <a href="Home.html">Home.html</a> | <strong>Reading Time:</strong> 10 minutes</p>
+<h4>What You'll Learn</h4>
+<ul>
+<li>What the mAi Automation Framework is</li>
+<li>Key capabilities and features</li>
+<li>Framework benefits and use cases</li>
+<li>How to navigate the documentation</li>
+</ul>
+<h4>Reading Notes</h4>
+<ul>
+<li><strong>Must Read:</strong> "Quick Start" section</li>
+<li><strong>Must Read:</strong> "Framework Features" section</li>
+<li><strong>Optional:</strong> "Getting Help" section (reference later)</li>
+</ul>
+<h4>Action Items After Reading</h4>
+<p>✅ Understand framework purpose | ✅ Identify which features you need | ✅ Know where to find help</p>
+
+<h3>Chapter 2: Architecture Overview</h3>
+<p><strong>File:</strong> <a href="Doc-Overview.html">Doc-Overview.html</a> | <strong>Reading Time:</strong> 15 minutes</p>
+<h4>What You'll Learn</h4>
+<ul>
+<li>Framework's 8-layer architecture</li>
+<li>60+ classes and their purposes</li>
+<li>Component relationships</li>
+<li>Technology stack</li>
+</ul>
+<h4>Key Concepts</h4>
+<ul>
+<li><strong>Layer 1-3:</strong> Test foundation (JUnit, Page Objects)</li>
+<li><strong>Layer 4-5:</strong> Framework utilities</li>
+<li><strong>Layer 6:</strong> Audits (HTTP, Network)</li>
+<li><strong>Layer 7:</strong> mAi Advisor™</li>
+<li><strong>Layer 8:</strong> Cloud integration</li>
+</ul>
+<h4>Action Items After Reading</h4>
+<p>✅ Understand 8-layer structure | ✅ Identify which layers you'll use | ✅ Recognize class naming conventions (FW_ prefix)</p>
+
+<h3>Chapter 3: Installation &amp; Setup</h3>
+<p><strong>File:</strong> <a href="Doc-Setup.html">Doc-Setup.html</a> | <strong>Reading Time:</strong> 20 minutes</p>
+<h4>What You'll Learn</h4>
+<ul>
+<li>Required software installation</li>
+<li>Project setup steps</li>
+<li>Configuration file setup</li>
+<li>Verification commands</li>
+</ul>
+<h4>Prerequisites Needed</h4>
+<p>Java 23+ | Maven 3.9+ | Chrome/Firefox/Edge browser | VS Code or IntelliJ IDEA</p>
+<h4>Action Items After Reading</h4>
+<p>✅ Install all required software | ✅ Clone/setup project | ✅ Configure <code>testConfig.properties</code> | ✅ Run <code>mvn clean test</code> successfully | ✅ Verify ChromeDriver works</p>
+</section>
+
+<section class="content-section">
+<h2>Part 2: Writing &amp; Running Tests</h2>
+<p><em>Estimated Time: 45-60 minutes</em></p>
+
+<h3>Chapter 4: Test Development</h3>
+<p><strong>File:</strong> <a href="Doc-Test-Development.html">Doc-Test-Development.html</a> | <strong>Reading Time:</strong> 25 minutes</p>
+<h4>What You'll Learn</h4>
+<ul>
+<li>Page Object Model (POM) pattern</li>
+<li>Writing test suites and test cases</li>
+<li>Using custom assertions</li>
+<li>HTTP audit integration</li>
+<li>Network diagnostic integration</li>
+<li>mAi Advisor integration</li>
+</ul>
+<h4>Key Patterns</h4>
+<div class="code-block"><pre><code>// Page Object Structure
+public class PO_Login extends FW_Page {
+    private String txt_username = "id=user-name";
+    
+    public void enterUsername(String username) {
+        FW_CustomAssertJU.sendKeys(driver, txt_username, username);
+    }
+}
+
+// Test Suite Structure
+@TestInstance(Lifecycle.PER_CLASS)
+public class TS_MyTests_JUnit {
+    @BeforeAll void setupSuite() { /* ... */ }
+    @Test void tc_my_first_test() { /* ... */ }
+}</code></pre></div>
+<h4>Action Items After Reading</h4>
+<p>✅ Understand Page Object pattern | ✅ Create a simple Page Object class | ✅ Write a basic test case | ✅ Use FW_CustomAssertJU assertions | ✅ Run your test successfully</p>
+
+<h3>Chapter 5: Test Execution</h3>
+<p><strong>File:</strong> <a href="Doc-Test-Execution-VSCode.html">Doc-Test-Execution-VSCode.html</a> | <strong>Reading Time:</strong> 15 minutes</p>
+<h4>What You'll Learn</h4>
+<ul>
+<li>Running tests from VS Code</li>
+<li>Maven command-line execution</li>
+<li>Test filtering and selection</li>
+<li>Viewing test results</li>
+</ul>
+<h4>Action Items After Reading</h4>
+<p>✅ Run tests from IDE | ✅ Run tests from command line | ✅ Filter tests by name or tag | ✅ Locate test results</p>
+
+<h3>Chapter 6: Test Lifecycle Flow</h3>
+<p><strong>File:</strong> <a href="Diagram-Maven-to-first-Test-Case.html">Diagram-Maven-to-first-Test-Case.html</a> | <strong>Reading Time:</strong> 15 minutes</p>
+<h4>What You'll Learn</h4>
+<ul>
+<li>Maven build phases</li>
+<li>Test execution order</li>
+<li>Lifecycle hooks (@BeforeAll, @AfterAll)</li>
+<li>Post-test processing</li>
+</ul>
+</section>
+
+<section class="content-section">
+<h2>Part 3: Advanced Features</h2>
+<p><em>Estimated Time: 60-90 minutes</em></p>
+
+<h3>Chapter 7: mAi Advisor™ System</h3>
+<p><strong>File:</strong> <a href="Doc-mAi-Advisor.html">Doc-mAi-Advisor.html</a> | <strong>Reading Time:</strong> 25 minutes</p>
+<h4>What You'll Learn</h4>
+<ul>
+<li>Two-tier recommendation model</li>
+<li>Six audience types</li>
+<li>Template system</li>
+<li>Finding-to-recommendation flow</li>
+</ul>
+<h4>Key Concepts</h4>
+<ul>
+<li><strong>Understanding Tier:</strong> What the issue is and why it matters</li>
+<li><strong>Action Tier:</strong> How to fix (role-specific)</li>
+<li><strong>Audiences:</strong> Developer, QA, DevOps, Security, PM, Executive</li>
+</ul>
+
+<h3>Chapter 8: HTTP Security Assessment</h3>
+<p><strong>File:</strong> <a href="Doc-HTTP-Assessment.html">Doc-HTTP-Assessment.html</a> | <strong>Reading Time:</strong> 25 minutes</p>
+<h4>What You'll Learn</h4>
+<ul>
+<li>Security header analysis</li>
+<li>SSL/TLS certificate validation</li>
+<li>Cookie security assessment</li>
+<li>Report generation</li>
+</ul>
+
+<h3>Chapter 9: Network Diagnostics</h3>
+<p><strong>File:</strong> <a href="Doc-Network-Diagnostics.html">Doc-Network-Diagnostics.html</a> | <strong>Reading Time:</strong> 20 minutes</p>
+<h4>What You'll Learn</h4>
+<ul>
+<li>Ping testing</li>
+<li>Traceroute analysis</li>
+<li>Speed test integration</li>
+<li>Network troubleshooting</li>
+</ul>
+</section>
+
+<section class="content-section">
+<h2>Part 4: Architecture Deep Dive</h2>
+<p><em>Estimated Time: 45-75 minutes</em></p>
+
+<h3>Chapter 10: Complete Architecture</h3>
+<p><strong>File:</strong> <a href="Diagram-Architecture.html">Diagram-Architecture.html</a> | <strong>Reading Time:</strong> 20 minutes</p>
+<h4>What You'll Learn</h4>
+<ul>
+<li>Full 8-layer diagram</li>
+<li>Component inventory (60+ classes)</li>
+<li>Dependency relationships</li>
+<li>Data flow paths</li>
+</ul>
+
+<h3>Chapter 11: Test Discovery System</h3>
+<p><strong>File:</strong> <a href="Diagram-TestAssetsScanner.html">Diagram-TestAssetsScanner.html</a> | <strong>Reading Time:</strong> 15 minutes</p>
+<h4>What You'll Learn</h4>
+<ul>
+<li>How tests are discovered</li>
+<li>File scanning patterns</li>
+<li>Test metadata extraction</li>
+<li>Suite organization</li>
+</ul>
+
+<h3>Chapter 12: Data Collection Pipeline</h3>
+<p><strong>File:</strong> <a href="Diagram-Adding-data-to-datacollector.html">Diagram-Adding-data-to-datacollector.html</a> | <strong>Reading Time:</strong> 20 minutes</p>
+<h4>What You'll Learn</h4>
+<ul>
+<li>Test step data capture</li>
+<li>CSV generation process</li>
+<li>Data transformation</li>
+<li>Archive management</li>
+</ul>
+</section>
+
+<section class="content-section">
+<h2>Part 5: Cloud Integration</h2>
+<p><em>Estimated Time: 30-45 minutes</em></p>
+
+<h3>Chapter 13: BigQuery Integration</h3>
+<p><strong>File:</strong> <a href="Diagram-Automation-completed-to-Google_BigData.html">Diagram-Automation-completed-to-Google_BigData.html</a> | <strong>Reading Time:</strong> 15 minutes</p>
+<h4>What You'll Learn</h4>
+<ul>
+<li>BigQuery upload process</li>
+<li>Schema configuration</li>
+<li>Data validation</li>
+<li>Query examples</li>
+</ul>
+
+<h3>Chapter 14: mAi Advisor Workflow</h3>
+<p><strong>File:</strong> <a href="Diagram-Advisor-Flow.html">Diagram-Advisor-Flow.html</a> | <strong>Reading Time:</strong> 10 minutes</p>
+<h4>What You'll Learn</h4>
+<ul>
+<li>Finding → Recommendation flow</li>
+<li>Template selection</li>
+<li>Audience filtering</li>
+<li>Report generation</li>
+</ul>
+
+<h3>Chapter 15: HTTP Audit Pipeline</h3>
+<p><strong>File:</strong> <a href="Diagram-HTTP-Audit-Pipeline.html">Diagram-HTTP-Audit-Pipeline.html</a> | <strong>Reading Time:</strong> 10 minutes</p>
+<h4>What You'll Learn</h4>
+<ul>
+<li>Audit execution flow</li>
+<li>Security check sequence</li>
+<li>Report assembly</li>
+<li>Advisor integration</li>
+</ul>
+</section>
+
+<section class="content-section">
+<h2>Part 6: Visual Reference</h2>
+<p><em>Estimated Time: 15-30 minutes</em></p>
+
+<h3>Chapter 16: Complete Diagram Index</h3>
+<p><strong>File:</strong> <a href="Diagrams.html">Diagrams.html</a> | <strong>Reading Time:</strong> 15 minutes</p>
+<h4>All Diagrams</h4>
+<ol>
+<li><strong>Architecture Overview</strong> - 8-layer system</li>
+<li><strong>Maven to First Test</strong> - Execution flow</li>
+<li><strong>Test Assets Scanner</strong> - Test discovery</li>
+<li><strong>Data Collection Pipeline</strong> - Data flow</li>
+<li><strong>BigQuery Upload</strong> - Cloud integration</li>
+<li><strong>Advisor Flow</strong> - Recommendation generation</li>
+<li><strong>HTTP Audit Pipeline</strong> - Security assessment</li>
+</ol>
+<h4>Action Items After Reading</h4>
+<p>✅ Bookmark this page for reference | ✅ Know which diagram to use when | ✅ Understand role-based paths</p>
+</section>
+
+<section class="content-section">
+<h2>Role-Based Reading Paths</h2>
+
+<div class="card-grid">
+<div class="card">
+<h4>Test Writers</h4>
+<p>Focus on Parts 1-2</p>
+<ol>
+<li>Framework Introduction</li>
+<li>Installation &amp; Setup</li>
+<li>Test Development</li>
+<li>Test Execution</li>
+</ol>
+<p><a href="Guide-For-Test-Writers.html">→ Test Writer's Guide</a></p>
+</div>
+<div class="card">
+<h4>DevOps Engineers</h4>
+<p>Focus on Parts 1, 5</p>
+<ol>
+<li>Architecture Overview</li>
+<li>Installation &amp; Setup</li>
+<li>BigQuery Integration</li>
+<li>Test Lifecycle Flow</li>
+</ol>
+<p><a href="Guide-For-DevOps.html">→ DevOps Guide</a></p>
+</div>
+<div class="card">
+<h4>Security Engineers</h4>
+<p>Focus on Parts 1, 3</p>
+<ol>
+<li>Framework Introduction</li>
+<li>HTTP Security Assessment</li>
+<li>mAi Advisor™ System</li>
+<li>HTTP Audit Pipeline</li>
+</ol>
+</div>
+<div class="card">
+<h4>Framework Maintainers</h4>
+<p>Read all parts</p>
+<ol>
+<li>All chapters in order</li>
+<li>Deep dive on architecture</li>
+<li>Study all diagrams</li>
+<li>Review all appendices</li>
+</ol>
+<p><a href="Guide-For-Framework-Maintainers.html">→ Maintainer's Guide</a></p>
+</div>
+</div>
+</section>
+
+<section class="content-section">
+<h2>Appendix A: Quick Command Reference</h2>
+
+<h3>Essential Maven Commands</h3>
+<div class="code-block"><pre><code># Run All Tests
+mvn clean verify
+
+# Run Specific Test Suite
+mvn test -Dtest=TS_MyTests_JUnit
+
+# Run Single Test Case
+mvn test -Dtest=TS_MyTests_JUnit#tc_specific_test
+
+# Skip Tests
+mvn clean install -DskipTests
+
+# Generate Reports
+mvn site                          # Generate JavaDocs
+allure serve target/allure-results # View Allure report</code></pre></div>
+
+<h3>HTTP Audit Commands</h3>
+<div class="code-block"><pre><code># Run all HTTP audits
+mvn test -Dtest=TS_HTTP_Audits_JUnit
+
+# Run single audit
+mvn test -Dtest=TS_HTTP_Audits_JUnit#tc_http_audit_basic</code></pre></div>
+
+<h3>Network Diagnostic Commands</h3>
+<div class="code-block"><pre><code># Run all network tests
+mvn test -Dtest=TS_Network_JUnit
+
+# Run specific network test
+mvn test -Dtest=TS_Network_JUnit#tc_network_ping_google</code></pre></div>
+
+<h3>Parallel Execution</h3>
+<div class="code-block"><pre><code># Configure in testConfig.properties
+parallelExecution=true
+parallelExecutionThreads=4</code></pre></div>
+</section>
+
+<section class="content-section">
+<h2>Appendix B: Configuration Properties</h2>
+
+<h3>Required Properties</h3>
+<div class="code-block"><pre><code># Browser Configuration
+browser=chrome
+headless=false
+
+# Test Configuration
+parallelExecution=false
+parallelExecutionThreads=1
+
+# Screenshot Configuration
+takeScreenshots=true
+screenCaptureFormat=png
+
+# Data Collection
+dataOutputPath=target/data/
+dataTestStepsFilename=TestStepsData.csv
+dataArchivePath=target/data/archive/</code></pre></div>
+
+<h3>Google Cloud Properties</h3>
+<div class="code-block"><pre><code># BigQuery Export
+googleCloudBigQueryExport=true
+googleCloudProjectId=your-project-id
+googleCloudServiceAccountJsonFile=src/test/resources/.private/credentials.json
+googleCloudProjectDataset=dataset_automation_01
+googleCloudProjectDatasetTableTestSteps=table_teststeps_02
+
+# Cloud Storage Export
+googleCloudStorageExport=true
+googleCloudStorageBucket=your_bucket_name</code></pre></div>
+
+<h3>mAi Advisor Properties</h3>
+<div class="code-block"><pre><code># Advisor Configuration
+maiAdvisorEnabled=true
+maiAdvisorAudiences=Developer,QA,DevOps,Security,PM,Executive</code></pre></div>
+</section>
+
+<section class="content-section">
+<h2>Appendix C: Troubleshooting Index</h2>
+
+<div class="card-grid">
+<div class="card">
+<h4>Maven Issues</h4>
+<p><strong>mvn: command not found</strong><br>→ Add Maven to PATH</p>
+<p><strong>Tests won't run</strong><br>→ Check Java version (need 23+)</p>
+<p><strong>Build fails</strong><br>→ Run <code>mvn clean install</code> first</p>
+</div>
+<div class="card">
+<h4>Browser Issues</h4>
+<p><strong>ChromeDriver version mismatch</strong><br>→ Update ChromeDriver to match Chrome version</p>
+<p><strong>Browser won't start</strong><br>→ Check headless mode setting</p>
+<p><strong>Timeout errors</strong><br>→ Increase implicit wait in configuration</p>
+</div>
+<div class="card">
+<h4>BigQuery Issues</h4>
+<p><strong>CSV file does not exist</strong><br>→ Verify dataOutputPath configuration</p>
+<p><strong>BigQuery credentials failed</strong><br>→ Check service account JSON file path</p>
+<p><strong>Dataset creation failed</strong><br>→ Grant BigQuery Admin role to service account</p>
+</div>
+<div class="card">
+<h4>Report Issues</h4>
+<p><strong>Allure report won't open</strong><br>→ Install Allure commandline tool</p>
+<p><strong>Screenshots missing</strong><br>→ Verify takeScreenshots=true</p>
+<p><strong>Report not generated</strong><br>→ Check post-integration-test execution</p>
+</div>
+</div>
+</section>
+
+<section class="content-section">
+<h2>Appendix D: Glossary</h2>
+
+<table class="data-table">
+<thead><tr><th>Term</th><th>Definition</th></tr></thead>
+<tbody>
+<tr><td><strong>mAi™</strong></td><td>MissionWares AI methodology for intelligent test guidance</td></tr>
+<tr><td><strong>POM</strong></td><td>Page Object Model design pattern</td></tr>
+<tr><td><strong>FW_</strong></td><td>Framework class naming prefix</td></tr>
+<tr><td><strong>JUnit 5</strong></td><td>Java testing framework (Jupiter)</td></tr>
+<tr><td><strong>Allure</strong></td><td>Test report framework</td></tr>
+<tr><td><strong>OpenCSV</strong></td><td>CSV parsing library</td></tr>
+<tr><td><strong>BigQuery</strong></td><td>Google Cloud data warehouse</td></tr>
+<tr><td><strong>Mermaid</strong></td><td>Diagram syntax (text-based flowcharts)</td></tr>
+<tr><td><strong>Surefire</strong></td><td>Maven plugin for test execution</td></tr>
+<tr><td><strong>WebDriver</strong></td><td>Browser automation API (Selenium)</td></tr>
+<tr><td><strong>Test Suite</strong></td><td>Collection of related test cases (*_JUnit.java)</td></tr>
+<tr><td><strong>Test Case</strong></td><td>Single test method (tc_*)</td></tr>
+<tr><td><strong>Page Object</strong></td><td>Class representing a web page (PO_*)</td></tr>
+<tr><td><strong>Custom Assertion</strong></td><td>Framework assertion with auto-screenshot</td></tr>
+<tr><td><strong>Test Step</strong></td><td>Single action within a test (logged to CSV)</td></tr>
+<tr><td><strong>Advisor Finding</strong></td><td>Security/quality issue detected by audit</td></tr>
+<tr><td><strong>Recommendation</strong></td><td>mAi Advisor generated guidance</td></tr>
+<tr><td><strong>Audience</strong></td><td>Target user type for recommendations</td></tr>
+<tr><td><strong>Template</strong></td><td>Pre-defined recommendation structure</td></tr>
+<tr><td><strong>Two-Tier Model</strong></td><td>Understanding + Action recommendation format</td></tr>
+</tbody>
+</table>
+</section>
+
+<section class="content-section">
+<h2>Reading Completion Checklist</h2>
+<p>After completing this guide, you should be able to:</p>
+
+<div class="card-grid">
+<div class="card">
+<h4>Basics</h4>
+<ul>
+<li>✅ Understand framework architecture (8 layers)</li>
+<li>✅ Install and configure the framework</li>
+<li>✅ Write a basic test using Page Objects</li>
+<li>✅ Run tests via Maven</li>
+<li>✅ View Allure reports</li>
+</ul>
+</div>
+<div class="card">
+<h4>Intermediate</h4>
+<ul>
+<li>✅ Write comprehensive test suites</li>
+<li>✅ Use custom assertions effectively</li>
+<li>✅ Configure parallel execution</li>
+<li>✅ Understand test lifecycle</li>
+</ul>
+</div>
+<div class="card">
+<h4>Advanced</h4>
+<ul>
+<li>✅ Run HTTP security audits</li>
+<li>✅ Execute network diagnostics</li>
+<li>✅ Generate mAi Advisor recommendations</li>
+<li>✅ Configure BigQuery integration</li>
+<li>✅ Interpret security findings</li>
+</ul>
+</div>
+<div class="card">
+<h4>Expert</h4>
+<ul>
+<li>✅ Understand complete architecture</li>
+<li>✅ Extend framework with new features</li>
+<li>✅ Troubleshoot complex issues</li>
+<li>✅ Contribute to framework development</li>
+</ul>
+</div>
+</div>
+</section>
+
+<section class="content-section">
+<h2>Next Steps</h2>
+<p><strong>Now that you've completed the reading guide:</strong></p>
+<ol>
+<li><strong>Practice</strong> - Write your own test suites</li>
+<li><strong>Experiment</strong> - Try different features</li>
+<li><strong>Integrate</strong> - Set up cloud integration if needed</li>
+<li><strong>Contribute</strong> - Report bugs or suggest features</li>
+<li><strong>Share</strong> - Help others learn the framework</li>
+</ol>
+
+<h3>Role-Specific Guides</h3>
+<table class="data-table">
+<thead><tr><th>Guide</th><th>Focus Area</th></tr></thead>
+<tbody>
+<tr><td><a href="Guide-For-Test-Writers.html">Guide for Test Writers</a></td><td>Writing and running tests</td></tr>
+<tr><td><a href="Guide-For-DevOps.html">Guide for DevOps Engineers</a></td><td>CI/CD integration and cloud setup</td></tr>
+<tr><td><a href="Guide-For-Framework-Maintainers.html">Guide for Framework Maintainers</a></td><td>Architecture and extension</td></tr>
+</tbody>
+</table>
+</section>
+
+<footer class="doc-footer" id="doc-footer" data-pagefind-ignore></footer>
+</main>
+</div>
+<script src="docs-config.js"></script>
+<script src="docs-nav.js"></script>
+<script>DocsConfig.renderFooter('doc-footer');</script>
+</body>
+</html>

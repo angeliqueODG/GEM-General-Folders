@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>mAi Advisor™ - mAi™ Framework Documentation</title>
+    <link rel="stylesheet" href="docs-style.css">
+    <link rel="stylesheet" href="pagefind/pagefind-ui.css">
+    <script src="pagefind/pagefind-ui.js" defer></script>
+    <script src="mermaid.min.js"></script>
+    <script>mermaid.initialize({ startOnLoad: true, theme: 'dark', securityLevel: 'loose' });</script>
+</head>
+<body>
+    <div class="layout">
+        <nav class="sidebar" id="sidebar" data-pagefind-ignore></nav>
+        <main class="main-content" data-pagefind-body>
+            <h1 data-pagefind-meta="title">mAi Advisor™ - Intelligent Guidance System</h1>
+            <p class="page-subtitle"><em>"Not just findings—Intelligent guidance for every role."</em></p>
+
+            <h2 id="introduction">Introduction</h2>
+
+            <h3>What is mAi Advisor™?</h3>
+            <p><strong>mAi Advisor™</strong> is an intelligent guidance system that automatically transforms HTTP audit findings into actionable, role-specific recommendations. Rather than providing generic security reports, the advisor generates tailored guidance for six different audiences within your organization.</p>
+
+            <h3>Why mAi Advisor™ Exists</h3>
+            <p>Traditional audit reports provide excellent data about security issues but lack actionable guidance tailored to specific roles.</p>
+
+            <table>
+                <thead><tr><th>Traditional Report</th><th>With mAi Advisor™</th></tr></thead>
+                <tbody>
+                    <tr>
+                        <td>Finding: "Missing HSTS header"<br>Severity: High<br>Impact: Users vulnerable to protocol downgrade attacks<br><strong>What now?</strong> → Everyone figures it out on their own</td>
+                        <td><strong>Developer</strong>: Gets Spring Boot code example<br><strong>DevOps</strong>: Gets Nginx configuration<br><strong>QA</strong>: Gets test cases to verify<br><strong>Security</strong>: Gets threat analysis<br><strong>PM</strong>: Gets sprint planning estimates<br><strong>Executive</strong>: Gets risk summary</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>When to Use mAi Advisor™</h3>
+            <ul class="feature-list">
+                <li><strong>Automatic Activation</strong> - During HTTP audit execution via <code>TS_HttpAssessment_JUnit</code></li>
+                <li><strong>Manual Invocation</strong> - Standalone recommendation generation for custom scenarios</li>
+                <li><strong>Audience-Specific Reports</strong> <span class="badge badge-new">NEW v2.2.0</span> - Configure target audience via <code>FW_HttpReporter</code></li>
+            </ul>
+
+            <h2 id="architecture">Architecture Overview</h2>
+            <p>mAi Advisor™ consists of 7 core components working together to deliver intelligent guidance.</p>
+
+            <h3>Core Components</h3>
+            <table>
+                <thead><tr><th>Component</th><th>Purpose</th></tr></thead>
+                <tbody>
+                    <tr><td><code>FW_Advisor.java</code></td><td>Static facade API for easy integration</td></tr>
+                    <tr><td><code>FW_AdvisorEngine.java</code></td><td>Core processing engine</td></tr>
+                    <tr><td><code>FW_AdvisorTemplateLoader.java</code></td><td>JSON template management</td></tr>
+                    <tr><td><code>FW_AdvisorAudience.java</code></td><td>Audience taxonomy enumeration</td></tr>
+                    <tr><td><code>FW_AdvisorRecommendation.java</code></td><td>Recommendation data model</td></tr>
+                    <tr><td><code>FW_AdvisorTemplate.java</code></td><td>Template data structure</td></tr>
+                    <tr><td><code>FW_AdvisorFinding.java</code></td><td>Finding classification model</td></tr>
+                </tbody>
+            </table>
+
+            <h3>Component Relationships</h3>
+            <pre class="mermaid">
+graph TB
+    A[FW_Advisor<br/>Static Facade] --> B[FW_AdvisorEngine<br/>Core Engine]
+    B --> C[FW_AdvisorTemplateLoader<br/>Template Manager]
+    C --> D[JSON Templates<br/>16+ templates]
+    B --> E[FW_AdvisorAudience<br/>6 audiences]
+    B --> F[FW_AdvisorRecommendation<br/>Output model]
+    I[FW_HttpReporter] --> B
+    I --> E
+    style A fill:#4a90d9
+    style B fill:#4a90d9
+    style C fill:#50c878
+    style D fill:#50c878
+    style E fill:#f5a623
+    style I fill:#9b59b6
+            </pre>
+
+            <h3>JSON Template System</h3>
+            <p>Templates are stored in <code>src/test/java/framework/advisor/templates/</code> organized by category:</p>
+            <pre><code>templates/
+├── security/         (8 templates)
+│   ├── hsts-missing.json
+│   ├── csp-missing.json
+│   ├── ssl-expired.json
+│   └── ...
+├── performance/      (3 templates)
+├── compliance/       (2 templates)
+└── infrastructure/   (3 templates)</code></pre>
+
+            <h2 id="two-tier-model">Two-Tier Recommendation Model</h2>
+            <p>mAi Advisor™ uses a two-tier system to deliver appropriate content to each audience.</p>
+
+            <table>
+                <thead><tr><th>Tier</th><th>Audience</th><th>Content</th></tr></thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Tier 1: UNDERSTANDING</strong></td>
+                        <td>All Audiences</td>
+                        <td>What's wrong, why it matters, impact, risk assessment</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Tier 2: ACTION</strong></td>
+                        <td>Implementers Only</td>
+                        <td>Step-by-step instructions, code examples, configurations, testing procedures</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Implementers vs Coordinators</h3>
+            <table>
+                <thead><tr><th>Role Type</th><th>Audiences</th><th>Receives</th></tr></thead>
+                <tbody>
+                    <tr><td><strong>Implementers</strong></td><td>Developer, DevOps, QA</td><td>Understanding + Action tiers</td></tr>
+                    <tr><td><strong>Coordinators</strong></td><td>Security, PM, Executive</td><td>Understanding tier only</td></tr>
+                </tbody>
+            </table>
+
+            <h2 id="six-audiences">Six Audience Types</h2>
+
+            <table>
+                <thead><tr><th>Audience</th><th>Role</th><th>Focus</th><th>Action Tier</th></tr></thead>
+                <tbody>
+                    <tr><td><strong>DEVELOPER</strong></td><td>Software Engineer</td><td>Code examples, testing procedures</td><td>✅ Yes</td></tr>
+                    <tr><td><strong>OPS_INFRASTRUCTURE</strong></td><td>DevOps Engineer</td><td>Server configs, deployment steps</td><td>✅ Yes</td></tr>
+                    <tr><td><strong>QA_TESTER</strong></td><td>QA Engineer</td><td>Test cases, validation procedures</td><td>✅ Yes</td></tr>
+                    <tr><td><strong>SECURITY_ENGINEER</strong></td><td>Security Specialist</td><td>Threat analysis, compliance</td><td>❌ No</td></tr>
+                    <tr><td><strong>PROJECT_MANAGER</strong></td><td>Project Coordinator</td><td>Effort estimates, sprint planning</td><td>❌ No</td></tr>
+                    <tr><td><strong>EXECUTIVE</strong></td><td>Business Leader</td><td>Risk assessment, cost estimates</td><td>❌ No</td></tr>
+                </tbody>
+            </table>
+
+            <h2 id="usage">Using mAi Advisor™</h2>
+
+            <h3>Automatic Integration (Recommended)</h3>
+            <pre><code>// HTTP audit automatically triggers advisor
+@Test
+@Tag("audit")
+@DisplayName("TC - Audit - HttpReview - Production")
+public void tc_audit_httpreview_production() {
+    FW_CustomAssertJU.autoPass(
+        FW_AuditManager.INSTANCE.getAuditHttpReview()
+            .runAuditHttpReview("https://api.production.com", true)
+    );
+    // Reports automatically include mAi Advisor™ recommendations
+}</code></pre>
+
+            <h3>Direct API Usage</h3>
+            <pre><code>// Get recommendations for specific audience
+List&lt;FW_AdvisorRecommendation&gt; recommendations = FW_Advisor
+    .getRecommendations(httpTransaction, FW_AdvisorAudience.DEVELOPER);
+
+// Get recommendations for all audiences
+Map&lt;FW_AdvisorAudience, List&lt;FW_AdvisorRecommendation&gt;&gt; allRecs = FW_Advisor
+    .getRecommendationsForAllAudiences(httpTransaction);
+
+// Get executive summary
+String summary = FW_Advisor.getExecutiveSummary(httpTransaction);</code></pre>
+
+            <h3>Configuring Report Audience <span class="badge badge-new">NEW v2.2.0</span></h3>
+            <pre><code>FW_Http http = FW_AuditManager.INSTANCE.performHttpAudit(url, false);
+FW_HttpReporter reporter = new FW_HttpReporter();
+
+// Configure for security team
+reporter.setTargetAudience(FW_AdvisorAudience.SECURITY_ENGINEER);
+reporter.setReportDepth(ReportDepth.STANDARD);
+String securityReport = reporter.generateReport(http);
+
+// Configure for executive briefing
+reporter.setTargetAudience(FW_AdvisorAudience.EXECUTIVE);
+reporter.setReportDepth(ReportDepth.EXECUTIVE);
+String execReport = reporter.generateReport(http);</code></pre>
+
+            <h2 id="best-practices">Best Practices</h2>
+
+            <h3>Audience Selection Guide</h3>
+            <table>
+                <thead><tr><th>Purpose</th><th>Recommended Audience</th><th>Depth Level</th></tr></thead>
+                <tbody>
+                    <tr><td>Daily development work</td><td>DEVELOPER</td><td>STANDARD</td></tr>
+                    <tr><td>Code review</td><td>DEVELOPER</td><td>COMPREHENSIVE</td></tr>
+                    <tr><td>Security audit</td><td>SECURITY_ENGINEER</td><td>STANDARD</td></tr>
+                    <tr><td>Executive briefing</td><td>EXECUTIVE</td><td>EXECUTIVE</td></tr>
+                    <tr><td>Sprint planning</td><td>PROJECT_MANAGER</td><td>STANDARD</td></tr>
+                    <tr><td>Deployment guide</td><td>OPS_INFRASTRUCTURE</td><td>STANDARD</td></tr>
+                    <tr><td>Test planning</td><td>QA_TESTER</td><td>STANDARD</td></tr>
+                </tbody>
+            </table>
+
+            <h3>Best Practices by Role</h3>
+            <ul class="feature-list">
+                <li><strong>Framework Maintainers</strong> - Keep templates updated quarterly, test code examples compile</li>
+                <li><strong>Test Writers</strong> - Use automatic mode, configure reports with <code>setTargetAudience()</code></li>
+                <li><strong>Security Teams</strong> - Understand "0 recommendations" is expected for coordinator audiences</li>
+                <li><strong>Development Teams</strong> - Use DEVELOPER audience for framework-specific code examples</li>
+            </ul>
+
+            <h2 id="troubleshooting">Troubleshooting</h2>
+
+            <div class="callout callout-warning">
+                <div class="callout-title">⚠️ Templates Not Loading</div>
+                <p>Verify template path: <code>src/test/java/framework/advisor/templates/</code>. Check file naming: <code>[finding-type].json</code>. Validate JSON syntax.</p>
+            </div>
+
+            <div class="callout callout-warning">
+                <div class="callout-title">⚠️ Recommendations Not Generating</div>
+                <p>Verify <code>advisorEnabled=true</code> in properties. Check audit findings detected issues. Review logs for template errors.</p>
+            </div>
+
+            <div class="callout callout-info">
+                <div class="callout-title">ℹ️ "0 Recommendations" Appearing</div>
+                <p>This is often CORRECT behavior! Coordinator audiences (SECURITY, PM, EXECUTIVE) don't get action-tier recommendations. Templates target implementers (DEVELOPER, OPS, QA). Report still includes findings and understanding tier.</p>
+            </div>
+
+            <div class="callout callout-warning">
+                <div class="callout-title">⚠️ Code Examples Don't Compile</div>
+                <p>Check framework version compatibility. Verify all required imports. Review framework documentation. Report template issues.</p>
+            </div>
+
+            <h2 id="api-reference">API Reference</h2>
+
+            <h3>FW_Advisor Static Methods</h3>
+            <pre><code>// Get recommendations for specific audience
+List&lt;FW_AdvisorRecommendation&gt; getRecommendations(FW_Http http, FW_AdvisorAudience audience)
+
+// Get recommendations for all audiences
+Map&lt;FW_AdvisorAudience, List&lt;FW_AdvisorRecommendation&gt;&gt; getRecommendationsForAllAudiences(FW_Http http)
+
+// Get executive summary
+String getExecutiveSummary(FW_Http http)
+
+// Check if advisor is enabled
+boolean isEnabled()
+
+// Get all available audiences
+FW_AdvisorAudience[] getAllAudiences()
+
+// Get implementer audiences only
+FW_AdvisorAudience[] getImplementerAudiences()
+
+// Get coordinator audiences only
+FW_AdvisorAudience[] getCoordinatorAudiences()</code></pre>
+
+            <h3>FW_HttpReporter Methods <span class="badge badge-new">NEW v2.2.0</span></h3>
+            <pre><code>// Configure target audience
+void setTargetAudience(FW_AdvisorAudience audience)
+
+// Get current audience
+FW_AdvisorAudience getTargetAudience()
+
+// Configure report depth
+void setReportDepth(ReportDepth depth)
+
+// Get current depth
+ReportDepth getReportDepth()
+
+// Generate report
+String generateReport(FW_Http transaction)</code></pre>
+
+            <h2 id="related-documentation">Related Documentation</h2>
+            <table>
+                <thead><tr><th>Document</th><th>Description</th></tr></thead>
+                <tbody>
+                    <tr><td><a href="Doc-HTTP-Assessment.html">HTTP Security Assessment</a></td><td>HTTP audit details and audience configuration</td></tr>
+                    <tr><td><a href="Doc-Network-Diagnostics.html">Network Diagnostics</a></td><td>Network testing</td></tr>
+                    <tr><td><a href="Doc-Test-Development.html">Test Development Guide</a></td><td>Using advisor in tests</td></tr>
+                    <tr><td><a href="Diagram-Architecture.html">Architecture Diagram</a></td><td>Layer 7 details</td></tr>
+                    <tr><td><a href="Diagram-Advisor-Flow.html">Advisor Flow Diagram</a></td><td>Visual workflow</td></tr>
+                </tbody>
+            </table>
+
+            <h2 id="whats-new">What's New in v1.1.0</h2>
+            <ul class="feature-list">
+                <li><strong>Audience Configuration in HTTP Reports</strong> - Integration with <code>FW_HttpReporter</code></li>
+                <li><strong>"0 Recommendations" Documentation</strong> - Explanation of expected behavior</li>
+                <li><strong>Enhanced Usage Examples</strong> - Multi-audience batch generation</li>
+                <li><strong>Troubleshooting Guide Updates</strong> - Report size verification</li>
+            </ul>
+
+            <hr>
+            <footer class="doc-footer" id="doc-footer" data-pagefind-ignore></footer>
+        </main>
+    </div>
+
+    <script src="docs-config.js"></script>
+    <script src="docs-nav.js"></script>
+    <script src="docs-highlight.js"></script>
+    <script>DocsConfig.renderFooter('doc-footer');</script>
+</body>
+</html>

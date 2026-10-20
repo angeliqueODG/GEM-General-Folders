@@ -1,0 +1,171 @@
+{
+  "metadata": {
+    "filename": "no-compression.json",
+    "filepath": "src/test/java/framework/advisor/templates/performance/no-compression.json",
+    "version": "1.0.0",
+    "created": "2025-10-09",
+    "lastUpdated": "2025-10-09 06:30:00 PM CDT",
+    "author": "Greg Paskal",
+    "company": "MissionWares",
+    "methodology": "mAi™ (MissionWares® + AI)",
+    "description": "HTTP compression (gzip/brotli) not enabled finding template with comprehensive guidance for all audiences including framework-specific implementation code, server configurations, and testing strategies to reduce bandwidth usage, improve page load times, and enhance user experience by compressing text-based responses.",
+    "aiGenerated": true,
+    "humanReviewed": false,
+    "reviewedBy": "Pending",
+    "approvedBy": "Pending",
+    "tags": ["compression", "gzip", "brotli", "performance", "bandwidth", "page-speed", "optimization"],
+    "relatedFindings": ["SLOW_RESPONSE_TIME", "POOR_CACHING", "LARGE_PAYLOAD", "HIGH_BANDWIDTH_USAGE", "POOR_CORE_WEB_VITALS"],
+    "estimatedRemediationTime": "1-2 hours",
+    "businessImpact": "MEDIUM",
+    "complianceRequirements": ["Web Performance Best Practices", "Google Core Web Vitals", "Accessibility Guidelines"]
+  },
+  "findingId": "PERF-COMP-001",
+  "findingType": "NO_HTTP_COMPRESSION",
+  "category": "PERFORMANCE",
+  "severity": "MEDIUM",
+  "cveReferences": [
+    "CWE-400"
+  ],
+  "understanding": {
+    "EXECUTIVE": {
+      "summary": "Your website lacks HTTP compression, causing slow page loads and higher infrastructure costs. Users experience 3-5x slower loading times compared to compressed sites, directly impacting conversion rates and customer satisfaction.",
+      "businessRisk": "Medium risk of revenue loss through poor user experience. Studies show 53% of mobile users abandon sites taking over 3 seconds to load (Google 2023). Each 100ms delay in load time reduces conversions by 7% (Amazon). Uncompressed responses increase bandwidth costs by 60-80%, raising hosting expenses $500-$5000/month depending on traffic. Poor Core Web Vitals scores harm SEO rankings, reducing organic traffic by 15-30%. Competitors with faster sites gain market advantage. Mobile users particularly affected on slower connections.",
+      "complianceImpact": "Google Core Web Vitals requirements for SEO ranking. Accessibility guidelines recommend fast load times for users with disabilities. No direct regulatory compliance, but considered best practice for professional web applications.",
+      "priority": "MEDIUM"
+    },
+    "PROJECT_MANAGER": {
+      "summary": "Missing HTTP compression causes unnecessarily slow page loads and high bandwidth costs. Enabling compression reduces response sizes by 60-80% for text content (HTML, CSS, JS, JSON).",
+      "timeline": "Should be addressed in current or next sprint. Implementation takes 1-2 hours including testing. Low complexity change with high impact. Medium priority unless application has performance SLAs or high bandwidth costs (then escalate to high).",
+      "effort": "1-2 hours for implementation and testing. Zero code changes required - pure configuration. Very low risk change with immediate measurable benefits.",
+      "dependencies": [
+        "Access to web server or application configuration",
+        "Staging environment for testing",
+        "Performance monitoring tools to measure improvement",
+        "CDN configuration access if using CDN"
+      ],
+      "blocking": [
+        "Performance SLA compliance",
+        "Core Web Vitals optimization goals",
+        "Bandwidth cost reduction initiatives",
+        "SEO ranking improvement projects",
+        "Mobile user experience improvements"
+      ]
+    },
+    "DEVELOPER": {
+      "summary": "HTTP compression (Content-Encoding: gzip or brotli) is not enabled on web server, causing text-based responses to be sent uncompressed, resulting in 3-5x larger payloads and slower load times.",
+      "technical": "HTTP compression reduces text-based response sizes by encoding them with gzip (widely supported, ~70% compression) or brotli (newer, ~75% compression, better for static content). Browser sends 'Accept-Encoding: gzip, deflate, br' header indicating compression support. Server should respond with 'Content-Encoding: gzip' or 'Content-Encoding: br' header and compressed payload. Compressible content: HTML, CSS, JavaScript, JSON, XML, SVG, text files. Non-compressible: images (JPEG, PNG, GIF already compressed), video, audio, compressed archives (ZIP, GZIP). Compression typically configured at web server level (Nginx, Apache) or application level (Spring Boot, Express). CDNs (CloudFront, Cloudflare) can also handle compression. Brotli provides 15-20% better compression than gzip but requires HTTPS. Dynamic compression (real-time) vs static compression (pre-compressed files).",
+      "vulnerability": "CWE-400 (Uncontrolled Resource Consumption) - Unnecessary bandwidth and processing consumption. Not a security vulnerability per se, but wastes resources and degrades performance. Can contribute to DoS scenarios under high load by consuming excessive bandwidth.",
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Web/HTTP/Compression",
+        "https://web.dev/uses-text-compression/",
+        "https://caniuse.com/brotli",
+        "https://tools.ietf.org/html/rfc7932"
+      ]
+    },
+    "SECURITY_ENGINEER": {
+      "summary": "Missing HTTP compression creates performance vulnerability through resource exhaustion. While not a direct security threat, excessive bandwidth consumption can contribute to availability issues and higher attack surface for volumetric DoS.",
+      "vulnerability": "CWE-400 (Uncontrolled Resource Consumption). Uncompressed responses consume 3-5x more bandwidth, making application more vulnerable to bandwidth exhaustion attacks. Under load, uncompressed responses degrade performance faster, potentially causing service degradation or outages. Indirect security impact through availability concerns.",
+      "attackVector": "Attacker could exploit lack of compression to amplify DoS attacks. By requesting large text resources repeatedly, attacker forces server to transmit 3-5x more data than necessary, exhausting bandwidth and connection limits faster. Combined with other performance issues, creates availability risks. Not a high-severity attack vector but contributes to overall resilience posture.",
+      "threatLevel": "LOW - Primarily performance concern with minor security implications. Main risk is availability degradation under load rather than direct exploit. However, contributes to overall system resilience. Fix is trivial with zero security downside, so recommended as defense-in-depth measure.",
+      "mitigationUrgency": "Implement within 2-4 weeks. Low complexity fix with high performance benefit. Higher priority (1-2 weeks) if application has performance SLAs, high traffic, or operates in bandwidth-constrained environments. Immediate if bandwidth costs are significant concern."
+    },
+    "OPS_INFRASTRUCTURE": {
+      "summary": "Web servers not configured to compress HTTP responses, causing 3-5x larger payloads and higher bandwidth consumption. Requires enabling compression at web server, load balancer, or CDN level.",
+      "technical": "Compression should be enabled at the edge - wherever HTTP responses first leave infrastructure (CDN, load balancer, or web server). Modern approach: CDN handles compression. Legacy approach: web server compression. Gzip compression levels 1-9 (6 is default balance of speed/compression). Brotli compression levels 0-11 (4-6 for dynamic, 11 for static). Configure MIME types to compress: text/html, text/css, application/javascript, application/json, text/xml, application/xml, image/svg+xml. Do NOT compress: images, video, audio, already-compressed formats. Consider CPU impact: compression uses ~2-5% CPU, but saves 60-80% bandwidth (good tradeoff). Brotli requires HTTPS. Pre-compress static assets at build time for best performance.",
+      "scope": "All web servers serving application traffic: CDN (CloudFront, Cloudflare, Fastly), load balancers (ALB, Nginx), web servers (Nginx, Apache, IIS), application servers if serving static content. Must be consistent across all environments (dev, staging, production). Affects all HTTP responses with compressible MIME types. Consider mobile clients on slow connections as primary beneficiaries.",
+      "monitoring": "Monitor compression ratio: compressed size / original size (target: 0.2-0.4 = 60-80% reduction). Track 'Content-Encoding' header presence in responses. Measure page load time improvements (target: 30-50% reduction for text-heavy pages). Monitor CPU usage increase (should be minimal, 2-5%). Alert if compression stops working (missing Content-Encoding header). Use Chrome DevTools Network tab to verify compressed responses. Monitor bandwidth usage reduction (should see 40-60% drop)."
+    },
+    "QA_TESTER": {
+      "summary": "Missing HTTP compression prevents validation that application delivers optimal performance and prevents accurate performance testing baseline establishment.",
+      "testImplication": "Cannot validate performance optimization controls. Performance testing tools (Lighthouse, WebPageTest) flag missing compression as high-priority issue. Page load times 3-5x slower than potential, making performance testing unrealistic. After compression enabled, must retest all performance metrics to establish new baseline. Browser DevTools Network tab shows actual payload sizes vs compressed sizes.",
+      "riskIfNotFixed": "Poor Lighthouse performance scores (typically 50-70 instead of 90+). Google PageSpeed Insights failure. Core Web Vitals non-compliance (LCP, FID, CLS affected). SEO ranking penalties. Performance SLA breaches. Higher cloud/bandwidth costs. User complaints about slow site. Mobile user abandonment. Lost revenue from poor conversion rates."
+    }
+  },
+  "actions": {
+    "DEVELOPER": {
+      "frameworks": {
+        "spring-boot": {
+          "code": "// Spring Boot - Enable HTTP compression (built-in)\n// application.properties or application.yml\n\n# application.properties\n# Enable response compression\nserver.compression.enabled=true\n\n# Minimum response size to trigger compression (bytes)\n# Default: 2048 (2KB) - only compress responses larger than this\nserver.compression.min-response-size=1024\n\n# MIME types to compress\nserver.compression.mime-types=text/html,text/xml,text/plain,text/css,text/javascript,\\\n  application/javascript,application/json,application/xml,image/svg+xml\n\n# Alternative: application.yml\nserver:\n  compression:\n    enabled: true\n    min-response-size: 1024\n    mime-types:\n      - text/html\n      - text/css\n      - application/json\n\n// For programmatic configuration:\n// CompressionConfig.java\n\nimport org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;\nimport org.springframework.boot.web.server.Compression;\nimport org.springframework.boot.web.server.WebServerFactoryCustomizer;\nimport org.springframework.context.annotation.Bean;\nimport org.springframework.context.annotation.Configuration;\n\n@Configuration\npublic class CompressionConfig {\n    \n    @Bean\n    public WebServerFactoryCustomizer<TomcatServletWebServerFactory> compressionCustomizer() {\n        return factory -> {\n            Compression compression = new Compression();\n            compression.setEnabled(true);\n            compression.setMinResponseSize(DataSize.ofKilobytes(1));\n            compression.setMimeTypes(new String[]{\n                \"text/html\",\n                \"text/css\",\n                \"application/javascript\",\n                \"application/json\"\n            });\n            factory.setCompression(compression);\n        };\n    }\n}",
+          "testCode": "// JUnit test to verify compression\nimport org.junit.jupiter.api.Test;\nimport org.springframework.test.web.servlet.MockMvc;\nimport static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;\nimport static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;\n\n@Test\npublic void shouldCompressResponseWhenAcceptEncodingGzip() throws Exception {\n    mockMvc.perform(get(\"/\")\n            .header(\"Accept-Encoding\", \"gzip, deflate\"))\n        .andExpect(status().isOk())\n        .andExpect(header().exists(\"Content-Encoding\"));\n}",
+          "dependencies": "<!-- Spring Boot has built-in compression -->\n<dependency>\n    <groupId>org.springframework.boot</groupId>\n    <artifactId>spring-boot-starter-web</artifactId>\n</dependency>",
+          "packageInstall": "mvn clean install"
+        },
+        "express-nodejs": {
+          "code": "// Express.js - Enable HTTP compression\nconst express = require('express');\nconst compression = require('compression');\n\nconst app = express();\n\n// Enable compression\napp.use(compression({\n  level: 6,        // Compression level (0-9)\n  threshold: 1024  // Only compress responses > 1KB\n}));\n\napp.get('/', (req, res) => {\n  res.send('<html><body><h1>Compressed</h1></body></html>');\n});\n\napp.listen(3000);",
+          "testCode": "// Test compression\nconst request = require('supertest');\nconst { expect } = require('chai');\n\nit('should compress response', (done) => {\n  request(app)\n    .get('/')\n    .set('Accept-Encoding', 'gzip')\n    .expect('Content-Encoding', 'gzip')\n    .end(done);\n});",
+          "dependencies": "npm install compression express",
+          "packageInstall": "npm install"
+        },
+        "generic": {
+          "code": "# Enable compression at web server level\n# See OPS_INFRASTRUCTURE section for:\n# - Nginx configuration\n# - Apache configuration  \n# - AWS CloudFront configuration",
+          "testCode": "# Test compression\ncurl -H \"Accept-Encoding: gzip\" -I https://your-domain.com\n\n# Look for:\nContent-Encoding: gzip",
+          "dependencies": "curl (usually pre-installed)",
+          "packageInstall": "# Usually pre-installed"
+        }
+      },
+      "verificationSteps": [
+        "1. Test with curl: curl -H 'Accept-Encoding: gzip' -I https://your-domain.com",
+        "2. Verify Content-Encoding: gzip header present",
+        "3. Open DevTools Network tab - verify Size column shows compression",
+        "4. Run Google PageSpeed Insights - compression audit passes",
+        "5. Measure compression ratio - should be 60-80% for text"
+      ],
+      "estimatedEffort": "2-3 hours"
+    },
+    "OPS_INFRASTRUCTURE": {
+      "servers": {
+        "nginx": {
+          "config": "# Nginx - Enable gzip compression\n# /etc/nginx/nginx.conf\n\nhttp {\n    gzip on;\n    gzip_comp_level 6;\n    gzip_min_length 1024;\n    gzip_proxied any;\n    gzip_types text/plain text/css text/javascript application/javascript application/json;\n    gzip_vary on;\n}",
+          "reload": "sudo nginx -t && sudo nginx -s reload",
+          "verify": "curl -H \"Accept-Encoding: gzip\" -I https://your-domain.com | grep content-encoding"
+        },
+        "apache": {
+          "config": "# Apache - Enable compression\n<IfModule mod_deflate.c>\n    SetOutputFilter DEFLATE\n    AddOutputFilterByType DEFLATE text/html text/css application/javascript application/json\n    DeflateCompressionLevel 6\n</IfModule>",
+          "reload": "sudo a2enmod deflate && sudo systemctl reload apache2",
+          "verify": "curl -H \"Accept-Encoding: gzip\" -I https://your-domain.com | grep content-encoding"
+        },
+        "aws-cloudfront": {
+          "config": "# AWS CloudFront - Enable compression in Console:\n# Distribution > Behaviors > Edit > Compress Objects Automatically: Yes\n\n# Or via CLI:\naws cloudfront update-distribution --id DIST_ID --distribution-config file://config.json\n\n# config.json:\n{\n  \"DefaultCacheBehavior\": {\n    \"Compress\": true\n  }\n}",
+          "reload": "# Wait 5-15 minutes for CloudFront deployment\naws cloudfront wait distribution-deployed --id DIST_ID",
+          "verify": "curl -H \"Accept-Encoding: gzip\" -I https://your-domain.com | grep content-encoding"
+        }
+      },
+      "rollbackPlan": "1. Backup configuration files\n2. If issues occur, set gzip off (Nginx) or Compress: false (CloudFront)\n3. Reload configuration\n4. Compression issues are extremely rare",
+      "verificationSteps": [
+        "1. Verify compression header present",
+        "2. Test HTML, CSS, JS, JSON compression",
+        "3. Verify images NOT compressed",
+        "4. Monitor CPU usage (should increase only 2-5%)",
+        "5. Run Google PageSpeed Insights"
+      ],
+      "estimatedEffort": "1-2 hours"
+    },
+    "QA_TESTER": {
+      "manualTests": [
+        {
+          "name": "Verify Compression Enabled",
+          "steps": [
+            "1. Open DevTools (F12) Network tab",
+            "2. Navigate to site",
+            "3. Check first request Response Headers",
+            "4. Verify Content-Encoding: gzip or br present",
+            "5. Check Size column shows compression ratio"
+          ],
+          "expected": "Content-Encoding header present. Size shows compressed/actual (e.g., 15KB/45KB = 67% compression)"
+        }
+      ],
+      "automatedTests": {
+        "tool": "Selenium WebDriver",
+        "example": "@Test\npublic void verifyCompressionEnabled() {\n  // Capture response headers\n  // Verify Content-Encoding: gzip\n}"
+      },
+      "verificationSteps": [
+        "1. Open DevTools Network tab",
+        "2. Verify compression header in responses",
+        "3. Verify Size column shows compression",
+        "4. Run PageSpeed Insights",
+        "5. Monitor for 24 hours"
+      ],
+      "estimatedEffort": "2-3 hours"
+    }
+  }
+}

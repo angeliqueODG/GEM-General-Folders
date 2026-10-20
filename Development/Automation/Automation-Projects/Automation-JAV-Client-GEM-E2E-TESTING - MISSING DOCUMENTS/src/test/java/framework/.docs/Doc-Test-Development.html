@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Development - mAi™ Framework Documentation</title>
+    <link rel="stylesheet" href="docs-style.css">
+    <link rel="stylesheet" href="pagefind/pagefind-ui.css">
+    <script src="pagefind/pagefind-ui.js" defer></script>
+</head>
+<body>
+    <div class="layout">
+        <nav class="sidebar" id="sidebar" data-pagefind-ignore></nav>
+        <main class="main-content" data-pagefind-body>
+            <h1 data-pagefind-meta="title">Test Development Guide</h1>
+            <p class="page-subtitle">Comprehensive guide for developing automated tests using the mAi™ Framework</p>
+
+            <p>This guide covers best practices and patterns for developing automated tests using the framework, including JUnit 5 <a href="https://www.perplexity.ai/?q=JUnit+5+test+framework+annotations+lifecycle" target="_blank" class="help-link" data-pagefind-ignore>?</a> annotations, Page Object Model <a href="https://www.perplexity.ai/?q=Page+Object+Model+pattern+Selenium+WebDriver" target="_blank" class="help-link" data-pagefind-ignore>?</a> implementation, custom assertions, HTTP security assessment, network diagnostics, and mAi Advisor™ integration.</p>
+
+            <h2 id="test-structure">Test Structure</h2>
+
+            <h3>Basic Test Class Structure</h3>
+            <p>Every test suite follows a consistent structure with JUnit 5 lifecycle hooks:</p>
+
+            <pre><code>package testsuites;
+
+import org.junit.jupiter.api.*;
+import framework.junit.*;
+import framework.driver.FW_Browser;
+import pageobjects.*;
+import static framework.junit.FW_CustomAssertJU.*;
+
+public class TS_Example_JUnit {
+    
+    WebDriver driver;
+    PO_Login loginPage;
+    
+    @BeforeAll
+    public static void setupTestSuite() {
+        String className = new Object() {}.getClass()
+            .getEnclosingClass().getSimpleName();
+        FW_TestSuiteFormatter.beforeAll(className);
+        FW_ConfigMgr.getInstance();
+    }
+    
+    @BeforeEach
+    public void setupTestCase(TestInfo testInfo) {
+        FW_TestSuiteFormatter.beforeEach(testInfo);
+        driver = FW_Browser.createWebDriver();
+        loginPage = new PO_Login(driver);
+    }
+    
+    @Test
+    @DisplayName("Test: Valid login credentials")
+    public void testValidLogin() {
+        autoPass("Navigate to login page", 
+            loginPage.navigateTo());
+        autoPass("Enter valid credentials", 
+            loginPage.login("user", "pass"));
+        autoPass("Verify successful login", 
+            loginPage.verifyLoginSuccess());
+    }
+    
+    @AfterEach
+    public void tearDownEach(TestInfo testInfo) {
+        FW_TestSuiteFormatter.afterEach(testInfo);
+        FW_Browser.disposeWebDriver(driver);
+    }
+    
+    @AfterAll
+    public static void tearDownTestSuite() {
+        String className = new Object() {}.getClass()
+            .getEnclosingClass().getSimpleName();
+        FW_TestSuiteFormatter.afterAll(className);
+    }
+}</code></pre>
+
+            <h2 id="naming-conventions">Naming Conventions</h2>
+
+            <table>
+                <thead><tr><th>Element</th><th>Pattern</th><th>Example</th></tr></thead>
+                <tbody>
+                    <tr><td><strong>Test Class</strong></td><td><code>TS_&lt;Feature&gt;_JUnit</code></td><td>TS_Authentication_JUnit</td></tr>
+                    <tr><td><strong>Test Method</strong></td><td><code>test&lt;Action&gt;&lt;Context&gt;</code></td><td>testValidLogin</td></tr>
+                    <tr><td><strong>Display Name</strong></td><td><code>@DisplayName("...")</code></td><td>Clear, business-readable description</td></tr>
+                </tbody>
+            </table>
+
+            <h2 id="junit5-annotations">JUnit 5 Annotations</h2>
+
+            <table>
+                <thead><tr><th>Annotation</th><th>Purpose</th><th>Usage</th></tr></thead>
+                <tbody>
+                    <tr><td><code>@Test</code></td><td>Marks a test method</td><td>Every test case</td></tr>
+                    <tr><td><code>@DisplayName</code></td><td>Human-readable test name</td><td>Describe test purpose</td></tr>
+                    <tr><td><code>@Order</code></td><td>Test execution order</td><td>Control test sequence</td></tr>
+                    <tr><td><code>@Disabled</code></td><td>Skip test execution</td><td>Temporarily disable tests</td></tr>
+                    <tr><td><code>@ParameterizedTest</code></td><td>Data-driven tests</td><td>Multiple test data sets</td></tr>
+                    <tr><td><code>@Tag</code></td><td>Test categorization</td><td>Group related tests</td></tr>
+                </tbody>
+            </table>
+
+            <h2 id="custom-assertions">Custom Assertions</h2>
+            <p>The framework provides enhanced assertions with automatic screenshots:</p>
+
+            <pre><code>// Basic assertions with screenshots
+autoPass("Step description");  // Pass with screenshot
+autoFail("Error description");  // Fail with screenshot
+autoWarn("Warning message");    // Warning with screenshot
+
+// Assertions with validation
+autoPassValidation("Verify element present", element.isDisplayed());
+
+// Performance assertions
+autoPassWithDuration("Page load", startTime, endTime);
+
+// Network assertions
+autoPassNetwork("Check connectivity", networkDetails);</code></pre>
+
+            <div class="callout callout-info">
+                <div class="callout-title">💡 Tip</div>
+                <p>All auto* assertions automatically capture screenshots and log step details to the data collector for reporting.</p>
+            </div>
+
+            <h2 id="page-object-model">Page Object Model</h2>
+            <p>The Page Object Model encapsulates page elements and interactions:</p>
+
+            <h3>Creating Page Objects</h3>
+            <pre><code>package pageobjects;
+
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.By;
+import framework.automation.FW_Page;
+
+public class PO_Login extends FW_Page {
+    
+    // Locators
+    private static final String LO_TXT_USERNAME = "//input[@id='user-name']";
+    private static final String LO_TXT_PASSWORD = "//input[@id='password']";
+    private static final String LO_BUT_LOGIN = "//input[@id='login-button']";
+    
+    // Constructor
+    public PO_Login(WebDriver driver) {
+        super(driver);
+    }
+    
+    // Page methods
+    public Object enterUsername(String username) {
+        String result = enterLocatorText(LO_TXT_USERNAME, username, 
+            FW_ConfigMgr.getDefaultTimeout());
+        return FW_TestStepUtils.createTestStep(result, Thread.currentThread());
+    }
+    
+    public Object clickLogin() {
+        String result = clickLocator(LO_BUT_LOGIN, FW_ConfigMgr.getDefaultTimeout());
+        return FW_TestStepUtils.createTestStep(result, Thread.currentThread());
+    }
+}</code></pre>
+
+            <h2 id="http-security-assessment">HTTP Security Assessment Testing</h2>
+            <p>The framework includes comprehensive HTTP security assessment <a href="https://www.perplexity.ai/?q=HTTP+security+headers+audit+OWASP" target="_blank" class="help-link" data-pagefind-ignore>?</a> capabilities to audit web application security headers, SSL/TLS configuration, and protocol compliance.</p>
+
+            <h3>HTTP Assessment Test Suite</h3>
+            <pre><code>package testsuites;
+
+import org.junit.jupiter.api.*;
+import framework.audits.FW_AuditManager;
+import framework.formatter.FW_TestSuiteFormatter;
+import framework.utilities.FW_ConfigMgr;
+import static framework.junit.FW_CustomAssertJU.*;
+
+public class TS_HttpAssessment_JUnit {
+    
+    @BeforeAll
+    public static void setupTestSuite() {
+        String className = new Object() {}.getClass()
+            .getEnclosingClass().getSimpleName();
+        FW_TestSuiteFormatter.beforeAll(className);
+        FW_ConfigMgr.getInstance();
+    }
+    
+    @Test
+    @DisplayName("Test: HTTP Security Headers Audit")
+    @Tag("security")
+    public void testHttpSecurityHeaders() {
+        String targetUrl = FW_ConfigMgr.getDefaultURL();
+        
+        autoPass("Initialize FW_AuditManager");
+        FW_AuditManager auditManager = new FW_AuditManager();
+        
+        autoPass("Perform HTTP security audit on: " + targetUrl);
+        auditManager.performHttpAudit(targetUrl);
+        
+        autoPass("HTTP audit complete - review reports in target/http-reports/");
+    }
+    
+    @Test
+    @DisplayName("Test: SSL/TLS Configuration Audit")
+    @Tag("security")
+    public void testSslConfiguration() {
+        String targetUrl = FW_ConfigMgr.getDefaultURL();
+        FW_AuditManager auditManager = new FW_AuditManager();
+        
+        autoPass("Audit SSL/TLS configuration for: " + targetUrl);
+        auditManager.performSslAudit(targetUrl);
+        
+        autoPass("SSL audit complete with certificate validation");
+    }
+    
+    @AfterAll
+    public static void tearDownTestSuite() {
+        String className = new Object() {}.getClass()
+            .getEnclosingClass().getSimpleName();
+        FW_TestSuiteFormatter.afterAll(className);
+    }
+}</code></pre>
+
+            <h3>HTTP Audit Configuration</h3>
+            <p>Configure HTTP audit settings in <code>testConfig.properties</code>:</p>
+            <pre><code># HTTP Audit Configuration
+http.audit.enabled=true
+http.audit.timeout=30000
+http.audit.followRedirects=true
+http.audit.reportDirectory=target/http-reports
+
+# Security Headers to Check
+http.audit.headers=X-Frame-Options,X-Content-Type-Options,Strict-Transport-Security,Content-Security-Policy</code></pre>
+
+            <h3>Understanding HTTP Audit Reports</h3>
+            <p>HTTP audit reports are generated in <code>target/http-reports/</code> with:</p>
+            <ul class="feature-list">
+                <li><strong>HTML Report</strong>: Color-coded findings with severity levels</li>
+                <li><strong>Diagnostic Report</strong>: Detailed technical analysis</li>
+                <li><strong>mAi Advisor™ Recommendations</strong>: Actionable remediation steps</li>
+            </ul>
+
+            <p>For complete HTTP assessment documentation, see <a href="Doc-HTTP-Assessment.html">HTTP Assessment Documentation</a>.</p>
+
+            <h2 id="network-diagnostics">Network Diagnostics Testing</h2>
+            <p>The framework includes network diagnostic capabilities for testing connectivity, performance, and routing.</p>
+
+            <h3>Network Diagnostics Test Suite</h3>
+            <pre><code>package testsuites;
+
+import org.junit.jupiter.api.*;
+import framework.audits.*;
+import framework.formatter.FW_TestSuiteFormatter;
+import framework.utilities.FW_ConfigMgr;
+import static framework.junit.FW_CustomAssertJU.*;
+
+public class TS_Network_JUnit {
+    
+    @BeforeAll
+    public static void setupTestSuite() {
+        String className = new Object() {}.getClass()
+            .getEnclosingClass().getSimpleName();
+        FW_TestSuiteFormatter.beforeAll(className);
+        FW_ConfigMgr.getInstance();
+    }
+    
+    @Test
+    @DisplayName("Test: Ping Network Connectivity")
+    @Tag("network")
+    public void testPing() {
+        String targetHost = FW_ConfigMgr.getDefaultURL()
+            .replace("https://", "").replace("http://", "");
+        
+        autoPass("Initialize ping audit");
+        FW_Audit_Ping pingAudit = new FW_Audit_Ping();
+        
+        autoPass("Execute ping to: " + targetHost);
+        pingAudit.auditPing(targetHost);
+        
+        autoPass("Ping audit complete - connectivity verified");
+    }
+    
+    @Test
+    @DisplayName("Test: Traceroute Network Path")
+    @Tag("network")
+    public void testTraceroute() {
+        String targetHost = "www.google.com";
+        
+        autoPass("Initialize traceroute audit");
+        FW_Audit_Traceroute tracerouteAudit = new FW_Audit_Traceroute();
+        
+        autoPass("Execute traceroute to: " + targetHost);
+        tracerouteAudit.auditTraceroute(targetHost);
+        
+        autoPass("Traceroute complete - network path mapped");
+    }
+    
+    @Test
+    @DisplayName("Test: Network Speed Test")
+    @Tag("network")
+    @Tag("performance")
+    public void testSpeedTest() {
+        autoPass("Initialize speed test audit");
+        FW_Audit_SpeedTest speedTestAudit = new FW_Audit_SpeedTest();
+        
+        autoPass("Execute network speed test");
+        speedTestAudit.performSpeedTest();
+        
+        autoPass("Speed test complete - bandwidth measured");
+    }
+    
+    @AfterAll
+    public static void tearDownTestSuite() {
+        String className = new Object() {}.getClass()
+            .getEnclosingClass().getSimpleName();
+        FW_TestSuiteFormatter.afterAll(className);
+    }
+}</code></pre>
+
+            <h3>Network Test Configuration</h3>
+            <p>Configure network diagnostic settings in <code>testConfig.properties</code>:</p>
+            <pre><code># Network Diagnostics Configuration
+network.audit.enabled=true
+network.ping.count=4
+network.ping.timeout=5000
+network.traceroute.maxHops=30
+network.speedtest.enabled=true
+network.speedtest.duration=10000</code></pre>
+
+            <h3>Network Test Patterns</h3>
+            <ul class="feature-list">
+                <li><strong>No WebDriver Required</strong>: Network tests don't need browser automation</li>
+                <li><strong>Standalone Execution</strong>: Can run independently of UI tests</li>
+                <li><strong>Fast Execution</strong>: Typically complete in seconds</li>
+                <li><strong>CI/CD Friendly</strong>: Ideal for pre-deployment validation</li>
+            </ul>
+
+            <p>For complete network diagnostics documentation, see <a href="Doc-Network-Diagnostics.html">Network Diagnostics Guide</a>.</p>
+
+            <h2 id="mai-advisor">Using mAi Advisor™ Recommendations</h2>
+            <p>mAi Advisor™ provides intelligent, context-aware recommendations for test failures and audit findings using a multi-tier, multi-audience model.</p>
+
+            <h3>mAi Advisor™ Architecture</h3>
+            <table>
+                <thead><tr><th>Tier</th><th>Purpose</th><th>Audience</th></tr></thead>
+                <tbody>
+                    <tr><td><strong>Understanding</strong></td><td>What the finding means, why it matters, business impact</td><td>All audiences</td></tr>
+                    <tr><td><strong>Action</strong></td><td>Step-by-step remediation, code examples, configuration</td><td>Implementers only</td></tr>
+                </tbody>
+            </table>
+
+            <h3>Six Audience Types</h3>
+            <table>
+                <thead><tr><th>Audience</th><th>Focus</th></tr></thead>
+                <tbody>
+                    <tr><td><strong>Developer</strong></td><td>Code examples, implementation details</td></tr>
+                    <tr><td><strong>DevOps</strong></td><td>Server configs, deployment procedures</td></tr>
+                    <tr><td><strong>QA</strong></td><td>Test cases, validation steps</td></tr>
+                    <tr><td><strong>Security</strong></td><td>Threat analysis, compliance requirements</td></tr>
+                    <tr><td><strong>PM</strong></td><td>Business impact, resource requirements</td></tr>
+                    <tr><td><strong>Executive</strong></td><td>Strategic overview, high-level recommendations</td></tr>
+                </tbody>
+            </table>
+
+            <h3>Accessing Advisor Recommendations</h3>
+            <pre><code>// HTTP audit automatically triggers advisor
+FW_AuditManager auditManager = new FW_AuditManager();
+auditManager.performHttpAudit(targetUrl);
+// Recommendations available in HTTP report
+
+// Manually access advisor for custom scenarios
+FW_AdvisorEngine advisor = new FW_AdvisorEngine();
+FW_AdvisorRecommendation recommendation = advisor
+    .getRecommendation("no-https", FW_AdvisorAudience.DEVELOPER);</code></pre>
+
+            <h3>Advisor Template Example</h3>
+            <pre><code>{
+  "finding": "no-https",
+  "title": "No HTTPS - Site Uses Insecure HTTP",
+  "understanding": {
+    "what": "Website uses HTTP instead of HTTPS protocol",
+    "why": "Exposes data to interception and manipulation",
+    "impact": "Critical security vulnerability affecting all users"
+  },
+  "actions": {
+    "developer": {
+      "code": "// Redirect all HTTP to HTTPS\napp.use((req, res, next) => {...})"
+    },
+    "devops": {
+      "servers": {
+        "nginx": {
+          "config": "server { listen 80; return 301 https://$host$request_uri; }"
+        }
+      }
+    }
+  }
+}</code></pre>
+
+            <h3>Configuring mAi Advisor™</h3>
+            <pre><code># mAi Advisor Configuration
+advisor.enabled=true
+advisor.audience=developer
+advisor.templatePath=src/test/java/framework/advisor/templates
+advisor.includeActions=true
+advisor.verbosity=detailed</code></pre>
+
+            <p>For complete mAi Advisor™ documentation, see <a href="Doc-mAi-Advisor.html">mAi Advisor™ System</a>.</p>
+
+            <h2 id="test-organization">Test Organization</h2>
+
+            <h3>Test Suite Structure</h3>
+            <pre><code>testsuites/
+├── TS_Authentication_JUnit.java    # Login/logout tests
+├── TS_Ordering_JUnit.java          # E-commerce flow tests
+├── TS_HttpAssessment_JUnit.java    # Security audit tests
+└── TS_Network_JUnit.java           # Network diagnostic tests</code></pre>
+
+            <h3>Best Practices</h3>
+            <ul class="feature-list">
+                <li><strong>Single Responsibility</strong>: One test suite per feature area</li>
+                <li><strong>Clear Naming</strong>: Descriptive test and method names</li>
+                <li><strong>Minimal Dependencies</strong>: Tests should be independent</li>
+                <li><strong>Consistent Patterns</strong>: Follow framework conventions</li>
+                <li><strong>Comprehensive Assertions</strong>: Validate all critical points</li>
+            </ul>
+
+            <h2 id="advanced-patterns">Advanced Patterns</h2>
+
+            <h3>Wait Strategies <a href="https://www.perplexity.ai/?q=Selenium+WebDriver+explicit+wait+fluent+wait" target="_blank" class="help-link" data-pagefind-ignore>?</a></h3>
+            <pre><code>// Explicit waits (preferred)
+WebElement element = waitForElement(locator, 10);
+
+// Fluent waits for complex conditions
+Wait&lt;WebDriver&gt; wait = new FluentWait&lt;&gt;(driver)
+    .withTimeout(Duration.ofSeconds(30))
+    .pollingEvery(Duration.ofSeconds(1))
+    .ignoring(NoSuchElementException.class);</code></pre>
+
+            <h3>Error Handling</h3>
+            <pre><code>try {
+    autoPass("Perform risky operation");
+    riskyOperation();
+} catch (Exception e) {
+    autoFail("Operation failed: " + e.getMessage());
+    throw e; // Re-throw to fail the test
+}</code></pre>
+
+            <h3>Parallel Execution <a href="https://www.perplexity.ai/?q=JUnit+5+parallel+test+execution+configuration" target="_blank" class="help-link" data-pagefind-ignore>?</a></h3>
+            <pre><code># In junit-platform.properties
+junit.jupiter.execution.parallel.enabled=true
+junit.jupiter.execution.parallel.mode.default=concurrent</code></pre>
+
+            <h2 id="debugging">Debugging Tests</h2>
+
+            <h3>Logging</h3>
+            <pre><code>// Framework logging
+FW_DebugUtils.log("Debug message");
+FW_DebugUtils.logWithTimestamp("Operation completed");
+
+// Console output with colors
+System.out.println(FW_ConsoleColors.GREEN + "Test passed" + FW_ConsoleColors.RESET);</code></pre>
+
+            <h3>Screenshots</h3>
+            <pre><code>// Manual screenshot capture
+FW_ScreenUtils.captureScreenshot(driver, "screenshot-name");
+
+// Automatic on assertion
+autoPass("Visual checkpoint"); // Includes screenshot</code></pre>
+
+            <h2 id="next-steps">Next Steps</h2>
+            <table>
+                <thead><tr><th>Document</th><th>Description</th></tr></thead>
+                <tbody>
+                    <tr><td><a href="Doc-Test-Execution-VSCode.html">Test Execution Guide</a></td><td>Running tests in VSCode</td></tr>
+                    <tr><td><a href="Doc-HTTP-Assessment.html">HTTP Assessment</a></td><td>Security auditing</td></tr>
+                    <tr><td><a href="Doc-Network-Diagnostics.html">Network Diagnostics</a></td><td>Network testing</td></tr>
+                    <tr><td><a href="Doc-mAi-Advisor.html">mAi Advisor™</a></td><td>Intelligent recommendations</td></tr>
+                    <tr><td><a href="Diagram-Architecture.html">Architecture Diagrams</a></td><td>Visual framework overview</td></tr>
+                </tbody>
+            </table>
+
+            <hr>
+            <footer class="doc-footer" id="doc-footer" data-pagefind-ignore></footer>
+        </main>
+    </div>
+
+    <script src="docs-config.js"></script>
+    <script src="docs-nav.js"></script>
+    <script src="docs-highlight.js"></script>
+    <script>DocsConfig.renderFooter('doc-footer');</script>
+</body>
+</html>

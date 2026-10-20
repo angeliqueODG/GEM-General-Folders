@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Maven to First Test Case - mAi™ Framework Documentation</title>
+<link rel="stylesheet" href="docs-style.css">
+<link rel="stylesheet" href="pagefind/pagefind-ui.css">
+<script src="pagefind/pagefind-ui.js"></script>
+<script src="mermaid.min.js"></script>
+<script>mermaid.initialize({startOnLoad: true, theme: 'dark'});</script>
+</head>
+<body>
+<div class="layout">
+<nav class="sidebar" id="sidebar" data-pagefind-ignore></nav>
+<main class="main-content" data-pagefind-body>
+<h1 data-pagefind-meta="title">Maven to First Test Case Execution</h1>
+<p class="subtitle">Complete execution path from mvn verify to first test case</p>
+
+<section class="content-section">
+<h2>Overview</h2>
+<p>This diagram traces the complete execution path from running <code>mvn verify</code> in the terminal through to the execution of the first test case in the SwagLabs test suite. Understanding this flow is essential for debugging test startup issues and configuring test execution.</p>
+</section>
+
+<section class="content-section">
+<h2>Execution Flow Stages</h2>
+<ol>
+<li><strong>Maven Initialization:</strong> Command processing and phase execution</li>
+<li><strong>Test Framework Setup:</strong> JUnit and Surefire plugin initialization</li>
+<li><strong>Test Suite Configuration:</strong> BeforeAll hooks and configuration loading</li>
+<li><strong>Test Case Preparation:</strong> BeforeEach hooks and resource setup</li>
+<li><strong>Test Execution:</strong> First test case runs with initialized resources</li>
+</ol>
+</section>
+
+<section class="content-section">
+<h2>Detailed Flow Diagram</h2>
+<pre class="mermaid">
+graph TB
+    subgraph Terminal["Terminal Command"]
+        T1[Run Command: mvn verify]
+    end
+    T1 --> M1[Maven]
+    subgraph Maven["Maven Build Lifecycle"]
+        M1[Maven Initialization]
+        M1 --> M2[Validate Phase]
+        M2 --> M3[Compile Phase]
+        M3 --> M4[Test Phase]
+        M4 --> M5[Surefire Plugin Execution]
+        M5 --> M6[Test Discovery &amp; Execution]
+    end
+    M6 --> TS1[TS_SwagLabs_JUnit Execution]
+    subgraph TS_SwagLabs_JUnit["Test Suite: TS_SwagLabs_JUnit"]
+        TS1 --> TS2a[BeforeAll: setupTestSuite]
+        subgraph BeforeAll["@BeforeAll Hook"]
+            TS2a[Create anonymous object and get class name]
+            TS2a --> TS2b[Call FW_TestSuiteFormatter.beforeAll with class name]
+            TS2b --> TS2c[Load testConfig.properties]
+        end
+        TS2c --> TS3a[BeforeEach: setupTestCase]
+        subgraph BeforeEach["@BeforeEach Hook - Current Pattern"]
+            TS3a[Call FW_TestSuiteFormatter.beforeEach with testInfo]
+            TS3a --> TS3e[Create WebDriver Instance]
+            TS3e --> TS3f[Instantiate Page Objects&lt;br/&gt;Login, Products, Cart, etc.]
+        end
+        TS3f --> TS4[First Test Case:&lt;br/&gt;TC - SwagLabs - Missing Username and Password]
+    end
+    subgraph FW_TestSuiteFormatter["Framework Component: FW_TestSuiteFormatter"]
+        TS2b &lt;--&gt; TSF1[beforeAll Method]
+        TSF1 --> TSF2[Get Suites, Cases &amp; Steps totals]
+        TSF2 --> TSF3[Print test details to terminal]
+        TS3a &lt;--&gt; TSF4[beforeEach Method]
+    end
+    subgraph FW_TestRunTracker["Framework Component: FW_TestRunTracker"]
+        TSF1 &lt;--&gt; TRT1[getInstance:&lt;br/&gt;FW_TestRunTracker singleton]
+    end
+    subgraph FW_ConfigMgr["Framework Component: FW_ConfigMgr"]
+        TS2c &lt;--&gt; CM1[getInstance:&lt;br/&gt;FW_ConfigMgr singleton]
+    end
+</pre>
+</section>
+
+<section class="content-section">
+<h2>Key Components</h2>
+
+<h3>Maven Phases</h3>
+<table class="data-table">
+<thead><tr><th>Phase</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td><code>validate</code></td><td>Validates project structure</td></tr>
+<tr><td><code>compile</code></td><td>Compiles source code</td></tr>
+<tr><td><code>test</code></td><td>Runs unit tests via Surefire</td></tr>
+<tr><td><code>verify</code></td><td>Runs integration tests</td></tr>
+</tbody>
+</table>
+
+<h3>Framework Initialization</h3>
+<ul>
+<li><strong>FW_TestSuiteFormatter:</strong> Formats and tracks test execution</li>
+<li><strong>FW_TestRunTracker:</strong> Singleton tracking test run metrics</li>
+<li><strong>FW_ConfigMgr:</strong> Manages test configuration properties</li>
+<li><strong>WebDriver:</strong> Browser automation driver instance</li>
+<li><strong>Page Objects:</strong> Encapsulated page element interactions</li>
+</ul>
+</section>
+
+<section class="content-section">
+<h2>Configuration Files</h2>
+<ul>
+<li><code>pom.xml</code> - Maven configuration and dependencies</li>
+<li><code>testConfig.properties</code> - Test execution parameters</li>
+<li>Test data files and schemas</li>
+</ul>
+</section>
+
+<section class="content-section">
+<h2>Pattern Evolution</h2>
+
+<h3>Current Pattern (v1.2.0)</h3>
+<p>The @BeforeEach hook now follows a simplified pattern:</p>
+<ol>
+<li>Call FW_TestSuiteFormatter.beforeEach for test tracking</li>
+<li>Create WebDriver instance for browser automation</li>
+<li>Instantiate Page Objects for test interactions</li>
+</ol>
+
+<h3>Deprecated Components (Removed)</h3>
+<p>Previous versions included these components in @BeforeEach:</p>
+<ul>
+<li><code>FW_Audit_Connectivity</code> - Network connectivity validation (deprecated)</li>
+<li><code>FW_Audit_Sandbox</code> - Environment validation (deprecated)</li>
+</ul>
+<p>These audit functions are now handled through dedicated audit test suites (TS_HttpAssessment_JUnit, TS_Network_JUnit), pre-test environment validation in Maven lifecycle, and framework-level health checks in FW_AuditManager.</p>
+</section>
+
+<section class="content-section">
+<h2>Related Documentation</h2>
+<table class="data-table">
+<thead><tr><th>Document</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td><a href="Diagram-Architecture.html">Architecture Overview</a></td><td>Framework layers</td></tr>
+<tr><td><a href="Doc-Test-Development.html">Test Development Guide</a></td><td>Writing tests</td></tr>
+<tr><td><a href="Doc-Test-Execution-VSCode.html">Test Execution in VSCode</a></td><td>IDE execution</td></tr>
+<tr><td><a href="Diagram-Adding-data-to-datacollector.html">Data Collection Flow</a></td><td>Data pipeline</td></tr>
+<tr><td><a href="Doc-HTTP-Assessment.html">HTTP Assessment</a></td><td>HTTP audit details</td></tr>
+<tr><td><a href="Doc-Network-Diagnostics.html">Network Diagnostics</a></td><td>Network audit details</td></tr>
+</tbody>
+</table>
+</section>
+
+<footer class="doc-footer" id="doc-footer" data-pagefind-ignore></footer>
+</main>
+</div>
+<script src="docs-config.js"></script>
+<script src="docs-nav.js"></script>
+<script>DocsConfig.renderFooter('doc-footer');</script>
+</body>
+</html>

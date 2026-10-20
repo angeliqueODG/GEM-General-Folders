@@ -1,0 +1,254 @@
+{
+  "metadata": {
+    "filename": "dns-issues.json",
+    "filepath": "src/test/java/framework/advisor/templates/infrastructure/dns-issues.json",
+    "version": "1.0.0",
+    "created": "2025-10-09",
+    "lastUpdated": "2025-10-09 05:35:00 PM CDT",
+    "author": "Greg Paskal",
+    "company": "MissionWares",
+    "methodology": "mAi™ (MissionWares® + AI)",
+    "description": "DNS security and configuration issues finding template with comprehensive guidance for all audiences including missing DNSSEC, CAA records, SPF/DKIM/DMARC email authentication, DNS hijacking vulnerabilities, and DNS hardening procedures across authoritative nameservers and DNS providers.",
+    "aiGenerated": true,
+    "humanReviewed": false,
+    "reviewedBy": "Pending",
+    "approvedBy": "Pending",
+    "tags": ["dns", "dnssec", "caa", "spf", "dkim", "dmarc", "email-security", "dns-hijacking", "infrastructure"],
+    "relatedFindings": ["DNSSEC_MISSING", "CAA_MISSING", "SPF_MISSING", "DKIM_MISSING", "DMARC_MISSING", "DNS_HIJACKING", "SUBDOMAIN_TAKEOVER"],
+    "estimatedRemediationTime": "3-6 hours",
+    "businessImpact": "HIGH",
+    "complianceRequirements": ["DMARC Enforcement 2024", "NIST 800-81-2", "CIS DNS Benchmark", "Email Authentication Best Practices"]
+  },
+  "findingId": "INFRA-DNS-001",
+  "findingType": "DNS_SECURITY_ISSUES",
+  "category": "INFRASTRUCTURE",
+  "severity": "HIGH",
+  "cveReferences": [
+    "CWE-350",
+    "CWE-923",
+    "CVE-2008-1447"
+  ],
+  "understanding": {
+    "EXECUTIVE": {
+      "summary": "Your DNS infrastructure lacks critical security protections including DNSSEC, CAA records, and email authentication (SPF/DKIM/DMARC), exposing your organization to DNS hijacking, fraudulent SSL certificates, email spoofing, and phishing attacks using your domain.",
+      "businessRisk": "Critical risk of brand impersonation and domain hijacking. Without DNS security: Attackers can issue fraudulent SSL certificates for your domain (if CAA missing), hijack email domains for phishing campaigns (if SPF/DKIM/DMARC missing), redirect users to malicious sites via DNS poisoning (if DNSSEC missing), launch phishing attacks using your domain name, damage brand reputation through email spoofing. Email providers (Gmail, Microsoft) increasingly require DMARC for delivery - missing DMARC causes legitimate emails to be rejected or marked as spam. Google/Yahoo mandate DMARC for bulk senders (Feb 2024). Average phishing attack costs $4.91M (IBM 2023). Brand damage from spoofed emails is immeasurable. Lost customer trust and revenue.",
+      "complianceImpact": "DMARC enforcement mandate (Google/Yahoo Feb 2024) - emails may be rejected without DMARC. NIST 800-81-2 recommends DNSSEC deployment. CIS DNS Benchmark requires DNS security controls. Email authentication gaps flagged in security audits. Industry best practices require SPF/DKIM/DMARC. Regulatory requirements for email security (HIPAA, GDPR data integrity). Customer security questionnaires fail without DNS security.",
+      "priority": "HIGH"
+    },
+    "PROJECT_MANAGER": {
+      "summary": "DNS infrastructure missing security controls: DNSSEC for DNS integrity, CAA records to restrict certificate issuance, SPF/DKIM/DMARC for email authentication. Need DNS security implementation to prevent hijacking and email spoofing.",
+      "timeline": "Should be addressed within 1-2 sprints. Implementation takes 3-6 hours depending on DNS provider. High priority if sending bulk email or preparing for compliance audit. Critical if recent phishing attempts using your domain reported. Email authentication (SPF/DKIM/DMARC) is highest priority due to 2024 enforcement mandates.",
+      "effort": "3-6 hours for complete DNS security implementation. SPF/DKIM/DMARC: 2-3 hours (highest priority). CAA records: 1 hour. DNSSEC: 2-3 hours (complex, provider-dependent). Testing and monitoring: 1-2 hours. One-time implementation with periodic review (quarterly).",
+      "dependencies": [
+        "Access to DNS management console (Route53, Cloudflare, etc.)",
+        "List of authorized email senders (for SPF)",
+        "List of authorized certificate authorities (for CAA)",
+        "DKIM key generation capability",
+        "Operations team for DNS changes",
+        "Email team for DMARC policy coordination",
+        "24-48 hours for DNS propagation"
+      ],
+      "blocking": [
+        "Email deliverability (Gmail/Yahoo reject without DMARC)",
+        "Security compliance certification",
+        "Penetration testing sign-off",
+        "Customer security assessments",
+        "SSL certificate validation controls",
+        "Brand protection initiatives",
+        "Email marketing campaigns (may be blocked)"
+      ]
+    },
+    "DEVELOPER": {
+      "summary": "DNS records lack security controls: DNSSEC signatures for authenticity, CAA records restricting certificate issuance, SPF records authorizing mail servers, DKIM signatures for email integrity, DMARC policies for handling failures.",
+      "technical": "DNS security gaps: 1) DNSSEC - cryptographic signatures prevent DNS poisoning and cache poisoning attacks. Uses DS records at parent zone, DNSKEY records at zone, RRSIG records signing resource records. 2) CAA (Certificate Authority Authorization) - DNS record specifying which CAs can issue certificates for domain. Format: 'CAA 0 issue \"letsencrypt.org\"'. Prevents fraudulent certificate issuance. 3) SPF (Sender Policy Framework) - TXT record listing authorized mail servers. Format: 'v=spf1 include:_spf.google.com ~all'. 4) DKIM (DomainKeys Identified Mail) - cryptographic signature in email headers, validated via DNS TXT record containing public key. 5) DMARC (Domain-based Message Authentication) - policy for handling SPF/DKIM failures. Format: 'v=DMARC1; p=reject; rua=mailto:dmarc@domain.com'. Without these: DNS responses can be spoofed, fraudulent certificates issued, emails forged, phishing attacks using domain name.",
+      "vulnerability": "CWE-350 (Reliance on Reverse DNS Resolution) - DNS responses trusted without validation. CWE-923 (Improper Restriction of Communication Channel to Intended Endpoints) - No authentication of DNS responses. CVE-2008-1447 (Kaminsky DNS cache poisoning) - DNSSEC prevents. Email spoofing enables: phishing campaigns using your domain, CEO fraud attacks, credential harvesting, malware distribution, brand impersonation. DNS hijacking enables: traffic redirection to malicious sites, man-in-the-middle attacks, credential theft via fake login pages. Missing CAA allows: any CA to issue certificates for your domain, fraudulent certificates enabling MITM attacks.",
+      "references": [
+        "https://dnssec-analyzer.verisignlabs.com/",
+        "https://mxtoolbox.com/dmarc.aspx",
+        "https://tools.ietf.org/html/rfc8659",
+        "https://www.cloudflare.com/dns/dnssec/how-dnssec-works/",
+        "https://dmarc.org/overview/"
+      ]
+    },
+    "SECURITY_ENGINEER": {
+      "summary": "DNS infrastructure lacks multiple security layers: DNSSEC (integrity), CAA (certificate control), SPF/DKIM/DMARC (email authentication), creating high-severity vulnerability to DNS hijacking, email spoofing, and man-in-the-middle attacks.",
+      "vulnerability": "CWE-350 (Reliance on Reverse DNS), CWE-923 (Improper Channel Restriction), CVE-2008-1447 (DNS cache poisoning). Multiple DNS security gaps create layered vulnerabilities: Missing DNSSEC enables DNS poisoning/hijacking, missing CAA enables fraudulent certificate issuance, missing SPF/DKIM/DMARC enables email spoofing and phishing. These vulnerabilities compound: DNS hijacking + fraudulent certificate = complete MITM capability. Email spoofing + brand trust = highly effective phishing.",
+      "attackVector": "1) DNS Cache Poisoning: Attacker poisons recursive resolver cache with malicious DNS records, redirecting users to attacker-controlled servers. 2) DNS Hijacking: Compromise DNS provider credentials or exploit DNS server, modify records to redirect traffic. 3) Email Spoofing: Forge email headers using victim's domain, bypass spam filters (no SPF/DKIM/DMARC), launch phishing campaigns, CEO fraud, credential harvesting. 4) Fraudulent Certificate Issuance: Request certificate from any CA (no CAA restriction), obtain valid certificate for victim domain, use for MITM attacks or phishing sites. 5) Subdomain Takeover: Find orphaned DNS records pointing to unclaimed resources (S3, GitHub Pages), claim resource, serve malicious content on victim's subdomain. 6) Combined Attack: Hijack DNS + issue fraudulent cert + host phishing site = complete domain impersonation.",
+      "threatLevel": "HIGH - DNS attacks are prevalent and high-impact. DNS hijacking incidents: GoDaddy (2020), Amazon Route53 (2019), numerous registrar compromises. Email spoofing universal - 3.4 billion spoofed emails daily (Proofpoint 2023). Missing DMARC results in 60% of spoofed emails delivered to inbox. Missing CAA documented in certificate mis-issuance incidents. DNSSEC adoption still low (30% of domains) making non-DNSSEC domains attractive targets. Low technical skill required for email spoofing (easy to forge headers). DNS hijacking requires higher skill but available via exploit kits and compromised registrar accounts.",
+      "mitigationUrgency": "HIGH PRIORITY - Implement within 1-2 weeks. Email authentication (SPF/DKIM/DMARC) is CRITICAL - implement immediately due to Gmail/Yahoo enforcement (Feb 2024). Missing DMARC causes email delivery failures. CAA records take 15 minutes to add - do immediately. DNSSEC implementation more complex (2-3 hours) but essential for DNS integrity. If email spoofing incidents reported: escalate to CRITICAL, implement DMARC p=reject immediately. If DNS hijacking suspected: escalate to CRITICAL, implement DNSSEC and audit DNS provider security."
+    },
+    "OPS_INFRASTRUCTURE": {
+      "summary": "Authoritative nameservers lack DNSSEC signing, CAA records, and email authentication records (SPF/DKIM/DMARC), requiring DNS configuration updates across all domains and delegation to DNS provider.",
+      "technical": "DNS security implementation: 1) SPF - Add TXT record: 'v=spf1 include:_spf.domain.com include:amazonses.com ~all'. List all authorized mail servers. Use 'include:' for third parties. Use '~all' (soft fail) initially, then '-all' (hard fail). 2) DKIM - Generate key pair (2048-bit RSA), publish public key in DNS TXT record at selector._domainkey.domain.com, configure mail server to sign with private key. 3) DMARC - Add TXT record at _dmarc.domain.com: 'v=DMARC1; p=none; rua=mailto:dmarc@domain.com'. Start with p=none (monitor), progress to p=quarantine, then p=reject. 4) CAA - Add CAA record: 'example.com CAA 0 issue \"letsencrypt.org\"'. List all authorized CAs. Use 'issuewild' for wildcard restrictions. 5) DNSSEC - Enable at DNS provider (Route53, Cloudflare), add DS record at parent nameserver (registrar), configure DNSSEC signing for zone. Provider-dependent process. Implementation points: DNS provider console (Route53, Cloudflare, Google DNS), registrar (for DS record), mail server (DKIM signing), monitoring (DMARC reports).",
+      "scope": "All domains and subdomains under organization control: primary domain, subdomains, alternate domains, development/staging domains (if public-facing). Email-sending domains require SPF/DKIM/DMARC. All HTTPS domains should have CAA. All critical domains should have DNSSEC. Coordinate with: DNS provider/hosting, email service provider (Google Workspace, Microsoft 365, SendGrid, SES), SSL/TLS certificate provider, registrar (for DNSSEC DS records). Changes propagate via DNS (TTL), typically 5 minutes to 48 hours.",
+      "monitoring": "Monitor DNS security posture: DNSSEC validation (dnssec-analyzer.verisignlabs.com), CAA record checks (caatest.co.uk), SPF validation (mxtoolbox.com/spf.aspx), DKIM validation (mail-tester.com), DMARC reports (aggregate and forensic). Receive DMARC reports daily (rua=mailto:dmarc@domain.com), analyze for: authentication pass/fail rates, sources of legitimate/illegitimate email, spoofing attempts. Set up monitoring: DMARC report analyzer (Postmark, Dmarcian, DMARC Analyzer), DNS monitoring (changes, outages), certificate transparency logs (for unauthorized certificate issuance). Alert on: DNSSEC validation failures, SPF/DKIM failures above threshold, DMARC policy violations, unauthorized certificate issuance (if CAA violated)."
+    },
+    "QA_TESTER": {
+      "summary": "DNS security gaps prevent validation that domain is protected against hijacking and spoofing. Cannot verify DNSSEC integrity, CAA certificate restrictions, or email authentication without proper DNS records.",
+      "testImplication": "Cannot validate DNS security controls. Security scanning tools flag missing DNSSEC, CAA, SPF, DKIM, DMARC as HIGH severity. Cannot test email deliverability without DMARC (emails rejected by Gmail/Yahoo). Cannot verify certificate issuance controls without CAA. Cannot test DNS integrity without DNSSEC. After implementation, must test: DNSSEC validation passes, CAA prevents unauthorized certificate requests, SPF/DKIM/DMARC authentication succeeds, email deliverability maintained.",
+      "riskIfNotFixed": "Security assessment failure. Penetration testing findings (DNS security gaps). Email deliverability failure (Gmail/Yahoo reject emails without DMARC). Customer security questionnaire failures. Actual exploitation: DNS hijacked redirecting users to malicious sites, fraudulent SSL certificates issued enabling phishing sites, email spoofed for phishing campaigns targeting customers/employees, brand reputation damage from successful impersonation attacks. Bug bounty payouts for subdomain takeover."
+    }
+  },
+  "actions": {
+    "DEVELOPER": {
+      "frameworks": {
+        "aws-route53": {
+          "code": "// AWS Route53 - DNS Security Implementation\n// Use AWS SDK or CloudFormation\n\n// Method 1: AWS CLI - SPF Record\naws route53 change-resource-record-sets \\\n  --hosted-zone-id Z1234567890ABC \\\n  --change-batch '{\n    \"Changes\": [{\n      \"Action\": \"UPSERT\",\n      \"ResourceRecordSet\": {\n        \"Name\": \"example.com\",\n        \"Type\": \"TXT\",\n        \"TTL\": 300,\n        \"ResourceRecords\": [{\n          \"Value\": \"\\\"v=spf1 include:_spf.google.com include:amazonses.com ~all\\\"\"\n        }]\n      }\n    }]\n  }'\n\n// Method 2: AWS CLI - DMARC Record\naws route53 change-resource-record-sets \\\n  --hosted-zone-id Z1234567890ABC \\\n  --change-batch '{\n    \"Changes\": [{\n      \"Action\": \"UPSERT\",\n      \"ResourceRecordSet\": {\n        \"Name\": \"_dmarc.example.com\",\n        \"Type\": \"TXT\",\n        \"TTL\": 300,\n        \"ResourceRecords\": [{\n          \"Value\": \"\\\"v=DMARC1; p=quarantine; rua=mailto:dmarc@example.com; ruf=mailto:dmarc@example.com; fo=1\\\"\"\n        }]\n      }\n    }]\n  }'\n\n// Method 3: AWS CLI - CAA Record\naws route53 change-resource-record-sets \\\n  --hosted-zone-id Z1234567890ABC \\\n  --change-batch '{\n    \"Changes\": [{\n      \"Action\": \"UPSERT\",\n      \"ResourceRecordSet\": {\n        \"Name\": \"example.com\",\n        \"Type\": \"CAA\",\n        \"TTL\": 300,\n        \"ResourceRecords\": [\n          {\"Value\": \"0 issue \\\"letsencrypt.org\\\"\"},\n          {\"Value\": \"0 issuewild \\\"letsencrypt.org\\\"\"},\n          {\"Value\": \"0 iodef \\\"mailto:security@example.com\\\"\"}\n        ]\n      }\n    }]\n  }'\n\n// Method 4: CloudFormation - Complete DNS Security\nResources:\n  SPFRecord:\n    Type: AWS::Route53::RecordSet\n    Properties:\n      HostedZoneId: Z1234567890ABC\n      Name: example.com\n      Type: TXT\n      TTL: 300\n      ResourceRecords:\n        - '\"v=spf1 include:_spf.google.com include:amazonses.com ~all\"'\n  \n  DMARCRecord:\n    Type: AWS::Route53::RecordSet\n    Properties:\n      HostedZoneId: Z1234567890ABC\n      Name: _dmarc.example.com\n      Type: TXT\n      TTL: 300\n      ResourceRecords:\n        - '\"v=DMARC1; p=quarantine; rua=mailto:dmarc@example.com; pct=100; fo=1\"'\n  \n  CAARecord:\n    Type: AWS::Route53::RecordSet\n    Properties:\n      HostedZoneId: Z1234567890ABC\n      Name: example.com\n      Type: CAA\n      TTL: 300\n      ResourceRecords:\n        - 0 issue \"letsencrypt.org\"\n        - 0 issuewild \"letsencrypt.org\"\n        - 0 iodef \"mailto:security@example.com\"\n\n// Method 5: Enable DNSSEC (AWS Console)\n// 1. Go to Route53 → Hosted zones\n// 2. Select your hosted zone\n// 3. Click \"DNSSEC signing\" tab\n// 4. Click \"Enable DNSSEC signing\"\n// 5. Route53 creates KSK (Key Signing Key)\n// 6. Add DS record at your registrar:\n//    - Key tag, algorithm, digest type, digest value\n// 7. Wait for propagation (24-48 hours)\n// 8. Verify with: dig +dnssec example.com",
+          "testCode": "// Python script to verify DNS security records\nimport dns.resolver\nimport requests\nimport json\n\ndef check_spf(domain):\n    \"\"\"Check SPF record\"\"\"\n    try:\n        answers = dns.resolver.resolve(domain, 'TXT')\n        for rdata in answers:\n            for txt_string in rdata.strings:\n                if txt_string.decode().startswith('v=spf1'):\n                    print(f\"✅ SPF Record Found: {txt_string.decode()}\")\n                    return True\n        print(\"❌ SPF Record Missing\")\n        return False\n    except Exception as e:\n        print(f\"❌ SPF Check Failed: {e}\")\n        return False\n\ndef check_dmarc(domain):\n    \"\"\"Check DMARC record\"\"\"\n    try:\n        answers = dns.resolver.resolve(f'_dmarc.{domain}', 'TXT')\n        for rdata in answers:\n            for txt_string in rdata.strings:\n                if txt_string.decode().startswith('v=DMARC1'):\n                    print(f\"✅ DMARC Record Found: {txt_string.decode()}\")\n                    return True\n        print(\"❌ DMARC Record Missing\")\n        return False\n    except Exception as e:\n        print(f\"❌ DMARC Check Failed: {e}\")\n        return False\n\ndef check_dkim(domain, selector='default'):\n    \"\"\"Check DKIM record\"\"\"\n    try:\n        dkim_domain = f\"{selector}._domainkey.{domain}\"\n        answers = dns.resolver.resolve(dkim_domain, 'TXT')\n        for rdata in answers:\n            for txt_string in rdata.strings:\n                if b'v=DKIM1' in txt_string:\n                    print(f\"✅ DKIM Record Found: {txt_string.decode()[:50]}...\")\n                    return True\n        print(\"❌ DKIM Record Missing\")\n        return False\n    except Exception as e:\n        print(f\"❌ DKIM Check Failed: {e}\")\n        return False\n\ndef check_caa(domain):\n    \"\"\"Check CAA record\"\"\"\n    try:\n        answers = dns.resolver.resolve(domain, 'CAA')\n        print(f\"✅ CAA Records Found:\")\n        for rdata in answers:\n            print(f\"   {rdata.flags} {rdata.tag.decode()} {rdata.value.decode()}\")\n        return True\n    except dns.resolver.NoAnswer:\n        print(\"❌ CAA Records Missing\")\n        return False\n    except Exception as e:\n        print(f\"❌ CAA Check Failed: {e}\")\n        return False\n\ndef check_dnssec(domain):\n    \"\"\"Check DNSSEC\"\"\"\n    try:\n        # Use Google DNS API for DNSSEC validation\n        url = f\"https://dns.google/resolve?name={domain}&type=A&do=1\"\n        response = requests.get(url)\n        data = response.json()\n        \n        if data.get('AD'):\n            print(f\"✅ DNSSEC Validated\")\n            return True\n        else:\n            print(\"❌ DNSSEC Not Validated\")\n            return False\n    except Exception as e:\n        print(f\"❌ DNSSEC Check Failed: {e}\")\n        return False\n\n# Run all checks\ndomain = \"example.com\"\nprint(f\"\\nDNS Security Check for {domain}\\n\")\nprint(\"=\"*50)\n\nspf_ok = check_spf(domain)\ndmarc_ok = check_dmarc(domain)\ndkim_ok = check_dkim(domain)\ncaa_ok = check_caa(domain)\ndnssec_ok = check_dnssec(domain)\n\nprint(\"\\n\" + \"=\"*50)\nif all([spf_ok, dmarc_ok, caa_ok, dnssec_ok]):\n    print(\"\\n✅ All DNS security checks passed!\")\nelse:\n    print(\"\\n❌ Some DNS security checks failed. Review above.\")",
+          "dependencies": "# Python dependencies\npip install dnspython requests\n\n# AWS CLI\naws configure\n\n# Or use boto3 for Python\npip install boto3",
+          "packageInstall": "pip install -r requirements.txt"
+        },
+        "cloudflare": {
+          "code": "// Cloudflare - DNS Security Implementation\n// Use Cloudflare Dashboard or API\n\n// Method 1: Cloudflare API - Add SPF Record\ncurl -X POST \"https://api.cloudflare.com/client/v4/zones/ZONE_ID/dns_records\" \\\n  -H \"Authorization: Bearer YOUR_API_TOKEN\" \\\n  -H \"Content-Type: application/json\" \\\n  --data '{\n    \"type\": \"TXT\",\n    \"name\": \"example.com\",\n    \"content\": \"v=spf1 include:_spf.google.com include:_spf.mx.cloudflare.net ~all\",\n    \"ttl\": 300\n  }'\n\n// Method 2: Cloudflare API - Add DMARC Record\ncurl -X POST \"https://api.cloudflare.com/client/v4/zones/ZONE_ID/dns_records\" \\\n  -H \"Authorization: Bearer YOUR_API_TOKEN\" \\\n  -H \"Content-Type: application/json\" \\\n  --data '{\n    \"type\": \"TXT\",\n    \"name\": \"_dmarc.example.com\",\n    \"content\": \"v=DMARC1; p=quarantine; rua=mailto:dmarc@example.com; ruf=mailto:dmarc@example.com; fo=1; pct=100\",\n    \"ttl\": 300\n  }'\n\n// Method 3: Cloudflare API - Add CAA Record\ncurl -X POST \"https://api.cloudflare.com/client/v4/zones/ZONE_ID/dns_records\" \\\n  -H \"Authorization: Bearer YOUR_API_TOKEN\" \\\n  -H \"Content-Type: application/json\" \\\n  --data '{\n    \"type\": \"CAA\",\n    \"name\": \"example.com\",\n    \"data\": {\n      \"flags\": 0,\n      \"tag\": \"issue\",\n      \"value\": \"letsencrypt.org\"\n    },\n    \"ttl\": 300\n  }'\n\n// Method 4: Enable DNSSEC (Cloudflare Dashboard)\n// 1. Log in to Cloudflare Dashboard\n// 2. Select your domain\n// 3. Go to DNS → Settings\n// 4. Enable DNSSEC\n// 5. Copy DS record details\n// 6. Add DS record at your registrar\n// 7. Wait for propagation\n// Note: Cloudflare provides automatic DNSSEC signing\n\n// Method 5: Python SDK - Complete Implementation\nimport CloudFlare\n\ncf = CloudFlare.CloudFlare(token='YOUR_API_TOKEN')\nzone_id = 'YOUR_ZONE_ID'\n\n# Add SPF\nspf_record = {\n    'type': 'TXT',\n    'name': 'example.com',\n    'content': 'v=spf1 include:_spf.google.com ~all',\n    'ttl': 300\n}\ncf.zones.dns_records.post(zone_id, data=spf_record)\nprint(\"✅ SPF record added\")\n\n# Add DMARC\ndmarc_record = {\n    'type': 'TXT',\n    'name': '_dmarc.example.com',\n    'content': 'v=DMARC1; p=quarantine; rua=mailto:dmarc@example.com',\n    'ttl': 300\n}\ncf.zones.dns_records.post(zone_id, data=dmarc_record)\nprint(\"✅ DMARC record added\")\n\n# Add CAA\ncaa_record = {\n    'type': 'CAA',\n    'name': 'example.com',\n    'data': {\n        'flags': 0,\n        'tag': 'issue',\n        'value': 'letsencrypt.org'\n    },\n    'ttl': 300\n}\ncf.zones.dns_records.post(zone_id, data=caa_record)\nprint(\"✅ CAA record added\")\n\n# Enable DNSSEC\ntry:\n    cf.zones.dnssec.post(zone_id)\n    print(\"✅ DNSSEC enabled\")\nexcept Exception as e:\n    print(f\"DNSSEC enable failed: {e}\")",
+          "testCode": "// Node.js - Test DNS Security\nconst dns = require('dns').promises;\nconst axios = require('axios');\n\nasync function checkDNSSecurity(domain) {\n  console.log(`\\nDNS Security Check for ${domain}\\n`);\n  console.log('='.repeat(50));\n  \n  // Check SPF\n  try {\n    const records = await dns.resolveTxt(domain);\n    const spf = records.find(r => r[0].startsWith('v=spf1'));\n    if (spf) {\n      console.log(`✅ SPF: ${spf[0]}`);\n    } else {\n      console.log('❌ SPF: Missing');\n    }\n  } catch (e) {\n    console.log(`❌ SPF: Error - ${e.message}`);\n  }\n  \n  // Check DMARC\n  try {\n    const records = await dns.resolveTxt(`_dmarc.${domain}`);\n    const dmarc = records.find(r => r[0].startsWith('v=DMARC1'));\n    if (dmarc) {\n      console.log(`✅ DMARC: ${dmarc[0]}`);\n    } else {\n      console.log('❌ DMARC: Missing');\n    }\n  } catch (e) {\n    console.log(`❌ DMARC: Error - ${e.message}`);\n  }\n  \n  // Check CAA\n  try {\n    const records = await dns.resolveCaa(domain);\n    if (records && records.length > 0) {\n      console.log('✅ CAA: Found');\n      records.forEach(r => console.log(`   ${r.issue || r.issuewild || r.iodef}`));\n    } else {\n      console.log('❌ CAA: Missing');\n    }\n  } catch (e) {\n    console.log(`❌ CAA: Error - ${e.message}`);\n  }\n  \n  // Check DNSSEC\n  try {\n    const response = await axios.get(\n      `https://dns.google/resolve?name=${domain}&type=A&do=1`\n    );\n    if (response.data.AD) {\n      console.log('✅ DNSSEC: Validated');\n    } else {\n      console.log('❌ DNSSEC: Not validated');\n    }\n  } catch (e) {\n    console.log(`❌ DNSSEC: Error - ${e.message}`);\n  }\n  \n  console.log('='.repeat(50));\n}\n\ncheckDNSSecurity('example.com');",
+          "dependencies": "npm install axios cloudflare",
+          "packageInstall": "npm install"
+        },
+        "generic": {
+          "code": "# Generic DNS Security Implementation Guide\n\n## 1. SPF (Sender Policy Framework)\n\n### Create SPF Record:\nType: TXT\nName: @ (or your domain)\nValue: v=spf1 [mechanisms] [qualifier]\n\n### Common Mechanisms:\n- ip4:192.0.2.0/24 - Allow specific IP\n- include:_spf.google.com - Include another domain's SPF\n- a - Allow domain's A record\n- mx - Allow domain's MX records\n\n### Qualifiers:\n- + Pass (default)\n- ~ Soft fail (mark but don't reject)\n- - Hard fail (reject)\n- ? Neutral\n\n### Example SPF Records:\n# Google Workspace only:\nv=spf1 include:_spf.google.com ~all\n\n# Google + AWS SES:\nv=spf1 include:_spf.google.com include:amazonses.com ~all\n\n# Multiple providers:\nv=spf1 include:_spf.google.com include:sendgrid.net include:_spf.salesforce.com ~all\n\n### SPF Best Practices:\n- Start with ~all (soft fail), move to -all after testing\n- Limit DNS lookups to 10 (SPF limit)\n- Use ip4/ip6 instead of 'a' or 'mx' when possible\n- Test with mail-tester.com\n\n## 2. DKIM (DomainKeys Identified Mail)\n\n### Generate DKIM Keys:\n# OpenSSL method:\nopenssl genrsa -out dkim_private.pem 2048\nopenssl rsa -in dkim_private.pem -pubout -outform der 2>/dev/null | openssl base64 -A\n\n### Create DKIM DNS Record:\nType: TXT\nName: selector._domainkey.yourdomain.com\nValue: v=DKIM1; k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA...\n\n### Common Selectors:\n- default._domainkey\n- google._domainkey (Google Workspace)\n- s1._domainkey, s2._domainkey (rotation)\n\n### DKIM Configuration:\n1. Generate key pair (2048-bit minimum)\n2. Add public key to DNS\n3. Configure mail server with private key\n4. Test with mail-tester.com\n\n## 3. DMARC (Domain-based Message Authentication)\n\n### Create DMARC Record:\nType: TXT\nName: _dmarc.yourdomain.com\nValue: v=DMARC1; p=policy; rua=mailto:reports@yourdomain.com\n\n### DMARC Policies:\n- p=none - Monitor only (start here)\n- p=quarantine - Suspicious email to spam\n- p=reject - Reject failed email\n\n### DMARC Tags:\n- v=DMARC1 - Version (required)\n- p=policy - Policy for domain (required)\n- sp=policy - Policy for subdomains\n- rua=mailto: - Aggregate reports\n- ruf=mailto: - Forensic reports\n- pct=100 - Percentage of email to apply policy\n- fo=1 - Forensic report options\n- adkim=s - DKIM alignment (s=strict, r=relaxed)\n- aspf=s - SPF alignment\n\n### Example DMARC Records:\n# Phase 1: Monitor\nv=DMARC1; p=none; rua=mailto:dmarc@yourdomain.com\n\n# Phase 2: Quarantine\nv=DMARC1; p=quarantine; rua=mailto:dmarc@yourdomain.com; pct=50\n\n# Phase 3: Reject\nv=DMARC1; p=reject; rua=mailto:dmarc@yourdomain.com; ruf=mailto:dmarc-forensic@yourdomain.com; fo=1\n\n### DMARC Implementation Phases:\n1. Week 1: p=none, monitor reports\n2. Week 2-3: Analyze, fix SPF/DKIM issues\n3. Week 4: p=quarantine; pct=10\n4. Week 5-6: p=quarantine; pct=50\n5. Week 7: p=quarantine; pct=100\n6. Week 8+: p=reject\n\n## 4. CAA (Certificate Authority Authorization)\n\n### Create CAA Record:\nType: CAA\nName: @ (or your domain)\nValue: flags tag \"value\"\n\n### CAA Tags:\n- issue - Authorize CA for certificates\n- issuewild - Authorize CA for wildcard certificates\n- iodef - Report policy violations\n\n### Example CAA Records:\n# Let's Encrypt only:\n0 issue \"letsencrypt.org\"\n0 issuewild \"letsencrypt.org\"\n\n# Multiple CAs:\n0 issue \"letsencrypt.org\"\n0 issue \"digicert.com\"\n0 issuewild \"letsencrypt.org\"\n0 iodef \"mailto:security@yourdomain.com\"\n\n# Prevent all issuance:\n0 issue \";\"\n\n## 5. DNSSEC\n\n### DNSSEC Implementation:\n1. Enable DNSSEC at DNS provider\n2. Provider generates KSK and ZSK\n3. Provider signs zone with RRSIG records\n4. Get DS record from provider\n5. Add DS record at registrar\n6. Wait for propagation (24-48 hours)\n7. Verify with dnssec-analyzer.verisignlabs.com\n\n### DNSSEC Components:\n- DNSKEY - Public keys\n- RRSIG - Signatures\n- DS - Delegation Signer (at parent)\n- NSEC/NSEC3 - Authenticated denial\n\n### Provider-Specific DNSSEC:\n- Route53: Automated, enable in console\n- Cloudflare: Automated, one-click enable\n- Google Cloud DNS: Automated\n- Manual: Use 'dnssec-keygen' and 'dnssec-signzone'",
+          "testCode": "# DNS Security Testing Commands\n\n## SPF Testing:\n# Check SPF record\ndig +short TXT example.com | grep spf\nnslookup -type=TXT example.com\n\n# Validate SPF\ncurl \"https://mxtoolbox.com/api/v1/lookup/spf/example.com\"\n\n## DKIM Testing:\n# Check DKIM record (replace 'selector')\ndig +short TXT selector._domainkey.example.com\n\n# Send test email and verify DKIM signature\n# Use mail-tester.com or dmarcian.com\n\n## DMARC Testing:\n# Check DMARC record\ndig +short TXT _dmarc.example.com\nnslookup -type=TXT _dmarc.example.com\n\n# Validate DMARC\ncurl \"https://mxtoolbox.com/api/v1/lookup/dmarc/example.com\"\n\n## CAA Testing:\n# Check CAA records\ndig +short CAA example.com\nnslookup -type=CAA example.com\n\n# Test with online tool\ncurl \"https://caatest.co.uk/example.com\"\n\n## DNSSEC Testing:\n# Check DNSSEC\ndig +dnssec example.com\n\n# Validate DNSSEC chain\ndelv example.com\n\n# Online DNSSEC validation\ncurl \"https://dnssec-analyzer.verisignlabs.com/example.com\"\n\n## Comprehensive DNS Test:\n# Check all records at once\ndig example.com ANY\n\n# Use online tools:\n# - https://mxtoolbox.com/SuperTool.aspx\n# - https://dnschecker.org/\n# - https://intodns.com/\n\n## Send Test Email:\n# Send to: check-auth@verifier.port25.com\n# Or: test@mail-tester.com\n# Check DKIM, SPF, DMARC results",
+          "dependencies": "dig, nslookup, curl, optional: delv for DNSSEC",
+          "packageInstall": "# Usually pre-installed on Linux/Mac"
+        }
+      },
+      "verificationSteps": [
+        "1. Check SPF: dig +short TXT example.com | grep spf",
+        "2. Verify SPF includes all authorized mail servers",
+        "3. Check DMARC: dig +short TXT _dmarc.example.com",
+        "4. Verify DMARC policy is at least p=quarantine (eventually p=reject)",
+        "5. Check DKIM: dig +short TXT selector._domainkey.example.com",
+        "6. Verify DKIM public key present",
+        "7. Send test email to check-auth@verifier.port25.com",
+        "8. Verify SPF, DKIM, DMARC all PASS",
+        "9. Check CAA: dig +short CAA example.com",
+        "10. Verify CAA authorizes only intended CAs",
+        "11. Check DNSSEC: dig +dnssec example.com",
+        "12. Verify DNSSEC validated (AD flag set)",
+        "13. Run comprehensive test: https://mxtoolbox.com/SuperTool.aspx",
+        "14. Monitor DMARC reports for authentication failures"
+      ],
+      "estimatedEffort": "4-5 hours"
+    },
+    "OPS_INFRASTRUCTURE": {
+      "servers": {
+        "dns-provider": {
+          "config": "# DNS Provider Configuration\n# Applicable to: Route53, Cloudflare, Google Cloud DNS, etc.\n\n## 1. SPF Record Implementation\nType: TXT\nName: @ (or example.com)\nTTL: 300 (5 minutes)\nValue: \"v=spf1 include:_spf.google.com include:amazonses.com ~all\"\n\nNotes:\n- List ALL services that send email on your behalf\n- Use 'include:' for third-party services\n- Start with '~all' (soft fail), progress to '-all' (hard fail)\n- Keep under 10 DNS lookups (SPF limit)\n\n## 2. DKIM Record Implementation\nType: TXT\nName: selector._domainkey.example.com\nTTL: 300\nValue: \"v=DKIM1; k=rsa; p=MIGfMA0GCSqGSI...\"\n\nNotes:\n- Get DKIM values from your email provider\n- Google Workspace: google._domainkey\n- AWS SES: Generate in SES console\n- Multiple selectors for key rotation\n\n## 3. DMARC Record Implementation\nType: TXT\nName: _dmarc.example.com\nTTL: 300\nValue: \"v=DMARC1; p=quarantine; rua=mailto:dmarc-reports@example.com; ruf=mailto:dmarc-forensic@example.com; fo=1; pct=100\"\n\nNotes:\n- Phase 1: p=none (monitor)\n- Phase 2: p=quarantine (suspicious to spam)\n- Phase 3: p=reject (block failed)\n- Set up email addresses for reports (rua, ruf)\n- Monitor reports weekly, adjust policy\n\n## 4. CAA Record Implementation\nType: CAA\nName: @ (or example.com)\nTTL: 300\nValue: \n  0 issue \"letsencrypt.org\"\n  0 issue \"digicert.com\"\n  0 issuewild \"letsencrypt.org\"\n  0 iodef \"mailto:security@example.com\"\n\nNotes:\n- List ONLY authorized Certificate Authorities\n- Use 'issuewild' to restrict wildcard certificates\n- Use 'iodef' to receive violation reports\n- Add CAA for root domain and subdomains if needed\n\n## 5. DNSSEC Implementation\nProvider-Specific:\n\n### AWS Route53:\n1. Console → Route53 → Hosted zones\n2. Select zone → DNSSEC signing\n3. Enable DNSSEC signing\n4. Copy DS record (Key tag, Algorithm, Digest type, Digest)\n5. Add DS record at registrar\n\n### Cloudflare:\n1. Dashboard → Domain → DNS → Settings\n2. Enable DNSSEC\n3. Copy DS record details\n4. Add DS record at registrar\n\n### Google Cloud DNS:\n1. Console → Network services → Cloud DNS\n2. Select zone → DNSSEC\n3. Enable DNSSEC\n4. Copy DS record\n5. Add at registrar\n\n### Generic:\n1. Enable DNSSEC at DNS provider\n2. Get DS record (4 values: Key tag, Algorithm, Digest type, Digest)\n3. Log in to domain registrar (GoDaddy, Namecheap, etc.)\n4. Add DS record in DNSSEC settings\n5. Wait 24-48 hours for propagation\n6. Verify: dig +dnssec example.com",
+          "reload": "# DNS changes propagate automatically\n# No reload/restart needed\n\n# Check propagation status:\n# SPF\ndig +short TXT example.com @8.8.8.8\ndig +short TXT example.com @1.1.1.1\n\n# DMARC\ndig +short TXT _dmarc.example.com @8.8.8.8\n\n# CAA\ndig +short CAA example.com @8.8.8.8\n\n# DNSSEC\ndig +dnssec example.com @8.8.8.8\n\n# Wait for TTL expiration (typically 5-15 minutes)\n# Global propagation can take up to 48 hours\n# Check multiple DNS servers to verify propagation",
+          "verify": "# Verify DNS Security Records\n\n# 1. SPF Verification\ndig +short TXT example.com | grep spf\n# Expected: v=spf1 ... ~all or -all\n\n# Test SPF online:\ncurl https://mxtoolbox.com/SuperTool.aspx?action=spf%3aexample.com\n\n# 2. DKIM Verification\ndig +short TXT selector._domainkey.example.com\n# Expected: v=DKIM1; k=rsa; p=...\n\n# 3. DMARC Verification\ndig +short TXT _dmarc.example.com\n# Expected: v=DMARC1; p=quarantine or p=reject\n\n# Test DMARC online:\ncurl https://mxtoolbox.com/dmarc.aspx\n\n# 4. CAA Verification\ndig +short CAA example.com\n# Expected: 0 issue \"letsencrypt.org\" (or your CA)\n\n# Test CAA online:\ncurl https://caatest.co.uk/example.com\n\n# 5. DNSSEC Verification\ndig +dnssec example.com | grep \"ad\"\n# Expected: flags: qr rd ra ad (ad = authenticated data)\n\n# Online DNSSEC validation:\ncurl https://dnssec-analyzer.verisignlabs.com/example.com\n\n# 6. Comprehensive Check\n# Send test email to:\ncheck-auth@verifier.port25.com\n# Or:\ntest@mail-tester.com\n\n# 7. Monitor DMARC Reports\n# Check rua email address for aggregate reports\n# Use DMARC analyzer: dmarcian.com, postmarkapp.com/dmarc"
+        },
+        "registrar": {
+          "config": "# Domain Registrar Configuration\n# For DNSSEC DS Record Addition\n\n## Popular Registrars:\n\n### GoDaddy:\n1. Log in to GoDaddy account\n2. My Products → Domains\n3. Click domain → Manage DNS\n4. Advanced Features → DS Records\n5. Add DS Record:\n   - Key Tag: (from DNS provider)\n   - Algorithm: (from DNS provider)\n   - Digest Type: (from DNS provider)\n   - Digest: (from DNS provider)\n\n### Namecheap:\n1. Log in to Namecheap\n2. Domain List → Manage\n3. Advanced DNS → DNSSEC\n4. Add DS Record\n5. Enter values from DNS provider\n\n### Google Domains:\n1. Log in to domains.google.com\n2. Select domain → DNS\n3. DNSSEC → Configure\n4. Add DS record\n\n### Cloudflare Registrar:\n1. Log in to Cloudflare\n2. Domain Registration → Manage\n3. DNSSEC automatically configured\n\n## DS Record Format:\nKey Tag: 12345\nAlgorithm: 8 (RSA/SHA-256) or 13 (ECDSA P-256/SHA-256)\nDigest Type: 2 (SHA-256) or 4 (SHA-384)\nDigest: [long hex string]\n\n## Verification:\n- Changes take 24-48 hours to propagate\n- Check parent zone: dig +short DS example.com\n- Verify DNSSEC chain: delv example.com",
+          "reload": "# Registrar changes propagate automatically\n# Typical propagation: 1-48 hours\n\n# Check DS record at parent:\ndig +short DS example.com\n\n# Verify DNSSEC chain:\ndelv example.com @8.8.8.8\n\n# If DNSSEC fails after 48 hours:\n# 1. Verify DS record matches DNS provider\n# 2. Check Key Tag, Algorithm, Digest Type\n# 3. Verify Digest value exactly\n# 4. Contact registrar support if issues persist",
+          "verify": "# Verify DS Record at Registrar\n\n# Check DS record published:\ndig +short DS example.com\n\n# Check from multiple DNS servers:\ndig DS example.com @8.8.8.8\ndig DS example.com @1.1.1.1\ndig DS example.com @208.67.222.222\n\n# Verify DNSSEC validation:\ndig +dnssec example.com @8.8.8.8 | grep \"ad\"\n# Should see: flags: qr rd ra ad\n\n# Online DNSSEC validator:\ncurl https://dnssec-analyzer.verisignlabs.com/example.com\n\n# Expected result: \"All OK\"\n# If errors, review DS record values"
+        }
+      },
+      "rollbackPlan": "1. Document current DNS records before changes (dig output)\n2. Set low TTL (300s) before major changes\n3. Test in staging/dev domain first if possible\n4. If email delivery breaks after SPF/DKIM/DMARC:\n   - Check DMARC reports for failure patterns\n   - Temporarily set DMARC p=none (monitor only)\n   - Review SPF includes - ensure all mail servers listed\n   - Verify DKIM selector and key match mail server config\n5. If DNSSEC breaks (site unreachable):\n   - Remove DS record at registrar immediately\n   - Disable DNSSEC at DNS provider\n   - Wait 1-2 hours for cache expiration\n   - Verify resolution restored\n   - Re-enable carefully with correct DS record\n6. If CAA blocks legitimate certificate:\n   - Add CA to CAA record immediately\n   - CAA changes propagate in 5-15 minutes\n   - Retry certificate issuance\n7. Keep backup of all DNS records: dig example.com ANY > dns-backup.txt\n8. Monitor email delivery metrics for 48 hours post-change\n9. Set up alerts for DMARC failures, DNSSEC failures",
+      "verificationSteps": [
+        "1. Verify SPF: dig +short TXT example.com | grep spf",
+        "2. Test SPF includes all authorized mail servers",
+        "3. Verify DMARC: dig +short TXT _dmarc.example.com",
+        "4. Check DMARC policy (p=quarantine minimum, p=reject optimal)",
+        "5. Verify DKIM: dig +short TXT selector._domainkey.example.com",
+        "6. Send test email to check-auth@verifier.port25.com",
+        "7. Confirm SPF PASS, DKIM PASS, DMARC PASS",
+        "8. Verify CAA: dig +short CAA example.com",
+        "9. Test certificate issuance (should succeed for authorized CAs)",
+        "10. Verify DNSSEC: dig +dnssec example.com | grep ad",
+        "11. Online validation: dnssec-analyzer.verisignlabs.com",
+        "12. Monitor DMARC reports daily for 2 weeks",
+        "13. Check email deliverability (inbox placement, spam rates)",
+        "14. Run comprehensive security scan: mxtoolbox.com/SuperTool.aspx"
+      ],
+      "estimatedEffort": "3-4 hours"
+    },
+    "QA_TESTER": {
+      "manualTests": [
+        {
+          "name": "Verify SPF Record",
+          "steps": [
+            "1. Open terminal or command prompt",
+            "2. Run: dig +short TXT example.com | grep spf",
+            "3. Verify SPF record present starting with 'v=spf1'",
+            "4. Confirm all email sending services included (Google, AWS SES, etc.)",
+            "5. Verify qualifier at end: ~all (soft fail) or -all (hard fail)",
+            "6. Use online tool: https://mxtoolbox.com/spf.aspx",
+            "7. Enter domain and check SPF validation",
+            "8. Verify no errors, all includes resolve",
+            "9. Check DNS lookup count (must be ≤10)",
+            "10. Screenshot results for documentation"
+          ],
+          "expected": "SPF record present. All authorized mail servers listed. No DNS lookup limit exceeded (≤10 lookups). Online validation passes with no errors."
+        },
+        {
+          "name": "Test Email Authentication",
+          "steps": [
+            "1. Send test email from your domain to: check-auth@verifier.port25.com",
+            "2. Wait for automated response (usually within 1 minute)",
+            "3. Review email authentication results in response",
+            "4. Verify SPF status: PASS",
+            "5. Verify DKIM status: PASS",
+            "6. Verify DMARC status: PASS",
+            "7. Alternative: Send to test@mail-tester.com",
+            "8. Visit https://www.mail-tester.com/[test-id]",
+            "9. Review authentication score (should be 10/10)",
+            "10. Document any failures and error messages"
+          ],
+          "expected": "All authentication checks PASS. SPF PASS, DKIM PASS, DMARC PASS. Mail tester score 10/10. No warnings or errors in authentication headers."
+        },
+        {
+          "name": "Verify CAA Records",
+          "steps": [
+            "1. Open terminal or command prompt",
+            "2. Run: dig +short CAA example.com",
+            "3. Verify CAA records present",
+            "4. Confirm format: 0 issue \"ca-name\"",
+            "5. Verify only authorized CAs listed",
+            "6. Check issuewild record for wildcard restrictions",
+            "7. Use online tool: https://caatest.co.uk/example.com",
+            "8. Verify CAA validation passes",
+            "9. Test certificate issuance (optional, if safe to test)",
+            "10. Document all authorized CAs"
+          ],
+          "expected": "CAA records present and valid. Only authorized CAs permitted. Online CAA test passes. Unauthorized CAs cannot issue certificates (if tested)."
+        },
+        {
+          "name": "Verify DNSSEC",
+          "steps": [
+            "1. Open terminal or command prompt",
+            "2. Run: dig +dnssec example.com",
+            "3. Verify 'ad' flag present in response flags",
+            "4. Check for RRSIG records in response",
+            "5. Run: delv example.com (if available)",
+            "6. Verify validation success message",
+            "7. Use online tool: https://dnssec-analyzer.verisignlabs.com/example.com",
+            "8. Review full DNSSEC chain validation",
+            "9. Verify no errors or warnings",
+            "10. Test from multiple locations/networks"
+          ],
+          "expected": "DNSSEC validated (ad flag present). RRSIG signatures present. Online DNSSEC analyzer shows 'All OK'. No validation errors or warnings. Works from multiple DNS resolvers."
+        }
+      ],
+      "automatedTests": {
+        "tool": "Python/Shell Scripts / DNS Testing Tools",
+        "example": "#!/bin/bash\n# Automated DNS Security Test Script\n\nDOMAIN=\"example.com\"\nEMAIL_SELECTOR=\"default\"  # Change to your DKIM selector\n\necho \"=================================\"\necho \"DNS Security Test: $DOMAIN\"\necho \"=================================\"\n\n# Test SPF\necho -e \"\\n[1/5] Testing SPF...\"\nSPF=$(dig +short TXT $DOMAIN | grep \"v=spf1\")\nif [ -n \"$SPF\" ]; then\n    echo \"✅ SPF Record Found:\"\n    echo \"   $SPF\"\nelse\n    echo \"❌ SPF Record Missing\"\nfi\n\n# Test DMARC\necho -e \"\\n[2/5] Testing DMARC...\"\nDMARC=$(dig +short TXT _dmarc.$DOMAIN)\nif [ -n \"$DMARC\" ]; then\n    echo \"✅ DMARC Record Found:\"\n    echo \"   $DMARC\"\n    \n    # Check policy\n    if echo \"$DMARC\" | grep -q \"p=reject\"; then\n        echo \"   ✅ Policy: reject (optimal)\"\n    elif echo \"$DMARC\" | grep -q \"p=quarantine\"; then\n        echo \"   ⚠️  Policy: quarantine (good, consider reject)\"\n    elif echo \"$DMARC\" | grep -q \"p=none\"; then\n        echo \"   ⚠️  Policy: none (monitoring only, upgrade to quarantine/reject)\"\n    fi\nelse\n    echo \"❌ DMARC Record Missing\"\nfi\n\n# Test DKIM\necho -e \"\\n[3/5] Testing DKIM...\"\nDKIM=$(dig +short TXT ${EMAIL_SELECTOR}._domainkey.$DOMAIN)\nif [ -n \"$DKIM\" ]; then\n    echo \"✅ DKIM Record Found:\"\n    echo \"   ${DKIM:0:60}...\" # Show first 60 chars\nelse\n    echo \"❌ DKIM Record Missing (using selector: $EMAIL_SELECTOR)\"\n    echo \"   Try different selectors: google, default, s1, s2\"\nfi\n\n# Test CAA\necho -e \"\\n[4/5] Testing CAA...\"\nCAA=$(dig +short CAA $DOMAIN)\nif [ -n \"$CAA\" ]; then\n    echo \"✅ CAA Records Found:\"\n    echo \"$CAA\" | while read line; do\n        echo \"   $line\"\n    done\nelse\n    echo \"⚠️  CAA Records Missing (recommended)\"\nfi\n\n# Test DNSSEC\necho -e \"\\n[5/5] Testing DNSSEC...\"\nDNSSEC=$(dig +dnssec $DOMAIN | grep \"flags:\" | grep \"ad\")\nif [ -n \"$DNSSEC\" ]; then\n    echo \"✅ DNSSEC Validated (ad flag present)\"\nelse\n    echo \"⚠️  DNSSEC Not Validated\"\nfi\n\necho -e \"\\n=================================\"\necho \"Test Complete\"\necho \"=================================\"\n\n# Additional online checks\necho -e \"\\nRecommended online checks:\"\necho \"  SPF:    https://mxtoolbox.com/spf.aspx\"\necho \"  DMARC:  https://mxtoolbox.com/dmarc.aspx\"\necho \"  DKIM:   Send test email to check-auth@verifier.port25.com\"\necho \"  CAA:    https://caatest.co.uk/$DOMAIN\"\necho \"  DNSSEC: https://dnssec-analyzer.verisignlabs.com/$DOMAIN\""
+      },
+      "edgeCases": [
+        "Test all subdomains for DNS security records",
+        "Verify DMARC policy inheritance on subdomains (sp= tag)",
+        "Test email from all authorized sending services",
+        "Test DKIM with different selectors (rotation scenario)",
+        "Verify CAA for wildcard certificates (issuewild)",
+        "Test DNSSEC from resolvers that don't validate",
+        "Verify SPF with legitimate but unlisted mail server (should fail)",
+        "Test DMARC with SPF pass but DKIM fail (should align)",
+        "Test DMARC with DKIM pass but SPF fail (should align)",
+        "Verify email delivery to Gmail, Outlook, Yahoo after DMARC",
+        "Test certificate issuance from unauthorized CA (should fail with CAA)",
+        "Verify DNS resolution during DNSSEC key rollover",
+        "Test SPF lookup limit (should be ≤10 DNS queries)",
+        "Verify DMARC reports received and parseable"
+      ],
+      "estimatedEffort": "4-5 hours"
+    }
+  }
+}

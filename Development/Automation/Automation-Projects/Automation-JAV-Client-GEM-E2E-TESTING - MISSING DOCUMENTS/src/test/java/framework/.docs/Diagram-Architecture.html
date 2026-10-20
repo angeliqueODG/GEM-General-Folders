@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Architecture Overview - mAi™ Framework Documentation</title>
+<link rel="stylesheet" href="docs-style.css">
+<link rel="stylesheet" href="pagefind/pagefind-ui.css">
+<script src="pagefind/pagefind-ui.js"></script>
+<script src="mermaid.min.js"></script>
+<script>mermaid.initialize({startOnLoad: true, theme: 'dark'});</script>
+</head>
+<body>
+<div class="layout">
+<nav class="sidebar" id="sidebar" data-pagefind-ignore></nav>
+<main class="main-content" data-pagefind-body>
+<h1 data-pagefind-meta="title">Framework Architecture Overview</h1>
+<p class="subtitle">Comprehensive 8-layer modular architecture design</p>
+
+<section class="content-section">
+<h2>Description</h2>
+<p>This document provides a comprehensive visual representation of the automation framework's architecture. The framework follows an 8-layer modular design that promotes scalability, maintainability, and extensibility.</p>
+<ul>
+<li><strong>Modularity:</strong> Each layer can be updated independently</li>
+<li><strong>Testability:</strong> Layers can be tested in isolation</li>
+<li><strong>Scalability:</strong> Easy to add new capabilities</li>
+<li><strong>Maintainability:</strong> Clear separation of responsibilities</li>
+<li><strong>Extensibility:</strong> Simple to integrate new tools and services</li>
+</ul>
+</section>
+
+<section class="content-section">
+<h2>8-Layer Architecture Diagram</h2>
+<pre class="mermaid">
+graph TB
+    subgraph "Layer 1: Test Execution Layer"
+        TS[Test Suites&lt;br/&gt;TS_*_JUnit.java]
+        TC[Test Cases&lt;br/&gt;@Test methods]
+        TST[Test Steps&lt;br/&gt;autoPass/autoFail]
+    end
+    subgraph "Layer 2: Page Object Layer"
+        PO[Page Objects&lt;br/&gt;PO_*.java]
+        LOC[Locators&lt;br/&gt;Element definitions]
+        ACT[Actions&lt;br/&gt;Page methods]
+    end
+    subgraph "Layer 3: Framework Core Layer"
+        ASSERT[Custom Assertions&lt;br/&gt;FW_CustomAssertJU]
+        CONFIG[Configuration&lt;br/&gt;FW_ConfigMgr]
+        UTILS[Utilities&lt;br/&gt;FW_*Utils]
+    end
+    subgraph "Layer 4: Infrastructure Layer"
+        DRV[WebDriver Manager&lt;br/&gt;FW_Browser]
+        NET[Network Utils&lt;br/&gt;FW_NetworkUtils]
+        SYS[System Utils&lt;br/&gt;FW_SystemUtils]
+    end
+    subgraph "Layer 5: Reporting Layer"
+        ALLURE[Allure Reporter&lt;br/&gt;FW_AllureReportGenerator]
+        HTTP_RPT[HTTP Reporter&lt;br/&gt;FW_HttpDiagnosticReporter]
+        JUNIT[JUnit Formatter&lt;br/&gt;FW_TestSuiteFormatter]
+    end
+    subgraph "Layer 6: Audit &amp; Diagnostics Layer"
+        HTTP_AUD[HTTP Audits&lt;br/&gt;FW_Audit_HttpReview]
+        NET_AUD[Network Audits&lt;br/&gt;FW_Audit_Ping/Traceroute]
+        PERF[Performance&lt;br/&gt;FW_Audit_SpeedTest]
+    end
+    subgraph "Layer 7: mAi Advisor™ Layer"
+        ADV_ENG[Advisor Engine&lt;br/&gt;FW_AdvisorEngine]
+        ADV_TMP[Template Loader&lt;br/&gt;FW_AdvisorTemplateLoader]
+        ADV_AUD[Audience Manager&lt;br/&gt;FW_AdvisorAudience]
+    end
+    subgraph "Layer 8: Data Integration Layer"
+        DATA_COL[Data Collector&lt;br/&gt;FW_TestStepDataCollector]
+        DATA_PROC[Data Processor&lt;br/&gt;FW_TestStepDataProcessor]
+        BQ[BigQuery Uploader&lt;br/&gt;FW_GoogleCloudBigQueryUploader]
+    end
+    TS --> TC
+    TC --> TST
+    TST --> ASSERT
+    TST --> PO
+    PO --> LOC
+    PO --> ACT
+    ACT --> DRV
+    ASSERT --> CONFIG
+    ASSERT --> UTILS
+    DRV --> NET
+    DRV --> SYS
+    TST --> DATA_COL
+    DATA_COL --> DATA_PROC
+    DATA_PROC --> BQ
+    TST --> ALLURE
+    TST --> JUNIT
+    HTTP_AUD --> HTTP_RPT
+    HTTP_AUD --> ADV_ENG
+    NET_AUD --> ADV_ENG
+    ADV_ENG --> ADV_TMP
+    ADV_ENG --> ADV_AUD
+    ADV_ENG --> HTTP_RPT
+</pre>
+</section>
+
+<section class="content-section">
+<h2>Layer Descriptions</h2>
+
+<h3>Layer 1: Test Execution Layer</h3>
+<p><strong>Purpose:</strong> Defines and executes automated test cases using JUnit 5</p>
+<p><strong>Key Components:</strong> Test Suites (<code>TS_*_JUnit.java</code>), Test Cases (<code>@Test</code> methods), Test Steps (autoPass/autoFail)</p>
+<p><strong>Responsibilities:</strong> Test suite organization, lifecycle management, execution flow control, JUnit 5 integration</p>
+<p><strong>Classes:</strong> <code>TS_Authentication_JUnit</code>, <code>TS_Ordering_JUnit</code>, <code>TS_HttpAssessment_JUnit</code>, <code>TS_Network_JUnit</code></p>
+
+<h3>Layer 2: Page Object Layer</h3>
+<p><strong>Purpose:</strong> Encapsulates page elements and interactions using Page Object Model pattern</p>
+<p><strong>Key Components:</strong> Page Objects (<code>PO_*.java</code>), Locators (XPath, CSS, ID), Actions (page methods)</p>
+<p><strong>Responsibilities:</strong> UI element encapsulation, page-level actions, wait strategies, reusable patterns</p>
+<p><strong>Classes:</strong> <code>PO_Login</code>, <code>PO_Products</code>, <code>PO_Cart</code>, <code>PO_Checkout</code>, <code>PO_Common_Hamburger</code></p>
+
+<h3>Layer 3: Framework Core Layer</h3>
+<p><strong>Purpose:</strong> Provides core utilities, assertions, and configuration management</p>
+<p><strong>Key Components:</strong> Custom Assertions (<code>FW_CustomAssertJU</code>), Configuration Manager (<code>FW_ConfigMgr</code>), Utilities</p>
+<p><strong>Responsibilities:</strong> Custom assertion logic, configuration management, utility functions, cross-cutting concerns</p>
+<p><strong>Classes:</strong> <code>FW_CustomAssertJU</code>, <code>FW_ConfigMgr</code>, <code>FW_DateTimeUtils</code>, <code>FW_StringUtils</code>, <code>FW_FileDirUtils</code>, <code>FW_CSVUtils</code></p>
+
+<h3>Layer 4: Infrastructure Layer</h3>
+<p><strong>Purpose:</strong> Manages WebDriver lifecycle and system-level operations</p>
+<p><strong>Key Components:</strong> WebDriver Manager (<code>FW_Browser</code>), Network Utilities, System Utilities</p>
+<p><strong>Responsibilities:</strong> WebDriver creation/configuration, browser lifecycle, network connectivity, environment detection</p>
+<p><strong>Classes:</strong> <code>FW_Browser</code>, <code>FW_NetworkUtils</code>, <code>FW_SystemUtils</code>, <code>FW_PerformanceUtils</code></p>
+
+<h3>Layer 5: Reporting Layer</h3>
+<p><strong>Purpose:</strong> Generates comprehensive test reports and execution summaries</p>
+<p><strong>Key Components:</strong> Allure Reporter, HTTP Reporter (<code>FW_HttpDiagnosticReporter</code>), JUnit Formatter</p>
+<p><strong>Responsibilities:</strong> Report generation, screenshot attachment, console formatting, trend analysis</p>
+<p><strong>Classes:</strong> <code>FW_AllureReportGenerator</code>, <code>FW_HttpDiagnosticReporter</code>, <code>FW_HttpReporter</code>, <code>FW_TestSuiteFormatter</code>, <code>FW_ReportUtils</code></p>
+
+<h3>Layer 6: Audit &amp; Diagnostics Layer</h3>
+<p><strong>Purpose:</strong> Performs security audits and network diagnostics</p>
+<p><strong>Key Components:</strong> HTTP Audits, Network Audits (Ping, Traceroute), Performance (SpeedTest)</p>
+<p><strong>Responsibilities:</strong> HTTP security header auditing, SSL/TLS validation, network connectivity testing, performance measurement</p>
+<p><strong>Classes:</strong> <code>FW_AuditManager</code>, <code>FW_Audit_HttpReview</code>, <code>FW_Audit_Ping</code>, <code>FW_Audit_Traceroute</code>, <code>FW_Audit_SpeedTest</code></p>
+
+<h3>Layer 7: mAi Advisor™ Layer</h3>
+<p><strong>Purpose:</strong> Provides intelligent, context-aware recommendations for findings</p>
+<p><strong>Key Components:</strong> Advisor Engine, Template Loader, Audience Manager</p>
+<p><strong>Responsibilities:</strong> Recommendation generation, multi-tier content delivery, multi-audience targeting, template-based system</p>
+<p><strong>Classes:</strong> <code>FW_Advisor</code>, <code>FW_AdvisorEngine</code>, <code>FW_AdvisorTemplateLoader</code>, <code>FW_AdvisorAudience</code></p>
+
+<h3>Layer 8: Data Integration Layer</h3>
+<p><strong>Purpose:</strong> Collects, processes, and uploads test data to cloud analytics</p>
+<p><strong>Key Components:</strong> Data Collector, Data Processor, BigQuery Uploader</p>
+<p><strong>Responsibilities:</strong> Real-time test step data collection, batch processing and CSV generation, BigQuery integration</p>
+<p><strong>Classes:</strong> <code>FW_TestStepDataCollector</code>, <code>FW_TestStepDataProcessor</code>, <code>FW_GoogleCloudBigQueryUploader</code>, <code>FW_GoogleCloudUtils</code></p>
+</section>
+
+<section class="content-section">
+<h2>Component Interaction Flows</h2>
+
+<h3>Test Execution Flow</h3>
+<pre class="mermaid">
+sequenceDiagram
+    participant Maven
+    participant TestSuite
+    participant TestCase
+    participant PageObject
+    participant WebDriver
+    participant Assertion
+    participant DataCollector
+    participant Reporter
+    Maven->>TestSuite: Execute test suite
+    TestSuite->>TestCase: @BeforeAll setup
+    TestSuite->>TestCase: Run test method
+    TestCase->>PageObject: Call page action
+    PageObject->>WebDriver: Interact with browser
+    WebDriver-->>PageObject: Element interaction result
+    PageObject-->>TestCase: Action result
+    TestCase->>Assertion: autoPass/autoFail
+    Assertion->>Assertion: Capture screenshot
+    Assertion->>DataCollector: Collect test step data
+    Assertion->>Reporter: Log to Allure
+    TestCase->>TestSuite: @AfterEach teardown
+    TestSuite->>Reporter: Generate final reports
+    DataCollector->>Reporter: Process collected data
+</pre>
+
+<h3>HTTP Audit Pipeline Flow</h3>
+<pre class="mermaid">
+sequenceDiagram
+    participant Test as HTTP Test
+    participant Manager as FW_AuditManager
+    participant HttpAudit as FW_Audit_HttpReview
+    participant Advisor as mAi Advisor™
+    participant Reporter as HTTP Reporter
+    Test->>Manager: performHttpAudit(url)
+    Manager->>HttpAudit: Execute HTTP audit
+    HttpAudit->>HttpAudit: Check security headers
+    HttpAudit->>HttpAudit: Validate SSL/TLS
+    HttpAudit->>HttpAudit: Analyze findings
+    HttpAudit->>Advisor: Request recommendations
+    Advisor->>Advisor: Load templates
+    Advisor->>Advisor: Generate multi-audience content
+    Advisor-->>HttpAudit: Return recommendations
+    HttpAudit->>Reporter: Create diagnostic report
+    Reporter->>Reporter: Generate HTML report
+    Reporter-->>Test: Report available in target/http-reports/
+</pre>
+
+<h3>mAi Advisor™ Recommendation Flow</h3>
+<pre class="mermaid">
+flowchart LR
+    A[Audit Finding] --> B[FW_AdvisorEngine]
+    B --> C{Load Template}
+    C --> D[Understanding Tier]
+    C --> E[Action Tier]
+    D --> F[All Audiences]
+    E --> G{Select Audience}
+    G --> H[Developer]
+    G --> I[DevOps]
+    G --> J[QA]
+    G --> K[Security]
+    G --> L[PM]
+    G --> M[Executive]
+    H --> N[Code Examples]
+    I --> O[Server Configs]
+    J --> P[Test Cases]
+    K --> Q[Threat Analysis]
+    L --> R[Business Impact]
+    M --> S[Strategic Overview]
+    N --> T[Formatted Recommendation]
+    O --> T
+    P --> T
+    Q --> T
+    R --> T
+    S --> T
+</pre>
+
+<h3>Data Collection to BigQuery Flow</h3>
+<pre class="mermaid">
+flowchart TD
+    A[Test Step Complete] --> B[autoPass/autoFail]
+    B --> C[FW_TestStepDataCollector]
+    C --> D{Batch Size Reached?}
+    D -->|No| E[Queue Test Step]
+    D -->|Yes| F[FW_TestStepDataProcessor]
+    E --> D
+    F --> G[Write to CSV]
+    G --> H[Maven Post-Integration]
+    H --> I[FW_GoogleCloudBigQueryUploader]
+    I --> J{Validate Files}
+    J -->|Fail| K[Log Error]
+    J -->|Pass| L[Authenticate with GCP]
+    L --> M[Stream Upload to BigQuery]
+    M --> N[Historical Analytics Available]
+</pre>
+</section>
+
+<section class="content-section">
+<h2>Design Principles</h2>
+<ol>
+<li><strong>Single Responsibility:</strong> Each layer has one primary responsibility</li>
+<li><strong>Dependency Inversion:</strong> Layers depend on abstractions, not implementations</li>
+<li><strong>Open/Closed:</strong> Open for extension, closed for modification</li>
+<li><strong>Interface Segregation:</strong> Clients only depend on methods they use</li>
+<li><strong>Don't Repeat Yourself (DRY):</strong> Reusable components across layers</li>
+</ol>
+</section>
+
+<section class="content-section">
+<h2>Layer Integration Points</h2>
+<ul>
+<li><strong>Test Layer → Page Object Layer:</strong> Test cases call page object methods; Test parameters → Page actions → Results</li>
+<li><strong>Page Object Layer → Infrastructure Layer:</strong> Page objects use WebDriver from FW_Browser</li>
+<li><strong>Framework Core → All Layers:</strong> All layers use utilities and configuration</li>
+<li><strong>Audit Layer → Advisor Layer:</strong> Audits request recommendations for findings</li>
+<li><strong>Test Layer → Data Integration Layer:</strong> Test steps automatically collect data</li>
+</ul>
+</section>
+
+<section class="content-section">
+<h2>Extensibility Points</h2>
+<ol>
+<li><strong>New Test Suites:</strong> Add new <code>TS_*_JUnit.java</code> files</li>
+<li><strong>New Page Objects:</strong> Create new <code>PO_*.java</code> classes</li>
+<li><strong>Custom Utilities:</strong> Add new <code>FW_*Utils.java</code> classes</li>
+<li><strong>New Audit Types:</strong> Implement new <code>FW_Audit_*.java</code> components</li>
+<li><strong>Custom Reporters:</strong> Create new report generators</li>
+<li><strong>Advisor Templates:</strong> Add new JSON recommendation templates</li>
+</ol>
+</section>
+
+<section class="content-section">
+<h2>Related Documentation</h2>
+<table class="data-table">
+<thead><tr><th>Document</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td><a href="Doc-Overview.html">Framework Overview</a></td><td>High-level framework introduction</td></tr>
+<tr><td><a href="Doc-Test-Development.html">Test Development Guide</a></td><td>Writing tests</td></tr>
+<tr><td><a href="Diagram-Maven-to-first-Test-Case.html">Test Execution Flow</a></td><td>Maven to test execution</td></tr>
+<tr><td><a href="Diagram-Adding-data-to-datacollector.html">Data Collection Pipeline</a></td><td>Data flow details</td></tr>
+<tr><td><a href="Diagram-Automation-completed-to-Google_BigData.html">BigQuery Integration</a></td><td>Cloud upload process</td></tr>
+<tr><td><a href="Doc-HTTP-Assessment.html">HTTP Assessment</a></td><td>HTTP audit layer details</td></tr>
+<tr><td><a href="Doc-Network-Diagnostics.html">Network Diagnostics</a></td><td>Network audit layer details</td></tr>
+<tr><td><a href="Doc-mAi-Advisor.html">mAi Advisor™</a></td><td>Advisor layer details</td></tr>
+</tbody>
+</table>
+</section>
+
+<footer class="doc-footer" id="doc-footer" data-pagefind-ignore></footer>
+</main>
+</div>
+<script src="docs-config.js"></script>
+<script src="docs-nav.js"></script>
+<script>DocsConfig.renderFooter('doc-footer');</script>
+</body>
+</html>

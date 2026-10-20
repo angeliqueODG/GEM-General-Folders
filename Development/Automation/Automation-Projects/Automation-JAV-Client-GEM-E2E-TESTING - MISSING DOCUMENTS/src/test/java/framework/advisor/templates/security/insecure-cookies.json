@@ -1,0 +1,186 @@
+{
+  "metadata": {
+    "filename": "insecure-cookies.json",
+    "filepath": "src/test/resources/framework/advisor/templates/security/insecure-cookies.json",
+    "version": "1.0.0",
+    "created": "2025-10-09",
+    "lastUpdated": "2025-10-09",
+    "author": "Greg Paskal",
+    "company": "MissionWares",
+    "methodology": "mAi™ (MissionWares® + AI)",
+    "description": "Insecure cookie configuration finding template with comprehensive guidance for all audiences including framework-specific implementation code for setting Secure, HttpOnly, and SameSite cookie attributes to prevent session hijacking, XSS-based cookie theft, and CSRF attacks.",
+    "aiGenerated": true,
+    "humanReviewed": false,
+    "reviewedBy": "Pending",
+    "approvedBy": "Pending",
+    "tags": ["cookies", "session-management", "authentication", "security", "httponly", "secure", "samesite", "xss", "csrf"],
+    "relatedFindings": ["XSS_VULNERABILITY", "CSRF_VULNERABILITY", "SESSION_FIXATION", "MISSING_HSTS", "NO_HTTPS"],
+    "estimatedRemediationTime": "2-4 hours",
+    "businessImpact": "HIGH",
+    "complianceRequirements": ["OWASP Top 10 A02:2021", "PCI-DSS 6.5.10", "GDPR Article 32", "HIPAA Security Rule"]
+  },
+  "findingId": "SEC-COOKIE-001",
+  "findingType": "INSECURE_COOKIES",
+  "category": "SECURITY",
+  "severity": "HIGH",
+  "cveReferences": [
+    "CWE-614",
+    "CWE-1004",
+    "CWE-352"
+  ],
+  "understanding": {
+    "EXECUTIVE": {
+      "summary": "Application cookies lack critical security flags, exposing user sessions to theft and unauthorized access.",
+      "businessRisk": "Vulnerable to session hijacking attacks that could compromise customer accounts, leading to data breaches, financial fraud, regulatory fines (GDPR, PCI-DSS), and severe reputation damage. Attackers can impersonate legitimate users and access sensitive business data.",
+      "complianceImpact": "Violates PCI-DSS requirement 6.5.10, OWASP Top 10 A02:2021 (Cryptographic Failures), GDPR Article 32 (security of processing), and HIPAA security requirements. May result in compliance audit failures and mandatory breach notifications.",
+      "priority": "HIGH"
+    },
+    "PROJECT_MANAGER": {
+      "summary": "Security cookies are missing Secure, HttpOnly, and SameSite flags, creating session hijacking vulnerabilities that must be remediated before production deployment.",
+      "timeline": "Impacts current sprint - must be resolved before release. Production deployment blocked until fixed. Estimated 1-2 days for development and testing across all frameworks.",
+      "effort": "2-4 hours development + 2-3 hours QA testing",
+      "dependencies": [
+        "Requires framework configuration changes",
+        "May need application server updates",
+        "Testing requires HTTPS environment"
+      ],
+      "blocking": [
+        "Production deployment approval",
+        "Security audit sign-off",
+        "Compliance certification"
+      ]
+    },
+    "DEVELOPER": {
+      "summary": "Session and authentication cookies are configured without Secure, HttpOnly, and SameSite attributes, allowing potential interception and cross-site attacks.",
+      "technical": "Cookies lack three critical security flags: (1) Secure flag ensures transmission only over HTTPS, preventing man-in-the-middle attacks on insecure networks. (2) HttpOnly flag prevents JavaScript access, blocking XSS-based cookie theft. (3) SameSite flag mitigates CSRF attacks by controlling cross-site cookie transmission. Without these flags, session tokens are vulnerable to interception, XSS exploitation, and CSRF attacks.",
+      "vulnerability": "CWE-614: Sensitive Cookie in HTTPS Session Without 'Secure' Attribute, CWE-1004: Sensitive Cookie Without 'HttpOnly' Flag. OWASP A02:2021 Cryptographic Failures. Attackers can steal cookies via network sniffing, XSS payloads, or CSRF attacks.",
+      "references": [
+        "https://owasp.org/www-community/controls/SecureFlag",
+        "https://owasp.org/www-community/HttpOnly",
+        "https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie/SameSite",
+        "https://cwe.mitre.org/data/definitions/614.html",
+        "https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html"
+      ]
+    },
+    "OPS_INFRASTRUCTURE": {
+      "summary": "Application cookies transmitted without security attributes, creating infrastructure-level vulnerability to session hijacking and cross-site attacks.",
+      "technical": "Cookie security flags must be set at application or web server level. Requires configuration changes in application frameworks (Spring Boot, Express.js, ASP.NET) or reverse proxy servers (Nginx, Apache). HTTPS must be enforced infrastructure-wide for Secure flag to function. Load balancers and CDNs must preserve cookie attributes.",
+      "scope": "All web servers, application servers, load balancers, and CDN edge nodes serving the application. Affects production, staging, and development environments.",
+      "monitoring": "Monitor Set-Cookie headers in HTTP responses. Alert on cookies missing Secure, HttpOnly, or SameSite=Strict/Lax attributes. Use security scanners and browser DevTools to validate cookie configuration. Track cookie-related security events in WAF logs."
+    },
+    "QA_TESTER": {
+      "summary": "Application cookies must be tested to ensure Secure, HttpOnly, and SameSite flags are properly set on all session and authentication cookies.",
+      "testImplication": "Requires testing cookie attributes in browser DevTools (Application > Cookies). Must verify cookies are only transmitted over HTTPS (Secure flag), cannot be accessed by JavaScript (HttpOnly flag), and include SameSite attribute. Test across all browsers (Chrome, Firefox, Safari, Edge) and verify behavior in cross-site scenarios.",
+      "riskIfNotFixed": "Security test cases will fail. Penetration tests will report HIGH severity findings. Application will fail PCI-DSS and compliance audits. Users remain vulnerable to session hijacking attacks, potentially leading to production security incidents."
+    },
+    "SECURITY_ENGINEER": {
+      "summary": "Critical security control failure - cookies lack defense-in-depth protections against interception, XSS-based theft, and CSRF attacks.",
+      "vulnerability": "CWE-614, CWE-1004, CWE-352. Missing cookie security attributes create multiple attack vectors: (1) Network interception of cookies sent over HTTP, (2) XSS-based cookie theft via document.cookie, (3) CSRF attacks using cookies in cross-site requests. Exploitable with basic MITM tools (Wireshark, Burp Suite) or simple XSS payloads.",
+      "attackVector": "Attacker on shared network intercepts HTTP traffic to steal Secure-less cookies. XSS vulnerability allows JavaScript to read HttpOnly-less cookies. CSRF attack leverages SameSite-less cookies to perform unauthorized actions. Session hijacking leads to full account compromise.",
+      "threatLevel": "HIGH - Easily exploitable with publicly available tools. Common attack vector in web application compromises. Low skill barrier for attackers. High impact if exploited.",
+      "mitigationUrgency": "Fix within 1-2 sprints. Deploy to production within 2 weeks. This is a standard security control that should have been implemented from day one. Delay increases breach probability and regulatory exposure."
+    }
+  },
+  "actions": {
+    "DEVELOPER": {
+      "frameworks": {
+        "spring-boot": {
+          "description": "Configure Spring Boot to set secure cookie attributes",
+          "code": "// Option 1: application.properties configuration\nserver.servlet.session.cookie.secure=true\nserver.servlet.session.cookie.http-only=true\nserver.servlet.session.cookie.same-site=strict\n\n// Option 2: Java Configuration Class\nimport org.springframework.context.annotation.Bean;\nimport org.springframework.context.annotation.Configuration;\nimport org.springframework.boot.web.servlet.server.CookieSameSiteSupplier;\n\n@Configuration\npublic class SecurityConfig {\n    \n    @Bean\n    public CookieSameSiteSupplier applicationCookieSameSiteSupplier() {\n        return CookieSameSiteSupplier.ofStrict();\n    }\n    \n    @Bean\n    public ServletContextInitializer servletContextInitializer() {\n        return servletContext -> {\n            SessionCookieConfig sessionCookieConfig = \n                servletContext.getSessionCookieConfig();\n            sessionCookieConfig.setHttpOnly(true);\n            sessionCookieConfig.setSecure(true);\n        };\n    }\n}\n\n// Option 3: Set on individual cookies\nimport javax.servlet.http.Cookie;\nimport javax.servlet.http.HttpServletResponse;\n\npublic void setSecureCookie(HttpServletResponse response) {\n    Cookie cookie = new Cookie(\"customCookie\", \"value\");\n    cookie.setHttpOnly(true);\n    cookie.setSecure(true);\n    cookie.setPath(\"/\");\n    cookie.setMaxAge(3600);\n    // Note: SameSite must be set via Set-Cookie header\n    response.addHeader(\"Set-Cookie\", \n        \"customCookie=value; HttpOnly; Secure; SameSite=Strict; Path=/; Max-Age=3600\");\n}",
+          "testCode": "import org.junit.jupiter.api.Test;\nimport org.springframework.beans.factory.annotation.Autowired;\nimport org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;\nimport org.springframework.boot.test.context.SpringBootTest;\nimport org.springframework.test.web.servlet.MockMvc;\nimport static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;\nimport static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;\n\n@SpringBootTest\n@AutoConfigureMockMvc\npublic class CookieSecurityTest {\n    \n    @Autowired\n    private MockMvc mockMvc;\n    \n    @Test\n    public void testSessionCookieSecurityAttributes() throws Exception {\n        mockMvc.perform(get(\"/login\"))\n            .andExpect(status().isOk())\n            .andExpect(cookie().httpOnly(\"JSESSIONID\", true))\n            .andExpect(cookie().secure(\"JSESSIONID\", true))\n            .andExpect(header().string(\"Set-Cookie\", \n                containsString(\"SameSite=Strict\")));\n    }\n}",
+          "dependencies": "Spring Boot 2.6+ (built-in SameSite support)\nSpring Security 5.8+ (recommended)\n\n<!-- pom.xml -->\n<dependency>\n    <groupId>org.springframework.boot</groupId>\n    <artifactId>spring-boot-starter-web</artifactId>\n    <version>3.2.0</version>\n</dependency>"
+        },
+        "express-nodejs": {
+          "description": "Configure Express.js session and cookie security",
+          "code": "// Install required packages\n// npm install express-session cookie-parser helmet\n\nconst express = require('express');\nconst session = require('express-session');\nconst cookieParser = require('cookie-parser');\nconst helmet = require('helmet');\n\nconst app = express();\n\n// Use helmet for security headers\napp.use(helmet());\n\n// Configure session with secure cookies\napp.use(session({\n  secret: process.env.SESSION_SECRET,\n  name: 'sessionId', // Custom name (not 'connect.sid')\n  cookie: {\n    secure: true,      // Only send over HTTPS\n    httpOnly: true,    // Prevent JavaScript access\n    sameSite: 'strict', // Prevent CSRF\n    maxAge: 3600000,   // 1 hour\n    domain: 'example.com',\n    path: '/'\n  },\n  resave: false,\n  saveUninitialized: false\n}));\n\n// Configure cookie parser\napp.use(cookieParser());\n\n// Set custom cookie with security flags\napp.get('/set-cookie', (req, res) => {\n  res.cookie('customCookie', 'value', {\n    httpOnly: true,\n    secure: true,\n    sameSite: 'strict',\n    maxAge: 3600000,\n    path: '/'\n  });\n  res.send('Secure cookie set');\n});\n\n// Environment-aware configuration\nconst isProduction = process.env.NODE_ENV === 'production';\nif (isProduction) {\n  app.set('trust proxy', 1); // Trust first proxy for secure cookies\n}\n\napp.listen(3000);",
+          "testCode": "// Install: npm install --save-dev jest supertest\n\nconst request = require('supertest');\nconst app = require('./app');\n\ndescribe('Cookie Security Tests', () => {\n  \n  test('Session cookie has secure attributes', async () => {\n    const response = await request(app)\n      .get('/login')\n      .expect(200);\n    \n    const setCookieHeader = response.headers['set-cookie'][0];\n    expect(setCookieHeader).toMatch(/HttpOnly/);\n    expect(setCookieHeader).toMatch(/Secure/);\n    expect(setCookieHeader).toMatch(/SameSite=Strict/i);\n  });\n  \n  test('Custom cookie has all security flags', async () => {\n    const response = await request(app)\n      .get('/set-cookie')\n      .expect(200);\n    \n    const cookie = response.headers['set-cookie']\n      .find(c => c.startsWith('customCookie'));\n    \n    expect(cookie).toBeDefined();\n    expect(cookie).toMatch(/HttpOnly/);\n    expect(cookie).toMatch(/Secure/);\n    expect(cookie).toMatch(/SameSite=Strict/i);\n  });\n});",
+          "package": "npm install express-session cookie-parser helmet\nnpm install --save-dev jest supertest"
+        },
+        "asp-net-core": {
+          "description": "Configure ASP.NET Core cookie security",
+          "code": "// Program.cs or Startup.cs\nusing Microsoft.AspNetCore.Builder;\nusing Microsoft.AspNetCore.Http;\nusing Microsoft.Extensions.DependencyInjection;\n\nvar builder = WebApplication.CreateBuilder(args);\n\n// Configure cookie policy\nbuilder.Services.Configure<CookiePolicyOptions>(options =>\n{\n    options.HttpOnly = HttpOnlyPolicy.Always;\n    options.Secure = CookieSecurePolicy.Always; // Require HTTPS\n    options.MinimumSameSitePolicy = SameSiteMode.Strict;\n});\n\n// Configure session with secure cookies\nbuilder.Services.AddSession(options =>\n{\n    options.Cookie.HttpOnly = true;\n    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;\n    options.Cookie.SameSite = SameSiteMode.Strict;\n    options.Cookie.Name = \".MyApp.Session\";\n    options.IdleTimeout = TimeSpan.FromMinutes(30);\n});\n\n// Configure authentication cookies\nbuilder.Services.AddAuthentication()\n    .AddCookie(options =>\n    {\n        options.Cookie.HttpOnly = true;\n        options.Cookie.SecurePolicy = CookieSecurePolicy.Always;\n        options.Cookie.SameSite = SameSiteMode.Strict;\n        options.Cookie.Name = \".MyApp.Auth\";\n    });\n\nvar app = builder.Build();\n\n// Apply cookie policy\napp.UseCookiePolicy();\napp.UseSession();\napp.UseAuthentication();\n\n// Set custom cookie in controller\npublic class HomeController : Controller\n{\n    public IActionResult SetCookie()\n    {\n        var cookieOptions = new CookieOptions\n        {\n            HttpOnly = true,\n            Secure = true,\n            SameSite = SameSiteMode.Strict,\n            Expires = DateTimeOffset.UtcNow.AddHours(1),\n            Path = \"/\"\n        };\n        \n        Response.Cookies.Append(\"CustomCookie\", \"value\", cookieOptions);\n        return Ok(\"Secure cookie set\");\n    }\n}\n\napp.Run();",
+          "testCode": "// Install: dotnet add package Microsoft.AspNetCore.Mvc.Testing\n\nusing Microsoft.AspNetCore.Mvc.Testing;\nusing Xunit;\n\npublic class CookieSecurityTests : IClassFixture<WebApplicationFactory<Program>>\n{\n    private readonly WebApplicationFactory<Program> _factory;\n    \n    public CookieSecurityTests(WebApplicationFactory<Program> factory)\n    {\n        _factory = factory;\n    }\n    \n    [Fact]\n    public async Task SessionCookie_HasSecurityAttributes()\n    {\n        var client = _factory.CreateClient();\n        var response = await client.GetAsync(\"/login\");\n        \n        Assert.True(response.Headers.TryGetValues(\"Set-Cookie\", \n            out var cookies));\n        \n        var sessionCookie = cookies.FirstOrDefault(c => \n            c.Contains(\".MyApp.Session\"));\n        \n        Assert.NotNull(sessionCookie);\n        Assert.Contains(\"HttpOnly\", sessionCookie);\n        Assert.Contains(\"Secure\", sessionCookie);\n        Assert.Contains(\"SameSite=Strict\", sessionCookie);\n    }\n}",
+          "dependencies": "ASP.NET Core 6.0+ (built-in secure defaults)\n\n<!-- .csproj -->\n<PackageReference Include=\"Microsoft.AspNetCore.App\" />\n<PackageReference Include=\"Microsoft.AspNetCore.Mvc.Testing\" Version=\"8.0.0\" />"
+        }
+      },
+      "verificationSteps": [
+        "Test in browser DevTools: Open Application/Storage tab, inspect Cookies, verify Secure, HttpOnly, and SameSite attributes are present",
+        "Test HTTPS requirement: Attempt to access application over HTTP - secure cookies should not be sent",
+        "Test JavaScript access: Open browser console, run 'document.cookie' - HttpOnly cookies should not appear",
+        "Test cross-site behavior: Access application from different origin - SameSite cookies should not be sent",
+        "Use security scanner: Run OWASP ZAP or Burp Suite to verify Set-Cookie headers contain all security attributes",
+        "Test across browsers: Verify cookie behavior in Chrome, Firefox, Safari, and Edge"
+      ],
+      "estimatedEffort": "2-4 hours"
+    },
+    "QA_TESTER": {
+      "manualTests": [
+        {
+          "name": "Verify Secure Flag",
+          "steps": [
+            "Open application in browser over HTTPS",
+            "Open DevTools (F12) > Application/Storage > Cookies",
+            "Login or trigger cookie creation",
+            "Locate session/auth cookies",
+            "Verify 'Secure' checkbox is checked or Secure column shows checkmark",
+            "Attempt to access application over HTTP (if available)",
+            "Verify secure cookies are NOT sent in HTTP requests (check Network tab)"
+          ],
+          "expected": "Secure flag present on all session/authentication cookies. Cookies only transmitted over HTTPS connections."
+        },
+        {
+          "name": "Verify HttpOnly Flag",
+          "steps": [
+            "Open application in browser",
+            "Open DevTools Console tab",
+            "Login or trigger cookie creation",
+            "Execute: console.log(document.cookie)",
+            "Verify session/auth cookies do NOT appear in output",
+            "Go to Application/Storage > Cookies",
+            "Verify 'HttpOnly' checkbox is checked for session/auth cookies"
+          ],
+          "expected": "HttpOnly flag present. Session cookies not accessible via JavaScript document.cookie. Only non-HttpOnly cookies (like preferences) visible in console."
+        },
+        {
+          "name": "Verify SameSite Flag",
+          "steps": [
+            "Open application in browser",
+            "Open DevTools > Application > Cookies",
+            "Login to create session cookie",
+            "Check 'SameSite' column value",
+            "Verify it shows 'Strict' or 'Lax' (Strict preferred)",
+            "Test cross-site behavior: Open application in different domain/subdomain",
+            "Verify cookies are not sent in cross-origin requests (check Network tab)"
+          ],
+          "expected": "SameSite=Strict or Lax present on all cookies. Cookies not sent in cross-site requests, protecting against CSRF."
+        },
+        {
+          "name": "End-to-End Cookie Security Test",
+          "steps": [
+            "Clear all cookies and browser cache",
+            "Access application over HTTPS",
+            "Complete login flow",
+            "Open DevTools > Application > Cookies",
+            "For each cookie, verify all three attributes: Secure=Yes, HttpOnly=Yes, SameSite=Strict/Lax",
+            "Document any cookies missing security attributes",
+            "Test complete user workflow to ensure secure cookies don't break functionality"
+          ],
+          "expected": "All session and authentication cookies have Secure, HttpOnly, and SameSite attributes. Application functions normally with secure cookie configuration."
+        }
+      ],
+      "automatedTests": {
+        "tool": "Selenium WebDriver with cookie inspection",
+        "example": "// Java Selenium Example\nimport org.openqa.selenium.Cookie;\nimport org.openqa.selenium.WebDriver;\nimport org.openqa.selenium.chrome.ChromeDriver;\nimport org.junit.jupiter.api.Test;\nimport static org.junit.jupiter.api.Assertions.*;\n\npublic class CookieSecurityTest {\n    \n    @Test\n    public void testCookieSecurityAttributes() {\n        WebDriver driver = new ChromeDriver();\n        driver.get(\"https://example.com/login\");\n        \n        // Login to create session cookie\n        // ... perform login ...\n        \n        // Get all cookies\n        Set<Cookie> cookies = driver.manage().getCookies();\n        \n        // Find session cookie\n        Cookie sessionCookie = cookies.stream()\n            .filter(c -> c.getName().equals(\"JSESSIONID\"))\n            .findFirst()\n            .orElse(null);\n        \n        assertNotNull(sessionCookie, \"Session cookie not found\");\n        assertTrue(sessionCookie.isSecure(), \n            \"Cookie missing Secure flag\");\n        assertTrue(sessionCookie.isHttpOnly(), \n            \"Cookie missing HttpOnly flag\");\n        // Note: Selenium doesn't expose SameSite, use HTTP header inspection\n        \n        driver.quit();\n    }\n}"
+      },
+      "edgeCases": [
+        "Test cookie behavior with mixed HTTP/HTTPS content on page",
+        "Verify cookies work correctly behind load balancer or reverse proxy",
+        "Test cookie persistence across browser restarts",
+        "Verify cookie expiration and renewal logic",
+        "Test with third-party cookies blocked in browser settings",
+        "Test SameSite=Strict vs SameSite=Lax for cross-subdomain scenarios"
+      ],
+      "estimatedEffort": "2-3 hours"
+    }
+  }
+}

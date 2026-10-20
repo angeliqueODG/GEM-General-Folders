@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>mAi Advisor™ Flow - mAi™ Framework Documentation</title>
+<link rel="stylesheet" href="docs-style.css">
+<link rel="stylesheet" href="pagefind/pagefind-ui.css">
+<script src="pagefind/pagefind-ui.js"></script>
+<script src="mermaid.min.js"></script>
+<script>mermaid.initialize({startOnLoad: true, theme: 'dark'});</script>
+</head>
+<body>
+<div class="layout">
+<nav class="sidebar" id="sidebar" data-pagefind-ignore></nav>
+<main class="main-content" data-pagefind-body>
+<h1 data-pagefind-meta="title">mAi Advisor™ Recommendation Flow</h1>
+<p class="subtitle">Intelligent recommendation generation workflow</p>
+
+<section class="content-section">
+<h2>Introduction</h2>
+<p>This document visualizes the complete flow of the mAi Advisor™ intelligent guidance system, from HTTP audit execution through multi-audience recommendation generation. Understanding this flow helps developers, QA engineers, and framework maintainers see how audit findings are transformed into actionable, role-specific guidance.</p>
+<h3>Key Process Steps</h3>
+<ol>
+<li>HTTP audit execution and finding detection</li>
+<li>Template matching based on finding type</li>
+<li>Framework auto-detection from HTTP headers</li>
+<li>Two-tier recommendation generation (Understanding + Action)</li>
+<li>Multi-audience content customization</li>
+<li>Report integration and delivery</li>
+</ol>
+</section>
+
+<section class="content-section">
+<h2>Complete Recommendation Generation Flow</h2>
+<p>This sequence diagram shows the end-to-end process from test execution to report delivery:</p>
+<pre class="mermaid">
+sequenceDiagram
+    participant Test as Test Suite
+    participant AM as FW_AuditManager
+    participant HttpEx as FW_HttpExecutor
+    participant Audit as FW_Audit_HttpReview
+    participant Advisor as FW_Advisor
+    participant Engine as FW_AdvisorEngine
+    participant Loader as FW_AdvisorTemplateLoader
+    participant Reporter as Report Generators
+    Test->>AM: performHttpAudit(url)
+    AM->>HttpEx: execute(url)
+    HttpEx->>HttpEx: Capture HTTP transaction
+    HttpEx-->>AM: FW_Http object
+    AM->>Audit: runAuditHttpReview(http)
+    rect rgb(220, 240, 255)
+        Note over Audit: 7-Phase Analysis
+        Audit->>Audit: 1. Network &amp; Geolocation
+        Audit->>Audit: 2. TLS &amp; Certificate
+        Audit->>Audit: 3. Security Headers
+        Audit->>Audit: 4. Cookie Security
+        Audit->>Audit: 5. Redirect Chain
+        Audit->>Audit: 6. Performance
+        Audit->>Audit: 7. Compliance
+    end
+    Audit->>Audit: Collect findings list
+    Note over Audit: Findings: HSTS_MISSING,&lt;br/&gt;CSP_MISSING, INSECURE_COOKIE
+    rect rgb(255, 245, 220)
+        Note over Audit,Engine: mAi Advisor™ Integration
+        Audit->>Advisor: Generate recommendations
+        Advisor->>Engine: generateRecommendations(http, audience)
+        loop For each finding
+            Engine->>Loader: loadTemplate(findingType)
+            Loader->>Loader: Check cache
+            alt Template cached
+                Loader-->>Engine: Return cached template
+            else Not cached
+                Loader->>Loader: Read JSON from filesystem
+                Loader->>Loader: Parse &amp; validate
+                Loader->>Loader: Store in cache
+                Loader-->>Engine: Return template
+            end
+            Engine->>Engine: detectFramework(httpHeaders)
+            Note over Engine: Detected: Spring Boot
+            Engine->>Engine: generateUnderstandingTier(template, audience)
+            Note over Engine: Generate for all audiences
+            alt Audience is implementer
+                Engine->>Engine: generateActionTier(template, audience)
+                Engine->>Engine: customizeCodeExamples(framework)
+                Note over Engine: Include Spring Boot code
+            end
+            Engine->>Engine: Create FW_AdvisorRecommendation
+        end
+        Engine-->>Advisor: List&lt;Recommendation&gt;
+        Advisor-->>Audit: Recommendations generated
+    end
+    Audit->>Audit: Populate FW_Http with scores &amp; findings
+    Audit-->>AM: FW_Http (enriched with advisor data)
+    rect rgb(220, 255, 220)
+        Note over AM,Reporter: Report Generation
+        AM->>Reporter: Generate diagnostic report
+        Reporter->>Reporter: Format HTML with findings
+        Reporter->>Reporter: Include advisor recommendations
+        Reporter->>Reporter: Add code examples per audience
+        Reporter-->>AM: HTML + Markdown reports
+        AM->>Reporter: Generate summary report
+        Reporter->>Reporter: Executive summary
+        Reporter->>Reporter: Key recommendations
+        Reporter-->>AM: Summary report
+    end
+    AM-->>Test: Audit complete with reports
+    Test->>Test: Review reports in target/http-reports/
+</pre>
+</section>
+
+<section class="content-section">
+<h2>Component Interaction Overview</h2>
+<p>This diagram shows how the main advisor components interact:</p>
+<pre class="mermaid">
+graph TB
+    subgraph "Layer 6: Audits"
+        A[FW_Audit_HttpReview&lt;br/&gt;Security Analysis]
+    end
+    subgraph "Layer 7: Advisor System"
+        B[FW_Advisor&lt;br/&gt;Static Facade]
+        C[FW_AdvisorEngine&lt;br/&gt;Core Engine]
+        D[FW_AdvisorTemplateLoader&lt;br/&gt;Template Manager]
+        E[FW_AdvisorAudience&lt;br/&gt;6 Audience Types]
+        F[FW_AdvisorRecommendation&lt;br/&gt;Output Model]
+    end
+    subgraph "Templates"
+        G[JSON Templates&lt;br/&gt;16 templates]
+        H[Security&lt;br/&gt;8 templates]
+        I[Performance&lt;br/&gt;3 templates]
+        J[Compliance&lt;br/&gt;2 templates]
+        K[Infrastructure&lt;br/&gt;3 templates]
+    end
+    subgraph "Reports"
+        L[FW_HttpDiagnosticReporter&lt;br/&gt;HTML + Markdown]
+        M[FW_HttpReporter&lt;br/&gt;Executive Summary]
+    end
+    A -->|Findings| B
+    B -->|Delegate| C
+    C -->|Load templates| D
+    D -->|Read| G
+    G -->|Contains| H
+    G -->|Contains| I
+    G -->|Contains| J
+    G -->|Contains| K
+    C -->|Use| E
+    C -->|Create| F
+    F -->|Include in| L
+    F -->|Include in| M
+    style A fill:#e1f5ff
+    style B fill:#fff3e1
+    style C fill:#fff3e1
+    style D fill:#fff3e1
+    style G fill:#ffe1e1
+    style L fill:#e1ffe1
+    style M fill:#e1ffe1
+</pre>
+</section>
+
+<section class="content-section">
+<h2>Template Selection Logic</h2>
+<p>This flowchart shows how findings are matched to templates and processed:</p>
+<pre class="mermaid">
+flowchart TD
+    Start([HTTP Audit Complete]) --> HasFindings{Findings&lt;br/&gt;detected?}
+    HasFindings -->|No| NoAdvisor[No advisor&lt;br/&gt;recommendations]
+    HasFindings -->|Yes| GetFirstFinding[Get next finding]
+    GetFirstFinding --> ClassifyFinding[Classify finding&lt;br/&gt;Type, Severity, Category]
+    ClassifyFinding --> DeterminePath{Finding&lt;br/&gt;type?}
+    DeterminePath -->|HSTS_MISSING| TemplateHSTS[Load:&lt;br/&gt;security/hsts-missing.json]
+    DeterminePath -->|CSP_MISSING| TemplateCSP[Load:&lt;br/&gt;security/csp-missing.json]
+    DeterminePath -->|INSECURE_COOKIE| TemplateCookie[Load:&lt;br/&gt;security/insecure-cookies.json]
+    DeterminePath -->|SSL_EXPIRED| TemplateSSL[Load:&lt;br/&gt;security/ssl-expired.json]
+    DeterminePath -->|Other| TemplateOther[Load:&lt;br/&gt;corresponding template]
+    TemplateHSTS --> CheckCache{Template&lt;br/&gt;in cache?}
+    TemplateCSP --> CheckCache
+    TemplateCookie --> CheckCache
+    TemplateSSL --> CheckCache
+    TemplateOther --> CheckCache
+    CheckCache -->|Yes| UseCache[Use cached template]
+    CheckCache -->|No| LoadTemplate[Load from filesystem]
+    LoadTemplate --> ParseJSON[Parse JSON]
+    ParseJSON --> Validate[Validate structure]
+    Validate --> StoreCache[Store in cache]
+    StoreCache --> UseCache
+    UseCache --> Generate[Generate recommendation]
+    Generate --> MoreFindings{More findings?}
+    MoreFindings -->|Yes| GetFirstFinding
+    MoreFindings -->|No| Complete[Return all recommendations]
+    style Start fill:#e1f5ff
+    style Complete fill:#e1ffe1
+    style UseCache fill:#fff3e1
+</pre>
+</section>
+
+<section class="content-section">
+<h2>Multi-Audience Content Flow</h2>
+<pre class="mermaid">
+flowchart TD
+    Finding[Single Finding] --> Template[Load Template]
+    Template --> T1[TIER 1:&lt;br/&gt;Understanding]
+    Template --> T2[TIER 2:&lt;br/&gt;Action]
+    T1 --> A1[DEVELOPER&lt;br/&gt;Understanding]
+    T1 --> A2[OPS_INFRASTRUCTURE&lt;br/&gt;Understanding]
+    T1 --> A3[QA_TESTER&lt;br/&gt;Understanding]
+    T1 --> A4[SECURITY_ENGINEER&lt;br/&gt;Understanding]
+    T1 --> A5[PROJECT_MANAGER&lt;br/&gt;Understanding]
+    T1 --> A6[EXECUTIVE&lt;br/&gt;Understanding]
+    T2 --> B1[DEVELOPER&lt;br/&gt;+ Action Tier&lt;br/&gt;+ Code Examples]
+    T2 --> B2[OPS_INFRASTRUCTURE&lt;br/&gt;+ Action Tier&lt;br/&gt;+ Nginx Config]
+    T2 --> B3[QA_TESTER&lt;br/&gt;+ Action Tier&lt;br/&gt;+ Test Cases]
+    A1 --> B1
+    A2 --> B2
+    A3 --> B3
+    B1 --> R1[Recommendation 1:&lt;br/&gt;Developer]
+    B2 --> R2[Recommendation 2:&lt;br/&gt;DevOps]
+    B3 --> R3[Recommendation 3:&lt;br/&gt;QA]
+    A4 --> R4[Recommendation 4:&lt;br/&gt;Security]
+    A5 --> R5[Recommendation 5:&lt;br/&gt;PM]
+    A6 --> R6[Recommendation 6:&lt;br/&gt;Executive]
+    R1 --> Report[6 Recommendations&lt;br/&gt;in Report]
+    R2 --> Report
+    R3 --> Report
+    R4 --> Report
+    R5 --> Report
+    R6 --> Report
+    style Finding fill:#ffe1e1
+    style Template fill:#fff3e1
+    style T1 fill:#e1f5ff
+    style T2 fill:#e1ffe1
+    style Report fill:#e1ffe1
+</pre>
+</section>
+
+<section class="content-section">
+<h2>Two-Tier Content Model</h2>
+<div class="card-grid">
+<div class="card">
+<h4>Tier 1: Understanding</h4>
+<p>All audiences receive:</p>
+<ul>
+<li><strong>what:</strong> What's wrong?</li>
+<li><strong>why:</strong> Why it matters?</li>
+<li><strong>impact:</strong> Business/technical impact</li>
+<li><strong>businessImpact:</strong> Organizational risk</li>
+<li><strong>technicalDetails:</strong> Technical specifics</li>
+<li><strong>riskAssessment:</strong> Risk level &amp; severity</li>
+</ul>
+</div>
+<div class="card">
+<h4>Tier 2: Action</h4>
+<p>Implementers (DEV, OPS, QA) receive:</p>
+<ul>
+<li><strong>steps:</strong> Remediation steps</li>
+<li><strong>codeExamples:</strong> Framework code</li>
+<li><strong>testingGuidance:</strong> Verification tests</li>
+<li><strong>effortEstimate:</strong> Time required</li>
+<li><strong>prerequisites:</strong> Requirements</li>
+</ul>
+</div>
+</div>
+</section>
+
+<section class="content-section">
+<h2>Two-Tier Content Assembly Flowchart</h2>
+<pre class="mermaid">
+flowchart TD
+    Template[JSON Template&lt;br/&gt;Loaded] --> ExtractMeta[Extract Metadata&lt;br/&gt;Finding ID, Type, Severity]
+    ExtractMeta --> Tier1[TIER 1:&lt;br/&gt;UNDERSTANDING]
+    ExtractMeta --> Tier2[TIER 2:&lt;br/&gt;ACTION]
+    Tier1 --> U1[Extract 'what'&lt;br/&gt;What's wrong?]
+    Tier1 --> U2[Extract 'why'&lt;br/&gt;Why it matters?]
+    Tier1 --> U3[Extract 'impact'&lt;br/&gt;Business/technical impact]
+    Tier1 --> U4[Extract 'businessImpact'&lt;br/&gt;Organizational risk]
+    Tier1 --> U5[Extract 'technicalDetails'&lt;br/&gt;Technical specifics]
+    Tier1 --> U6[Extract 'riskAssessment'&lt;br/&gt;Risk level &amp; severity]
+    U1 --> AssembleU[Assemble&lt;br/&gt;Understanding Content]
+    U2 --> AssembleU
+    U3 --> AssembleU
+    U4 --> AssembleU
+    U5 --> AssembleU
+    U6 --> AssembleU
+    Tier2 --> A1[Extract 'steps'&lt;br/&gt;Remediation steps]
+    Tier2 --> A2[Extract 'codeExamples'&lt;br/&gt;Framework code]
+    Tier2 --> A3[Extract 'testingGuidance'&lt;br/&gt;Verification tests]
+    Tier2 --> A4[Extract 'effortEstimate'&lt;br/&gt;Time required]
+    Tier2 --> A5[Extract 'prerequisites'&lt;br/&gt;Requirements]
+    A1 --> CheckImpl{Audience is&lt;br/&gt;implementer?}
+    A2 --> CheckImpl
+    A3 --> CheckImpl
+    A4 --> CheckImpl
+    A5 --> CheckImpl
+    CheckImpl -->|Yes| AssembleA[Assemble&lt;br/&gt;Action Content]
+    CheckImpl -->|No| SkipA[Skip Action&lt;br/&gt;Content]
+    AssembleU --> Combine[Combine Tiers]
+    AssembleA --> Combine
+    SkipA --> Combine
+    Combine --> Rec[FW_AdvisorRecommendation&lt;br/&gt;Complete]
+    Rec --> Output{Output&lt;br/&gt;format?}
+    Output -->|Developer| DevFormat[Markdown with&lt;br/&gt;code blocks]
+    Output -->|DevOps| OpsFormat[Configuration&lt;br/&gt;files]
+    Output -->|QA| QAFormat[Test cases&lt;br/&gt;checklist]
+    Output -->|Others| GenFormat[Formatted&lt;br/&gt;guidance]
+    DevFormat --> Report[Include in&lt;br/&gt;Report]
+    OpsFormat --> Report
+    QAFormat --> Report
+    GenFormat --> Report
+    style Template fill:#fff3e1
+    style Tier1 fill:#e1f5ff
+    style Tier2 fill:#e1ffe1
+    style Rec fill:#ffe1ff
+    style Report fill:#e1ffe1
+</pre>
+</section>
+
+<section class="content-section">
+<h2>Audience Types</h2>
+<table class="data-table">
+<thead><tr><th>Audience</th><th>Type</th><th>Receives</th></tr></thead>
+<tbody>
+<tr><td>DEVELOPER</td><td>Implementer</td><td>Understanding + Action + Code Examples</td></tr>
+<tr><td>OPS_INFRASTRUCTURE</td><td>Implementer</td><td>Understanding + Action + Nginx Config</td></tr>
+<tr><td>QA_TESTER</td><td>Implementer</td><td>Understanding + Action + Test Cases</td></tr>
+<tr><td>SECURITY_ENGINEER</td><td>Coordinator</td><td>Understanding only</td></tr>
+<tr><td>PROJECT_MANAGER</td><td>Coordinator</td><td>Understanding only</td></tr>
+<tr><td>EXECUTIVE</td><td>Coordinator</td><td>Understanding only</td></tr>
+</tbody>
+</table>
+</section>
+
+<section class="content-section">
+<h2>Report Integration Flow</h2>
+<p>This diagram shows how advisor recommendations are integrated into reports:</p>
+<pre class="mermaid">
+flowchart LR
+    Audit[FW_Audit_HttpReview&lt;br/&gt;Complete] --> Findings[List of Findings]
+    Findings --> Advisor[mAi Advisor™&lt;br/&gt;Generate Recommendations]
+    Advisor --> Recs[List of&lt;br/&gt;Recommendations&lt;br/&gt;per audience]
+    Recs --> DiagReport[FW_HttpDiagnosticReporter]
+    Recs --> SummReport[FW_HttpReporter]
+    DiagReport --> D1[Section 1:&lt;br/&gt;DNS &amp; Network]
+    DiagReport --> D2[Section 2:&lt;br/&gt;TLS &amp; Certificates]
+    DiagReport --> D3[Section 3:&lt;br/&gt;Security Headers]
+    DiagReport --> D4[Section 4:&lt;br/&gt;Performance]
+    DiagReport --> D5[Section 5:&lt;br/&gt;Network Diagnostics]
+    DiagReport --> D6[Section 6:&lt;br/&gt;Error Diagnostics]
+    DiagReport --> D7[Section 7:&lt;br/&gt;Remediation Guidance&lt;br/&gt;⭐ ADVISOR CONTENT]
+    D7 --> D7A[By Audience:&lt;br/&gt;Developer]
+    D7 --> D7B[By Audience:&lt;br/&gt;DevOps]
+    D7 --> D7C[By Audience:&lt;br/&gt;QA]
+    D7 --> D7D[By Audience:&lt;br/&gt;Security]
+    D7 --> D7E[By Audience:&lt;br/&gt;PM]
+    D7 --> D7F[By Audience:&lt;br/&gt;Executive]
+    SummReport --> S1[Executive Summary]
+    SummReport --> S2[Key Findings]
+    SummReport --> S3[Recommended Actions&lt;br/&gt;⭐ ADVISOR CONTENT]
+    SummReport --> S4[Compliance Status]
+    D7 --> HTML[diagnostic.html]
+    D7 --> MD1[diagnostic.md]
+    S3 --> MD2[summary.md]
+    HTML --> Browser[View in Browser]
+    MD1 --> IDE[View in IDE]
+    MD2 --> IDE
+    style Advisor fill:#fff3e1
+    style D7 fill:#e1ffe1
+    style S3 fill:#e1ffe1
+    style HTML fill:#e1f5ff
+    style MD1 fill:#e1f5ff
+    style MD2 fill:#e1f5ff
+</pre>
+</section>
+
+<section class="content-section">
+<h2>Summary</h2>
+<p>The mAi Advisor™ system transforms raw HTTP audit findings into actionable, role-specific guidance through a sophisticated multi-stage process:</p>
+<ol>
+<li><strong>Finding Detection:</strong> HTTP audit identifies security, performance, and compliance issues</li>
+<li><strong>Template Matching:</strong> Each finding type maps to a pre-built JSON template</li>
+<li><strong>Framework Detection:</strong> HTTP headers reveal application technology stack</li>
+<li><strong>Content Generation:</strong> Two-tier model creates understanding (all) + action (implementers)</li>
+<li><strong>Audience Targeting:</strong> Recommendations customized for 6 different roles</li>
+<li><strong>Report Integration:</strong> Guidance embedded in comprehensive diagnostic reports</li>
+</ol>
+<p>This intelligent system reduces remediation time by 50%+ by providing exactly the right information to exactly the right person at exactly the right time.</p>
+</section>
+
+<section class="content-section">
+<h2>Related Documentation</h2>
+<table class="data-table">
+<thead><tr><th>Document</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td><a href="Doc-mAi-Advisor.html">mAi Advisor™ Guide</a></td><td>Comprehensive advisor documentation</td></tr>
+<tr><td><a href="Doc-HTTP-Assessment.html">HTTP Security Assessment</a></td><td>HTTP audit details</td></tr>
+<tr><td><a href="Diagram-Architecture.html">Architecture Overview</a></td><td>Framework architecture</td></tr>
+<tr><td><a href="Diagrams.html">Diagrams Hub</a></td><td>All framework diagrams</td></tr>
+</tbody>
+</table>
+</section>
+
+<footer class="doc-footer" id="doc-footer" data-pagefind-ignore></footer>
+</main>
+</div>
+<script src="docs-config.js"></script>
+<script src="docs-nav.js"></script>
+<script>DocsConfig.renderFooter('doc-footer');</script>
+</body>
+</html>

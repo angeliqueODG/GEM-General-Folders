@@ -1,0 +1,102 @@
+{
+    // ===============================================================
+    // VSCode Settings
+    //
+    // version=1.10
+    //
+    // Developed by Greg Paskal - April 2024
+    //    
+    // Description
+    // The following configurations ensure a consistent IDE experience
+    // across all projects. This file should be included in the root
+    // of the project repository in a directory named .vscode.
+    //
+    // Change History:
+    // 2025-07-31: v1.10 - Added formatting of 4 spaces of tab
+    // 2025-06-16: v1.09 - Added Java test method debug command
+    // 2025-06-13: v1.08 - Added disabling of organizing imports on save
+    // 2025-04-15: v1.07 - Adjusted for AI code completion
+    // 2025-02-09: v1.06 - Tuning up settings
+    // 2024-07-25: v1.05 - Added word wrap off setting.
+    // 2024-06-18: v1.04 - Added format on save setting.
+    // 2024-06-12: v1.03 - Added Java Home setting.
+    // 2024-04-15: v1.02 - Removed more sticky settings.
+    // 2024-04-10: v1.01 - Removed sticky scroll and minimap setting
+    // 2024-04-10: v1.00 - Initial version
+    //
+    // ===============================================================
+
+    // ======================== IDE Settings =========================
+
+    // Controls whether minimap is shown
+    "editor.minimap.enabled": false,
+
+    // Controls the tab size
+    "editor.tabSize": 4,
+
+    // Controls whether the editor should insert spaces or tabs
+    "editor.insertSpaces": true,
+
+    // Controls where to format the code on save
+    "editor.formatOnSave": false,
+
+    // Controls where to format the code on type
+    "editor.formatOnType": false,
+
+    // Controls word wrap
+    "editor.wordWrap": "off",
+
+    // Controls drag and drop behavior in the editor
+    "editor.dragAndDrop": false,
+
+    // Controld the hover behavior in the editor
+    "editor.hover.enabled": false,
+
+    // Controls how many lines of command history the terminal keeps
+    "terminal.integrated.scrollback": 5000,
+
+    // Controls whether single-child folders are compacted in the file explorer
+    "explorer.compactFolders": false,
+
+    // Controls whether the file explorer should automatically hide folders
+    "workbench.tree.enableStickyScroll": false,
+
+    // Controls whether the editor should scroll with the cursor
+    "editor.stickyScroll.scrollWithEditor": false,
+
+    // Controls whether the editor should have sticky tab stops
+    "editor.stickyTabStops": false,
+
+    // Controls whether the editor should have sticky word wrap
+    "editor.stickyScroll.enabled": false,
+
+    // Control whether breadcrumbs are enabled
+    "breadcrumbs.enabled": false,
+
+    // Controls whether to render whitespace characters
+    "editor.renderWhitespace": "none",
+
+    // Controls whether to reorganize imports on save
+    "jdk.java.onSave.organizeImports": false,
+
+    // ======================== AI Settings =========================
+
+    // AI Tool, Inline suggestions
+    "editor.inlineSuggest.enabled": true,
+
+    // ============================= Java Settings =============================
+
+    // Instructs VSCode where to find the Java Development Kit
+    "java.home": "/opt/homebrew/opt/openjdk/",
+
+    // Controls the null analysis mode in Java
+    "java.compile.nullAnalysis.mode": "automatic",
+
+    // Controls how the Java build configuration is updated
+    "java.configuration.updateBuildConfiguration": "automatic",
+    "java.debug.settings.onBuildFailureProceed": true,
+
+    // Controls the Java test method debug command
+    "java.debugTestMethod": ["mvn","test","-Dmaven.surefire.debug","-Dtest=${class}#${method}"],
+
+}

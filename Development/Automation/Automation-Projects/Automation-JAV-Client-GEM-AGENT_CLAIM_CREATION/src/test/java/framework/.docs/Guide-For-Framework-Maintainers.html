@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Framework Maintainer's Guide - mAi™ Framework Documentation</title>
+<link rel="stylesheet" href="docs-style.css">
+<link rel="stylesheet" href="pagefind/pagefind-ui.css">
+<script src="pagefind/pagefind-ui.js"></script>
+</head>
+<body>
+<div class="layout">
+<nav class="sidebar" id="sidebar" data-pagefind-ignore></nav>
+<main class="main-content" data-pagefind-body>
+<h1 data-pagefind-meta="title">Framework Maintainer's Guide</h1>
+<p class="subtitle">Deep technical insight into architecture, patterns, and extension points</p>
+
+<section class="content-section">
+<h2>Welcome Framework Maintainers!</h2>
+<p><strong>Target Audience:</strong> Framework Developers, Lead Engineers, Architects</p>
+<p><strong>Reading Time:</strong> 120 minutes | <strong>Goal:</strong> Master framework architecture and extension</p>
+
+<p>This guide provides deep technical insight into the framework's architecture:</p>
+<ul>
+<li>✅ Complete 8-layer architecture</li>
+<li>✅ Component interactions and dependencies</li>
+<li>✅ Design patterns and principles</li>
+<li>✅ Extension points</li>
+<li>✅ Adding new features</li>
+<li>✅ Best practices</li>
+</ul>
+</section>
+
+<section class="content-section">
+<h2>8-Layer Architecture</h2>
+
+<div class="code-block"><pre><code>Layer 8: Cloud Integration
+         ├─ FW_GoogleCloudBigQueryUploader
+         ├─ FW_GoogleCloudStorageUploader
+         └─ FW_GoogleCloudUtils
+         ↑
+Layer 7: Advisor (mAi™)
+         ├─ FW_Advisor
+         ├─ FW_AdvisorEngine
+         ├─ FW_AdvisorFinding
+         ├─ FW_AdvisorRecommendation
+         └─ FW_AdvisorTemplate
+         ↑
+Layer 6: Audits
+         ├─ FW_Audit_HttpReview
+         ├─ FW_Audit_Ping
+         ├─ FW_Audit_Traceroute
+         └─ FW_Audit_SpeedTest
+         ↑
+Layer 5: Data Management
+         ├─ FW_TestStepDataCollector
+         └─ FW_TestStepDataProcessor
+         ↑
+Layer 4: Utilities
+         ├─ FW_ConfigMgr
+         ├─ FW_DateTimeUtils
+         ├─ FW_FileDirUtils
+         ├─ FW_Http
+         └─ FW_ConsoleColors
+         ↑
+Layer 3: Framework Core
+         ├─ FW_CustomAssertJU
+         ├─ FW_Driver
+         └─ FW_Page
+         ↑
+Layer 2: Page Objects
+         └─ PO_* (user-defined)
+         ↑
+Layer 1: Test Foundation
+         ├─ FW_TestSuite
+         ├─ FW_TestCase
+         ├─ FW_TestRun
+         └─ TS_*_JUnit (user-defined)</code></pre></div>
+
+<table class="data-table">
+<thead><tr><th>Layer</th><th>Purpose</th><th>Key Classes</th></tr></thead>
+<tbody>
+<tr><td><strong>1. Test Execution</strong></td><td>JUnit 5 test suites</td><td>TS_*_JUnit</td></tr>
+<tr><td><strong>2. Page Object</strong></td><td>UI encapsulation</td><td>PO_*, FW_Page</td></tr>
+<tr><td><strong>3. Framework Core</strong></td><td>Utilities &amp; assertions</td><td>FW_CustomAssertJU, FW_ConfigMgr</td></tr>
+<tr><td><strong>4. Infrastructure</strong></td><td>WebDriver &amp; system</td><td>FW_Browser, FW_NetworkUtils</td></tr>
+<tr><td><strong>5. Reporting</strong></td><td>Test reports</td><td>FW_AllureReportGenerator</td></tr>
+<tr><td><strong>6. Audit &amp; Diagnostics</strong></td><td>Security &amp; network</td><td>FW_Audit_*, FW_AuditManager</td></tr>
+<tr><td><strong>7. mAi Advisor™</strong></td><td>Recommendations</td><td>FW_Advisor*, FW_AdvisorEngine</td></tr>
+<tr><td><strong>8. Data Integration</strong></td><td>Cloud analytics</td><td>FW_GoogleCloudBigQueryUploader</td></tr>
+</tbody>
+</table>
+
+<h3>Key Design Principles</h3>
+<ul>
+<li><strong>Layered Architecture:</strong> Each layer depends only on layers below, clear separation of concerns, testable in isolation</li>
+<li><strong>Single Responsibility:</strong> Each class has one clear purpose, easy to understand and maintain</li>
+<li><strong>Open/Closed Principle:</strong> Open for extension, closed for modification</li>
+<li><strong>Dependency Injection:</strong> WebDriver passed to constructors, configuration injected</li>
+<li><strong>Thread-Safety:</strong> ConcurrentHashMap for data collection, thread-local WebDriver</li>
+</ul>
+</section>
+
+<section class="content-section">
+<h2>Layer Interactions</h2>
+<p>Data flows through layers in a structured pattern:</p>
+<ol>
+<li><strong>Test → Page Object:</strong> Tests call page action methods</li>
+<li><strong>Page Object → Infrastructure:</strong> Page objects use WebDriver</li>
+<li><strong>Core → All Layers:</strong> Utilities and config used everywhere</li>
+<li><strong>Audit → Advisor:</strong> Findings request recommendations</li>
+<li><strong>Test → Data:</strong> Test steps auto-collect to BigQuery</li>
+</ol>
+</section>
+
+<section class="content-section">
+<h2>Core Components</h2>
+
+<h3>FW_CustomAssertJU</h3>
+<p>Central assertion engine with automatic screenshots and data collection.</p>
+<div class="code-block"><pre><code>// Core assertion flow
+public static void autoPass(WebDriver driver, String locator, String description) {
+    try {
+        WebElement element = findElement(driver, locator);
+        element.click();
+        captureScreenshot(driver, description);
+        collectTestStepData(description, "PASS");
+        logToAllure(description, Status.PASSED);
+    } catch (Exception e) {
+        captureScreenshot(driver, description);
+        collectTestStepData(description, "FAIL");
+        throw new AssertionError(description, e);
+    }
+}</code></pre></div>
+
+<h3>FW_ConfigMgr</h3>
+<p>Singleton configuration manager loading from testConfig.properties.</p>
+<div class="code-block"><pre><code>public class FW_ConfigMgr {
+    private static Properties config;
+    
+    // Lazy-load configuration
+    public static String getBrowser() {
+        return getProperty("browser", "chrome");
+    }
+    
+    // Centralized configuration access
+}</code></pre></div>
+
+<h3>FW_AuditManager</h3>
+<p>Singleton orchestrating all audit types (HTTP, Ping, Traceroute, SpeedTest).</p>
+
+<h3>FW_TestRunManager</h3>
+<p>Singleton managing active test runs with thread-safe tracking.</p>
+<div class="code-block"><pre><code>public class FW_TestRunManager {
+    private static FW_TestRunManager instance;
+    private ConcurrentHashMap&lt;String, FW_TestRun&gt; activeRuns;
+    
+    private FW_TestRunManager() {
+        activeRuns = new ConcurrentHashMap&lt;&gt;();
+    }
+    
+    public static synchronized FW_TestRunManager getInstance() {
+        if (instance == null) {
+            instance = new FW_TestRunManager();
+        }
+        return instance;
+    }
+}</code></pre></div>
+</section>
+
+<section class="content-section">
+<h2>Data Pipeline</h2>
+<ol>
+<li><strong>Test Step Complete:</strong> autoPass/autoFail called</li>
+<li><strong>Data Collection:</strong> FW_TestStepDataCollector queues step</li>
+<li><strong>Batch Processing:</strong> At threshold, writes to CSV</li>
+<li><strong>Post-Test:</strong> Maven triggers BigQuery upload</li>
+<li><strong>Cloud Storage:</strong> Data available in BigQuery</li>
+</ol>
+
+<div class="code-block"><pre><code>Test Execution
+    ↓
+FW_CustomAssertJU.autoPass()
+    ↓
+FW_TestStepDataCollector.addStep()
+    ↓
+Queue reaches threshold
+    ↓
+FW_TestStepDataProcessor.writeToCSV()
+    ↓
+Maven post-integration-test phase
+    ↓
+FW_GoogleCloudBigQueryUploader.upload()
+    ↓
+Data in BigQuery table</code></pre></div>
+</section>
+
+<section class="content-section">
+<h2>Extension Points</h2>
+
+<div class="card-grid">
+<div class="card">
+<h4>New Test Suites</h4>
+<p>Add <code>TS_*_JUnit.java</code> files extending base patterns.</p>
+</div>
+<div class="card">
+<h4>New Page Objects</h4>
+<p>Create <code>PO_*.java</code> classes extending <code>FW_Page</code>.</p>
+</div>
+<div class="card">
+<h4>New Utilities</h4>
+<p>Add <code>FW_*Utils.java</code> static utility classes.</p>
+</div>
+<div class="card">
+<h4>New Audit Types</h4>
+<p>Implement <code>FW_Audit_*.java</code> components.</p>
+</div>
+<div class="card">
+<h4>New Reporters</h4>
+<p>Create report generators following existing patterns.</p>
+</div>
+<div class="card">
+<h4>Advisor Templates</h4>
+<p>Add JSON templates in <code>resources/advisor/</code>.</p>
+</div>
+</div>
+</section>
+
+<section class="content-section">
+<h2>Adding New Features</h2>
+
+<h3>New Audit Type Example</h3>
+<div class="code-block"><pre><code>public class FW_Audit_NewType {
+    
+    public Object runAudit(String target, boolean verbose) {
+        // 1. Validate input
+        if (target == null || target.isEmpty()) {
+            return createErrorResult("Invalid target");
+        }
+        
+        // 2. Perform audit
+        AuditResult result = performAudit(target);
+        
+        // 3. Generate findings
+        List&lt;Finding&gt; findings = analyzeResults(result);
+        
+        // 4. Get recommendations from mAi Advisor
+        List&lt;Recommendation&gt; recs = FW_Advisor.getRecommendations(findings);
+        
+        // 5. Return formatted result
+        return formatResult(result, findings, recs, verbose);
+    }
+}</code></pre></div>
+
+<h3>Register with AuditManager</h3>
+<div class="code-block"><pre><code>// In FW_AuditManager
+private final FW_Audit_NewType auditNewType = new FW_Audit_NewType();
+
+public FW_Audit_NewType getAuditNewType() {
+    return auditNewType;
+}</code></pre></div>
+
+<h3>Feature Development Checklist</h3>
+<p><strong>1. Planning Phase:</strong></p>
+<ul>
+<li>☐ Define feature requirements</li>
+<li>☐ Identify affected layers</li>
+<li>☐ Design class structure</li>
+<li>☐ Plan test coverage</li>
+</ul>
+<p><strong>2. Implementation Phase:</strong></p>
+<ul>
+<li>☐ Create classes following naming conventions</li>
+<li>☐ Add mAi™ header to all files</li>
+<li>☐ Implement core functionality</li>
+<li>☐ Add error handling</li>
+<li>☐ Add logging/console output</li>
+<li>☐ Write JavaDoc comments</li>
+</ul>
+<p><strong>3. Testing Phase:</strong></p>
+<ul>
+<li>☐ Create test suite</li>
+<li>☐ Test happy path</li>
+<li>☐ Test error cases</li>
+<li>☐ Test thread-safety (if parallel)</li>
+</ul>
+<p><strong>4. Documentation Phase:</strong></p>
+<ul>
+<li>☐ Update relevant .md files</li>
+<li>☐ Add code examples</li>
+<li>☐ Generate JavaDocs</li>
+</ul>
+</section>
+
+<section class="content-section">
+<h2>Design Patterns</h2>
+
+<table class="data-table">
+<thead><tr><th>Pattern</th><th>Usage</th><th>Examples</th></tr></thead>
+<tbody>
+<tr><td><strong>Singleton</strong></td><td>Single instance managers</td><td>FW_ConfigMgr, FW_AuditManager, FW_TestRunManager</td></tr>
+<tr><td><strong>Page Object</strong></td><td>UI encapsulation</td><td>All PO_* classes</td></tr>
+<tr><td><strong>Factory</strong></td><td>Object creation</td><td>FW_Browser.createDriver()</td></tr>
+<tr><td><strong>Template Method</strong></td><td>Algorithm skeleton</td><td>FW_Audit base patterns, FW_TestSuite</td></tr>
+<tr><td><strong>Strategy</strong></td><td>Interchangeable algorithms</td><td>Audience-specific recommendations</td></tr>
+</tbody>
+</table>
+
+<h3>Factory Pattern Example</h3>
+<div class="code-block"><pre><code>public class FW_Driver {
+    public static WebDriver createDriver(String browser, boolean headless) {
+        return switch (browser) {
+            case "chrome" -&gt; createChromeDriver(headless);
+            case "firefox" -&gt; createFirefoxDriver(headless);
+            case "edge" -&gt; createEdgeDriver(headless);
+            default -&gt; throw new IllegalArgumentException("Unknown browser");
+        };
+    }
+}</code></pre></div>
+
+<h3>Template Method Pattern Example</h3>
+<div class="code-block"><pre><code>public abstract class FW_TestSuite {
+    // Template method
+    public final void runTest() {
+        setupSuite();
+        executeTests();
+        teardownSuite();
+    }
+    
+    // Hooks for subclasses
+    protected abstract void setupSuite();
+    protected abstract void executeTests();
+    protected abstract void teardownSuite();
+}</code></pre></div>
+</section>
+
+<section class="content-section">
+<h2>Code Conventions</h2>
+
+<h3>Naming Conventions</h3>
+<table class="data-table">
+<thead><tr><th>Type</th><th>Pattern</th><th>Example</th></tr></thead>
+<tbody>
+<tr><td>Framework Class</td><td><code>FW_&lt;Name&gt;</code></td><td>FW_ConfigMgr, FW_Driver</td></tr>
+<tr><td>Page Object</td><td><code>PO_&lt;Name&gt;</code></td><td>PO_LoginPage, PO_HomePage</td></tr>
+<tr><td>Test Suite</td><td><code>TS_&lt;Name&gt;_JUnit</code></td><td>TS_Login_JUnit</td></tr>
+<tr><td>Test Case</td><td><code>tc_&lt;description&gt;</code></td><td>tc_login_valid_user</td></tr>
+<tr><td>Button Locator</td><td><code>btn_&lt;name&gt;</code></td><td>btn_submit</td></tr>
+<tr><td>Text Field Locator</td><td><code>txt_&lt;name&gt;</code></td><td>txt_username</td></tr>
+<tr><td>Label Locator</td><td><code>lbl_&lt;name&gt;</code></td><td>lbl_welcome</td></tr>
+<tr><td>Link Locator</td><td><code>lnk_&lt;name&gt;</code></td><td>lnk_home</td></tr>
+<tr><td>Checkbox Locator</td><td><code>chk_&lt;name&gt;</code></td><td>chk_remember</td></tr>
+<tr><td>Dropdown Locator</td><td><code>drp_&lt;name&gt;</code></td><td>drp_country</td></tr>
+</tbody>
+</table>
+
+<h3>Package Organization</h3>
+<div class="code-block"><pre><code>src/test/java/
+├── framework/          # Framework classes
+│   ├── advisor/        # mAi Advisor
+│   ├── audits/         # Audit classes
+│   ├── automation/     # WebDriver classes
+│   ├── data/           # Data management
+│   ├── junit/          # JUnit extensions
+│   └── utilities/      # Utility classes
+├── pageobjects/        # Page Objects
+└── testsuites/         # Test Suites</code></pre></div>
+
+<h3>File Headers (mAi™ Methodology)</h3>
+<div class="code-block"><pre><code>// ===============================================================
+// @file: ClassName.java
+// @filepath: src/test/java/package/ClassName.java
+// @version: 1.0.0
+// @updated: 2025-10-30 02:00:00 PM CDT
+// @author: Your Name
+// @company: MissionWares
+//
+// @description:
+// Brief description of the class purpose and functionality.
+//
+// @dependencies:
+// - List of key dependencies
+// - External libraries used
+//
+// @methods:
+// - methodName(): Brief description
+// - anotherMethod(): Brief description
+//
+// @tags: category, feature, mAi™
+//
+// @changeLog:
+// Date        Author          Version  Description
+// ----------  --------------  -------  --------------------------
+// 2025-10-30  Your Name       1.0.0    Initial implementation
+// ===============================================================</code></pre></div>
+</section>
+
+<section class="content-section">
+<h2>Best Practices</h2>
+
+<h3>Code Quality</h3>
+<ul>
+<li>✅ <strong>Single Responsibility:</strong> Each class has one purpose</li>
+<li>✅ <strong>Dependency Injection:</strong> Pass dependencies, don't create them</li>
+<li>✅ <strong>Immutability:</strong> Prefer final fields and immutable objects</li>
+<li>✅ <strong>Fail Fast:</strong> Validate inputs early</li>
+<li>✅ <strong>Logging:</strong> Use appropriate log levels</li>
+<li>✅ <strong>Documentation:</strong> JavaDoc all public methods</li>
+<li>✅ <strong>Testing:</strong> Write unit tests for utilities</li>
+<li>✅ <strong>Thread Safety:</strong> Consider concurrent access</li>
+</ul>
+
+<h3>Error Handling</h3>
+<ul>
+<li>Use try-catch appropriately</li>
+<li>Provide meaningful error messages</li>
+<li>Log errors with context</li>
+<li>Clean up resources in finally blocks</li>
+</ul>
+
+<h3>Performance</h3>
+<ul>
+<li>Minimize WebDriver interactions</li>
+<li>Use implicit waits wisely</li>
+<li>Batch operations when possible</li>
+<li>Clean up resources promptly</li>
+</ul>
+
+<h3>SOLID Principles</h3>
+<ul>
+<li><strong>S</strong> - Single Responsibility</li>
+<li><strong>O</strong> - Open/Closed</li>
+<li><strong>L</strong> - Liskov Substitution</li>
+<li><strong>I</strong> - Interface Segregation</li>
+<li><strong>D</strong> - Dependency Inversion</li>
+</ul>
+</section>
+
+<section class="content-section">
+<h2>Quick Reference Card</h2>
+<p><em>Print this section!</em></p>
+
+<h3>Key Classes by Layer</h3>
+<div class="code-block"><pre><code>Layer 8: FW_GoogleCloudBigQueryUploader, FW_GoogleCloudStorageUploader
+Layer 7: FW_Advisor, FW_AdvisorEngine
+Layer 6: FW_Audit_HttpReview, FW_Audit_Ping
+Layer 5: FW_TestStepDataCollector, FW_TestStepDataProcessor
+Layer 4: FW_ConfigMgr, FW_Http, FW_DateTimeUtils
+Layer 3: FW_CustomAssertJU, FW_Driver, FW_Page
+Layer 2: PO_* (user-defined)
+Layer 1: FW_TestSuite, TS_*_JUnit (user-defined)</code></pre></div>
+
+<h3>Extension Points</h3>
+<div class="code-block"><pre><code>New Assertion:      FW_CustomAssertJU
+New Audit:          framework/audits/FW_Audit_*.java
+New Template:       framework/advisor/templates/
+New Utility:        framework/utilities/FW_*.java
+New Page Object:    pageobjects/PO_*.java</code></pre></div>
+
+<h3>Important Files</h3>
+<div class="code-block"><pre><code>Configuration:      src/test/resources/testConfig.properties
+Schemas:            src/test/java/framework/data/*Schema.json
+Templates:          src/test/java/framework/advisor/templates/
+Documentation:      src/test/java/framework/.docs/</code></pre></div>
+</section>
+
+<section class="content-section">
+<h2>Related Documentation</h2>
+<table class="data-table">
+<thead><tr><th>Document</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td><a href="Diagram-Architecture.html">Architecture Diagram</a></td><td>Visual architecture overview</td></tr>
+<tr><td><a href="Doc-Overview.html">Framework Overview</a></td><td>High-level introduction</td></tr>
+<tr><td><a href="Doc-mAi-Advisor.html">mAi Advisor™ System</a></td><td>Recommendation engine details</td></tr>
+<tr><td><a href="Guide-Reading-Order.html">Complete Reading Guide</a></td><td>Full documentation path</td></tr>
+<tr><td><a href="Guide-For-Test-Writers.html">Test Writer's Guide</a></td><td>Writing tests</td></tr>
+<tr><td><a href="Guide-For-DevOps.html">DevOps Guide</a></td><td>CI/CD integration</td></tr>
+</tbody>
+</table>
+</section>
+
+<footer class="doc-footer" id="doc-footer" data-pagefind-ignore></footer>
+</main>
+</div>
+<script src="docs-config.js"></script>
+<script src="docs-nav.js"></script>
+<script>DocsConfig.renderFooter('doc-footer');</script>
+</body>
+</html>

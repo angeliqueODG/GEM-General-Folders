@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Execution in VSCode - mAi™ Framework Documentation</title>
+    <link rel="stylesheet" href="docs-style.css">
+    <link rel="stylesheet" href="pagefind/pagefind-ui.css">
+    <script src="pagefind/pagefind-ui.js" defer></script>
+</head>
+<body>
+    <div class="layout">
+        <nav class="sidebar" id="sidebar" data-pagefind-ignore></nav>
+        <main class="main-content" data-pagefind-body>
+            <h1 data-pagefind-meta="title">Test Execution in VSCode</h1>
+            <p class="page-subtitle">Running test automation with Maven within Visual Studio Code</p>
+
+            <p>This guide covers various methods for executing tests within VSCode <a href="https://www.perplexity.ai/?q=Visual+Studio+Code+Java+development+setup" target="_blank" class="help-link" data-pagefind-ignore>?</a> and generating reports using Maven <a href="https://www.perplexity.ai/?q=Apache+Maven+build+tool+lifecycle" target="_blank" class="help-link" data-pagefind-ignore>?</a> and Allure <a href="https://www.perplexity.ai/?q=Allure+test+report+framework+features" target="_blank" class="help-link" data-pagefind-ignore>?</a>.</p>
+
+            <h2 id="vscode-setup">VSCode Setup</h2>
+
+            <h3>Required Extensions</h3>
+            <ul class="feature-list">
+                <li><strong>Java Extension Pack</strong> - Microsoft (Core Java support)</li>
+                <li><strong>Maven for Java</strong> - Microsoft (Maven integration)</li>
+                <li><strong>Test Runner for Java</strong> - Microsoft (Test execution UI)</li>
+                <li><strong>XML</strong> - Red Hat (POM file support)</li>
+            </ul>
+
+            <h3>Workspace Settings</h3>
+            <p>Ensure your <code>.vscode/settings.json</code> includes:</p>
+            <pre><code>{
+    "java.home": "/opt/homebrew/opt/openjdk/",
+    "java.configuration.updateBuildConfiguration": "automatic",
+    "java.debug.settings.onBuildFailureProceed": true
+}</code></pre>
+
+            <h2 id="running-tests">Running Tests via Maven</h2>
+
+            <h3>Method 1: Maven Sidebar</h3>
+            <ol>
+                <li>Open the automation project within VSCode</li>
+                <li>Right-click on the "Maven" section in the sidebar</li>
+                <li>Look for "Run Maven Commands" in the popup menu</li>
+                <li>Select <code>verify</code> to execute all tests and generate reports</li>
+            </ol>
+
+            <h3>Method 2: Terminal Commands</h3>
+            <p>Open the integrated terminal (<code>Terminal > New Terminal</code>) and run:</p>
+            <pre><code># Run all tests
+mvn verify
+
+# Run specific test suite
+mvn test -Dtest=TS_Authentication_JUnit
+
+# Run specific test method
+mvn test -Dtest=TS_Authentication_JUnit#testValidLogin
+
+# Run HTTP security assessment
+mvn test -Dtest=TS_HttpAssessment_JUnit
+
+# Run network diagnostics
+mvn test -Dtest=TS_Network_JUnit
+
+# Run with specific browser
+mvn test -Dbrowser=chrome
+
+# Run with custom configuration
+mvn test -DconfigFile=test-staging.properties</code></pre>
+
+            <h3>Method 3: Test Explorer</h3>
+            <ol>
+                <li>Open the Test Explorer sidebar (flask icon)</li>
+                <li>Navigate to your test classes</li>
+                <li>Click the play button next to: Package level (all tests), Class level (class tests), or Method level (single test)</li>
+            </ol>
+
+            <h3>Method 4: Code Lens</h3>
+            <p>With Java extensions installed, you'll see "Run Test" and "Debug Test" links above test classes and test methods. Click these to execute tests directly from the editor.</p>
+
+            <h2 id="maven-lifecycle">Maven Lifecycle Phases</h2>
+
+            <table>
+                <thead><tr><th>Phase</th><th>Description</th><th>Command</th></tr></thead>
+                <tbody>
+                    <tr><td><code>clean</code></td><td>Remove previous build artifacts</td><td><code>mvn clean</code></td></tr>
+                    <tr><td><code>compile</code></td><td>Compile source code</td><td><code>mvn compile</code></td></tr>
+                    <tr><td><code>test</code></td><td>Run unit tests</td><td><code>mvn test</code></td></tr>
+                    <tr><td><code>verify</code></td><td>Run integration tests</td><td><code>mvn verify</code></td></tr>
+                    <tr><td><code>site</code></td><td>Generate project documentation</td><td><code>mvn site</code></td></tr>
+                </tbody>
+            </table>
+
+            <h2 id="allure-report">Launching Allure Report</h2>
+
+            <h3>Generate and Open Report</h3>
+            <pre><code># 1. Navigate to project root
+cd ~/Documents/Development/Automation/Automation-Projects/Automation-JAV-mAi
+
+# 2. Run tests
+mvn verify
+
+# 3. Generate and open Allure report
+allure open
+
+# 4. Press Ctrl+C in terminal to stop the server</code></pre>
+
+            <h3>Alternative: Generate Static Report</h3>
+            <pre><code># Generate report without server
+allure generate --clean
+
+# Open in browser manually
+open allure-report/index.html</code></pre>
+
+            <h2 id="javadocs">Launching JavaDocs</h2>
+
+            <pre><code># Navigate to project root
+cd ~/Documents/Development/Automation/Automation-Projects/Automation-JAV-mAi
+
+# Generate JavaDocs
+mvn site
+
+# Open in Chrome
+open -a "Google Chrome" target/site/index.html
+
+# Or use default browser
+open target/site/index.html</code></pre>
+
+            <h2 id="debugging">Debugging Tests</h2>
+
+            <h3>Setting Breakpoints</h3>
+            <ol>
+                <li>Click in the gutter next to line numbers to set breakpoints</li>
+                <li>Right-click on test method and select "Debug Test"</li>
+                <li>Use Debug Console to inspect variables</li>
+            </ol>
+
+            <h3>Debug Configuration</h3>
+            <p>Create <code>.vscode/launch.json</code>:</p>
+            <pre><code>{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Debug Current Test",
+            "request": "launch",
+            "mainClass": "",
+            "projectName": "Automation-JAV-mAi"
+        }
+    ]
+}</code></pre>
+
+            <h3>Remote Debugging</h3>
+            <p>For Maven Surefire <a href="https://www.perplexity.ai/?q=Maven+Surefire+plugin+debugging+configuration" target="_blank" class="help-link" data-pagefind-ignore>?</a> debugging:</p>
+            <pre><code>mvn -Dmaven.surefire.debug test
+# Then attach debugger on port 5005</code></pre>
+
+            <h2 id="execution-options">Test Execution Options</h2>
+
+            <h3>Parallel Execution</h3>
+            <pre><code># Run tests in parallel
+mvn test -Djunit.jupiter.execution.parallel.enabled=true</code></pre>
+
+            <h3>Skip Tests</h3>
+            <pre><code># Build without running tests
+mvn install -DskipTests
+
+# Skip test compilation and execution
+mvn install -Dmaven.test.skip=true</code></pre>
+
+            <h3>Test Filtering</h3>
+            <pre><code># Run tests with specific tags
+mvn test -Dgroups="smoke"
+
+# Exclude tests with tags
+mvn test -DexcludedGroups="slow"</code></pre>
+
+            <h2 id="advanced-tests">Advanced Feature Tests</h2>
+
+            <h3>HTTP Security Assessment</h3>
+            <p>Run comprehensive HTTP security audits:</p>
+            <pre><code># Run HTTP assessment suite
+mvn test -Dtest=TS_HttpAssessment_JUnit
+
+# Run specific HTTP audit
+mvn test -Dtest=TS_HttpAssessment_JUnit#testHttpSecurityHeaders</code></pre>
+
+            <p>View HTTP diagnostic reports:</p>
+            <ul class="feature-list">
+                <li>Location: <code>target/http-reports/</code></li>
+                <li>HTML report with color-coded findings</li>
+                <li>Includes mAi Advisor™ recommendations</li>
+            </ul>
+
+            <h3>Network Diagnostics</h3>
+            <p>Run network connectivity and performance tests:</p>
+            <pre><code># Run all network tests
+mvn test -Dtest=TS_Network_JUnit
+
+# Run ping test only
+mvn test -Dtest=TS_Network_JUnit#testPing
+
+# Run traceroute only
+mvn test -Dtest=TS_Network_JUnit#testTraceroute
+
+# Run speed test only
+mvn test -Dtest=TS_Network_JUnit#testSpeedTest</code></pre>
+
+            <h2 id="cleaning">Cleaning Build Artifacts</h2>
+
+            <h3>Complete Clean</h3>
+            <pre><code># Remove all generated files
+mvn clean</code></pre>
+            <p>This removes: <code>target/</code> directory, test reports, compiled classes, JavaDocs, Allure results, and HTTP diagnostic reports.</p>
+
+            <h3>Selective Clean</h3>
+            <pre><code># Clean only Allure results
+rm -rf allure-results/
+
+# Clean only reports
+rm -rf allure-report/
+
+# Clean only JavaDocs
+rm -rf target/site/
+
+# Clean HTTP reports
+rm -rf target/http-reports/</code></pre>
+
+            <h2 id="troubleshooting">Common Issues and Solutions</h2>
+
+            <div class="callout callout-warning">
+                <div class="callout-title">⚠️ Maven Commands Not Found</div>
+                <p>Ensure Maven is in PATH and restart VSCode.</p>
+            </div>
+
+            <div class="callout callout-warning">
+                <div class="callout-title">⚠️ Tests Not Discovered</div>
+                <p>Refresh Java projects: <code>Cmd+Shift+P</code> → "Java: Reload Projects"</p>
+            </div>
+
+            <div class="callout callout-warning">
+                <div class="callout-title">⚠️ Allure Command Not Found</div>
+                <p>Install Allure via Homebrew: <code>brew install allure</code></p>
+            </div>
+
+            <div class="callout callout-warning">
+                <div class="callout-title">⚠️ Out of Memory Errors</div>
+                <p>Increase Maven memory: <code>export MAVEN_OPTS="-Xmx2048m"</code></p>
+            </div>
+
+            <div class="callout callout-warning">
+                <div class="callout-title">⚠️ HTTP Reports Not Generated</div>
+                <p>Ensure target directory exists and tests completed successfully.</p>
+            </div>
+
+            <h2 id="tips">Tips and Tricks</h2>
+
+            <h3>Quick Commands (Shell Aliases)</h3>
+            <p>Add to <code>~/.zshrc</code> or <code>~/.bash_profile</code>:</p>
+            <pre><code>alias test-all="mvn clean verify"
+alias test-smoke="mvn test -Dgroups=smoke"
+alias test-http="mvn test -Dtest=TS_HttpAssessment_JUnit"
+alias test-network="mvn test -Dtest=TS_Network_JUnit"
+alias report="allure open"
+alias docs="mvn site && open target/site/index.html"</code></pre>
+
+            <h3>VSCode Tasks</h3>
+            <p>Create <code>.vscode/tasks.json</code>:</p>
+            <pre><code>{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Run All Tests",
+            "type": "shell",
+            "command": "mvn clean verify",
+            "group": "test"
+        },
+        {
+            "label": "Run HTTP Assessment",
+            "type": "shell",
+            "command": "mvn test -Dtest=TS_HttpAssessment_JUnit",
+            "group": "test"
+        },
+        {
+            "label": "Run Network Tests",
+            "type": "shell",
+            "command": "mvn test -Dtest=TS_Network_JUnit",
+            "group": "test"
+        },
+        {
+            "label": "Generate Report",
+            "type": "shell",
+            "command": "allure open",
+            "group": "build"
+        }
+    ]
+}</code></pre>
+
+            <h2 id="next-steps">Next Steps</h2>
+            <table>
+                <thead><tr><th>Document</th><th>Description</th></tr></thead>
+                <tbody>
+                    <tr><td><a href="Doc-Test-Development.html">Test Development Guide</a></td><td>Writing tests</td></tr>
+                    <tr><td><a href="Diagram-Architecture.html">Framework Architecture</a></td><td>Visual overview</td></tr>
+                    <tr><td><a href="Doc-HTTP-Assessment.html">HTTP Assessment</a></td><td>Security auditing</td></tr>
+                    <tr><td><a href="Doc-Network-Diagnostics.html">Network Diagnostics</a></td><td>Network testing</td></tr>
+                    <tr><td><a href="Doc-mAi-Advisor.html">mAi Advisor™</a></td><td>Intelligent recommendations</td></tr>
+                </tbody>
+            </table>
+
+            <hr>
+            <footer class="doc-footer" id="doc-footer" data-pagefind-ignore></footer>
+        </main>
+    </div>
+
+    <script src="docs-config.js"></script>
+    <script src="docs-nav.js"></script>
+    <script src="docs-highlight.js"></script>
+    <script>DocsConfig.renderFooter('doc-footer');</script>
+</body>
+</html>

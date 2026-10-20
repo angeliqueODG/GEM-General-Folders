@@ -1,0 +1,115 @@
+# ===============================================================
+# @title mAi - AI Assist Configuration
+# @file aiassist_config.yaml
+# @version 1.2.0
+# @updated 2025-08-16 09:25:00 PM CDT
+# @author Greg Paskal
+# @company MissionWares
+#
+# @description
+# Configuration for the MissionWares AI Assist application.
+# Defines output directories, ignore patterns, and generation
+# settings for tree visualization, path listing, and context
+# file creation. This is the active configuration file used
+# by all AI Assist scripts in the framework.
+#
+# @sections
+# - Common Settings - Output directory and auto-clear options
+# - generate_tree - Project tree visualization configuration
+# - generate_paths - File path listing configuration
+# - generate_context - Context file generation configuration
+#
+# @dependencies
+# - yq (YAML processor for reading values)
+# - AI Assist script suite
+#
+# @tags mAi, configuration, settings, ai-assist, active-config
+#
+# @changeLog
+# Date        Author          Version  Description
+# ----------  --------------  -------  --------------------------
+# 2025-08-01  G. Paskal       1.0.0    Initial configuration
+# 2025-08-10  G. Paskal       1.1.0    Added ignore patterns
+# 2025-08-16  G. Paskal       1.2.0    Removed SampleData, fixed wildcards
+# ===============================================================
+
+# Project information (required by ConfigurationManager)
+project:
+  name: "Automation-JAV-GEM_QA2"
+  description: "Java Automation Project"
+  root_directory: "./"
+
+# Common output directory
+common_output_directory: ".missionwares/AiAssist/output"
+
+# Automatically clear the output directory before capturing new context.
+auto_clear_output_on_capture: true
+
+# Configuration for project documentation management
+documentation:
+  # Base directory for all project documentation
+  # Examples: ".docs", ".missionwares/AiAssist/documentation", "docs", "documentation"
+  base_directory: ".docs"
+  
+  # Auto-generate missing documentation files
+  auto_generate_missing: true
+  
+  # Documentation files to maintain
+  required_files:
+    - "README.md"
+    - "REQUIREMENTS.md"
+    - "ARCHITECTURE.md"
+    - "FEATURES.md"
+    - "ISSUES.md"
+    - "CHANGELOG.md"
+    - "API.md"
+    - "SETUP.md"
+  
+  # Assets subdirectory for images, diagrams, etc.
+  assets_directory: "assets"
+  
+  # Documentation versioning strategy
+  versioning:
+    enabled: true
+    track_changes: true
+    backup_on_major_updates: false
+
+# Configuration for rules generation
+generate_rules:
+  output_file: "AI_Instructions_and_Rules.md"
+  output_locations:
+    - path: "${common_output_directory}/rules"
+      save_timestamped_version: false
+
+# Configuration for generate_tree.sh
+generate_tree:
+  output_file: "tree.md"
+  # File extensions are now correctly formatted with wildcards (*.)
+  ignore_patterns: "target|extensions|.ai_assist|.missionwares|.git|.gitignore|.vscode|.allure|.archive|*.gif|*.jpg|*.jpeg|*.png|*.svg|*.afdesign|*.ttf|*.wav|*.zip|*.mmdb|allure-report|allure-results|.sftpignore|*.entitlements|*.xcassets|.DS_Store|SampleData|output|training_disabled|.private"
+  output_locations:
+    - path: "${common_output_directory}/tree"
+      save_timestamped_version: false
+
+# Configuration for generate_paths.sh
+generate_paths:
+  output_file: "paths.md"
+  # File extensions are now correctly formatted with wildcards (*.)
+  ignore_patterns: "target|extensions|.ai_assist|.missionwares|.git|.gitignore|.vscode|.allure|.archive|*.gif|*.jpg|*.jpeg|*.png|*.svg|*.afdesign|*.ttf|*.wav|*.zip|*.mmdb|allure-report|allure-results|.sftpignore|*.entitlements|*.xcassets|.DS_Store|SampleData|output|training_disabled|.private"
+  exclude_directories: true
+  output_locations:
+    - path: "${common_output_directory}/paths"
+      save_timestamped_version: false
+
+# Configuration for generate_context.sh
+generate_context:
+  output_file: "context.md"
+  maximum_line_length: 7000
+  output_locations:
+    - path: "${common_output_directory}/context"
+      save_timestamped_version: false
+ 
+# Configuration for consolidated
+generate_consolidated:
+  output_locations:
+    - path: "${common_output_directory}/consolidated"
+      save_timestamped_version: false

@@ -1,0 +1,3 @@
+"DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
+"","125223","TC - Claim Portal - Flight_Trip_Delay - TD Business Travel Visa","","Thu Dec 18 13:41:02 CAT 2025","passed","Thu Dec 18 13:43:07 CAT 2025","","TS_TD_Claim_Portal_Flight_Trip_Delay_JUnit","TS_TD_Claim_Portal_Flight_Trip_Delay_JUnit","tc_claim_portal_exploritory_td_business_travel_visa"
+"","245348","TC - Claim Portal - Trip Interruption - TD Business Travel Visa","","Thu Dec 18 13:44:58 CAT 2025","passed","Thu Dec 18 13:49:03 CAT 2025","","TS_TD_Trip_Interruption_JUnit","TS_TD_Trip_Interruption_JUnit","tc_claim_portal_exploritory_td_business_travel_visa"

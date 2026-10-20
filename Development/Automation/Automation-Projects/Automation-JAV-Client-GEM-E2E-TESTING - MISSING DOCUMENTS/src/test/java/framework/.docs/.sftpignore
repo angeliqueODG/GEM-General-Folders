@@ -1,0 +1,9 @@
+.vscode/
+.archive-md/
+.missionwares/
+.git/
+.gitignore
+.sftp.json
+.settings.json
+.DS_Store
+_support_files/

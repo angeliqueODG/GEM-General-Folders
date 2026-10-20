@@ -1,0 +1,24 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "bashdb",
+            "request": "launch",
+            "name": "autotools.sh",
+            "program": "${workspaceFolder}/autotools.sh"
+        },
+        {
+            "type": "bashdb",
+            "request": "launch",
+            "name": "app_install_auto_dev_for_java.sh",
+            "program": "${workspaceFolder}/framework/apps/app_install_auto_dev_for_java.sh",
+        },
+        {
+            "type": "bashdb",
+            "request": "launch",
+            "name": "app_analysis_of_installed_java.sh",
+            "program": "${workspaceFolder}/framework/apps/app_analysis_of_installed_java.sh",
+            "args": []
+        }
+    ]
+}

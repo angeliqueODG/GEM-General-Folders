@@ -1,0 +1,217 @@
+{
+  "metadata": {
+    "filename": "hsts-missing.json",
+    "filepath": "src/test/java/framework/advisor/templates/security/hsts-missing.json",
+    "version": "1.0.0",
+    "created": "2025-10-09",
+    "lastUpdated": "2025-10-09",
+    "author": "Greg Paskal",
+    "company": "MissionWares",
+    "methodology": "mAi™ (MissionWares® + AI)",
+    "description": "HTTP Strict Transport Security (HSTS) header missing finding template with comprehensive guidance for all audiences including framework-specific implementation code, testing strategies, and infrastructure deployment procedures for preventing protocol downgrade attacks.",
+    "aiGenerated": true,
+    "humanReviewed": false,
+    "reviewedBy": "Pending",
+    "approvedBy": "Pending",
+    "tags": ["hsts", "strict-transport-security", "security", "headers", "transport-security", "https", "protocol-downgrade"],
+    "relatedFindings": ["NO_HTTPS", "SSL_CERTIFICATE_EXPIRED", "WEAK_CIPHER", "TLS_VERSION_OLD"],
+    "estimatedRemediationTime": "1-2 hours",
+    "businessImpact": "HIGH",
+    "complianceRequirements": ["PCI-DSS 4.1", "SOC 2", "GDPR Article 32", "OWASP Top 10", "NIST 800-53"]
+  },
+  "findingId": "SEC-HSTS-001",
+  "findingType": "HSTS_MISSING",
+  "category": "SECURITY",
+  "severity": "HIGH",
+  "cveReferences": [
+    "CWE-319",
+    "CWE-523"
+  ],
+  "understanding": {
+    "EXECUTIVE": {
+      "summary": "Your website lacks HTTP Strict Transport Security (HSTS) headers, allowing attackers to force users' connections to downgrade from secure HTTPS to insecure HTTP, exposing sensitive data to interception.",
+      "businessRisk": "Man-in-the-middle attacks can intercept customer credentials, payment information, and personal data. SSL-stripping attacks bypass HTTPS protection. Brand reputation damage from security incidents. Potential compliance violations (PCI-DSS, GDPR) with fines up to 4% of annual revenue or $100,000+ per incident.",
+      "complianceImpact": "PCI-DSS 4.1 requires HSTS for payment processing. SOC 2 Type II requires transport security controls. GDPR Article 32 requires appropriate security measures. Missing HSTS may trigger mandatory breach notifications and regulatory audits.",
+      "priority": "HIGH"
+    },
+    "PROJECT_MANAGER": {
+      "summary": "Missing HSTS header allows protocol downgrade attacks where attackers force connections from HTTPS to HTTP, bypassing encryption and exposing user data.",
+      "timeline": "Low implementation complexity but high security impact. Can be deployed within current sprint without blocking other work. Requires coordination with infrastructure team for server configuration changes.",
+      "effort": "1-2 hours total: 30 minutes implementation, 30 minutes testing, 30 minutes deployment verification across all environments",
+      "dependencies": [
+        "Server configuration access (Nginx/Apache/IIS)",
+        "Valid HTTPS certificate already deployed",
+        "Ability to test header changes in staging",
+        "CDN configuration access if applicable"
+      ],
+      "blocking": [
+        "PCI-DSS compliance certification",
+        "SOC 2 audit completion",
+        "Security-sensitive feature releases",
+        "Customer data protection requirements"
+      ]
+    },
+    "DEVELOPER": {
+      "summary": "HSTS header instructs browsers to only connect via HTTPS for a specified duration, preventing protocol downgrade and SSL-stripping attacks.",
+      "technical": "The Strict-Transport-Security HTTP response header tells browsers to automatically upgrade all HTTP requests to HTTPS and refuse connections that don't use valid TLS. Format: Strict-Transport-Security: max-age=31536000; includeSubDomains; preload. Without HSTS, the first request to a site over HTTP is vulnerable to man-in-the-middle attacks before the redirect to HTTPS occurs.",
+      "vulnerability": "Protocol downgrade attack (CWE-319). Attackers on the network path can intercept the initial HTTP request and prevent the redirect to HTTPS, forcing all subsequent traffic to remain unencrypted. SSL-stripping tools automate this attack. Users clicking http:// links or typing domain names without https:// are vulnerable.",
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security",
+        "https://www.rfc-editor.org/rfc/rfc6797",
+        "https://owasp.org/www-project-secure-headers/#strict-transport-security",
+        "https://hstspreload.org/"
+      ]
+    },
+    "SECURITY_ENGINEER": {
+      "summary": "Missing HSTS enables protocol downgrade attacks, allowing man-in-the-middle interception of initial HTTP connections before HTTPS redirect.",
+      "vulnerability": "Protocol downgrade vulnerability (CWE-319, CWE-523). SSL-stripping attacks intercept HTTP traffic and prevent HTTPS upgrade. Browser's first connection to site is vulnerable even if server redirects to HTTPS. Network attackers can inject malicious content or steal session tokens during unencrypted initial connection.",
+      "attackVector": "Attacker positions on network path (public WiFi, compromised router, ISP-level). When user visits site via HTTP (typed domain, bookmark, http:// link), attacker intercepts request and proxies connection, stripping HTTPS and presenting HTTP to user while maintaining HTTPS to server. User sees normal site but all traffic is readable by attacker.",
+      "threatLevel": "HIGH - Active exploitation common on public networks. Automated tools (SSLstrip, BetterCAP) make attacks trivial. Users on public WiFi, hotels, airports, coffee shops are high-risk. 40% of users type domains without https://, exposing themselves to first-request vulnerability.",
+      "mitigationUrgency": "Immediate (within 24 hours). Deploy HSTS with minimum 6-month max-age. Implement across all subdomains. Consider HSTS preloading for maximum protection. One-time configuration with lasting protection."
+    },
+    "OPS_INFRASTRUCTURE": {
+      "summary": "HSTS header missing from server response configuration, allowing protocol downgrade attacks on production web servers.",
+      "technical": "Server (Nginx, Apache, IIS, CDN) not configured to send Strict-Transport-Security header. All HTTPS responses should include this header to instruct browsers to enforce HTTPS-only connections. Configuration is at web server or load balancer level, not application code.",
+      "scope": "All web servers, load balancers, reverse proxies, and CDN configurations serving HTTPS traffic. Applies to primary domain and all subdomains if includeSubDomains directive used. Must be configured at outermost edge of infrastructure (CDN or load balancer) to protect all traffic.",
+      "monitoring": "Verify HSTS header presence in production using curl or browser DevTools. Monitor for certificate expiration (HSTS with expired cert causes hard failure). Track HSTS max-age to ensure it doesn't expire. Alert on any HTTPS→HTTP downgrade attempts (shouldn't occur with HSTS). Test with SSL Labs for HSTS validation."
+    },
+    "QA_TESTER": {
+      "summary": "Missing HSTS header means automated security tests will fail and protocol downgrade vulnerabilities remain undetected until penetration testing.",
+      "testImplication": "Security scanning tools (OWASP ZAP, Burp Suite) will flag missing HSTS as HIGH severity. Compliance tests will fail. Cannot verify SSL-stripping protection. Manual testing required to confirm HTTPS enforcement. Browser DevTools won't show HSTS activation without header.",
+      "riskIfNotFixed": "Security audit failures. PCI-DSS compliance testing blocked. Penetration testers will demonstrate protocol downgrade attacks. User data exposed during testing on unsecured networks. Cannot certify transport security requirements met."
+    }
+  },
+  "actions": {
+    "DEVELOPER": {
+      "frameworks": {
+        "spring-boot": {
+          "code": "// Spring Boot Security Configuration\n// File: src/main/java/com/example/config/SecurityConfig.java\n\nimport org.springframework.context.annotation.Bean;\nimport org.springframework.context.annotation.Configuration;\nimport org.springframework.security.config.annotation.web.builders.HttpSecurity;\nimport org.springframework.security.web.SecurityFilterChain;\nimport org.springframework.security.web.header.writers.HstsHeaderWriter;\n\n@Configuration\npublic class SecurityConfig {\n\n    @Bean\n    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {\n        http\n            .headers(headers -> headers\n                .httpStrictTransportSecurity(hsts -> hsts\n                    .maxAgeInSeconds(31536000)  // 1 year\n                    .includeSubDomains(true)\n                    .preload(true)\n                )\n            );\n        return http.build();\n    }\n}\n\n// Alternative: application.properties\n// server.ssl.enabled=true\n// security.require-ssl=true",
+          "testCode": "// JUnit Test for HSTS Header\n// File: src/test/java/com/example/HstsHeaderTest.java\n\nimport org.junit.jupiter.api.Test;\nimport org.springframework.beans.factory.annotation.Autowired;\nimport org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;\nimport org.springframework.boot.test.context.SpringBootTest;\nimport org.springframework.test.web.servlet.MockMvc;\n\nimport static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;\nimport static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;\n\n@SpringBootTest\n@AutoConfigureMockMvc\npublic class HstsHeaderTest {\n\n    @Autowired\n    private MockMvc mockMvc;\n\n    @Test\n    public void shouldReturnHstsHeader() throws Exception {\n        mockMvc.perform(get(\"/\"))\n            .andExpect(status().isOk())\n            .andExpect(header().exists(\"Strict-Transport-Security\"))\n            .andExpect(header().string(\"Strict-Transport-Security\", \n                \"max-age=31536000; includeSubDomains; preload\"));\n    }\n}",
+          "dependencies": "// Maven (pom.xml)\n<dependency>\n    <groupId>org.springframework.boot</groupId>\n    <artifactId>spring-boot-starter-security</artifactId>\n</dependency>\n\n// Gradle (build.gradle)\nimplementation 'org.springframework.boot:spring-boot-starter-security'"
+        },
+        "express-nodejs": {
+          "code": "// Express.js with Helmet middleware\n// File: server.js or app.js\n\nconst express = require('express');\nconst helmet = require('helmet');\n\nconst app = express();\n\n// Enable HSTS with Helmet\napp.use(helmet.hsts({\n  maxAge: 31536000,        // 1 year in seconds\n  includeSubDomains: true, // Apply to all subdomains\n  preload: true            // Allow browser preload list inclusion\n}));\n\n// Alternative: Manual header setting\napp.use((req, res, next) => {\n  res.setHeader(\n    'Strict-Transport-Security',\n    'max-age=31536000; includeSubDomains; preload'\n  );\n  next();\n});\n\napp.listen(3000);",
+          "testCode": "// Jest/Supertest Test\n// File: tests/hsts.test.js\n\nconst request = require('supertest');\nconst app = require('../app');\n\ndescribe('HSTS Header', () => {\n  it('should return HSTS header on all responses', async () => {\n    const response = await request(app).get('/');\n    \n    expect(response.headers['strict-transport-security']).toBeDefined();\n    expect(response.headers['strict-transport-security'])\n      .toContain('max-age=31536000');\n    expect(response.headers['strict-transport-security'])\n      .toContain('includeSubDomains');\n  });\n});",
+          "dependencies": "# npm\nnpm install helmet\n\n# yarn\nyarn add helmet\n\n# package.json\n{\n  \"dependencies\": {\n    \"helmet\": \"^7.0.0\",\n    \"express\": \"^4.18.0\"\n  }\n}"
+        },
+        "asp-net-core": {
+          "code": "// ASP.NET Core Startup Configuration\n// File: Startup.cs or Program.cs (.NET 6+)\n\nusing Microsoft.AspNetCore.HttpsPolicy;\n\npublic class Startup\n{\n    public void ConfigureServices(IServiceCollection services)\n    {\n        services.AddHsts(options =>\n        {\n            options.Preload = true;\n            options.IncludeSubDomains = true;\n            options.MaxAge = TimeSpan.FromDays(365);\n        });\n        \n        services.AddHttpsRedirection(options =>\n        {\n            options.HttpsPort = 443;\n        });\n    }\n\n    public void Configure(IApplicationBuilder app)\n    {\n        app.UseHsts();\n        app.UseHttpsRedirection();\n    }\n}\n\n// .NET 6+ Minimal API (Program.cs)\nvar builder = WebApplication.CreateBuilder(args);\nbuilder.Services.AddHsts(options =>\n{\n    options.Preload = true;\n    options.IncludeSubDomains = true;\n    options.MaxAge = TimeSpan.FromDays(365);\n});\n\nvar app = builder.Build();\napp.UseHsts();\napp.UseHttpsRedirection();\napp.Run();",
+          "testCode": "// xUnit Test\n// File: Tests/HstsHeaderTests.cs\n\nusing Microsoft.AspNetCore.Mvc.Testing;\nusing Xunit;\n\npublic class HstsHeaderTests : IClassFixture<WebApplicationFactory<Program>>\n{\n    private readonly WebApplicationFactory<Program> _factory;\n\n    public HstsHeaderTests(WebApplicationFactory<Program> factory)\n    {\n        _factory = factory;\n    }\n\n    [Fact]\n    public async Task GetRequest_ReturnsHstsHeader()\n    {\n        var client = _factory.CreateClient();\n        var response = await client.GetAsync(\"/\");\n        \n        Assert.True(response.Headers.Contains(\"Strict-Transport-Security\"));\n        var hstsHeader = response.Headers.GetValues(\"Strict-Transport-Security\").First();\n        Assert.Contains(\"max-age=31536000\", hstsHeader);\n        Assert.Contains(\"includeSubDomains\", hstsHeader);\n    }\n}",
+          "dependencies": "// No additional packages required\n// Built into ASP.NET Core"
+        }
+      },
+      "verificationSteps": [
+        "1. Deploy changes to staging/test environment",
+        "2. Open browser DevTools (F12) → Network tab",
+        "3. Navigate to your site (ensure HTTPS)",
+        "4. Click any request → Response Headers section",
+        "5. Verify 'Strict-Transport-Security' header present",
+        "6. Confirm value: 'max-age=31536000; includeSubDomains; preload'",
+        "7. Test in multiple browsers (Chrome, Firefox, Safari, Edge)",
+        "8. Use curl to verify: curl -I https://yourdomain.com | grep -i strict",
+        "9. Verify SSL Labs test: https://www.ssllabs.com/ssltest/",
+        "10. Check Security Headers: https://securityheaders.com/",
+        "11. Clear browser cache and re-test (ensure header persists)",
+        "12. Test subdomain if using includeSubDomains directive"
+      ],
+      "estimatedEffort": "1-2 hours"
+    },
+    "OPS_INFRASTRUCTURE": {
+      "servers": {
+        "nginx": {
+          "config": "# Nginx Configuration\n# File: /etc/nginx/nginx.conf or /etc/nginx/sites-available/default\n\nserver {\n    listen 443 ssl http2;\n    server_name yourdomain.com;\n\n    # SSL Certificate Configuration\n    ssl_certificate /path/to/certificate.crt;\n    ssl_certificate_key /path/to/private.key;\n\n    # HSTS Header (add to https server block only)\n    add_header Strict-Transport-Security \"max-age=31536000; includeSubDomains; preload\" always;\n\n    # Optional: Redirect HTTP to HTTPS\n    # (place in separate server block for port 80)\n}\n\nserver {\n    listen 80;\n    server_name yourdomain.com;\n    return 301 https://$server_name$request_uri;\n}",
+          "reload": "# Test configuration syntax\nsudo nginx -t\n\n# Reload Nginx (no downtime)\nsudo nginx -s reload\n\n# OR restart Nginx service\nsudo systemctl reload nginx\n\n# Verify process\nsudo systemctl status nginx",
+          "verify": "# Verify HSTS header is present\ncurl -I https://yourdomain.com | grep -i strict-transport-security\n\n# Expected output:\n# Strict-Transport-Security: max-age=31536000; includeSubDomains; preload"
+        },
+        "apache": {
+          "config": "# Apache Configuration\n# File: /etc/apache2/sites-available/000-default-ssl.conf or httpd.conf\n\n<VirtualHost *:443>\n    ServerName yourdomain.com\n    \n    # SSL Configuration\n    SSLEngine on\n    SSLCertificateFile /path/to/certificate.crt\n    SSLCertificateKeyFile /path/to/private.key\n    \n    # HSTS Header (only in SSL virtual host)\n    Header always set Strict-Transport-Security \"max-age=31536000; includeSubDomains; preload\"\n</VirtualHost>\n\n# HTTP to HTTPS Redirect\n<VirtualHost *:80>\n    ServerName yourdomain.com\n    Redirect permanent / https://yourdomain.com/\n</VirtualHost>",
+          "enable": "# Enable required Apache modules\nsudo a2enmod ssl\nsudo a2enmod headers\nsudo a2enmod rewrite\n\n# Enable SSL site\nsudo a2ensite 000-default-ssl\n\n# Test configuration\nsudo apache2ctl configtest\n\n# Reload Apache\nsudo systemctl reload apache2",
+          "verify": "# Verify HSTS header\ncurl -I https://yourdomain.com | grep -i strict-transport-security\n\n# Check Apache error logs if issues\nsudo tail -f /var/log/apache2/error.log"
+        },
+        "cloudflare": {
+          "config": "# Cloudflare Dashboard Configuration\n# 1. Log into Cloudflare dashboard\n# 2. Select your domain\n# 3. Navigate to: SSL/TLS → Edge Certificates\n# 4. Scroll to 'HTTP Strict Transport Security (HSTS)'\n# 5. Click 'Enable HSTS'\n# 6. Configure settings:\n#    - Status: On\n#    - Max-Age: 12 months (31536000 seconds)\n#    - Apply HSTS to subdomains: Yes\n#    - Preload: Yes (if ready for HSTS preload list)\n#    - No-Sniff Header: Yes\n# 7. Read and acknowledge the warning\n# 8. Click 'Save'\n\n# Note: Ensure valid SSL certificate is active before enabling HSTS\n# Cloudflare will automatically add the header to all HTTPS responses",
+          "verify": "# Verify through Cloudflare dashboard or curl\ncurl -I https://yourdomain.com | grep -i strict-transport-security\n\n# Expected output:\nstrict-transport-security: max-age=31536000; includeSubDomains; preload"
+        },
+        "aws-elb": {
+          "config": "# AWS Application Load Balancer - Add HSTS header\n# Using AWS CLI:\n\naws elbv2 modify-listener --listener-arn <listener-arn> \\\n  --default-actions Type=forward,TargetGroupArn=<target-group-arn> \\\n  --alpn-policy HTTP2Preferred\n\n# Add custom header using Lambda@Edge or CloudFront:\n# 1. Create Lambda function to add HSTS header\n# 2. Associate with CloudFront distribution\n# 3. Or configure in ALB target group attributes\n\n# Alternative: Configure at application level (recommended)\n# See Developer framework examples above",
+          "verify": "# Test from outside AWS\ncurl -I https://yourdomain.com | grep -i strict\n\n# Check ALB logs in S3 or CloudWatch"
+        }
+      },
+      "verificationSteps": [
+        "1. Test configuration syntax before applying changes",
+        "2. Apply changes to staging environment first",
+        "3. Verify HSTS header with curl: curl -I https://yourdomain.com",
+        "4. Test in browser DevTools → Network tab → Response Headers",
+        "5. Validate with SSL Labs: https://www.ssllabs.com/ssltest/",
+        "6. Check Security Headers: https://securityheaders.com/",
+        "7. Test subdomain access if using includeSubDomains",
+        "8. Monitor error logs for any issues",
+        "9. Verify across all environments (dev, staging, prod)",
+        "10. Document change in change management system"
+      ],
+      "rollbackPlan": "1. Comment out HSTS header line in configuration file\n2. Reload/restart web server\n3. Verify header removed with curl\n4. Note: Browsers cache HSTS for max-age duration\n5. Users may need to clear browser HSTS cache manually\n6. Chrome: chrome://net-internals/#hsts → Delete domain\n7. Firefox: Delete site-specific settings\n8. Rollback should be avoided - only if certificate invalid",
+      "estimatedEffort": "1-2 hours"
+    },
+    "QA_TESTER": {
+      "manualTests": [
+        {
+          "name": "HSTS Header Presence Test",
+          "steps": [
+            "1. Open browser (Chrome, Firefox, Safari, Edge)",
+            "2. Press F12 to open Developer Tools",
+            "3. Navigate to Network tab",
+            "4. Visit https://yourdomain.com",
+            "5. Click on the document request (usually first in list)",
+            "6. View Response Headers section",
+            "7. Locate 'Strict-Transport-Security' header",
+            "8. Verify value contains: 'max-age=31536000'",
+            "9. Verify value contains: 'includeSubDomains'",
+            "10. Verify value contains: 'preload' (if applicable)"
+          ],
+          "expected": "Header 'Strict-Transport-Security: max-age=31536000; includeSubDomains; preload' is present in all HTTPS responses"
+        },
+        {
+          "name": "HTTP to HTTPS Redirect Test",
+          "steps": [
+            "1. Type http://yourdomain.com in browser address bar",
+            "2. Press Enter",
+            "3. Observe browser behavior",
+            "4. Check address bar after page loads",
+            "5. Verify URL shows https:// (not http://)",
+            "6. Check Network tab for redirect chain",
+            "7. Verify 301 or 302 redirect from HTTP to HTTPS"
+          ],
+          "expected": "Browser automatically redirects from http:// to https:// and HSTS header enforces HTTPS-only connections"
+        },
+        {
+          "name": "Subdomain HSTS Inheritance Test",
+          "steps": [
+            "1. Visit https://subdomain.yourdomain.com",
+            "2. Check Developer Tools → Network → Response Headers",
+            "3. Verify HSTS header present on subdomain",
+            "4. Try accessing http://subdomain.yourdomain.com",
+            "5. Verify automatic upgrade to HTTPS"
+          ],
+          "expected": "If 'includeSubDomains' directive used, all subdomains inherit HSTS policy and enforce HTTPS"
+        }
+      ],
+      "automatedTests": {
+        "tool": "Selenium WebDriver",
+        "example": "// Selenium Test Example (Java)\nimport org.openqa.selenium.WebDriver;\nimport org.openqa.selenium.chrome.ChromeDriver;\nimport org.openqa.selenium.devtools.DevTools;\nimport org.openqa.selenium.devtools.v120.network.Network;\nimport org.junit.Test;\nimport static org.junit.Assert.*;\n\npublic class HstsHeaderTest {\n    \n    @Test\n    public void testHstsHeaderPresent() {\n        WebDriver driver = new ChromeDriver();\n        DevTools devTools = ((ChromeDriver) driver).getDevTools();\n        devTools.createSession();\n        \n        List<String> hstsHeaders = new ArrayList<>();\n        devTools.send(Network.enable(Optional.empty(), Optional.empty(), Optional.empty()));\n        \n        devTools.addListener(Network.responseReceived(), response -> {\n            response.getResponse().getHeaders().forEach((key, value) -> {\n                if (key.equalsIgnoreCase(\"Strict-Transport-Security\")) {\n                    hstsHeaders.add(value.toString());\n                }\n            });\n        });\n        \n        driver.get(\"https://yourdomain.com\");\n        \n        assertFalse(\"HSTS header not found\", hstsHeaders.isEmpty());\n        assertTrue(\"HSTS max-age incorrect\", \n            hstsHeaders.get(0).contains(\"max-age=31536000\"));\n        assertTrue(\"includeSubDomains missing\", \n            hstsHeaders.get(0).contains(\"includeSubDomains\"));\n        \n        driver.quit();\n    }\n}"
+      },
+      "edgeCases": [
+        "Test on different browsers (Chrome, Firefox, Safari, Edge)",
+        "Test on mobile devices (iOS Safari, Android Chrome)",
+        "Verify behavior with expired SSL certificate (should fail hard)",
+        "Test with self-signed certificate in development",
+        "Verify HSTS preload list inclusion (if preload directive used)",
+        "Test behavior after max-age expiration (requires time manipulation)",
+        "Verify HSTS works with CDN (Cloudflare, Akamai, Fastly)",
+        "Test subdomain access with and without includeSubDomains",
+        "Verify HSTS survives browser cache clear",
+        "Test with browser HSTS cache manipulation (chrome://net-internals/#hsts)"
+      ],
+      "estimatedEffort": "2-3 hours"
+    }
+  }
+}

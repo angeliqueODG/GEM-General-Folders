@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTTP Security Assessment - mAi™ Framework Documentation</title>
+    <link rel="stylesheet" href="docs-style.css">
+    <link rel="stylesheet" href="pagefind/pagefind-ui.css">
+    <script src="pagefind/pagefind-ui.js" defer></script>
+</head>
+<body>
+    <div class="layout">
+        <nav class="sidebar" id="sidebar" data-pagefind-ignore></nav>
+        <main class="main-content" data-pagefind-body>
+            <h1 data-pagefind-meta="title">HTTP Security Assessment</h1>
+            <p class="page-subtitle">Automated vulnerability detection and security analysis for web applications</p>
+
+            <h2 id="introduction">Introduction</h2>
+            <p>The HTTP Security Assessment system is the framework's automated vulnerability detection capability that performs deep security analysis of web applications and APIs. It captures complete HTTP transactions, analyzes security headers <a href="https://www.perplexity.ai/?q=HTTP+security+headers+best+practices" target="_blank" class="help-link" data-pagefind-ignore>?</a>, validates SSL/TLS certificates <a href="https://www.perplexity.ai/?q=SSL+TLS+certificate+validation" target="_blank" class="help-link" data-pagefind-ignore>?</a>, assesses cookie security, measures performance, and generates comprehensive diagnostic reports.</p>
+
+            <h3>Key Capabilities</h3>
+            <ul class="feature-list">
+                <li><strong>35+ Security Checks</strong> - Headers, SSL, cookies, CORS, CSP analysis</li>
+                <li><strong>Automated Detection</strong> - HSTS, XSS protection, clickjacking vulnerabilities</li>
+                <li><strong>Performance Profiling</strong> - Response times, compression, caching metrics</li>
+                <li><strong>Compliance Analysis</strong> - PCI-DSS, GDPR, OWASP alignment</li>
+                <li><strong>mAi Advisor™ Integration</strong> - Actionable, role-specific guidance</li>
+                <li><strong>18 Report Configurations</strong> <span class="badge badge-new">v2.2.0</span> - 3 depth levels × 6 audience types</li>
+                <li><strong>HTML Reports with Help Links</strong> <span class="badge badge-new">v3.0.0</span> - Dual MD+HTML output with Perplexity.ai</li>
+            </ul>
+
+            <h2 id="architecture">Architecture Components</h2>
+            <p>The HTTP assessment system consists of 6 core components:</p>
+
+            <table>
+                <thead><tr><th>Component</th><th>Purpose</th></tr></thead>
+                <tbody>
+                    <tr><td><code>FW_AuditManager</code></td><td>Central audit orchestration hub (singleton)</td></tr>
+                    <tr><td><code>FW_Audit_HttpReview</code></td><td>Core HTTP analysis engine (7 phases)</td></tr>
+                    <tr><td><code>FW_HttpExecutor</code></td><td>HTTP transaction capture</td></tr>
+                    <tr><td><code>FW_Http</code></td><td>HTTP transaction data model (9 sections)</td></tr>
+                    <tr><td><code>FW_HttpDiagnosticReporter</code></td><td>HTML/Markdown diagnostic reports</td></tr>
+                    <tr><td><code>FW_HttpReporter</code></td><td>Configurable summary reports (v2.2.0)</td></tr>
+                    <tr><td><code>FW_HtmlReportGenerator</code></td><td>HTML reports with help links (v3.0.0)</td></tr>
+                </tbody>
+            </table>
+
+            <h3>Analysis Phases</h3>
+            <ol>
+                <li>Network &amp; Geolocation</li>
+                <li>TLS &amp; Certificate validation</li>
+                <li>Security header analysis</li>
+                <li>Cookie security assessment</li>
+                <li>Redirect chain inspection</li>
+                <li>Performance profiling</li>
+                <li>Compliance checking</li>
+            </ol>
+
+            <h2 id="report-configuration">Report Configuration <span class="badge badge-new">NEW v2.2.0</span></h2>
+            <p>The reporting system offers <strong>18 different report configurations</strong> through two independent controls.</p>
+
+            <h3>Report Depth Levels</h3>
+            <table>
+                <thead><tr><th>Depth</th><th>Size</th><th>Content</th><th>Use Cases</th></tr></thead>
+                <tbody>
+                    <tr><td><strong>EXECUTIVE</strong></td><td>~1,800 chars, &lt;1 page</td><td>Critical/High findings only, top 3 recommendations</td><td>Board presentations, executive briefings</td></tr>
+                    <tr><td><strong>STANDARD</strong> <span class="badge">DEFAULT</span></td><td>~12,000 chars, ~3 pages</td><td>All 11 sections, complete findings, mAi Advisor™</td><td>Daily development, security audits</td></tr>
+                    <tr><td><strong>COMPREHENSIVE</strong></td><td>~13,000 chars, ~4 pages</td><td>All STANDARD + raw request/response data</td><td>Debugging, forensic analysis</td></tr>
+                </tbody>
+            </table>
+
+            <h3>Audience Configuration</h3>
+            <table>
+                <thead><tr><th>Audience</th><th>Focus</th><th>Receives</th></tr></thead>
+                <tbody>
+                    <tr><td><strong>DEVELOPER</strong></td><td>Technical implementation</td><td>Code examples, testing approaches</td></tr>
+                    <tr><td><strong>SECURITY_ENGINEER</strong></td><td>Threat analysis</td><td>Attack vectors, compliance requirements</td></tr>
+                    <tr><td><strong>PROJECT_MANAGER</strong></td><td>Planning &amp; coordination</td><td>Effort estimates, sprint planning</td></tr>
+                    <tr><td><strong>EXECUTIVE</strong></td><td>Business impact</td><td>Risk assessment, cost estimates</td></tr>
+                    <tr><td><strong>OPS_INFRASTRUCTURE</strong></td><td>Deployment &amp; operations</td><td>Server configs, deployment procedures</td></tr>
+                    <tr><td><strong>QA_TESTER</strong></td><td>Testing strategies</td><td>Test cases, validation procedures</td></tr>
+                </tbody>
+            </table>
+
+            <h2 id="what-gets-audited">What Gets Audited</h2>
+
+            <h3>Security Headers (12 Types)</h3>
+            <p><strong>Critical:</strong> Strict-Transport-Security (HSTS), Content-Security-Policy (CSP), X-Frame-Options, X-Content-Type-Options</p>
+            <p><strong>Important:</strong> X-XSS-Protection, Referrer-Policy, Permissions-Policy, Cross-Origin-* (CORS)</p>
+
+            <h3>SSL/TLS Configuration</h3>
+            <ul class="feature-list">
+                <li>Certificate chain integrity and expiration</li>
+                <li>TLS protocol version (1.2, 1.3)</li>
+                <li>Cipher suite strength</li>
+                <li>Self-signed certificate detection</li>
+            </ul>
+
+            <h3>Cookie Security</h3>
+            <ul class="feature-list">
+                <li><strong>Secure flag</strong> - HTTPS-only transmission</li>
+                <li><strong>HttpOnly flag</strong> - JavaScript access prevention</li>
+                <li><strong>SameSite policy</strong> - CSRF protection</li>
+            </ul>
+
+            <h3>Performance Metrics</h3>
+            <table>
+                <thead><tr><th>Metric</th><th>Good</th><th>Warning</th><th>Slow</th></tr></thead>
+                <tbody>
+                    <tr><td>DNS Resolution</td><td>&lt;100ms</td><td>100-500ms</td><td>&gt;500ms</td></tr>
+                    <tr><td>Connection</td><td>&lt;200ms</td><td>200-1000ms</td><td>&gt;1000ms</td></tr>
+                    <tr><td>Time to First Byte</td><td>&lt;500ms</td><td>500-2000ms</td><td>&gt;2000ms</td></tr>
+                </tbody>
+            </table>
+
+            <h3>Compliance Checking</h3>
+            <p>Standards analyzed: OWASP Top 10 <a href="https://www.perplexity.ai/?q=OWASP+Top+10+security+risks" target="_blank" class="help-link" data-pagefind-ignore>?</a>, PCI-DSS <a href="https://www.perplexity.ai/?q=PCI-DSS+compliance+requirements" target="_blank" class="help-link" data-pagefind-ignore>?</a>, GDPR <a href="https://www.perplexity.ai/?q=GDPR+data+protection+requirements" target="_blank" class="help-link" data-pagefind-ignore>?</a>, NIST TLS standards.</p>
+
+            <h2 id="running-audits">Running HTTP Audits</h2>
+
+            <h3>Using Test Suite (Recommended)</h3>
+            <pre><code>@Test
+@Tag("audit")
+@DisplayName("TC - Audit - HttpReview - www.saucedemo.com")
+public void tc_audit_httpreview_www_saucedemo_com() {
+    String url = "https://www.saucedemo.com/v1/";
+    FW_CustomAssertJU.autoPass(
+        FW_AuditManager.INSTANCE.getAuditHttpReview()
+            .runAuditHttpReview(url, true)
+    );
+}</code></pre>
+
+            <h3>Using FW_AuditManager API</h3>
+            <pre><code>// Simple audit (default: STANDARD depth, DEVELOPER audience)
+FW_AuditManager.INSTANCE.performHttpAudit("https://example.com");
+
+// With verbose output
+FW_Http http = FW_AuditManager.INSTANCE.performHttpAudit(
+    "https://example.com", 
+    true  // verbose console output
+);
+
+// Access results
+System.out.println("Security Score: " + http.getSecurityScore());
+System.out.println("Critical Findings: " + http.getCriticalFindingsCount());</code></pre>
+
+            <h3>Configuring Report Depth and Audience</h3>
+            <pre><code>FW_Http http = FW_AuditManager.INSTANCE.performHttpAudit(url, false);
+FW_HttpReporter reporter = new FW_HttpReporter();
+
+// Configure depth and audience
+reporter.setReportDepth(FW_HttpReporter.ReportDepth.EXECUTIVE);
+reporter.setTargetAudience(FW_AdvisorAudience.EXECUTIVE);
+
+// Generate report
+String report = reporter.generateReport(http);
+
+// Save to file
+Files.write(
+    Paths.get("target/http-reports/executive-summary.md"),
+    report.getBytes(StandardCharsets.UTF_8)
+);</code></pre>
+
+            <h2 id="common-configurations">Common Report Configurations</h2>
+
+            <table>
+                <thead><tr><th>Purpose</th><th>Depth</th><th>Audience</th><th>Result</th></tr></thead>
+                <tbody>
+                    <tr><td>Executive Summary</td><td>EXECUTIVE</td><td>EXECUTIVE</td><td>1-page business impact summary</td></tr>
+                    <tr><td>Developer Deep Dive</td><td>COMPREHENSIVE</td><td>DEVELOPER</td><td>4-page technical analysis with raw data</td></tr>
+                    <tr><td>Security Audit</td><td>STANDARD</td><td>SECURITY_ENGINEER</td><td>3-page security-focused analysis</td></tr>
+                    <tr><td>Operations Deployment</td><td>STANDARD</td><td>OPS_INFRASTRUCTURE</td><td>3-page ops guide with server configs</td></tr>
+                    <tr><td>QA Test Planning</td><td>STANDARD</td><td>QA_TESTER</td><td>3-page testing strategy with test cases</td></tr>
+                    <tr><td>Project Planning</td><td>STANDARD</td><td>PROJECT_MANAGER</td><td>3-page planning guide with effort estimates</td></tr>
+                </tbody>
+            </table>
+
+            <h2 id="understanding-reports">Understanding Reports</h2>
+
+            <h3>Color-Coded Findings</h3>
+            <ul class="feature-list">
+                <li>🔴 <strong>Red (Critical)</strong> - Immediate action required</li>
+                <li>🟠 <strong>Orange (High)</strong> - Address within 1 week</li>
+                <li>🟡 <strong>Yellow (Medium)</strong> - Address within 1 month</li>
+                <li>🔵 <strong>Blue (Low)</strong> - Address when convenient</li>
+                <li>⚪ <strong>White (Info)</strong> - Informational only</li>
+            </ul>
+
+            <div class="callout callout-info">
+                <div class="callout-title">ℹ️ Understanding "0 Recommendations"</div>
+                <p>This is correct behavior, not an error! mAi Advisor™ templates target specific audiences. Some findings primarily affect developers (implementation), so Security/Executive audiences may not get implementation-level recommendations. This ensures relevant guidance only.</p>
+            </div>
+
+            <h2 id="configuration">Configuration Options</h2>
+            <p>Configure audit behavior in <code>testConfig.properties</code>:</p>
+            <pre><code># HTTP Audit Configuration
+http.followRedirects=true
+http.maxRedirects=10
+http.connectionTimeout=30000
+http.readTimeout=60000
+http.userAgent=Mozilla/5.0 (MissionWares Audit Bot)
+
+# Report Generation
+http.generateHtmlReport=true
+http.generateMarkdownReport=true
+http.reportOutputPath=target/http-reports/
+
+# Report Configuration (NEW in v2.2.0)
+http.report.defaultDepth=STANDARD
+http.report.defaultAudience=DEVELOPER
+
+# mAi Advisor™ Integration
+advisorEnabled=true
+advisorDefaultAudience=DEVELOPER
+advisorIncludeCodeExamples=true</code></pre>
+
+            <h2 id="troubleshooting">Troubleshooting</h2>
+
+            <div class="callout callout-warning">
+                <div class="callout-title">⚠️ Connection timeout</div>
+                <p><strong>Cause:</strong> Target server unreachable. <strong>Solution:</strong> Increase <code>http.connectionTimeout</code></p>
+            </div>
+
+            <div class="callout callout-warning">
+                <div class="callout-title">⚠️ SSL handshake failed</div>
+                <p><strong>Cause:</strong> Certificate validation failure. <strong>Solution:</strong> Check certificate chain, update trust store</p>
+            </div>
+
+            <div class="callout callout-warning">
+                <div class="callout-title">⚠️ No findings generated</div>
+                <p><strong>Cause:</strong> No security issues detected. <strong>Solution:</strong> This is good! The site is secure.</p>
+            </div>
+
+            <div class="callout callout-warning">
+                <div class="callout-title">⚠️ 0 recommendations</div>
+                <p><strong>Cause:</strong> Audience filtering working correctly. <strong>Solution:</strong> Expected behavior for coordinator audiences</p>
+            </div>
+
+            <h3>Debugging Techniques</h3>
+            <pre><code>// Enable verbose output
+FW_Http http = FW_AuditManager.INSTANCE.performHttpAudit(url, true);
+
+// Check FW_Http Object
+System.out.println("Valid: " + http.isValid());
+System.out.println("Complete: " + http.isResponseComplete());
+System.out.println("Has Error: " + http.hasError());
+
+// Verify report configuration
+System.out.println("Depth: " + reporter.getReportDepth());
+System.out.println("Audience: " + reporter.getTargetAudience());</code></pre>
+
+            <h2 id="best-practices">Best Practices</h2>
+
+            <h3>Choose Depth Based on Purpose</h3>
+            <ul class="feature-list">
+                <li><strong>EXECUTIVE</strong> - Daily standups, quick status checks, leadership briefings</li>
+                <li><strong>STANDARD</strong> - Sprint reviews, technical discussions, team meetings</li>
+                <li><strong>COMPREHENSIVE</strong> - Debugging, forensics, compliance documentation</li>
+            </ul>
+
+            <h3>Choose Audience Based on Reader</h3>
+            <ul class="feature-list">
+                <li><strong>DEVELOPER</strong> - Implementers who write code</li>
+                <li><strong>SECURITY_ENGINEER</strong> - Security specialists who assess threats</li>
+                <li><strong>PROJECT_MANAGER</strong> - Coordinators who plan work</li>
+                <li><strong>EXECUTIVE</strong> - Leaders who need business context</li>
+                <li><strong>OPS_INFRASTRUCTURE</strong> - Operators who deploy and maintain</li>
+                <li><strong>QA_TESTER</strong> - Testers who validate functionality</li>
+            </ul>
+
+            <h2 id="related-documentation">Related Documentation</h2>
+            <table>
+                <thead><tr><th>Document</th><th>Description</th></tr></thead>
+                <tbody>
+                    <tr><td><a href="Doc-mAi-Advisor.html">mAi Advisor™ Guide</a></td><td>Intelligent recommendations</td></tr>
+                    <tr><td><a href="Doc-Network-Diagnostics.html">Network Diagnostics</a></td><td>Network testing</td></tr>
+                    <tr><td><a href="Doc-Test-Development.html">Test Development</a></td><td>Writing tests</td></tr>
+                    <tr><td><a href="Diagram-Architecture.html">Architecture Diagram</a></td><td>Layer 6 details</td></tr>
+                    <tr><td><a href="Diagram-HTTP-Audit-Pipeline.html">HTTP Audit Pipeline</a></td><td>Visual flow</td></tr>
+                </tbody>
+            </table>
+
+            <h2 id="html-reports">HTML Reports with Help Links <span class="badge badge-new">NEW v3.0.0</span></h2>
+            <p>The framework now supports <strong>dual-mode report generation</strong> - producing both Markdown and HTML reports simultaneously. HTML reports feature a modern dark theme, interactive help links powered by Perplexity.ai <a href="https://www.perplexity.ai/?q=Perplexity+AI+search+engine" target="_blank" class="help-link" data-pagefind-ignore>?</a>, and topic-based organization.</p>
+
+            <h3>Enabling HTML Reports</h3>
+            <pre><code class="language-properties"># Report output formats (both can be true for dual output)
+reportOutputMarkdown=true    # Default: true (backward compatible)
+reportOutputHtml=true        # Default: false (opt-in)
+
+# Help links configuration
+reportHelpLinksEnabled=true  # Enable ? icons with Perplexity links
+reportHelpLinksProvider=perplexity  # AI provider for help queries</code></pre>
+
+            <h3>HTML Report Features</h3>
+            <ul class="feature-list">
+                <li><strong>Dark Theme</strong> - Professional styling with color-coded grades</li>
+                <li><strong>Interactive Help Links</strong> - Click ? icons for Perplexity.ai explanations</li>
+                <li><strong>Topic-Based Organization</strong> - 8 self-contained topic sections</li>
+                <li><strong>Table of Contents</strong> - Clickable navigation with grades and findings counts</li>
+                <li><strong>Severity Styling</strong> - Color-coded findings (Critical=red, High=orange, Medium=yellow, Low=blue)</li>
+            </ul>
+
+            <h3>Topic-Based Architecture</h3>
+            <table>
+                <thead><tr><th>Topic</th><th>Weight</th><th>Description</th></tr></thead>
+                <tbody>
+                    <tr><td>📜 SSL/TLS Certificates</td><td>12.5%</td><td>Certificate validity, expiration, signature</td></tr>
+                    <tr><td>🔒 Security Headers</td><td>12.5%</td><td>HSTS, CSP, X-Frame-Options, etc.</td></tr>
+                    <tr><td>⚡ Performance</td><td>12.5%</td><td>Response times, compression, caching</td></tr>
+                    <tr><td>🌐 DNS & Network</td><td>12.5%</td><td>DNS resolution, geolocation</td></tr>
+                    <tr><td>📄 Content Analysis</td><td>12.5%</td><td>Content type, body analysis</td></tr>
+                    <tr><td>🔀 Redirects</td><td>12.5%</td><td>Redirect chain inspection</td></tr>
+                    <tr><td>🍪 Cookies</td><td>12.5%</td><td>Cookie security attributes</td></tr>
+                    <tr><td>🔗 CORS Configuration</td><td>12.5%</td><td>Cross-origin policy analysis</td></tr>
+                </tbody>
+            </table>
+
+            <h3>Grading Algorithm</h3>
+            <p>The overall grade is calculated using a <strong>weighted average of topic grades</strong>:</p>
+            <ul class="feature-list">
+                <li><strong>A = 95 points</strong>, B = 85, C = 75, D = 65, F = 40</li>
+                <li>Each topic contributes: (grade points × weight)</li>
+                <li>Sum of weighted scores determines overall grade</li>
+                <li>Severity-aware topic grading: CRITICAL→F, HIGH→C/D, MEDIUM→A-/B, LOW→A-</li>
+            </ul>
+
+            <h3>Code Example</h3>
+            <pre><code class="language-java">// Configure reporter for dual output
+FW_HttpReporter reporter = new FW_HttpReporter();
+reporter.setReportDepth(ReportDepth.COMPREHENSIVE);
+reporter.setTargetAudience(FW_AdvisorAudience.SECURITY_ENGINEER);
+
+// Generate both MD and HTML reports
+String mdReport = reporter.generateReport(httpTransaction);
+String htmlReport = reporter.generateHtmlReport(httpTransaction);</code></pre>
+
+            <h2 id="whats-new-v3">What's New in v3.0.0</h2>
+            <ul class="feature-list">
+                <li><strong>HTML Reports with Help Links</strong> - Dual-mode MD + HTML output with Perplexity.ai integration</li>
+                <li><strong>Topic-Based Architecture</strong> - 8 self-contained topic sections with independent grading</li>
+                <li><strong>Weighted Grade Calculation</strong> - Overall grade reflects topic grades (replaces penalty system)</li>
+                <li><strong>Severity-Aware Grading</strong> - Topics grade based on CRITICAL, HIGH, MEDIUM, LOW findings</li>
+                <li><strong>New Configuration Properties</strong> - reportOutputHtml, reportHelpLinksEnabled</li>
+            </ul>
+
+            <h2 id="whats-new">What's New in v2.2.0</h2>
+            <ul class="feature-list">
+                <li><strong>Report Depth Levels</strong> - 3 configurable depths (EXECUTIVE, STANDARD, COMPREHENSIVE)</li>
+                <li><strong>Audience Configuration</strong> - 6 audience types supported</li>
+                <li><strong>18 Report Configurations</strong> - Any depth + any audience combination</li>
+                <li><strong>Enhanced API</strong> - New setReportDepth() and setTargetAudience() methods</li>
+            </ul>
+
+            <hr>
+            <footer class="doc-footer" id="doc-footer" data-pagefind-ignore></footer>
+        </main>
+    </div>
+
+    <script src="docs-config.js"></script>
+    <script src="docs-nav.js"></script>
+    <script src="docs-highlight.js"></script>
+    <script>DocsConfig.renderFooter('doc-footer');</script>
+</body>
+</html>

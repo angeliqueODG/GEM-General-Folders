@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Data Collection Pipeline - mAi™ Framework Documentation</title>
+<link rel="stylesheet" href="docs-style.css">
+<link rel="stylesheet" href="pagefind/pagefind-ui.css">
+<script src="pagefind/pagefind-ui.js"></script>
+<script src="mermaid.min.js"></script>
+<script>mermaid.initialize({startOnLoad: true, theme: 'dark'});</script>
+</head>
+<body>
+<div class="layout">
+<nav class="sidebar" id="sidebar" data-pagefind-ignore></nav>
+<main class="main-content" data-pagefind-body>
+<h1 data-pagefind-meta="title">FW_TestStepDataCollector Class Flow</h1>
+<p class="subtitle">Test step data flow from execution to CSV storage</p>
+
+<section class="content-section">
+<h2>Overview</h2>
+<p>This sequence diagram illustrates the complete flow of test step data collection in the automation framework, from test completion through to CSV file persistence.</p>
+</section>
+
+<section class="content-section">
+<h2>Sequence Diagram</h2>
+<pre class="mermaid">
+sequenceDiagram
+    participant Test as Test Step
+    participant CA as FW_CustomAssertJU
+    participant DC as FW_TestStepDataCollector
+    participant DPR as FW_TestStepDataProcessor
+    participant CSV as CSV File
+    Test->>CA: autoPass/autoFail()
+    CA->>CA: Capture test step data
+    CA->>CA: Take screenshot (if enabled)
+    CA->>DC: add(testStepData)
+    DC->>DC: Add to pendingSteps queue
+    DC->>DC: Check batch size threshold
+    alt Batch size reached
+        DC->>DC: Trigger batch processing
+        DC->>DPR: processBatch(pendingSteps)
+        DPR->>DPR: Format test step records
+        DPR->>CSV: Write batch to CSV file
+        CSV-->>DPR: Confirmation
+        DPR-->>DC: Processing complete
+        DC->>DC: Clear processed steps
+    end
+    DC-->>CA: Data queued successfully
+    CA-->>Test: Assertion complete
+    Note over DC,DPR: Batch processing occurs periodically&lt;br/&gt;based on queue size
+</pre>
+</section>
+
+<section class="content-section">
+<h2>Key Features</h2>
+
+<h3>Data Collection Strategy</h3>
+<ul>
+<li><strong>Asynchronous Collection:</strong> Test steps are queued without blocking test execution</li>
+<li><strong>Batch Processing:</strong> Data is written to CSV in configurable batch sizes</li>
+<li><strong>Thread-Safe Operations:</strong> Concurrent test execution supported via synchronized collections</li>
+<li><strong>Memory Efficient:</strong> Automatic flush prevents memory overflow on long test runs</li>
+</ul>
+
+<h3>CSV File Management</h3>
+<ul>
+<li><strong>Automatic File Creation:</strong> CSV file created on first data write</li>
+<li><strong>Header Management:</strong> Column headers written once at file creation</li>
+<li><strong>Append Mode:</strong> New data appended to existing file during test run</li>
+<li><strong>UTF-8 Encoding:</strong> Ensures proper character encoding for international characters</li>
+</ul>
+
+<h3>Processing Thresholds</h3>
+<ul>
+<li><strong>Default Batch Size:</strong> 100 test steps</li>
+<li><strong>Configurable Threshold:</strong> Adjustable via testConfig.properties</li>
+<li><strong>Forced Flush:</strong> Manual flush available for immediate persistence</li>
+<li><strong>Final Flush:</strong> Automatic flush on test suite completion</li>
+</ul>
+</section>
+
+<section class="content-section">
+<h2>Data Flow Stages</h2>
+<ol>
+<li><strong>Test Step Completion:</strong> autoPass/autoFail methods capture test results</li>
+<li><strong>Screenshot Capture:</strong> Optional screenshot taken for visual validation</li>
+<li><strong>Queue Addition:</strong> Test step data added to pending queue</li>
+<li><strong>Threshold Check:</strong> Batch size evaluated for processing trigger</li>
+<li><strong>Batch Processing:</strong> Pending steps formatted and written as CSV records</li>
+<li><strong>File Persistence:</strong> Data appended to CSV file with proper encoding</li>
+<li><strong>Queue Cleanup:</strong> Processed steps removed from memory</li>
+</ol>
+</section>
+
+<section class="content-section">
+<h2>CSV Output Schema</h2>
+<p>The generated CSV file includes the following columns:</p>
+<table class="data-table">
+<thead><tr><th>Column</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td>Test Run ID</td><td>Unique identifier for the test run</td></tr>
+<tr><td>Test Suite Name</td><td>Name of the test suite class</td></tr>
+<tr><td>Test Case Name</td><td>Name of the test method</td></tr>
+<tr><td>Test Step Number</td><td>Sequential step number within test case</td></tr>
+<tr><td>Step Description</td><td>Human-readable description of the step</td></tr>
+<tr><td>Pass/Fail Status</td><td>Result status (PASS, FAIL, SKIP)</td></tr>
+<tr><td>Execution Timestamp</td><td>UTC timestamp of step execution</td></tr>
+<tr><td>Duration</td><td>Step duration in milliseconds</td></tr>
+<tr><td>Screenshot Path</td><td>Path to screenshot file (if captured)</td></tr>
+<tr><td>Error Message</td><td>Error details (if failed)</td></tr>
+</tbody>
+</table>
+</section>
+
+<section class="content-section">
+<h2>Related Components</h2>
+<ul>
+<li><strong>FW_CustomAssertJU:</strong> Entry point for test step data collection</li>
+<li><strong>FW_TestStepDataCollector:</strong> Manages queuing and batch coordination</li>
+<li><strong>FW_TestStepDataProcessor:</strong> Handles CSV formatting and file I/O</li>
+<li><strong>FW_TestStep:</strong> Data object containing step metadata and results</li>
+<li><strong>FW_CSVUtils:</strong> Utility methods for CSV file operations</li>
+</ul>
+</section>
+
+<section class="content-section">
+<h2>Performance Considerations</h2>
+<ul>
+<li><strong>Memory Usage:</strong> Queue size directly impacts memory footprint</li>
+<li><strong>I/O Operations:</strong> Batch writing reduces file system overhead</li>
+<li><strong>Thread Safety:</strong> Synchronized operations ensure data integrity</li>
+<li><strong>Immediate Persistence:</strong> CSV data written immediately vs. held until test completion</li>
+<li><strong>Data Persistence:</strong> All test steps are eventually written to CSV for data lake ingestion</li>
+</ul>
+</section>
+
+<section class="content-section">
+<h2>Related Diagrams</h2>
+<table class="data-table">
+<thead><tr><th>Document</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td><a href="Diagram-Architecture.html">Architecture Overview</a></td><td>Framework layers</td></tr>
+<tr><td><a href="Diagram-Maven-to-first-Test-Case.html">Maven to First Test Case</a></td><td>Test execution flow</td></tr>
+<tr><td><a href="Diagram-Automation-completed-to-Google_BigData.html">Test Completion to BigQuery</a></td><td>Cloud upload process</td></tr>
+</tbody>
+</table>
+</section>
+
+<footer class="doc-footer" id="doc-footer" data-pagefind-ignore></footer>
+</main>
+</div>
+<script src="docs-config.js"></script>
+<script src="docs-nav.js"></script>
+<script>DocsConfig.renderFooter('doc-footer');</script>
+</body>
+</html>

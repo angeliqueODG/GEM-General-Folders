@@ -1,0 +1,252 @@
+{
+  "metadata": {
+    "filename": "server-misconfiguration.json",
+    "filepath": "src/test/java/framework/advisor/templates/infrastructure/server-misconfiguration.json",
+    "version": "1.0.0",
+    "created": "2025-10-09",
+    "lastUpdated": "2025-10-09 05:30:00 PM CDT",
+    "author": "Greg Paskal",
+    "company": "MissionWares",
+    "methodology": "mAi™ (MissionWares® + AI)",
+    "description": "Server misconfiguration finding template with comprehensive guidance for all audiences including insecure server defaults, exposed version information, directory listing, unnecessary modules, and hardening procedures across web servers, application servers, and infrastructure components.",
+    "aiGenerated": true,
+    "humanReviewed": false,
+    "reviewedBy": "Pending",
+    "approvedBy": "Pending",
+    "tags": ["server-hardening", "infrastructure", "security", "configuration", "apache", "nginx", "iis", "information-disclosure"],
+    "relatedFindings": ["SERVER_VERSION_EXPOSURE", "DIRECTORY_LISTING", "DEFAULT_PAGES", "UNNECESSARY_MODULES", "INSECURE_DEFAULTS"],
+    "estimatedRemediationTime": "2-4 hours",
+    "businessImpact": "HIGH",
+    "complianceRequirements": ["CIS Benchmarks", "NIST 800-53", "PCI-DSS 2.2", "OWASP ASVS"]
+  },
+  "findingId": "INFRA-SVR-001",
+  "findingType": "SERVER_MISCONFIGURATION",
+  "category": "INFRASTRUCTURE",
+  "severity": "HIGH",
+  "cveReferences": [
+    "CWE-200",
+    "CWE-16",
+    "CWE-209"
+  ],
+  "understanding": {
+    "EXECUTIVE": {
+      "summary": "Your web servers are exposing sensitive configuration details and running with insecure default settings, making it easier for attackers to identify vulnerabilities and plan targeted attacks against your infrastructure.",
+      "businessRisk": "High risk of targeted attacks using exposed server information. Attackers use server version information to identify known vulnerabilities and launch zero-day exploits. Server misconfigurations create attack surface for reconnaissance, enumeration, and exploitation. Information disclosure helps attackers map infrastructure and plan multi-stage attacks. Directory listing exposure can leak sensitive files, source code, backups, and configuration files. Default pages and error messages reveal technology stack details. Average breach from infrastructure misconfiguration costs $3.86M (IBM 2023). Compliance frameworks (PCI-DSS 2.2, CIS Benchmarks) mandate server hardening.",
+      "complianceImpact": "PCI-DSS Requirement 2.2 violation (secure server configurations). CIS Benchmark Level 1 non-compliance. NIST 800-53 CM-7 (Least Functionality) violation. SOC 2 security controls gap. May trigger audit findings requiring immediate remediation. Information disclosure findings in penetration tests and security assessments.",
+      "priority": "HIGH"
+    },
+    "PROJECT_MANAGER": {
+      "summary": "Web servers configured with insecure defaults expose infrastructure details to attackers. Need to implement server hardening to remove version headers, disable directory listing, remove default pages, and configure secure defaults.",
+      "timeline": "Should be addressed within 1-2 sprints. Implementation takes 2-4 hours per server type plus testing. Medium-high priority for security posture improvement. Critical if recent security scans flagged information disclosure or if preparing for compliance audit.",
+      "effort": "2-4 hours for server configuration hardening across all environments. Additional 2-3 hours for testing and validation. Ongoing maintenance as infrastructure evolves. One-time effort with lasting security improvement.",
+      "dependencies": [
+        "Operations team availability",
+        "Access to server configurations (Nginx, Apache, IIS)",
+        "Staging environment for testing configuration changes",
+        "Load balancer / reverse proxy access",
+        "Coordination with development for application-level changes",
+        "Change management approval for production deployment"
+      ],
+      "blocking": [
+        "Security compliance certification (PCI-DSS, SOC 2)",
+        "Penetration testing sign-off",
+        "Security audit completion",
+        "Production deployment approval",
+        "Customer security questionnaire responses"
+      ]
+    },
+    "DEVELOPER": {
+      "summary": "Server configuration exposes version information, enables directory listing, serves default error pages, and runs with insecure defaults that facilitate reconnaissance and exploitation.",
+      "technical": "Server misconfiguration includes: 1) Version exposure via Server header (e.g., 'Server: Apache/2.4.41'), 2) Directory listing enabled allowing attackers to browse file structure, 3) Default error pages revealing server type and version, 4) Default welcome pages exposing technology stack, 5) Unnecessary modules loaded increasing attack surface, 6) Verbose error messages leaking paths and configuration, 7) Development settings in production (debug mode, source maps). Attackers use this information for: fingerprinting technology stack, identifying vulnerable versions, discovering hidden directories, locating backup files, mapping application structure. Best practices: Suppress version headers, disable directory listing, customize error pages, remove default content, disable unused modules, implement least privilege, use secure defaults.",
+      "vulnerability": "CWE-200 (Information Exposure) - Server configuration leaks sensitive implementation details. CWE-16 (Configuration) - Insecure default settings create vulnerabilities. CWE-209 (Error Message Information Leak) - Verbose errors reveal system information. Exposed server versions enable targeted exploitation of known CVEs. Directory listing exposes: backup files (.bak, .old), configuration files (.env, config.php), source code, database dumps, API keys in config files, admin panels, development artifacts. Default pages reveal: framework versions, programming language, server software, installed components.",
+      "references": [
+        "https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/02-Configuration_and_Deployment_Management_Testing/05-Enumerate_Infrastructure_and_Application_Admin_Interfaces",
+        "https://cheatsheetseries.owasp.org/cheatsheets/Error_Handling_Cheat_Sheet.html",
+        "https://www.cisecurity.org/cis-benchmarks/",
+        "https://nvd.nist.gov/vuln/detail/CVE-2019-0211"
+      ]
+    },
+    "SECURITY_ENGINEER": {
+      "summary": "Server misconfiguration creates information disclosure vulnerabilities enabling reconnaissance, fingerprinting, and targeted exploitation based on exposed version and configuration details.",
+      "vulnerability": "CWE-200 (Information Exposure), CWE-16 (Configuration), CWE-209 (Error Message Information Leak). Information disclosure is OWASP Top 10 A05:2021 Security Misconfiguration. Server misconfigurations create layered vulnerabilities: version exposure enables precise CVE targeting, directory listing enables file discovery, default pages reveal architecture, verbose errors leak paths, unnecessary modules expand attack surface. Combined with other vulnerabilities, creates exploitation chains.",
+      "attackVector": "1) Reconnaissance: Scan for version headers, default pages, directory listings. 2) Fingerprinting: Identify exact server version and installed modules. 3) CVE Mapping: Cross-reference versions with CVE database to find exploits. 4) Directory Brute-Force: Use discovered directories and patterns to enumerate further. 5) File Discovery: Find sensitive files through listing or predictable paths (.git, .env, backup.sql). 6) Credential Harvesting: Extract credentials from exposed config files. 7) Privilege Escalation: Exploit version-specific CVEs (e.g., Apache 2.4.17-2.4.38 CVE-2019-0211 root privilege escalation). 8) Lateral Movement: Use infrastructure knowledge for broader compromise.",
+      "threatLevel": "HIGH - Server misconfigurations present in 60%+ of applications (OWASP 2023). Easy to detect via automated scanning (Nmap, Nikto, Nessus). Low skill required but high impact. Version-specific exploits readily available (Metasploit, ExploitDB). Information disclosure enables targeted attacks reducing attacker effort by 70%. Combined with XSS, SQLi, or RCE creates severe impact. Directory listing led to numerous breaches exposing customer data, source code, credentials.",
+      "mitigationUrgency": "Implement within 1-2 weeks. High priority for internet-facing servers. Critical if recent versions with known CVEs detected. Essential before penetration testing or security audits. Immediate if directory listing discovered on production servers. Server hardening is foundational security control - implement early in security program."
+    },
+    "OPS_INFRASTRUCTURE": {
+      "summary": "Web servers, application servers, and load balancers configured with default settings expose version information and enable directory listing, requiring infrastructure-wide hardening across all environments.",
+      "technical": "Server hardening involves: 1) Suppress Server header or obfuscate version (Nginx: server_tokens off; Apache: ServerTokens Prod). 2) Disable directory listing (Nginx: autoindex off; Apache: Options -Indexes). 3) Remove default pages and welcome screens. 4) Customize error pages (400, 403, 404, 500 series). 5) Disable unnecessary modules (Apache: disable mod_status, mod_info; Nginx: disable unused modules at compile). 6) Configure minimal privilege (run as non-root user, chroot if possible). 7) Remove version from HTTP error responses. 8) Disable server status pages. 9) Configure secure TLS settings. 10) Implement security headers via server configuration. Apply across: production web servers, staging environments, load balancers, reverse proxies, API gateways. Use configuration management (Ansible, Chef, Puppet) for consistency.",
+      "scope": "All servers serving HTTP/HTTPS traffic: production web servers (Nginx, Apache, IIS), load balancers (AWS ALB/NLB, HAProxy, Nginx), reverse proxies, API gateways, CDN origin servers. All environments (production, staging, development - though production is highest priority). Includes: physical servers, virtual machines, containers, serverless edge functions. Must maintain configuration consistency across scaling events (auto-scaling groups, Kubernetes deployments).",
+      "monitoring": "Monitor for information disclosure: periodic security scans (Nmap, Nikto), automated vulnerability scanning, penetration testing results, bug bounty reports. Verify hardening: curl/wget checks for Server header, directory listing tests, default page checks. Configuration drift detection: compare production configs against hardened baseline, alert on unauthorized changes. Monitor server logs for: reconnaissance attempts (403 errors on common paths), directory traversal attempts, attempts to access default pages. Use SIEM for pattern detection."
+    },
+    "QA_TESTER": {
+      "summary": "Server misconfiguration prevents validation that infrastructure implements secure defaults and blocks testing of information disclosure protections across all server endpoints.",
+      "testImplication": "Cannot validate server hardening implementation. Security testing tools flag version exposure and directory listing as high-severity findings. Cannot verify defense-in-depth security posture. After hardening, must test that: version headers removed/obfuscated, directory listing disabled globally, default pages removed, error pages customized, unnecessary modules disabled. Must verify application functionality not broken by configuration changes.",
+      "riskIfNotFixed": "Security assessment failure. Penetration test findings (information disclosure rated HIGH). PCI-DSS audit non-compliance (Requirement 2.2). SOC 2 control gaps. Actual exploitation: attacker fingerprints exact versions, identifies CVEs, exploits known vulnerabilities, discovers sensitive files through directory listing, harvests credentials from exposed configs. Customer security questionnaires flagged. Bug bounty payouts for information disclosure."
+    }
+  },
+  "actions": {
+    "DEVELOPER": {
+      "frameworks": {
+        "spring-boot": {
+          "code": "// Spring Boot - Remove server version from response headers\n// application.properties or application.yml\n\n# Hide server version in response header\nserver.server-header=\n# Or customize to generic value\n# server.server-header=WebServer\n\n# Disable error details in production\nserver.error.include-message=never\nserver.error.include-binding-errors=never\nserver.error.include-stacktrace=never\nserver.error.include-exception=false\n\n# Custom error pages\nserver.error.whitelabel.enabled=false\n\n# Create custom error controller\nimport org.springframework.boot.web.servlet.error.ErrorController;\nimport org.springframework.stereotype.Controller;\nimport org.springframework.web.bind.annotation.RequestMapping;\nimport javax.servlet.http.HttpServletRequest;\n\n@Controller\npublic class CustomErrorController implements ErrorController {\n    \n    @RequestMapping(\"/error\")\n    public String handleError(HttpServletRequest request) {\n        Integer statusCode = (Integer) request.getAttribute(\"javax.servlet.error.status_code\");\n        \n        if (statusCode == 404) {\n            return \"error/404\";\n        } else if (statusCode == 403) {\n            return \"error/403\";\n        } else if (statusCode == 500) {\n            return \"error/500\";\n        }\n        \n        return \"error/generic\";\n    }\n}\n\n// Remove server header completely via filter\nimport javax.servlet.*;\nimport javax.servlet.http.HttpServletResponse;\nimport java.io.IOException;\n\n@Component\npublic class ServerHeaderFilter implements Filter {\n    \n    @Override\n    public void doFilter(ServletRequest request, ServletResponse response, \n                        FilterChain chain) throws IOException, ServletException {\n        HttpServletResponse httpResponse = (HttpServletResponse) response;\n        \n        // Remove or obfuscate Server header\n        httpResponse.setHeader(\"Server\", \"\");\n        \n        chain.doFilter(request, response);\n    }\n}\n\n// Disable banner in logs (optional)\nspring.main.banner-mode=off",
+          "testCode": "// JUnit test to verify server header removed\nimport org.junit.jupiter.api.Test;\nimport org.springframework.beans.factory.annotation.Autowired;\nimport org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;\nimport org.springframework.boot.test.context.SpringBootTest;\nimport org.springframework.test.web.servlet.MockMvc;\n\nimport static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;\nimport static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;\n\n@SpringBootTest\n@AutoConfigureMockMvc\npublic class ServerHardeningTest {\n\n    @Autowired\n    private MockMvc mockMvc;\n\n    @Test\n    public void serverHeaderShouldBeEmpty() throws Exception {\n        mockMvc.perform(get(\"/\"))\n            .andExpect(status().isOk())\n            .andExpect(result -> {\n                String serverHeader = result.getResponse().getHeader(\"Server\");\n                assertTrue(serverHeader == null || serverHeader.isEmpty() || \n                          !serverHeader.contains(\"Spring\") && !serverHeader.contains(\"Tomcat\"),\n                    \"Server header should not reveal version information\");\n            });\n    }\n    \n    @Test\n    public void errorPagesShouldNotRevealFramework() throws Exception {\n        mockMvc.perform(get(\"/nonexistent\"))\n            .andExpect(status().isNotFound())\n            .andExpect(result -> {\n                String content = result.getResponse().getContentAsString();\n                assertFalse(content.contains(\"Whitelabel Error Page\"),\n                    \"Should not show default Spring error page\");\n                assertFalse(content.contains(\"Tomcat\"),\n                    \"Should not reveal Tomcat in error pages\");\n                assertFalse(content.contains(\"Spring\"),\n                    \"Should not reveal Spring in error pages\");\n            });\n    }\n    \n    @Test\n    public void errorShouldNotIncludeStackTrace() throws Exception {\n        mockMvc.perform(get(\"/error-endpoint\"))\n            .andExpect(result -> {\n                String content = result.getResponse().getContentAsString();\n                assertFalse(content.contains(\".java:\"),\n                    \"Should not expose stack traces\");\n                assertFalse(content.contains(\"Exception\"),\n                    \"Should not expose exception details\");\n            });\n    }\n}",
+          "dependencies": "<!-- Spring Boot standard dependencies -->\n<dependency>\n    <groupId>org.springframework.boot</groupId>\n    <artifactId>spring-boot-starter-web</artifactId>\n</dependency>\n<dependency>\n    <groupId>org.springframework.boot</groupId>\n    <artifactId>spring-boot-starter-test</artifactId>\n    <scope>test</scope>\n</dependency>",
+          "packageInstall": "mvn clean install"
+        },
+        "express-nodejs": {
+          "code": "// Express.js - Remove server version and harden configuration\nconst express = require('express');\nconst helmet = require('helmet');\nconst path = require('path');\n\nconst app = express();\n\n// Use helmet to remove X-Powered-By and set security headers\napp.use(helmet());\n\n// Alternative: Manually remove X-Powered-By\napp.disable('x-powered-by');\n\n// Custom Server header (or remove completely)\napp.use((req, res, next) => {\n  res.removeHeader('X-Powered-By');\n  res.setHeader('Server', ''); // Empty or generic: 'WebServer'\n  next();\n});\n\n// Disable directory listing (Express doesn't enable by default, but verify)\n// Never use express.static without proper configuration\napp.use('/public', express.static(path.join(__dirname, 'public'), {\n  dotfiles: 'deny',\n  index: false, // Disable directory index\n}));\n\n// Custom error handlers - DO NOT expose stack traces in production\nif (process.env.NODE_ENV === 'production') {\n  // Production error handler - no stack traces\n  app.use((err, req, res, next) => {\n    res.status(err.status || 500);\n    res.json({\n      error: 'An error occurred processing your request',\n      // DO NOT include: err.message, err.stack\n    });\n  });\n} else {\n  // Development error handler - with stack traces\n  app.use((err, req, res, next) => {\n    res.status(err.status || 500);\n    res.json({\n      error: err.message,\n      stack: err.stack\n    });\n  });\n}\n\n// Custom 404 handler\napp.use((req, res) => {\n  res.status(404).json({\n    error: 'Not Found'\n    // DO NOT include: requested path, server info\n  });\n});\n\n// Remove unnecessary response headers\napp.use((req, res, next) => {\n  res.removeHeader('X-Powered-By');\n  res.removeHeader('X-AspNet-Version');\n  res.removeHeader('X-AspNetMvc-Version');\n  next();\n});\n\nconst PORT = process.env.PORT || 3000;\napp.listen(PORT, () => {\n  console.log(`Server running on port ${PORT}`);\n});",
+          "testCode": "// Mocha/Chai test for server hardening\nconst request = require('supertest');\nconst { expect } = require('chai');\nconst app = require('../app');\n\ndescribe('Server Hardening Tests', () => {\n  it('should not expose X-Powered-By header', (done) => {\n    request(app)\n      .get('/')\n      .end((err, res) => {\n        if (err) return done(err);\n        \n        expect(res.headers).to.not.have.property('x-powered-by');\n        done();\n      });\n  });\n  \n  it('should not expose Server version information', (done) => {\n    request(app)\n      .get('/')\n      .end((err, res) => {\n        if (err) return done(err);\n        \n        const serverHeader = res.headers['server'];\n        if (serverHeader) {\n          expect(serverHeader).to.not.match(/express/i);\n          expect(serverHeader).to.not.match(/node/i);\n          expect(serverHeader).to.not.include('/');\n        }\n        \n        done();\n      });\n  });\n  \n  it('should not expose stack traces in error responses', (done) => {\n    request(app)\n      .get('/trigger-error') // endpoint that throws error\n      .expect(500)\n      .end((err, res) => {\n        if (err) return done(err);\n        \n        const body = JSON.stringify(res.body);\n        expect(body).to.not.include('.js:');\n        expect(body).to.not.include('at ');\n        expect(body).to.not.match(/node_modules/i);\n        \n        done();\n      });\n  });\n  \n  it('should not allow directory listing', (done) => {\n    request(app)\n      .get('/public/')\n      .end((err, res) => {\n        if (err) return done(err);\n        \n        // Should either 404 or serve index.html, not directory listing\n        expect(res.status).to.be.oneOf([404, 200]);\n        if (res.status === 200) {\n          expect(res.text).to.not.include('Index of');\n          expect(res.text).to.not.include('Parent Directory');\n        }\n        \n        done();\n      });\n  });\n  \n  it('custom 404 should not reveal server information', (done) => {\n    request(app)\n      .get('/nonexistent')\n      .expect(404)\n      .end((err, res) => {\n        if (err) return done(err);\n        \n        const body = JSON.stringify(res.body);\n        expect(body).to.not.match(/express/i);\n        expect(body).to.not.match(/node/i);\n        expect(body).to.not.include(process.cwd());\n        \n        done();\n      });\n  });\n});",
+          "dependencies": "npm install express helmet",
+          "packageInstall": "npm install"
+        },
+        "generic": {
+          "code": "# Generic Server Hardening Checklist\n\n## Application-Level Hardening\n\n### 1. Remove Version Headers\n- Remove or obfuscate 'Server' header\n- Remove 'X-Powered-By' header\n- Remove framework-specific headers (X-AspNet-Version, etc.)\n\n### 2. Disable Directory Listing\n- Disable autoindex/directory browsing\n- Ensure all static file serving has index files\n- Return 403/404 for directory requests\n\n### 3. Custom Error Pages\n- Create custom 400, 403, 404, 500 error pages\n- Remove default error pages\n- Do not expose:\n  - Server type or version\n  - Framework name or version\n  - File paths\n  - Stack traces\n  - Database errors\n  - Configuration details\n\n### 4. Disable Unnecessary Features\n- Disable unused modules/middleware\n- Remove debug endpoints in production\n- Disable server status pages\n- Remove default admin panels\n\n### 5. Production Configuration\n- Set NODE_ENV=production (Node.js)\n- Set DEBUG=false\n- Disable verbose logging\n- Disable source maps in production\n- Remove development dependencies\n\n## Infrastructure-Level Hardening\nSee OPS_INFRASTRUCTURE actions section",
+          "testCode": "# Generic Testing Procedures\n\n## Command-Line Tests\n\n# Test for Server header\ncurl -I https://your-domain.com | grep -i \"^Server:\"\n\n# Test for X-Powered-By\ncurl -I https://your-domain.com | grep -i \"X-Powered-By\"\n\n# Test for directory listing\ncurl https://your-domain.com/assets/\ncurl https://your-domain.com/images/\ncurl https://your-domain.com/static/\n\n# Test error pages\ncurl -I https://your-domain.com/nonexistent\ncurl https://your-domain.com/nonexistent\n\n# Test for default pages\ncurl https://your-domain.com/index.html\ncurl https://your-domain.com/default.aspx\n\n## Browser DevTools Tests\n\n1. Open DevTools (F12) → Network tab\n2. Load page\n3. Click first request → Headers\n4. Verify Server header is empty or generic\n5. Verify no X-Powered-By header\n6. Test 404 page - should not reveal framework\n\n## Automated Scanning\n\n# Nmap\nnmap -sV -p 80,443 your-domain.com\n\n# Nikto\nnikto -h https://your-domain.com\n\n# Whatweb\nwhatweb https://your-domain.com",
+          "dependencies": "curl, browser, optional: nmap, nikto, whatweb",
+          "packageInstall": "# Usually pre-installed"
+        }
+      },
+      "verificationSteps": [
+        "1. Test Server header: curl -I https://your-domain.com | grep Server",
+        "2. Verify Server header is empty or generic (not 'Apache/2.4.41', 'nginx/1.18.0')",
+        "3. Test X-Powered-By: curl -I https://your-domain.com | grep X-Powered-By",
+        "4. Verify X-Powered-By header is absent",
+        "5. Test directory listing: curl https://your-domain.com/assets/",
+        "6. Verify directory listing disabled (404 or 403, not file list)",
+        "7. Test 404 error page: curl https://your-domain.com/nonexistent",
+        "8. Verify custom error page without framework information",
+        "9. Test 500 error page (trigger application error)",
+        "10. Verify error page does not expose stack traces or paths",
+        "11. Run Nikto scan: nikto -h https://your-domain.com",
+        "12. Verify no information disclosure findings in scan results"
+      ],
+      "estimatedEffort": "2-3 hours"
+    },
+    "OPS_INFRASTRUCTURE": {
+      "servers": {
+        "nginx": {
+          "config": "# Nginx Server Hardening Configuration\n# /etc/nginx/nginx.conf or /etc/nginx/sites-available/your-site\n\n# Hide Nginx version in Server header and error pages\nserver_tokens off;\n\n# Disable directory listing globally\nautoindex off;\n\nhttp {\n    # Hide Nginx version\n    server_tokens off;\n    \n    # Custom Server header (optional - or leave empty)\n    more_set_headers 'Server: WebServer';\n    # Or remove completely:\n    # more_clear_headers 'Server';\n    \n    # Disable autoindex globally\n    autoindex off;\n    \n    # Custom error pages\n    error_page 400 401 402 403 404 /error.html;\n    error_page 500 502 503 504 /error.html;\n    \n    server {\n        listen 443 ssl http2;\n        server_name your-domain.com;\n        \n        # Root directory\n        root /var/www/html;\n        \n        # Disable directory listing for this server block\n        autoindex off;\n        \n        # Custom error pages location\n        location = /error.html {\n            internal;\n            root /var/www/error-pages;\n        }\n        \n        # Deny access to hidden files\n        location ~ /\\. {\n            deny all;\n            access_log off;\n            log_not_found off;\n        }\n        \n        # Deny access to backup files\n        location ~ ~$ {\n            deny all;\n            access_log off;\n            log_not_found off;\n        }\n        \n        # Disable .git directory access\n        location ~ /\\.git {\n            deny all;\n        }\n        \n        # Remove server status pages\n        # Comment out or remove these if enabled:\n        # location /nginx_status { stub_status on; }\n        \n        # Security headers\n        add_header X-Frame-Options \"DENY\" always;\n        add_header X-Content-Type-Options \"nosniff\" always;\n        add_header X-XSS-Protection \"1; mode=block\" always;\n        \n        # Rest of your configuration\n        location / {\n            try_files $uri $uri/ =404;\n        }\n    }\n}",
+          "reload": "# Test Nginx configuration syntax\nsudo nginx -t\n\n# If test passes, reload Nginx gracefully\nsudo nginx -s reload\n\n# Or restart Nginx service\nsudo systemctl restart nginx\n\n# Verify Nginx is running\nsudo systemctl status nginx\n\n# Check Nginx error logs if issues\nsudo tail -f /var/log/nginx/error.log",
+          "verify": "# Verify server_tokens is off\ncurl -I https://your-domain.com | grep -i \"^Server:\"\n# Should show: Server: nginx (without version)\n# Or custom/empty if using more_set_headers\n\n# Test directory listing\ncurl https://your-domain.com/images/\n# Should return 403 or 404, not file listing\n\n# Verify configuration\nsudo nginx -T | grep server_tokens\nsudo nginx -T | grep autoindex\n\n# Check for status pages\ncurl http://localhost/nginx_status\n# Should return 404 or 403\n\n# Test error pages\ncurl https://your-domain.com/nonexistent\n# Should show custom error page without Nginx branding"
+        },
+        "apache": {
+          "config": "# Apache Server Hardening Configuration\n# /etc/apache2/conf-available/security.conf or httpd.conf\n\n# Hide Apache version and OS in Server header\nServerTokens Prod\n# Output: Server: Apache (no version, no OS)\n\n# Or for complete hiding:\n# ServerTokens Full → Apache/2.4.41 (Ubuntu)\n# ServerTokens OS → Apache/2.4.41\n# ServerTokens Minor → Apache/2.4\n# ServerTokens Minimal → Apache\n# ServerTokens Prod → Apache\n\n# Hide Apache version in error pages\nServerSignature Off\n\n# Disable directory listing globally\n<Directory />\n    Options -Indexes\n</Directory>\n\n# Disable directory listing for web root\n<Directory /var/www/html>\n    Options -Indexes +FollowSymLinks\n    AllowOverride None\n    Require all granted\n</Directory>\n\n# Custom error documents\nErrorDocument 400 /error/400.html\nErrorDocument 403 /error/403.html\nErrorDocument 404 /error/404.html\nErrorDocument 500 /error/500.html\nErrorDocument 502 /error/502.html\nErrorDocument 503 /error/503.html\n\n# Deny access to hidden files and directories\n<DirectoryMatch \"^/.*/\\.\">\n    Require all denied\n</DirectoryMatch>\n\n# Deny access to backup files\n<FilesMatch \"\\.(bak|old|backup|~)$\">\n    Require all denied\n</FilesMatch>\n\n# Disable .git directory access\n<DirectoryMatch \"^/.*/\\.git\">\n    Require all denied\n</DirectoryMatch>\n\n# Disable server-status and server-info\n# Comment out or remove these modules:\n# LoadModule status_module modules/mod_status.so\n# LoadModule info_module modules/mod_info.so\n\n# If modules are needed, restrict access:\n<Location \"/server-status\">\n    SetHandler server-status\n    Require ip 127.0.0.1\n    Require ip ::1\n</Location>\n\n# Security headers\nHeader always set X-Frame-Options \"DENY\"\nHeader always set X-Content-Type-Options \"nosniff\"\nHeader always set X-XSS-Protection \"1; mode=block\"\n\n# Remove Server header completely (requires mod_security)\n# SecServerSignature \" \"",
+          "reload": "# Enable security configuration\nsudo a2enconf security\n\n# Test Apache configuration\nsudo apachectl configtest\n# or\nsudo apache2ctl configtest\n\n# If test passes, reload Apache gracefully\nsudo systemctl reload apache2\n# or\nsudo systemctl reload httpd\n\n# Restart if needed\nsudo systemctl restart apache2\n\n# Verify Apache is running\nsudo systemctl status apache2\n\n# Check Apache error logs\nsudo tail -f /var/log/apache2/error.log",
+          "verify": "# Verify ServerTokens setting\ncurl -I https://your-domain.com | grep -i \"^Server:\"\n# Should show: Server: Apache (no version)\n\n# Test directory listing\ncurl https://your-domain.com/images/\n# Should return 403, not file listing\n\n# Verify configuration values\napachectl -t -D DUMP_MODULES | grep -i status\napachectl -t -D DUMP_MODULES | grep -i info\n\n# Check for server-status\ncurl http://localhost/server-status\n# Should return 404 or 403\n\n# Test error pages\ncurl https://your-domain.com/nonexistent\n# Should show custom error without Apache branding\n\n# Verify security.conf is loaded\napachectl -t -D DUMP_INCLUDES | grep security"
+        },
+        "iis": {
+          "config": "<!-- IIS Server Hardening Configuration -->\n<!-- Use web.config or IIS Manager -->\n\n<!-- Method 1: web.config -->\n<configuration>\n  <system.webServer>\n    \n    <!-- Remove Server header -->\n    <httpProtocol>\n      <customHeaders>\n        <remove name=\"X-Powered-By\" />\n      </customHeaders>\n    </httpProtocol>\n    \n    <!-- Disable directory browsing -->\n    <directoryBrowse enabled=\"false\" />\n    \n    <!-- Custom error pages -->\n    <httpErrors errorMode=\"Custom\" existingResponse=\"Replace\">\n      <remove statusCode=\"400\" />\n      <error statusCode=\"400\" path=\"/error/400.html\" responseMode=\"ExecuteURL\" />\n      <remove statusCode=\"403\" />\n      <error statusCode=\"403\" path=\"/error/403.html\" responseMode=\"ExecuteURL\" />\n      <remove statusCode=\"404\" />\n      <error statusCode=\"404\" path=\"/error/404.html\" responseMode=\"ExecuteURL\" />\n      <remove statusCode=\"500\" />\n      <error statusCode=\"500\" path=\"/error/500.html\" responseMode=\"ExecuteURL\" />\n    </httpErrors>\n    \n    <!-- Security headers -->\n    <httpProtocol>\n      <customHeaders>\n        <add name=\"X-Frame-Options\" value=\"DENY\" />\n        <add name=\"X-Content-Type-Options\" value=\"nosniff\" />\n        <add name=\"X-XSS-Protection\" value=\"1; mode=block\" />\n      </customHeaders>\n    </httpProtocol>\n    \n  </system.webServer>\n  \n  <system.web>\n    <!-- Disable detailed error messages -->\n    <customErrors mode=\"On\" defaultRedirect=\"/error/error.html\" />\n    \n    <!-- Disable trace -->\n    <trace enabled=\"false\" />\n  </system.web>\n</configuration>\n\n<!-- Method 2: Remove Server header via URL Rewrite Module -->\n<configuration>\n  <system.webServer>\n    <rewrite>\n      <outboundRules>\n        <rule name=\"Remove Server Header\">\n          <match serverVariable=\"RESPONSE_SERVER\" pattern=\".*\" />\n          <action type=\"Rewrite\" value=\"\" />\n        </rule>\n      </outboundRules>\n    </rewrite>\n  </system.webServer>\n</configuration>\n\n<!-- Method 3: IIS Manager GUI -->\n<!-- \n1. Open IIS Manager\n2. Select server/site\n3. HTTP Response Headers → Remove X-Powered-By\n4. Directory Browsing → Disable\n5. Error Pages → Edit Feature Settings → Custom error pages\n-->",
+          "reload": "# IIS Configuration Changes\n# Most web.config changes apply immediately (no restart needed)\n\n# If needed, restart IIS:\niisreset\n\n# Or restart specific app pool:\nC:\\Windows\\System32\\inetsrv\\appcmd.exe recycle apppool /apppool.name:\"YourAppPoolName\"\n\n# Check IIS status:\nC:\\Windows\\System32\\inetsrv\\appcmd.exe list apppools\n\n# Verify configuration:\nC:\\Windows\\System32\\inetsrv\\appcmd.exe list config /section:httpProtocol\nC:\\Windows\\System32\\inetsrv\\appcmd.exe list config /section:directoryBrowse",
+          "verify": "# Test Server header removal\ncurl -I https://your-domain.com | findstr /I \"Server:\"\n# Should not show \"Microsoft-IIS/10.0\"\n\n# Test X-Powered-By removal\ncurl -I https://your-domain.com | findstr /I \"X-Powered-By\"\n# Should not appear\n\n# Test directory browsing\ncurl https://your-domain.com/images/\n# Should return 403, not file listing\n\n# Test custom error pages\ncurl -I https://your-domain.com/nonexistent\n# Should show custom 404\n\n# PowerShell testing:\nInvoke-WebRequest -Uri \"https://your-domain.com\" -Method Head | Select-Object -ExpandProperty Headers"
+        },
+        "aws-alb": {
+          "config": "# AWS Application Load Balancer - Remove server version headers\n# Note: ALB adds its own headers, configure at application level\n\n# Method 1: Lambda@Edge (CloudFront)\nexport const handler = async (event) => {\n  const response = event.Records[0].cf.response;\n  const headers = response.headers;\n  \n  // Remove server version headers\n  delete headers['server'];\n  delete headers['x-powered-by'];\n  \n  return response;\n};\n\n# Method 2: Target group health checks\n# AWS CLI - Configure target group\naws elbv2 modify-target-group \\\n  --target-group-arn arn:aws:elasticloadbalancing:region:account:targetgroup/my-tg/xxx \\\n  --health-check-enabled \\\n  --health-check-path /health \\\n  --matcher HttpCode=200\n\n# Method 3: Implement at application level\n# Server header removal must be done in application code (Spring Boot, Express, etc.)\n\n# CloudFormation - Response headers policy\nResources:\n  ResponseHeadersPolicy:\n    Type: AWS::CloudFront::ResponseHeadersPolicy\n    Properties:\n      ResponseHeadersPolicyConfig:\n        Name: RemoveServerHeaders\n        CustomHeadersConfig:\n          Items:\n            - Header: Server\n              Value: \"\"\n              Override: true",
+          "reload": "# No reload needed for ALB\n# Changes propagate automatically\n\n# Verify ALB target health\naws elbv2 describe-target-health \\\n  --target-group-arn arn:aws:elasticloadbalancing:region:account:targetgroup/my-tg/xxx\n\n# Check ALB attributes\naws elbv2 describe-load-balancer-attributes \\\n  --load-balancer-arn arn:aws:elasticloadbalancing:region:account:loadbalancer/app/my-lb/xxx\n\n# For CloudFront, check distribution status\naws cloudfront get-distribution --id DISTRIBUTION_ID",
+          "verify": "# Test ALB endpoint\ncurl -I https://your-alb-dns.region.elb.amazonaws.com | grep -i server\n\n# Test CloudFront distribution\ncurl -I https://your-domain.com | grep -i server\n\n# Verify target responses\nfor target in target1 target2; do\n  curl -I https://$target | grep -i server\ndone\n\n# Check CloudFront headers\naws cloudfront get-distribution-config --id DISTRIBUTION_ID"
+        }
+      },
+      "rollbackPlan": "1. Backup all server configuration files before changes\n2. Document current configuration baseline\n3. Test changes in staging environment first\n4. If server fails to start after config changes:\n   - Nginx: Revert config, run 'nginx -t', then reload\n   - Apache: Revert config, run 'apachectl configtest', then reload\n   - IIS: Revert web.config or use IIS Manager to undo\n5. If applications break (500 errors):\n   - Check error logs for specific issues\n   - Verify custom error pages exist and are accessible\n   - Ensure directory permissions correct for error page directory\n6. If directory listing needed for specific directories:\n   - Re-enable selectively for specific paths only\n   - Use authentication/authorization to protect\n7. Monitor application logs and metrics for 30 minutes post-deployment\n8. Have rollback script ready: cp /backup/nginx.conf /etc/nginx/nginx.conf && nginx -s reload",
+      "verificationSteps": [
+        "1. Verify Server header: curl -I https://your-domain.com | grep Server",
+        "2. Confirm Server header shows no version (e.g., 'nginx' not 'nginx/1.18.0')",
+        "3. Test X-Powered-By removed: curl -I https://your-domain.com | grep X-Powered-By",
+        "4. Should return empty (header not present)",
+        "5. Test directory listing: curl https://your-domain.com/assets/",
+        "6. Should return 403/404, not file list",
+        "7. Test error pages: curl https://your-domain.com/nonexistent",
+        "8. Custom error page should appear without server branding",
+        "9. Run Nikto scan: nikto -h https://your-domain.com",
+        "10. Verify no 'Server version detected' findings",
+        "11. Test all application functionality (smoke test)",
+        "12. Monitor logs for errors for 1 hour post-deployment"
+      ],
+      "estimatedEffort": "2-3 hours"
+    },
+    "QA_TESTER": {
+      "manualTests": [
+        {
+          "name": "Verify Server Header Hardening",
+          "steps": [
+            "1. Open browser DevTools (F12)",
+            "2. Go to Network tab",
+            "3. Navigate to https://your-domain.com",
+            "4. Click first request (HTML document)",
+            "5. View Response Headers section",
+            "6. Check 'Server' header value",
+            "7. Verify: No version number present (e.g., 'nginx' not 'nginx/1.18.0')",
+            "8. Check 'X-Powered-By' header",
+            "9. Verify: Header not present or empty",
+            "10. Screenshot for evidence"
+          ],
+          "expected": "Server header present but shows no version information. X-Powered-By header completely absent. No framework or technology version exposed in any response headers."
+        },
+        {
+          "name": "Test Directory Listing Disabled",
+          "steps": [
+            "1. Identify directories that should not be browsable (/images/, /assets/, /static/, /uploads/)",
+            "2. Navigate to https://your-domain.com/images/",
+            "3. Verify response is 403 Forbidden or 404 Not Found",
+            "4. Verify no file listing displayed",
+            "5. Test multiple directories: /assets/, /css/, /js/, /uploads/",
+            "6. Test root directory: https://your-domain.com/",
+            "7. Verify index file served, not directory listing",
+            "8. Try common backup directories: /backup/, /old/, /bak/",
+            "9. Verify all return 403/404",
+            "10. Document any accessible directory listings"
+          ],
+          "expected": "All directory requests return 403 or 404. No directory listings displayed. No file names or folder structure exposed. Index files (index.html) served where appropriate."
+        },
+        {
+          "name": "Test Custom Error Pages",
+          "steps": [
+            "1. Test 404: Navigate to https://your-domain.com/this-does-not-exist-12345",
+            "2. Verify custom 404 page appears",
+            "3. Verify page does NOT contain: server name, version, framework name, file paths, stack traces",
+            "4. Test 403: Try to access forbidden resource",
+            "5. Verify custom 403 page without server info",
+            "6. Test 500: Trigger application error (if test endpoint available)",
+            "7. Verify custom 500 page without stack trace",
+            "8. View page source for each error page",
+            "9. Confirm no HTML comments revealing server details",
+            "10. Test error pages in multiple browsers"
+          ],
+          "expected": "Custom error pages display for all error codes. No server, framework, or version information revealed. No stack traces, file paths, or technical details exposed. Professional, branded error pages."
+        },
+        {
+          "name": "Information Disclosure Scan",
+          "steps": [
+            "1. Use command line: curl -I https://your-domain.com",
+            "2. Review all response headers",
+            "3. Document any headers revealing technology stack",
+            "4. Run Wappalyzer browser extension on site",
+            "5. Note what technologies are detected",
+            "6. Run BuiltWith (https://builtwith.com/) on domain",
+            "7. Compare detected technologies to actual stack",
+            "8. Run Nikto scan: nikto -h https://your-domain.com",
+            "9. Review scan results for information disclosure findings",
+            "10. Document all information disclosure issues"
+          ],
+          "expected": "Minimal technology detection. No server versions detected. No framework versions identified through headers. Nikto scan shows no 'Server version disclosed' findings. Limited technology fingerprinting possible."
+        }
+      ],
+      "automatedTests": {
+        "tool": "Selenium WebDriver / OWASP ZAP / Nikto",
+        "example": "// Selenium test for server hardening validation\nimport org.openqa.selenium.WebDriver;\nimport org.openqa.selenium.chrome.ChromeDriver;\nimport org.testng.annotations.Test;\nimport org.testng.Assert;\nimport java.io.IOException;\nimport java.net.HttpURLConnection;\nimport java.net.URL;\nimport java.util.List;\nimport java.util.Map;\n\npublic class ServerHardeningTest {\n    \n    @Test\n    public void verifyServerHeaderObfuscated() throws IOException {\n        URL url = new URL(\"https://your-domain.com\");\n        HttpURLConnection connection = (HttpURLConnection) url.openConnection();\n        connection.setRequestMethod(\"HEAD\");\n        \n        Map<String, List<String>> headers = connection.getHeaderFields();\n        \n        // Check Server header\n        List<String> serverHeader = headers.get(\"Server\");\n        if (serverHeader != null && !serverHeader.isEmpty()) {\n            String serverValue = serverHeader.get(0);\n            \n            // Should not contain version numbers\n            Assert.assertFalse(serverValue.matches(\".*\\\\d+\\\\.\\\\d+.*\"),\n                \"Server header should not contain version numbers: \" + serverValue);\n            \n            // Should not contain specific server names with versions\n            Assert.assertFalse(serverValue.contains(\"Apache/\"),\n                \"Server header reveals Apache version\");\n            Assert.assertFalse(serverValue.contains(\"nginx/\"),\n                \"Server header reveals nginx version\");\n            Assert.assertFalse(serverValue.contains(\"Microsoft-IIS/\"),\n                \"Server header reveals IIS version\");\n        }\n        \n        connection.disconnect();\n    }\n    \n    @Test\n    public void verifyNoPoweredByHeader() throws IOException {\n        URL url = new URL(\"https://your-domain.com\");\n        HttpURLConnection connection = (HttpURLConnection) url.openConnection();\n        connection.setRequestMethod(\"HEAD\");\n        \n        Map<String, List<String>> headers = connection.getHeaderFields();\n        \n        // Check X-Powered-By is not present\n        Assert.assertNull(headers.get(\"X-Powered-By\"),\n            \"X-Powered-By header should not be present\");\n        \n        Assert.assertNull(headers.get(\"X-AspNet-Version\"),\n            \"X-AspNet-Version header should not be present\");\n        \n        Assert.assertNull(headers.get(\"X-AspNetMvc-Version\"),\n            \"X-AspNetMvc-Version header should not be present\");\n        \n        connection.disconnect();\n    }\n    \n    @Test\n    public void verifyDirectoryListingDisabled() throws IOException {\n        String[] testPaths = {\n            \"https://your-domain.com/images/\",\n            \"https://your-domain.com/assets/\",\n            \"https://your-domain.com/static/\",\n            \"https://your-domain.com/uploads/\"\n        };\n        \n        for (String testUrl : testPaths) {\n            URL url = new URL(testUrl);\n            HttpURLConnection connection = (HttpURLConnection) url.openConnection();\n            connection.setInstanceFollowRedirects(false);\n            \n            int responseCode = connection.getResponseCode();\n            \n            // Should be 403 or 404, not 200\n            Assert.assertTrue(responseCode == 403 || responseCode == 404,\n                \"Directory listing should be disabled for \" + testUrl + \n                \". Got response code: \" + responseCode);\n            \n            connection.disconnect();\n        }\n    }\n    \n    @Test\n    public void verifyCustomErrorPages() throws IOException {\n        // Test 404\n        URL url = new URL(\"https://your-domain.com/nonexistent-page-12345\");\n        HttpURLConnection connection = (HttpURLConnection) url.openConnection();\n        \n        int responseCode = connection.getResponseCode();\n        Assert.assertEquals(responseCode, 404, \"Should return 404 for nonexistent page\");\n        \n        // Read response body\n        java.io.InputStream is = connection.getErrorStream();\n        java.util.Scanner scanner = new java.util.Scanner(is).useDelimiter(\"\\\\A\");\n        String responseBody = scanner.hasNext() ? scanner.next() : \"\";\n        \n        // Verify custom error page (not default server error)\n        Assert.assertFalse(responseBody.contains(\"Apache\"),\n            \"Error page should not contain 'Apache'\");\n        Assert.assertFalse(responseBody.contains(\"nginx\"),\n            \"Error page should not contain 'nginx'\");\n        Assert.assertFalse(responseBody.contains(\"Microsoft\"),\n            \"Error page should not contain 'Microsoft'\");\n        Assert.assertFalse(responseBody.contains(\"Tomcat\"),\n            \"Error page should not contain 'Tomcat'\");\n        \n        connection.disconnect();\n    }\n    \n    @Test\n    public void runSecurityScan() {\n        // This would integrate with OWASP ZAP or Nikto\n        // Placeholder for security scan integration\n        \n        // Example: Run Nikto via command line and parse results\n        // nikto -h https://your-domain.com -output nikto-results.txt\n        // Parse nikto-results.txt and assert no critical findings\n    }\n}"
+      },
+      "edgeCases": [
+        "Subdomain testing - verify hardening applied to all subdomains",
+        "API endpoints - ensure API responses also obfuscated",
+        "Different protocols - test HTTP and HTTPS separately",
+        "Mobile site - verify mobile version also hardened",
+        "Different regions - test CDN edge locations",
+        "Load balancer endpoints - test direct backend servers",
+        "Error conditions - test various error scenarios (400, 401, 403, 404, 500, 502, 503)",
+        "Static files - test that static file serving doesn't reveal info",
+        "Redirects - verify redirects don't expose server details",
+        "WebSocket endpoints - test if applicable"
+      ],
+      "estimatedEffort": "3-4 hours"
+    }
+  }
+}

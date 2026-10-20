@@ -1,0 +1,254 @@
+{
+  "metadata": {
+    "filename": "x-content-type-options-missing.json",
+    "filepath": "src/test/resources/framework/advisor/templates/security/x-content-type-options-missing.json",
+    "version": "1.0.0",
+    "created": "2025-10-09",
+    "lastUpdated": "2025-10-09",
+    "author": "Greg Paskal",
+    "company": "MissionWares",
+    "methodology": "mAi™ (MissionWares® + AI)",
+    "description": "X-Content-Type-Options header missing finding template with comprehensive guidance for all audiences including framework-specific implementation code, server configurations, and testing strategies to prevent MIME type sniffing attacks where browsers incorrectly interpret file content types, potentially executing malicious scripts disguised as benign content.",
+    "aiGenerated": true,
+    "humanReviewed": false,
+    "reviewedBy": "Pending",
+    "approvedBy": "Pending",
+    "tags": ["x-content-type-options", "mime-sniffing", "content-type", "security", "headers", "xss", "content-security"],
+    "relatedFindings": ["XSS_VULNERABILITY", "CSP_HEADER_MISSING", "MIME_TYPE_MISCONFIGURATION", "CONTENT_TYPE_MISSING"],
+    "estimatedRemediationTime": "30 minutes - 1 hour",
+    "businessImpact": "LOW",
+    "complianceRequirements": ["OWASP Top 10 A03:2021", "CWE-16", "CWE-430", "NIST 800-53"]
+  },
+  "findingId": "SEC-XCTO-001",
+  "findingType": "X_CONTENT_TYPE_OPTIONS_MISSING",
+  "category": "SECURITY",
+  "severity": "LOW",
+  "cveReferences": [
+    "CWE-16",
+    "CWE-430"
+  ],
+  "understanding": {
+    "EXECUTIVE": {
+      "summary": "Your application lacks X-Content-Type-Options protection, allowing browsers to misinterpret file types and potentially execute malicious code disguised as safe content like images or text files.",
+      "businessRisk": "Low risk of MIME type sniffing attacks where browsers incorrectly interpret file content types. Attackers can exploit this to execute malicious scripts by uploading files with misleading extensions (e.g., JavaScript disguised as an image). Combined with file upload vulnerabilities, can lead to cross-site scripting (XSS) attacks. Lower priority than other security headers but part of defense-in-depth strategy. Minimal business impact if exploited, but contributes to overall security posture.",
+      "complianceImpact": "OWASP Top 10 A03:2021 (Injection) defense-in-depth control. CWE-16 (Configuration) and CWE-430 (Deployment of Wrong Handler) references. Some security frameworks and compliance audits check for presence of this header as part of baseline security controls. May appear in penetration test reports as informational or low-severity finding.",
+      "priority": "LOW"
+    },
+    "PROJECT_MANAGER": {
+      "summary": "Missing X-Content-Type-Options header allows browsers to guess file types, potentially enabling MIME sniffing attacks. Simple one-line fix with minimal risk.",
+      "timeline": "Can be addressed in current or next sprint. Implementation takes 30 minutes to 1 hour including testing. Very low complexity change with no functional impact. Low priority unless combined with other vulnerabilities or required for compliance.",
+      "effort": "30 minutes to 1 hour for implementation and testing. Zero-risk change with no code modification.",
+      "dependencies": [
+        "Access to web server or application configuration",
+        "Staging environment for testing"
+      ],
+      "blocking": [
+        "Security compliance audit completion (minor item)",
+        "Penetration testing sign-off (informational finding)",
+        "Some security certification requirements"
+      ]
+    },
+    "DEVELOPER": {
+      "summary": "X-Content-Type-Options HTTP response header is not present, allowing browsers to perform MIME type sniffing, potentially executing malicious content with incorrect Content-Type headers.",
+      "technical": "X-Content-Type-Options is an HTTP response header that prevents browsers from MIME-sniffing responses away from the declared Content-Type. Without this header, browsers (especially older versions of IE and Chrome) attempt to guess the content type by examining the content itself, ignoring the Content-Type header. This enables attacks where malicious JavaScript is uploaded as an image (image/jpeg) but executed as script. The header has one value: 'nosniff'. When set, browsers strictly follow the declared Content-Type and refuse to render content if mismatch detected. Particularly important for user-uploaded content, file downloads, and API responses. Supported by all modern browsers (IE8+, Chrome 1+, Firefox 50+, Safari 11+).",
+      "vulnerability": "CWE-16 (Configuration) and CWE-430 (Deployment of Wrong Handler). MIME sniffing allows browsers to interpret files differently than server intended. Attack scenario: (1) Attacker uploads JavaScript file with .jpg extension, (2) Server returns it with Content-Type: image/jpeg, (3) Without X-Content-Type-Options, browser detects JavaScript and executes it, (4) XSS payload runs in victim's browser. Also exploitable in: CSS files containing JavaScript, HTML files disguised as text, SVG files with embedded scripts. Most effective when combined with file upload vulnerabilities or user-generated content.",
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Content-Type-Options",
+        "https://owasp.org/www-community/Security_Headers",
+        "https://cwe.mitre.org/data/definitions/16.html",
+        "https://cwe.mitre.org/data/definitions/430.html"
+      ]
+    },
+    "SECURITY_ENGINEER": {
+      "summary": "Missing X-Content-Type-Options enables MIME type sniffing attacks where browsers execute malicious content by ignoring declared Content-Type headers, creating XSS attack vectors.",
+      "vulnerability": "CWE-16 (Configuration), CWE-430 (Deployment of Wrong Handler). MIME sniffing exploits browser behavior of content type detection. Without X-Content-Type-Options: nosniff, browsers examine file content to determine type, overriding server-declared Content-Type. Attack vectors: (1) Upload JavaScript disguised as image, (2) Inject script into CSS files, (3) Upload HTML as plain text, (4) SVG files with embedded JavaScript, (5) Polyglot files valid as multiple types. Most dangerous with file upload features or user-generated content hosting.",
+      "attackVector": "Attacker uploads malicious file with misleading extension/Content-Type. Examples: JavaScript with .jpg extension and Content-Type: image/jpeg, HTML with .txt extension and Content-Type: text/plain, SVG with embedded script. Browser performs MIME sniffing, detects actual content type (JavaScript/HTML), executes code despite incorrect Content-Type header. Results in XSS, data theft, session hijacking. Requires file upload capability or ability to influence server-served content. Effectiveness reduced in modern browsers but still exploitable, especially in legacy browser support scenarios.",
+      "threatLevel": "LOW - Modern browsers have improved MIME sniffing protections, reducing attack surface. However, defense-in-depth principle recommends implementation. Critical for applications with: file upload features, user-generated content, legacy browser support, untrusted content serving. Combined with other vulnerabilities (file upload bypass, insufficient validation), severity increases to MEDIUM. Simple fix with no performance impact makes implementation worthwhile despite low base risk.",
+      "mitigationUrgency": "Implement within 1-4 weeks as part of security header hardening. Can be bundled with other security header implementations (CSP, X-Frame-Options, HSTS). Higher priority (1-2 weeks) if application allows file uploads or serves user-generated content. Very low implementation complexity with zero functional risk."
+    },
+    "OPS_INFRASTRUCTURE": {
+      "summary": "Web servers not configured to send X-Content-Type-Options header, requiring simple HTTP response header configuration across infrastructure.",
+      "technical": "X-Content-Type-Options header must be added to HTTP responses at web server, reverse proxy, or application layer. Header syntax: X-Content-Type-Options: nosniff (only valid value). Typically configured in Nginx, Apache, load balancers, CDN, or application middleware. Simple one-line configuration change. Should be applied globally to all responses. No performance impact. Works in conjunction with proper Content-Type headers on all resources.",
+      "scope": "All web servers serving application traffic: production web servers, load balancers, CDN origin shields, API gateways, reverse proxies. Must be consistent across all environments (dev, staging, production). Applies to all HTTP responses including: HTML pages, API responses, static assets (CSS, JS, images), file downloads, user-uploaded content.",
+      "monitoring": "Monitor for correct Content-Type headers on all resources. Verify X-Content-Type-Options present using security scanners. Use browser DevTools to verify header in responses. No specific runtime monitoring needed - header presence is static configuration. Include in regular security header audits."
+    },
+    "QA_TESTER": {
+      "summary": "Missing X-Content-Type-Options header prevents validation that browsers strictly respect declared Content-Type headers and block MIME sniffing attacks.",
+      "testImplication": "Cannot validate MIME sniffing prevention controls. Security testing tools (Burp Suite, OWASP ZAP) flag missing X-Content-Type-Options as low-severity finding. After implementation, must test: (1) Header present on all responses, (2) Application functionality unaffected, (3) File uploads and downloads work correctly, (4) No Content-Type mismatches causing browser errors.",
+      "riskIfNotFixed": "Security audit finding (informational/low severity). Penetration test report item. Incomplete defense-in-depth security posture. Potential MIME sniffing exploitation if combined with file upload vulnerabilities. Modern browsers less affected but legacy browser support remains vulnerable."
+    }
+  },
+  "actions": {
+    "DEVELOPER": {
+      "frameworks": {
+        "spring-boot": {
+          "code": "// Spring Boot - Add X-Content-Type-Options via Security Configuration\n// SecurityConfig.java\n\nimport org.springframework.context.annotation.Bean;\nimport org.springframework.context.annotation.Configuration;\nimport org.springframework.security.config.annotation.web.builders.HttpSecurity;\nimport org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;\nimport org.springframework.security.web.SecurityFilterChain;\n\n@Configuration\n@EnableWebSecurity\npublic class SecurityConfig {\n\n    @Bean\n    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {\n        http\n            .headers(headers -> headers\n                // Add X-Content-Type-Options: nosniff\n                .contentTypeOptions()\n            )\n            .authorizeHttpRequests(auth -> auth\n                .anyRequest().permitAll()\n            );\n        \n        return http.build();\n    }\n}\n\n// Alternative: Manual Filter approach\nimport javax.servlet.*;\nimport javax.servlet.http.HttpServletResponse;\nimport java.io.IOException;\nimport org.springframework.stereotype.Component;\n\n@Component\npublic class SecurityHeadersFilter implements Filter {\n    \n    @Override\n    public void doFilter(ServletRequest request, ServletResponse response, \n                        FilterChain chain) throws IOException, ServletException {\n        HttpServletResponse httpResponse = (HttpServletResponse) response;\n        \n        // Set X-Content-Type-Options header\n        httpResponse.setHeader(\"X-Content-Type-Options\", \"nosniff\");\n        \n        // Also add other security headers\n        httpResponse.setHeader(\"X-Frame-Options\", \"DENY\");\n        httpResponse.setHeader(\"X-XSS-Protection\", \"1; mode=block\");\n        \n        chain.doFilter(request, response);\n    }\n}\n\n// Application-wide configuration\n// application.properties\nserver.servlet.headers.x-content-type-options=nosniff",
+          "testCode": "// JUnit test to verify X-Content-Type-Options header\nimport org.junit.jupiter.api.Test;\nimport org.springframework.beans.factory.annotation.Autowired;\nimport org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;\nimport org.springframework.boot.test.context.SpringBootTest;\nimport org.springframework.test.web.servlet.MockMvc;\n\nimport static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;\nimport static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;\n\n@SpringBootTest\n@AutoConfigureMockMvc\npublic class XContentTypeOptionsTest {\n\n    @Autowired\n    private MockMvc mockMvc;\n\n    @Test\n    public void shouldHaveXContentTypeOptionsHeader() throws Exception {\n        mockMvc.perform(get(\"/\"))\n            .andExpect(status().isOk())\n            .andExpect(header().exists(\"X-Content-Type-Options\"))\n            .andExpect(header().string(\"X-Content-Type-Options\", \"nosniff\"));\n    }\n    \n    @Test\n    public void allEndpointsShouldHaveHeader() throws Exception {\n        String[] endpoints = {\"/\", \"/api/data\", \"/login\", \"/static/style.css\"};\n        \n        for (String endpoint : endpoints) {\n            mockMvc.perform(get(endpoint))\n                .andExpect(header().exists(\"X-Content-Type-Options\"))\n                .andExpect(header().string(\"X-Content-Type-Options\", \"nosniff\"));\n        }\n    }\n    \n    @Test\n    public void shouldNotAllowOtherValues() throws Exception {\n        // X-Content-Type-Options only has one valid value: nosniff\n        mockMvc.perform(get(\"/\"))\n            .andExpect(header().string(\"X-Content-Type-Options\", \"nosniff\"));\n    }\n}",
+          "dependencies": "<!-- Maven dependencies -->\n<dependency>\n    <groupId>org.springframework.boot</groupId>\n    <artifactId>spring-boot-starter-security</artifactId>\n</dependency>\n<dependency>\n    <groupId>org.springframework.boot</groupId>\n    <artifactId>spring-boot-starter-web</artifactId>\n</dependency>",
+          "packageInstall": "mvn clean install"
+        },
+        "express-nodejs": {
+          "code": "// Express.js - Add X-Content-Type-Options via helmet middleware\nconst express = require('express');\nconst helmet = require('helmet');\n\nconst app = express();\n\n// Method 1: Use helmet (recommended - includes X-Content-Type-Options by default)\napp.use(helmet());\n\n// Method 2: Use specific helmet middleware\napp.use(helmet.noSniff());\n\n// Method 3: Manual middleware (if not using helmet)\napp.use((req, res, next) => {\n  res.setHeader('X-Content-Type-Options', 'nosniff');\n  next();\n});\n\n// Method 4: Helmet with custom security headers\napp.use(\n  helmet({\n    contentSecurityPolicy: {\n      directives: {\n        defaultSrc: [\"'self'\"],\n      },\n    },\n    xContentTypeOptions: true,  // Explicitly enable (default)\n    xFrameOptions: { action: 'deny' },\n    hsts: {\n      maxAge: 31536000,\n      includeSubDomains: true,\n    },\n  })\n);\n\napp.get('/', (req, res) => {\n  res.send('<h1>Protected from MIME sniffing</h1>');\n});\n\napp.get('/api/data', (req, res) => {\n  res.json({ message: 'API response with nosniff header' });\n});\n\napp.listen(3000, () => {\n  console.log('Server running with X-Content-Type-Options protection');\n});",
+          "testCode": "// Mocha/Chai test for X-Content-Type-Options header\nconst request = require('supertest');\nconst { expect } = require('chai');\nconst app = require('../app');\n\ndescribe('X-Content-Type-Options Header Tests', () => {\n  it('should have X-Content-Type-Options header', (done) => {\n    request(app)\n      .get('/')\n      .expect(200)\n      .expect('X-Content-Type-Options', 'nosniff')\n      .end(done);\n  });\n  \n  it('should have nosniff value only', (done) => {\n    request(app)\n      .get('/')\n      .end((err, res) => {\n        if (err) return done(err);\n        \n        const xcto = res.headers['x-content-type-options'];\n        expect(xcto).to.equal('nosniff');\n        \n        done();\n      });\n  });\n  \n  it('should protect all routes', (done) => {\n    const routes = ['/', '/api/data', '/static/style.css'];\n    let completed = 0;\n    \n    routes.forEach(route => {\n      request(app)\n        .get(route)\n        .end((err, res) => {\n          if (!err) {\n            expect(res.headers['x-content-type-options']).to.equal('nosniff');\n          }\n          completed++;\n          if (completed === routes.length) done();\n        });\n    });\n  });\n  \n  it('should work with different content types', (done) => {\n    request(app)\n      .get('/api/data')\n      .expect('Content-Type', /json/)\n      .expect('X-Content-Type-Options', 'nosniff')\n      .end(done);\n  });\n});",
+          "dependencies": "npm install express helmet",
+          "packageInstall": "npm install"
+        },
+        "asp-net-core": {
+          "code": "// ASP.NET Core - Add X-Content-Type-Options header\n// Program.cs\n\nusing Microsoft.AspNetCore.Builder;\nusing Microsoft.Extensions.DependencyInjection;\n\nvar builder = WebApplication.CreateBuilder(args);\n\nbuilder.Services.AddControllersWithViews();\n\nvar app = builder.Build();\n\n// Method 1: Simple middleware\napp.Use(async (context, next) =>\n{\n    context.Response.Headers.Add(\"X-Content-Type-Options\", \"nosniff\");\n    await next();\n});\n\n// Method 2: Use built-in security headers (recommended)\napp.UseHsts();  // Includes X-Content-Type-Options by default in production\n\napp.UseRouting();\napp.UseAuthorization();\n\napp.MapControllerRoute(\n    name: \"default\",\n    pattern: \"{controller=Home}/{action=Index}/{id?}\");\n\napp.Run();\n\n// Alternative: Create reusable middleware class\npublic class SecurityHeadersMiddleware\n{\n    private readonly RequestDelegate _next;\n    \n    public SecurityHeadersMiddleware(RequestDelegate next)\n    {\n        _next = next;\n    }\n    \n    public async Task InvokeAsync(HttpContext context)\n    {\n        // Add X-Content-Type-Options\n        context.Response.Headers.Add(\"X-Content-Type-Options\", \"nosniff\");\n        \n        // Add other security headers\n        context.Response.Headers.Add(\"X-Frame-Options\", \"DENY\");\n        context.Response.Headers.Add(\"X-XSS-Protection\", \"1; mode=block\");\n        context.Response.Headers.Add(\n            \"Content-Security-Policy\", \n            \"default-src 'self'\"\n        );\n        \n        await _next(context);\n    }\n}\n\n// Extension method for easy registration\npublic static class SecurityHeadersExtensions\n{\n    public static IApplicationBuilder UseSecurityHeaders(\n        this IApplicationBuilder builder)\n    {\n        return builder.UseMiddleware<SecurityHeadersMiddleware>();\n    }\n}\n\n// Usage in Program.cs:\n// app.UseSecurityHeaders();\n\n// Method 3: Using NWebsec package (optional)\n// Install-Package NWebsec.AspNetCore.Middleware\n// builder.Services.AddHsts(options =>\n// {\n//     options.MaxAge = TimeSpan.FromDays(365);\n//     options.IncludeSubDomains = true;\n// });\n// app.UseXContentTypeOptions();  // NWebsec middleware",
+          "testCode": "// xUnit test for X-Content-Type-Options header\nusing Xunit;\nusing Microsoft.AspNetCore.Mvc.Testing;\nusing System.Net.Http;\nusing System.Threading.Tasks;\nusing System.Linq;\n\npublic class XContentTypeOptionsTests : IClassFixture<WebApplicationFactory<Program>>\n{\n    private readonly HttpClient _client;\n    \n    public XContentTypeOptionsTests(WebApplicationFactory<Program> factory)\n    {\n        _client = factory.CreateClient();\n    }\n    \n    [Fact]\n    public async Task Should_Have_XContentTypeOptions_Header()\n    {\n        var response = await _client.GetAsync(\"/\");\n        \n        Assert.True(response.Headers.Contains(\"X-Content-Type-Options\"),\n            \"Response should contain X-Content-Type-Options header\");\n    }\n    \n    [Fact]\n    public async Task XContentTypeOptions_Should_Be_NoSniff()\n    {\n        var response = await _client.GetAsync(\"/\");\n        var header = response.Headers.GetValues(\"X-Content-Type-Options\").First();\n        \n        Assert.Equal(\"nosniff\", header);\n    }\n    \n    [Theory]\n    [InlineData(\"/\")]\n    [InlineData(\"/Home/Index\")]\n    [InlineData(\"/api/data\")]\n    public async Task All_Endpoints_Should_Have_Header(string path)\n    {\n        var response = await _client.GetAsync(path);\n        \n        Assert.True(response.Headers.Contains(\"X-Content-Type-Options\"),\n            $\"Endpoint {path} should have X-Content-Type-Options header\");\n        \n        var header = response.Headers.GetValues(\"X-Content-Type-Options\").First();\n        Assert.Equal(\"nosniff\", header);\n    }\n    \n    [Fact]\n    public async Task Should_Work_With_Different_Content_Types()\n    {\n        // Test HTML page\n        var htmlResponse = await _client.GetAsync(\"/\");\n        Assert.Contains(\"X-Content-Type-Options\", \n            htmlResponse.Headers.Select(h => h.Key));\n        \n        // Test JSON API\n        var jsonResponse = await _client.GetAsync(\"/api/data\");\n        Assert.Contains(\"X-Content-Type-Options\", \n            jsonResponse.Headers.Select(h => h.Key));\n    }\n}",
+          "dependencies": "<PackageReference Include=\"Microsoft.AspNetCore.App\" />\n<PackageReference Include=\"xunit\" Version=\"2.5.0\" />\n<PackageReference Include=\"Microsoft.AspNetCore.Mvc.Testing\" Version=\"8.0.0\" />\n\n<!-- Optional: NWebsec for additional security header middleware -->\n<!-- <PackageReference Include=\"NWebsec.AspNetCore.Middleware\" Version=\"3.0.0\" /> -->",
+          "packageInstall": "dotnet restore"
+        },
+        "django-python": {
+          "code": "# Django - Add X-Content-Type-Options via settings\n# settings.py\n\n# Method 1: Use Django's built-in SecurityMiddleware\nMIDDLEWARE = [\n    'django.middleware.security.SecurityMiddleware',  # Includes X-Content-Type-Options\n    # ... other middleware\n]\n\n# Enable secure content type sniffing prevention\nSECURE_CONTENT_TYPE_NOSNIFF = True\n\n# Method 2: Custom middleware for more control\n# middleware.py\nclass SecurityHeadersMiddleware:\n    def __init__(self, get_response):\n        self.get_response = get_response\n    \n    def __call__(self, request):\n        response = self.get_response(request)\n        \n        # Set X-Content-Type-Options header\n        response['X-Content-Type-Options'] = 'nosniff'\n        \n        # Also add other security headers\n        response['X-Frame-Options'] = 'DENY'\n        response['X-XSS-Protection'] = '1; mode=block'\n        \n        return response\n\n# Add custom middleware to MIDDLEWARE list\n# MIDDLEWARE = [\n#     'your_app.middleware.SecurityHeadersMiddleware',\n#     # ... other middleware\n# ]\n\n# Method 3: Using django-csp package (includes X-Content-Type-Options)\n# Install: pip install django-csp\n# MIDDLEWARE = [\n#     'csp.middleware.CSPMiddleware',\n#     # ...\n# ]\n# CSP_DEFAULT_SRC = (\"'self'\",)\n\n# Method 4: Per-view decorator (not recommended - use global setting)\nfrom django.views.decorators.http import require_safe\n\ndef add_security_headers(view_func):\n    def wrapper(request, *args, **kwargs):\n        response = view_func(request, *args, **kwargs)\n        response['X-Content-Type-Options'] = 'nosniff'\n        return response\n    return wrapper\n\n@add_security_headers\ndef my_view(request):\n    return HttpResponse('Protected view')",
+          "testCode": "# pytest test for X-Content-Type-Options header\nimport pytest\nfrom django.test import Client\nfrom django.urls import reverse\n\n@pytest.fixture\ndef client():\n    return Client()\n\n@pytest.mark.django_db\ndef test_xcontent_type_options_header_present(client):\n    \"\"\"Test that X-Content-Type-Options header is present\"\"\"\n    response = client.get('/')\n    \n    assert 'X-Content-Type-Options' in response.headers, \\\n        \"Response should contain X-Content-Type-Options header\"\n\n@pytest.mark.django_db\ndef test_xcontent_type_options_nosniff(client):\n    \"\"\"Test that X-Content-Type-Options is set to nosniff\"\"\"\n    response = client.get('/')\n    xcto = response.headers.get('X-Content-Type-Options', '')\n    \n    assert xcto == 'nosniff', \\\n        f\"X-Content-Type-Options should be nosniff, got: {xcto}\"\n\n@pytest.mark.django_db\ndef test_all_pages_protected(client):\n    \"\"\"Test that all pages have X-Content-Type-Options header\"\"\"\n    test_urls = ['/', '/login/', '/api/data/', '/static/style.css']\n    \n    for url in test_urls:\n        response = client.get(url)\n        assert 'X-Content-Type-Options' in response.headers, \\\n            f\"Page {url} should have X-Content-Type-Options header\"\n        assert response.headers['X-Content-Type-Options'] == 'nosniff'\n\n@pytest.mark.django_db\ndef test_different_content_types(client):\n    \"\"\"Test header present for different content types\"\"\"\n    # HTML page\n    html_response = client.get('/')\n    assert html_response.headers.get('X-Content-Type-Options') == 'nosniff'\n    \n    # JSON API endpoint\n    api_response = client.get('/api/data/')\n    assert api_response.headers.get('X-Content-Type-Options') == 'nosniff'\n\n@pytest.mark.django_db\ndef test_secure_content_type_nosniff_setting(client, settings):\n    \"\"\"Test that Django setting is enabled\"\"\"\n    assert settings.SECURE_CONTENT_TYPE_NOSNIFF is True, \\\n        \"SECURE_CONTENT_TYPE_NOSNIFF should be True in settings\"",
+          "dependencies": "pip install django pytest pytest-django",
+          "packageInstall": "pip install -r requirements.txt"
+        },
+        "generic": {
+          "code": "# Generic X-Content-Type-Options Implementation Guidelines\n\n## Header Syntax\n\nX-Content-Type-Options: nosniff\n\n# This is the ONLY valid value for this header\n# There are no other options or directives\n\n## What It Does\n\n1. Prevents browsers from MIME-sniffing responses\n2. Forces browsers to respect the Content-Type header\n3. Blocks execution if Content-Type mismatches actual content\n\n## Implementation Locations\n\n### Application Level (Recommended)\n- Add header in application middleware/framework\n- Benefits: Consistent across all responses, version controlled\n- See framework examples above\n\n### Web Server Level\n- Add header in Nginx/Apache/IIS configuration\n- Benefits: No application code changes needed\n- See server configuration examples below\n\n### CDN/Load Balancer Level\n- Add header at edge or load balancer\n- Benefits: Applies to all origin content\n- See AWS CloudFront example below\n\n## When to Apply\n\nApply X-Content-Type-Options: nosniff to:\n- ✅ All HTML pages\n- ✅ All API responses (JSON, XML, etc.)\n- ✅ All static assets (CSS, JS, images)\n- ✅ All file downloads\n- ✅ User-uploaded content\n- ✅ Error pages (4xx, 5xx)\n\n## Common Mistakes to Avoid\n\n❌ Don't use any value other than \"nosniff\"\n❌ Don't conditionally apply (should be global)\n❌ Don't forget error responses\n❌ Don't rely on browser defaults\n\n## Best Practices\n\n✅ Apply globally to all responses\n✅ Set correct Content-Type headers on all resources\n✅ Test with different file types\n✅ Include in security header policy\n✅ Combine with CSP for defense-in-depth\n\n## Browser Compatibility\n\n- Internet Explorer 8+\n- Chrome 1+\n- Firefox 50+\n- Safari 11+\n- Edge (all versions)\n\n## Testing\n\nVerify header present:\ncurl -I https://your-domain.com | grep -i x-content-type-options\n\nExpected output:\nX-Content-Type-Options: nosniff",
+          "testCode": "# Generic X-Content-Type-Options Testing\n\n## Browser DevTools Testing\n\n1. Open browser DevTools (F12)\n2. Go to Network tab\n3. Navigate to your site\n4. Click on any request (HTML, CSS, JS, API)\n5. Go to Headers section\n6. Look for X-Content-Type-Options: nosniff in Response Headers\n\n## Command-Line Testing\n\n# Check if header is present\ncurl -I https://your-domain.com | grep -i x-content-type-options\n\n# Expected output:\nX-Content-Type-Options: nosniff\n\n# Test multiple resources\nfor path in / /api/data /style.css /script.js; do\n  echo \"Testing $path:\"\n  curl -I https://your-domain.com$path | grep -i x-content-type-options\ndone\n\n# Test different HTTP methods\ncurl -I -X GET https://your-domain.com/api/data | grep -i x-content\ncurl -I -X POST https://your-domain.com/api/data | grep -i x-content\n\n## MIME Sniffing Test\n\n# Create test file that could be MIME-sniffed\n# Example: JavaScript served as text/plain\n\n1. Create file: test.txt containing JavaScript:\n   alert('XSS');\n\n2. Serve with incorrect Content-Type: text/plain\n\n3. Try to execute in browser:\n   <script src=\"/test.txt\"></script>\n\n4. With X-Content-Type-Options: nosniff:\n   - Browser blocks execution\n   - Console shows: \"Refused to execute script because MIME type mismatch\"\n\n5. Without header:\n   - Browser might execute (MIME sniffing)\n   - Alert appears (security risk)\n\n## Online Testing Tools\n\n1. Security Headers Scanner\n   https://securityheaders.com/\n   - Enter your domain\n   - Verify X-Content-Type-Options present\n\n2. Mozilla Observatory\n   https://observatory.mozilla.org/\n   - Comprehensive security scan\n   - Checks X-Content-Type-Options\n\n3. SSL Labs\n   https://www.ssllabs.com/ssltest/\n   - HTTP header analysis\n\n## Automated Testing Script\n\n#!/bin/bash\n# test-xcto.sh\n\nURL=\"$1\"\n\nif [ -z \"$URL\" ]; then\n  echo \"Usage: $0 <url>\"\n  exit 1\nfi\n\necho \"Testing X-Content-Type-Options for: $URL\"\n\nXCTO=$(curl -s -I \"$URL\" | grep -i \"^x-content-type-options:\" | cut -d: -f2 | tr -d '\\r\\n ')\n\nif [ -z \"$XCTO\" ]; then\n  echo \"❌ X-Content-Type-Options header is MISSING\"\n  exit 1\nelse\n  echo \"✅ X-Content-Type-Options: $XCTO\"\n  \n  if [ \"$XCTO\" == \"nosniff\" ]; then\n    echo \"✅ Correct value (nosniff)\"\n  else\n    echo \"❌ Incorrect value - should be 'nosniff'\"\n  fi\nfi\n\n# Test multiple resource types\necho \"\"\necho \"Testing different resource types:\"\n\nfor path in / /api/data /static/style.css /static/script.js; do\n  RESULT=$(curl -s -I \"$URL$path\" | grep -i \"^x-content-type-options:\")\n  if [ -n \"$RESULT\" ]; then\n    echo \"✅ $path\"\n  else\n    echo \"❌ $path - header missing\"\n  fi\ndone",
+          "dependencies": "curl, browser with DevTools",
+          "packageInstall": "# Usually pre-installed"
+        }
+      },
+      "verificationSteps": [
+        "Deploy to staging environment first",
+        "Verify header present: curl -I https://your-domain.com | grep X-Content-Type-Options",
+        "Test in browser DevTools: Network tab > Headers > Response Headers",
+        "Verify value is exactly 'nosniff' (case-sensitive)",
+        "Test multiple resource types: HTML, CSS, JS, JSON, images",
+        "Test API endpoints have header",
+        "Test static assets have header",
+        "Test error pages (404, 500) have header",
+        "Verify application functionality unchanged",
+        "Run security scanner (securityheaders.com) to verify configuration",
+        "Test across multiple browsers (Chrome, Firefox, Safari, Edge)",
+        "Monitor application logs for Content-Type related errors"
+      ],
+      "estimatedEffort": "30 minutes - 1 hour"
+    },
+    "OPS_INFRASTRUCTURE": {
+      "servers": {
+        "nginx": {
+          "config": "# Nginx - Add X-Content-Type-Options header\n# /etc/nginx/sites-available/your-site or /etc/nginx/nginx.conf\n\nserver {\n    listen 443 ssl http2;\n    listen [::]:443 ssl http2;\n    server_name your-domain.com;\n    \n    # Add X-Content-Type-Options header\n    add_header X-Content-Type-Options \"nosniff\" always;\n    \n    # Other recommended security headers\n    add_header X-Frame-Options \"DENY\" always;\n    add_header X-XSS-Protection \"1; mode=block\" always;\n    add_header Referrer-Policy \"strict-origin-when-cross-origin\" always;\n    add_header Content-Security-Policy \"default-src 'self'\" always;\n    \n    location / {\n        proxy_pass http://backend;\n        proxy_set_header Host $host;\n        proxy_set_header X-Real-IP $remote_addr;\n        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;\n        proxy_set_header X-Forwarded-Proto $scheme;\n    }\n    \n    # Ensure header on static files too\n    location ~* \\.(css|js|jpg|jpeg|png|gif|ico|svg|woff|woff2|ttf)$ {\n        add_header X-Content-Type-Options \"nosniff\" always;\n        expires 1y;\n        access_log off;\n    }\n}\n\n# Note: 'always' ensures header added even for error responses",
+          "reload": "# Test Nginx configuration\nsudo nginx -t\n\n# If test passes, reload Nginx gracefully\nsudo nginx -s reload\n\n# Or use systemctl\nsudo systemctl reload nginx\n\n# Verify Nginx is running\nsudo systemctl status nginx\n\n# Check error logs if issues\nsudo tail -f /var/log/nginx/error.log",
+          "verify": "# Verify header is being sent\ncurl -I https://your-domain.com | grep -i x-content-type-options\n\n# Expected output:\nX-Content-Type-Options: nosniff\n\n# Test multiple resource types\ncurl -I https://your-domain.com/\ncurl -I https://your-domain.com/style.css\ncurl -I https://your-domain.com/script.js\ncurl -I https://your-domain.com/api/data\n\n# View all response headers\ncurl -I https://your-domain.com\n\n# Check Nginx configuration\nsudo nginx -T | grep -A 2 \"add_header X-Content-Type-Options\""
+        },
+        "apache": {
+          "config": "# Apache - Add X-Content-Type-Options header\n# /etc/apache2/sites-available/your-site.conf or .htaccess\n\n<VirtualHost *:443>\n    ServerName your-domain.com\n    \n    # Enable mod_headers if not enabled\n    # a2enmod headers\n    \n    # Add X-Content-Type-Options header\n    Header always set X-Content-Type-Options \"nosniff\"\n    \n    # Other recommended security headers\n    Header always set X-Frame-Options \"DENY\"\n    Header always set X-XSS-Protection \"1; mode=block\"\n    Header always set Referrer-Policy \"strict-origin-when-cross-origin\"\n    Header always set Content-Security-Policy \"default-src 'self'\"\n    \n    DocumentRoot /var/www/html\n    \n    <Directory /var/www/html>\n        Options -Indexes +FollowSymLinks\n        AllowOverride All\n        Require all granted\n    </Directory>\n    \n    SSLEngine on\n    SSLCertificateFile /etc/ssl/certs/your-cert.crt\n    SSLCertificateKeyFile /etc/ssl/private/your-key.key\n</VirtualHost>\n\n# Alternative: .htaccess file\n<IfModule mod_headers.c>\n  Header always set X-Content-Type-Options \"nosniff\"\n</IfModule>",
+          "reload": "# Enable headers module if not enabled\nsudo a2enmod headers\n\n# Test Apache configuration\nsudo apachectl configtest\n# or\nsudo apache2ctl configtest\n\n# If test passes, reload Apache\nsudo systemctl reload apache2\n# or\nsudo systemctl reload httpd\n\n# Verify Apache is running\nsudo systemctl status apache2\n\n# Check error logs\nsudo tail -f /var/log/apache2/error.log",
+          "verify": "# Verify header is present\ncurl -I https://your-domain.com | grep -i x-content-type-options\n\n# Expected output:\nX-Content-Type-Options: nosniff\n\n# View all response headers\ncurl -I https://your-domain.com\n\n# Check Apache configuration\nsudo apachectl -S | grep -i your-domain\n\n# Verify headers module loaded\napachectl -M | grep headers"
+        },
+        "aws-cloudfront": {
+          "config": "# AWS CloudFront - Add X-Content-Type-Options via Response Headers Policy\n\n# AWS CLI - Create/Update Response Headers Policy\naws cloudfront create-response-headers-policy \\\n  --response-headers-policy-config '{\n    \"Name\": \"SecurityHeadersPolicy\",\n    \"Comment\": \"Security headers including X-Content-Type-Options\",\n    \"SecurityHeadersConfig\": {\n      \"XContentTypeOptions\": {\n        \"Override\": true\n      },\n      \"XFrameOptions\": {\n        \"FrameOption\": \"DENY\",\n        \"Override\": true\n      },\n      \"StrictTransportSecurity\": {\n        \"AccessControlMaxAgeSec\": 31536000,\n        \"IncludeSubdomains\": true,\n        \"Override\": true\n      }\n    }\n  }'\n\n# CloudFormation Template\nResources:\n  ResponseHeadersPolicy:\n    Type: AWS::CloudFront::ResponseHeadersPolicy\n    Properties:\n      ResponseHeadersPolicyConfig:\n        Name: SecurityHeadersPolicy\n        SecurityHeadersConfig:\n          XContentTypeOptions:\n            Override: true\n          XFrameOptions:\n            FrameOption: DENY\n            Override: true\n          StrictTransportSecurity:\n            AccessControlMaxAgeSec: 31536000\n            IncludeSubdomains: true\n            Override: true\n\n  CloudFrontDistribution:\n    Type: AWS::CloudFront::Distribution\n    Properties:\n      DistributionConfig:\n        DefaultCacheBehavior:\n          ResponseHeadersPolicyId: !Ref ResponseHeadersPolicy\n          # ... other settings ...\n\n# Terraform Example\nresource \"aws_cloudfront_response_headers_policy\" \"security_headers\" {\n  name = \"security-headers-policy\"\n\n  security_headers_config {\n    content_type_options {\n      override = true\n    }\n\n    frame_options {\n      frame_option = \"DENY\"\n      override     = true\n    }\n\n    strict_transport_security {\n      access_control_max_age_sec = 31536000\n      include_subdomains         = true\n      override                   = true\n    }\n  }\n}\n\nresource \"aws_cloudfront_distribution\" \"main\" {\n  default_cache_behavior {\n    response_headers_policy_id = aws_cloudfront_response_headers_policy.security_headers.id\n    # ... other settings ...\n  }\n}",
+          "reload": "# No reload needed - CloudFront propagates automatically\n\n# Check deployment status\naws cloudfront get-distribution \\\n  --id DISTRIBUTION_ID \\\n  --query 'Distribution.Status'\n\n# Wait for deployment (5-15 minutes)\naws cloudfront wait distribution-deployed \\\n  --id DISTRIBUTION_ID\n\n# Verify policy attached\naws cloudfront get-response-headers-policy \\\n  --id POLICY_ID",
+          "verify": "# Test header from CloudFront\ncurl -I https://your-cloudfront-domain.cloudfront.net | grep -i x-content-type-options\n\n# Test from custom domain\ncurl -I https://your-domain.com | grep -i x-content-type-options\n\n# Expected output:\nX-Content-Type-Options: nosniff\n\n# View all headers\ncurl -I https://your-domain.com"
+        }
+      },
+      "rollbackPlan": "1. Keep backup of current configuration files\n2. Document current header configuration\n3. If X-Content-Type-Options causes issues (extremely rare), remove header\n4. For Nginx: Comment out header line, test with 'nginx -t', reload\n5. For Apache: Comment out header line, test with 'apachectl configtest', reload\n6. For AWS CloudFront: Remove X-Content-Type-Options from Response Headers Policy\n7. Verify application functionality restored\n8. Investigate root cause (usually incorrect Content-Type headers on resources)\n9. Fix Content-Type headers on affected resources\n10. Re-deploy X-Content-Type-Options header",
+      "verificationSteps": [
+        "1. Verify header present: curl -I https://your-domain.com | grep -i x-content-type-options",
+        "2. Verify value is 'nosniff': curl -I https://your-domain.com",
+        "3. Test multiple resource types (HTML, CSS, JS, JSON, images)",
+        "4. Test API endpoints",
+        "5. Test static assets",
+        "6. Test error pages (404, 500)",
+        "7. Verify application functionality unchanged",
+        "8. Check browser console for Content-Type errors",
+        "9. Run securityheaders.com scan",
+        "10. Test across multiple browsers",
+        "11. Verify CDN/load balancer propagation complete",
+        "12. Monitor logs for Content-Type related issues"
+      ],
+      "estimatedEffort": "30 minutes - 1 hour"
+    },
+    "QA_TESTER": {
+      "manualTests": [
+        {
+          "name": "Verify X-Content-Type-Options Header Present",
+          "steps": [
+            "1. Open browser (Chrome recommended)",
+            "2. Open DevTools (F12)",
+            "3. Go to Network tab",
+            "4. Navigate to https://your-domain.com",
+            "5. Click on first request (HTML document)",
+            "6. Click 'Headers' section",
+            "7. Scroll to 'Response Headers'",
+            "8. Look for 'X-Content-Type-Options' header",
+            "9. Verify value is exactly 'nosniff'",
+            "10. Screenshot for test evidence"
+          ],
+          "expected": "X-Content-Type-Options header present with value 'nosniff' on all HTTP responses."
+        },
+        {
+          "name": "Test Multiple Resource Types",
+          "steps": [
+            "1. Open browser DevTools (F12) > Network tab",
+            "2. Navigate to application",
+            "3. Filter by 'All' to see all resource types",
+            "4. Check HTML page request - verify header present",
+            "5. Check CSS file request - verify header present",
+            "6. Check JavaScript file request - verify header present",
+            "7. Check image file request - verify header present",
+            "8. Check API JSON response - verify header present",
+            "9. Check font file request - verify header present",
+            "10. Document any resource type missing header"
+          ],
+          "expected": "X-Content-Type-Options: nosniff present on ALL resource types (HTML, CSS, JS, images, JSON, fonts, etc.)"
+        },
+        {
+          "name": "Test Error Pages Have Header",
+          "steps": [
+            "1. Open browser DevTools (F12) > Network tab",
+            "2. Navigate to non-existent page: https://your-domain.com/nonexistent",
+            "3. Check 404 error response headers",
+            "4. Verify X-Content-Type-Options: nosniff present",
+            "5. Trigger 500 error (if test environment allows)",
+            "6. Check 500 error response headers",
+            "7. Verify X-Content-Type-Options: nosniff present",
+            "8. Test other error codes (401, 403, etc.)",
+            "9. Verify header present on all error responses",
+            "10. Document findings"
+          ],
+          "expected": "X-Content-Type-Options: nosniff present on all error responses (404, 500, 401, 403, etc.)"
+        },
+        {
+          "name": "Verify Application Functionality Unchanged",
+          "steps": [
+            "1. Clear browser cache",
+            "2. Test all critical user journeys",
+            "3. Test file uploads (if applicable)",
+            "4. Test file downloads (if applicable)",
+            "5. Test dynamic content loading (AJAX)",
+            "6. Test embedded media (images, videos)",
+            "7. Test CSS styles applied correctly",
+            "8. Test JavaScript functionality",
+            "9. Check browser console for errors",
+            "10. Verify no Content-Type mismatch errors"
+          ],
+          "expected": "All application functionality works correctly. No Content-Type related errors. No broken features. Styles and scripts load normally."
+        }
+      ],
+      "automatedTests": {
+        "tool": "Selenium WebDriver / Playwright",
+        "example": "// Selenium test for X-Content-Type-Options validation\nimport org.openqa.selenium.WebDriver;\nimport org.openqa.selenium.chrome.ChromeDriver;\nimport org.openqa.selenium.chrome.ChromeOptions;\nimport org.openqa.selenium.logging.LogEntries;\nimport org.openqa.selenium.logging.LogEntry;\nimport org.openqa.selenium.logging.LogType;\nimport org.testng.annotations.Test;\nimport org.testng.Assert;\n\npublic class XContentTypeOptionsTest {\n    \n    @Test\n    public void verifyXContentTypeOptionsPresent() {\n        ChromeOptions options = new ChromeOptions();\n        options.setCapability(\"goog:loggingPrefs\", \n            Map.of(\"performance\", \"ALL\"));\n        \n        WebDriver driver = new ChromeDriver(options);\n        \n        try {\n            driver.get(\"https://your-domain.com\");\n            \n            // Get performance logs to check headers\n            LogEntries logs = driver.manage().logs().get(LogType.PERFORMANCE);\n            \n            boolean headerFound = false;\n            for (LogEntry entry : logs) {\n                String message = entry.getMessage();\n                if (message.contains(\"X-Content-Type-Options\") && \n                    message.contains(\"nosniff\")) {\n                    headerFound = true;\n                    break;\n                }\n            }\n            \n            Assert.assertTrue(headerFound, \n                \"X-Content-Type-Options: nosniff header should be present\");\n            \n        } finally {\n            driver.quit();\n        }\n    }\n    \n    @Test\n    public void verifyAllResourceTypesProtected() {\n        WebDriver driver = new ChromeDriver();\n        \n        String[] resources = {\n            \"https://your-domain.com/\",           // HTML\n            \"https://your-domain.com/style.css\",  // CSS\n            \"https://your-domain.com/script.js\",  // JS\n            \"https://your-domain.com/api/data\"    // JSON\n        };\n        \n        try {\n            for (String resource : resources) {\n                // Use REST Assured or HTTP client to check headers\n                // (Selenium doesn't directly expose response headers)\n                System.out.println(\"Checking: \" + resource);\n                // Validation logic here\n            }\n        } finally {\n            driver.quit();\n        }\n    }\n    \n    @Test\n    public void verifyNoContentTypeMismatchErrors() {\n        WebDriver driver = new ChromeDriver();\n        \n        try {\n            driver.get(\"https://your-domain.com\");\n            \n            // Get browser console logs\n            LogEntries logs = driver.manage().logs().get(LogType.BROWSER);\n            \n            for (LogEntry entry : logs) {\n                String message = entry.getMessage();\n                // Check for MIME type mismatch errors\n                Assert.assertFalse(\n                    message.contains(\"MIME type\") && message.contains(\"mismatch\"),\n                    \"Should not have MIME type mismatch errors: \" + message\n                );\n            }\n        } finally {\n            driver.quit();\n        }\n    }\n}"
+      },
+      "verificationSteps": [
+        "1. Clear browser cache and cookies",
+        "2. Open DevTools (F12) > Network tab",
+        "3. Navigate to application",
+        "4. Verify X-Content-Type-Options: nosniff in all response headers",
+        "5. Test multiple resource types (HTML, CSS, JS, images, JSON)",
+        "6. Test API endpoints",
+        "7. Test error pages (404, 500)",
+        "8. Verify no Content-Type mismatch errors in console",
+        "9. Test application functionality - all features work",
+        "10. Run automated Selenium/Playwright tests - all pass",
+        "11. Run securityheaders.com scan - X-Content-Type-Options passes",
+        "12. Monitor production for 24 hours - no issues reported"
+      ],
+      "estimatedEffort": "1-2 hours"
+    }
+  }
+}

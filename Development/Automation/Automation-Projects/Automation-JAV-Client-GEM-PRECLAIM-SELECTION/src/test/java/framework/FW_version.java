@@ -1,0 +1,65 @@
+package framework;
+// ===============================================================
+// Automation Framework
+// Developed by Greg Paskal - Dec 2023
+// ===============================================================
+// Description
+// This automation framework is designed to be used with Selenium WebDriver and Java.
+// The framework utilizes the Page Object (PO) design pattern.
+// It is built to be used with the JUnit testing framework along with the Maven build tool.
+// ===============================================================
+// Change Log
+// Date        Name            Version            Description
+// ----------  --------------  -------  -----------------------------------------
+// 2023-12-05  G. Paskal        1.0.0   Initial creation
+// 2023-12-06  G. Paskal        1.0.1   Added support for Maven
+// 2023-12-07  G. Paskal        1.0.2   Added support for JUnit
+// 2023-12-08  G. Paskal        1.0.3   Added support for Page Object (PO) design pattern
+// 2023-12-09  G. Paskal        1.0.4   Added support for Configuration Manager
+// 2023-12-10  G. Paskal        1.0.5   Added support for Allure reporting
+// 2024-01-21  G. Paskal        2.0.0   Extended FW_Driver with more methods
+// 2024-01-22  G. Paskal        2.0.1   Added FW_Page method to switchToIframe
+// 2024-01-23  G. Paskal        2.0.2   Added FW_Page method to switch to different windows
+// 2024-01-24  G. Paskal        2.0.3   Added FW_Page methods for not exist and cookies
+// 2024-01-25  G. Paskal        2.0.4   Enhanced Configuration Manager with easier access to defaultTimeout and defaultInterval
+// 2024-02-01  G. Paskal        2.0.5   Enhanced FW_Driver with more fundamental methods
+// 2024-02-05  G. Paskal        2.0.6   Enhanced FW_Page with more fundamental methods
+// 2024-02-06  G. Paskal        2.0.7   Completed setup of FW_Driver and FW_Page with fundamental methods
+// 2024-02-07  G. Paskal        2.0.8   Refatored validateExactMatch to handel nulls better.
+// 2024-02-27  G. Paskal        2.0.9   Began adding audits to the framework
+// 2024-02-27  G. Paskal        2.0.10  Added enhancements to the custom assertion class to record step details in allure.
+// 2024-02-28  G. Paskal        2.0.11  Added method to do test search within a locator text including a verbose return option.
+// 2024-03-08  G. Paskal        2.0.12  Added methods for FW_Network class to gather network details. Enhanced Unit Test for FW_Network.
+// 2024-03-14  G. Paskal        2.0.13  Added method to verify text was not found within a locator.
+// 2024-03-18  G. Paskal        2.0.14  Added method to Drag and Drop and also refactored mouse over method with more exception handling.
+// 2024-04-03  G. Paskal        2.0.15  Added capabilities for headless execution and multiple browser support. Refactored WebDriver into FW_Browser. Added screenshots and locator highlighting.
+// 2024-04-15  G. Paskal        2.0.16  Added ability to highlight some failed locators (textual) in a different color.
+// 2024-04-19  G. Paskal        2.0.17  Improvements made to Allure reporting with new Note feature and refactor of Screenshot.
+// 2024-06-27  G. Paskal        3.0.0   Added new UserSatisfaction Assessment throughout the Framework.
+// 2024-06-27  G. Paskal        3.0.1   Added WaitForDelay and refactored framework for usage.
+// 2024-07-01  G. Paskal        3.0.2   Refactored FW_Driver methods to be more robust.
+// 2024-07-16  G. Paskal        3.0.3   Added RadioButtonGroup method to FW_Page
+// 2024-07-23  G. Paskal        3.0.4   Enhanced highlightLocator method to handle mocking of locators.
+// 2024-07-24  G. Paskal        3.0.5   Additional work on the setDropdown method.
+// 2024-08-12  G. Paskal        3.0.6   Enhanced to support SelectorsHub extension for Chrome
+// 2024-08-19  G. Paskal        3.0.7   Enhanced switchToWindowByPosition with more robustness.
+// 2024-10-22  G. Paskal        3.0.8   Added File and Directory methods to the framework. Enhanced for inventoring test suites and test cases. Speed Test Update.
+// 2025-01-08  G. Paskal        4.0.0   Added AI Assist documentation to all framework classes.
+// 2025-06-19  G. Paskal        4.0.1   Enhanced StringUtils to return 0.0 for null or empty duration strings.
+// 2025-06-27  G. Paskal        4.0.2   Tuning to SpeedTest and Traceroute audits.
+// 2025-06-30  G. Paskal        4.0.3   Added AuditManager to the framework to manage all audits in one place.
+// 2025-07-07  G. Paskal        4.0.4   Added FW_Audit_Ping class to handle ping audits.
+// 2025-08-05  G. Paskal        4.0.5   Refactored the way data is getting written to Google BigQuery in smaller batches.
+// ===============================================================
+
+/**
+ * This class contains the version information of the framework.
+ */
+public class FW_version {
+
+    /**
+     * The current version of the framework.
+     */
+    public static final String VERSION = "4.0.5";
+
+}

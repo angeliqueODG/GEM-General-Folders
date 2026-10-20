@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BigQuery Upload Process - mAi™ Framework Documentation</title>
+<link rel="stylesheet" href="docs-style.css">
+<link rel="stylesheet" href="pagefind/pagefind-ui.css">
+<script src="pagefind/pagefind-ui.js"></script>
+<script src="mermaid.min.js"></script>
+<script>mermaid.initialize({startOnLoad: true, theme: 'dark', flowchart: { useMaxWidth: true }});</script>
+</head>
+<body>
+<div class="layout">
+<nav class="sidebar" id="sidebar" data-pagefind-ignore></nav>
+<main class="main-content" data-pagefind-body>
+<h1 data-pagefind-meta="title">BigQuery Upload Process</h1>
+<p class="subtitle">Complete post-test data pipeline from CSV to Google BigQuery</p>
+
+<section class="content-section">
+<h2>Introduction</h2>
+<p>This diagram documents the complete data pipeline that transfers test execution results from local CSV files to Google BigQuery for long-term storage, analytics, and reporting. The pipeline is automatically triggered by Maven's <code>post-integration-test</code> phase after all tests complete.</p>
+<h3>Pipeline Stages</h3>
+<ol>
+<li>Maven trigger and configuration validation</li>
+<li>Google Cloud authentication</li>
+<li>Dataset and table validation/creation</li>
+<li>CSV parsing and data collection (OpenCSV)</li>
+<li>Batch insertion to BigQuery</li>
+<li>CSV file archiving</li>
+</ol>
+</section>
+
+<section class="content-section">
+<h2>Key Process Steps</h2>
+
+<h3>1. Maven Trigger</h3>
+<p><strong>Phase:</strong> <code>post-integration-test</code><br/>
+<strong>Execution:</strong> Automatically triggered after test completion<br/>
+<strong>Entry Point:</strong> <code>FW_GoogleCloudBigQueryUploader.main()</code></p>
+
+<h3>2. Configuration Validation</h3>
+<p>Validates all required properties from <code>testConfig.properties</code>: Google Cloud Project ID, Service account credentials file, Dataset and table names, Schema file location, CSV file paths.</p>
+
+<h3>3. Authentication</h3>
+<p>Loads service account JSON credentials, creates authenticated BigQuery client, verifies client connectivity.</p>
+
+<h3>4. Dataset &amp; Table Validation</h3>
+<p>Checks if dataset exists (creates if missing), checks if table exists (creates with schema if missing), validates table schema against JSON definition.</p>
+
+<h3>5. CSV Processing</h3>
+<p>Parses CSV using OpenCSV library, reads header row (skipped - already in schema), collects data rows into <code>List&lt;RowToInsert&gt;</code>, maps column names to values.</p>
+
+<h3>6. Data Upload</h3>
+<p>Batch insertion via <code>FW_GoogleCloudUtils.writeBigQueryTableRows()</code>, monitors job completion, handles timeout and retry logic.</p>
+
+<h3>7. File Archiving</h3>
+<p>Moves processed CSV to archive folder, appends timestamp to filename, confirms successful archive.</p>
+</section>
+
+<section class="content-section">
+<h2>Complete Flow Diagram</h2>
+<pre class="mermaid">
+flowchart TD
+    Start([Maven Build&lt;br/&gt;post-integration-test]) --> CheckFlag{googleCloudBigQueryExport&lt;br/&gt;= true?}
+    CheckFlag -->|No| Skip[Skip Export]
+    CheckFlag -->|Yes| Main[FW_GoogleCloudBigQueryUploader&lt;br/&gt;main method]
+    Main --> Upload[Call uploadTestStepsCSV]
+    subgraph UploadFlow["uploadTestStepsCSV() Method"]
+        U1[Start Upload Process]
+        U1 --> V1[Get googleCloudProjectId]
+        V1 --> V1Check{Valid?}
+        V1Check -->|No| V1Fail[ERROR: Exit]
+        V1Check -->|Yes| V2[Get googleCloudServiceAccountJsonFile]
+        V2 --> V2Check{Valid?}
+        V2Check -->|No| V2Fail[ERROR: Exit]
+        V2Check -->|Yes| V3[Get googleCloudProjectDataset]
+        V3 --> V3Check{Valid?}
+        V3Check -->|No| V3Fail[ERROR: Exit]
+        V3Check -->|Yes| V4[Get googleCloudProjectDatasetTableTestSteps]
+        V4 --> V4Check{Valid?}
+        V4Check -->|No| V4Fail[ERROR: Exit]
+        V4Check -->|Yes| V5[Get googleCloudProjectDatasetTableTestStepsSchema]
+        V5 --> V5Check{Valid?}
+        V5Check -->|No| V5Fail[ERROR: Exit]
+        V5Check -->|Yes| V6[Get dataOutputPath]
+        V6 --> V6Check{Valid?}
+        V6Check -->|No| V6Fail[ERROR: Exit]
+        V6Check -->|Yes| V7[Get dataTestStepsFilename]
+        V7 --> V7Check{Valid?}
+        V7Check -->|No| V7Fail[ERROR: Exit]
+        V7Check -->|Yes| FileCheck[File Validation]
+        FileCheck --> F1[Check CSV file exists]
+        F1 --> F1Check{Exists?}
+        F1Check -->|No| F1Fail[ERROR: Exit]
+        F1Check -->|Yes| F2[Check schema file exists]
+        F2 --> F2Check{Exists?}
+        F2Check -->|No| F2Fail[ERROR: Exit]
+        F2Check -->|Yes| F3[Check service account file exists]
+        F3 --> F3Check{Exists?}
+        F3Check -->|No| F3Fail[ERROR: Exit]
+        F3Check -->|Yes| ReadSchema[Read Schema]
+        ReadSchema --> S1[FW_GoogleCloudUtils.readSchemaFromFile]
+        S1 --> S1Check{Success?}
+        S1Check -->|No| S1Fail[ERROR: Exit]
+        S1Check -->|Yes| AuthStart[Authentication]
+        AuthStart --> A1[Load service account credentials]
+        A1 --> A2[Create GoogleCredentials]
+        A2 --> A3[Create BigQuery client]
+        A3 --> A3Check{Success?}
+        A3Check -->|No| A3Fail[ERROR: Exit]
+        A3Check -->|Yes| DatasetCheck[Dataset Validation]
+        DatasetCheck --> D1[checkBigQueryDatasetExist]
+        D1 --> D1Check{Dataset exists?}
+        D1Check -->|Yes| D1Skip[Dataset OK]
+        D1Check -->|No| D2[createBigQueryDataset]
+        D2 --> D2Check{Created?}
+        D2Check -->|No| D2Fail[ERROR: Exit]
+        D2Check -->|Yes| D1Skip
+        D1Skip --> TableCheck[Table Validation]
+        TableCheck --> T1[checkBigQueryTableExist]
+        T1 --> T1Check{Table exists?}
+        T1Check -->|Yes| T1Skip[Table OK]
+        T1Check -->|No| T2[createBigQueryTable with schema]
+        T2 --> T2Check{Created?}
+        T2Check -->|No| T2Fail[ERROR: Exit]
+        T2Check -->|Yes| T1Skip
+        T1Skip --> CSVParse[CSV Parsing]
+        CSVParse --> CSV1[Create CSVParser]
+        CSV1 --> CSV2[Create BufferedReader]
+        CSV2 --> CSV3[Create CSVReader]
+        CSV3 --> CSV4[Initialize List RowToInsert]
+        CSV4 --> CSV5[Read header row]
+        CSV5 --> CSV5Check{Header exists?}
+        CSV5Check -->|No| CSV5Fail[ERROR: Empty CSV]
+        CSV5Check -->|Yes| CSV6[Skip header row]
+        CSV6 --> CSV7[Loop: Read next row]
+        CSV7 --> CSV8{More rows?}
+        CSV8 -->|Yes| CSV9[Create Map]
+        CSV9 --> CSV10[Map headers to values]
+        CSV10 --> CSV11[Create RowToInsert]
+        CSV11 --> CSV7
+        CSV8 -->|No| WriteData[Write to BigQuery]
+        WriteData --> W1[writeBigQueryTableRows]
+        W1 --> W2[Create InsertAllRequest]
+        W2 --> W3[Execute batch insert]
+        W3 --> W4[Monitor job]
+        W4 --> W4Check{Success?}
+        W4Check -->|No| W4Fail[ERROR: Insert failed]
+        W4Check -->|Yes| W5[Upload Complete]
+        W5 --> Complete[Return]
+    end
+    Complete --> Archive[Call archiveTestStepsCSV]
+    subgraph ArchiveFlow["archiveTestStepsCSV() Method"]
+        Arch1[Start Archive] --> Arch2[Get config paths]
+        Arch2 --> Arch3[Generate timestamp]
+        Arch3 --> Arch4[Create archived filename]
+        Arch4 --> Arch5[Check CSV exists]
+        Arch5 --> Arch5Check{Exists?}
+        Arch5Check -->|No| Arch5Fail[WARN: Not found]
+        Arch5Check -->|Yes| Arch6[Move to archive]
+        Arch6 --> Arch6Check{Success?}
+        Arch6Check -->|No| Arch6Fail[ERROR: Move failed]
+        Arch6Check -->|Yes| Arch7[Archive Complete]
+        Arch7 --> Done[Return]
+    end
+    Archive --> End([Pipeline Complete])
+    Skip --> End
+    style Start fill:#e1f5ff
+    style End fill:#e1ffe1
+    style Main fill:#fff3e1
+    style V1Fail fill:#ffcccc
+    style V2Fail fill:#ffcccc
+    style V3Fail fill:#ffcccc
+    style V4Fail fill:#ffcccc
+    style V5Fail fill:#ffcccc
+    style V6Fail fill:#ffcccc
+    style V7Fail fill:#ffcccc
+    style F1Fail fill:#ffcccc
+    style F2Fail fill:#ffcccc
+    style F3Fail fill:#ffcccc
+    style S1Fail fill:#ffcccc
+    style A3Fail fill:#ffcccc
+    style D2Fail fill:#ffcccc
+    style T2Fail fill:#ffcccc
+    style CSV5Fail fill:#ffcccc
+    style W4Fail fill:#ffcccc
+</pre>
+</section>
+
+<section class="content-section">
+<h2>Configuration Requirements</h2>
+
+<h3>Required Properties (testConfig.properties)</h3>
+<div class="code-block"><pre><code># Google Cloud Project Configuration
+googleCloudProjectId=project-mw-automation-v01
+
+# Service Account Credentials
+googleCloudServiceAccountJsonFile=src/test/resources/.private/project-*.json
+
+# BigQuery Dataset &amp; Tables
+googleCloudProjectDataset=dataset_automation_01
+googleCloudProjectDatasetTableTestSteps=table_teststeps_02
+googleCloudProjectDatasetTableTestStepsSchema=src/test/java/framework/data/FW_GoogleCloudBigQueryTableTestStepsSchema.json
+
+# CSV Data Files
+dataOutputPath=target/data/
+dataTestStepsFilename=TestStepsData.csv
+dataArchivePath=target/data/archive/
+
+# Export Control
+googleCloudBigQueryExport=true
+
+# Performance Settings
+googleCloudBigQueryTimeout=10
+googleCloudBigQueryMaxAttempts=10</code></pre></div>
+
+<h3>Required Files</h3>
+<table class="data-table">
+<thead><tr><th>File</th><th>Purpose</th><th>Location</th></tr></thead>
+<tbody>
+<tr><td>CSV Data File</td><td>Test step results</td><td><code>target/data/TestStepsData.csv</code></td></tr>
+<tr><td>Schema File</td><td>BigQuery table definition</td><td><code>src/test/java/framework/data/FW_GoogleCloudBigQueryTableTestStepsSchema.json</code></td></tr>
+<tr><td>Service Account</td><td>GCP authentication</td><td><code>src/test/resources/.private/*.json</code></td></tr>
+<tr><td>Properties File</td><td>Configuration</td><td><code>src/test/resources/testConfig.properties</code></td></tr>
+</tbody>
+</table>
+</section>
+
+<section class="content-section">
+<h2>Schema Structure</h2>
+<p>The BigQuery table schema includes 26 columns for comprehensive test step tracking:</p>
+
+<h3>Test Identification (11 columns)</h3>
+<ul>
+<li><code>clientRefID</code>, <code>projectRefID</code>, <code>applicationRefID</code> - Reference IDs (STRING, REQUIRED)</li>
+<li><code>testRunRefID</code>, <code>testSuiteRefID</code>, <code>testCaseRefID</code>, <code>testStepRefID</code> - Test hierarchy IDs</li>
+<li><code>testSuiteName</code>, <code>testCaseName</code> - Display names (STRING, NULLABLE)</li>
+<li><code>testCaseRepetition</code>, <code>testCaseRepetitions</code> - Repetition tracking (INTEGER)</li>
+</ul>
+
+<h3>Test Execution (11 columns)</h3>
+<ul>
+<li><code>testStepTimestamp</code> - Execution timestamp (TIMESTAMP, REQUIRED) <em>[Partition Column]</em></li>
+<li><code>testStepRefOrder</code> - Step order, <code>testStepPageObject</code> - Page object, <code>testStepMethod</code> - Method</li>
+<li><code>testStepResult</code> - Pass/Fail, <code>testStepResultDetails</code> - Details</li>
+<li><code>testStepResultMetricKey</code>, <code>testStepResultMetricNumber</code>, <code>testStepResultMetricString</code> - Metrics</li>
+</ul>
+
+<h3>Assets &amp; Performance (4 columns)</h3>
+<ul>
+<li><code>testStepScreenshotRef</code>, <code>testStepScreenshotThumbRef</code> - Screenshot URLs</li>
+<li><code>testStepDurationHR</code> (seconds), <code>testStepDurationMS</code> (milliseconds) - Duration</li>
+</ul>
+</section>
+
+<section class="content-section">
+<h2>Error Handling</h2>
+<p>Comprehensive error handling for 15+ scenarios including: configuration errors, file errors, authentication errors, dataset/table errors, parse errors, upload errors, and archive errors.</p>
+</section>
+
+<section class="content-section">
+<h2>Related Components</h2>
+<ul>
+<li><strong>FW_GoogleCloudBigQueryUploader</strong> - Main orchestration class</li>
+<li><strong>FW_GoogleCloudUtils</strong> - Reusable Google Cloud utility methods</li>
+<li><strong>FW_TestStepDataProcessor</strong> - Generates CSV file during test execution</li>
+<li><strong>FW_GoogleCloudStorageUploader</strong> - Upload screenshots to Cloud Storage</li>
+</ul>
+</section>
+
+<section class="content-section">
+<h2>Related Documentation</h2>
+<table class="data-table">
+<thead><tr><th>Document</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td><a href="Diagram-Adding-data-to-datacollector.html">Data Collection Flow</a></td><td>How CSV is generated</td></tr>
+<tr><td><a href="Diagram-TestAssetsScanner.html">Test Assets Scanner</a></td><td>Test discovery process</td></tr>
+<tr><td><a href="Diagram-Maven-to-first-Test-Case.html">Maven to Test Case</a></td><td>Complete test execution flow</td></tr>
+<tr><td><a href="Doc-Overview.html">Framework Overview</a></td><td>Architecture overview</td></tr>
+</tbody>
+</table>
+</section>
+
+<footer class="doc-footer" id="doc-footer" data-pagefind-ignore></footer>
+</main>
+</div>
+<script src="docs-config.js"></script>
+<script src="docs-nav.js"></script>
+<script>DocsConfig.renderFooter('doc-footer');</script>
+</body>
+</html>

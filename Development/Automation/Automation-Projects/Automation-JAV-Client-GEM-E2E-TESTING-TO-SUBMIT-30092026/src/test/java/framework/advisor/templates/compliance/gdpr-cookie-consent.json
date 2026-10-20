@@ -1,0 +1,229 @@
+{
+  "metadata": {
+    "filename": "gdpr-cookie-consent.json",
+    "filepath": "src/test/java/framework/advisor/templates/compliance/gdpr-cookie-consent.json",
+    "version": "1.0.0",
+    "created": "2025-10-09",
+    "lastUpdated": "2025-10-09 07:15:00 PM CDT",
+    "author": "Greg Paskal",
+    "company": "MissionWares",
+    "methodology": "mAi™ (MissionWares® + AI)",
+    "description": "GDPR cookie consent compliance finding template with comprehensive guidance for all audiences including implementation code for cookie banners, consent management platforms, cookie categorization, opt-in/opt-out mechanisms, and consent storage strategies to comply with EU General Data Protection Regulation and ePrivacy Directive requirements.",
+    "aiGenerated": true,
+    "humanReviewed": false,
+    "reviewedBy": "Pending",
+    "approvedBy": "Pending",
+    "tags": ["gdpr", "cookies", "consent", "privacy", "compliance", "eprivacy", "cookie-banner"],
+    "relatedFindings": ["PRIVACY_POLICY_MISSING", "DATA_COLLECTION_CONSENT", "THIRD_PARTY_COOKIES", "ANALYTICS_WITHOUT_CONSENT"],
+    "estimatedRemediationTime": "8-16 hours",
+    "businessImpact": "CRITICAL",
+    "complianceRequirements": ["GDPR Article 7", "ePrivacy Directive", "PECR (UK)", "CCPA (California)"]
+  },
+  "findingId": "COMP-GDPR-001",
+  "findingType": "GDPR_COOKIE_CONSENT_MISSING",
+  "category": "COMPLIANCE",
+  "severity": "CRITICAL",
+  "cveReferences": [
+    "CWE-359"
+  ],
+  "understanding": {
+    "EXECUTIVE": {
+      "summary": "Your website lacks proper GDPR-compliant cookie consent, exposing the company to regulatory fines up to €20M or 4% of annual revenue, legal liability, and reputation damage for violating EU privacy laws.",
+      "businessRisk": "Critical risk of massive regulatory fines and legal action. GDPR fines: up to €20 million or 4% of global annual revenue (whichever is higher). Recent cases: Google €90M (2020), Amazon €746M (2021), Meta €1.2B (2023). Beyond fines: class action lawsuits from EU citizens, criminal liability for directors/officers, business suspension in EU markets, reputation damage, customer trust erosion. Non-compliance affects: all companies processing EU citizen data (regardless of company location), companies with EU physical presence, companies targeting EU customers. Risk applies even if company is US-based but serves EU users. Additional risks: CCPA fines in California ($7,500 per violation), UK PECR fines (£500K+), other regional privacy law violations.",
+      "complianceImpact": "GDPR Article 7 (Consent) requires explicit, informed, freely given consent before placing non-essential cookies. ePrivacy Directive mandates cookie consent. UK PECR enforces cookie consent. CCPA (California) requires opt-out mechanism. Failing to comply: business cannot legally operate in EU, payment processors may terminate accounts, B2B contracts may require compliance, investors/acquirers demand compliance, insurance may not cover violations.",
+      "priority": "CRITICAL"
+    },
+    "PROJECT_MANAGER": {
+      "summary": "Missing GDPR cookie consent implementation exposes company to €20M fines. Need cookie consent banner, consent management, cookie policy, and documentation to achieve compliance.",
+      "timeline": "IMMEDIATE priority if serving EU customers. Implementation takes 8-16 hours for basic compliance, 2-4 weeks for comprehensive solution with consent management platform (CMP). Cannot delay - enforcement is active with multi-million dollar fines. Must complete before serving EU traffic.",
+      "effort": "8-16 hours for DIY implementation: cookie banner UI (4 hours), consent storage logic (2 hours), cookie categorization (2 hours), privacy policy update (2 hours), testing (2 hours), documentation (2 hours). Alternative: 1-2 days to integrate third-party CMP (OneTrust, Cookiebot, Osano). Ongoing maintenance: quarterly cookie audits, consent log retention, policy updates.",
+      "dependencies": [
+        "Legal review of cookie policy and consent flow",
+        "UI/UX team for cookie banner design",
+        "Development team for implementation",
+        "Audit of all cookies currently used",
+        "Third-party consent management platform (optional)",
+        "Privacy policy updates",
+        "Documentation of consent records",
+        "EU legal entity or representative if required"
+      ],
+      "blocking": [
+        "EU market entry or operations",
+        "Legal compliance for EU data processing",
+        "Payment processing (processors require compliance)",
+        "B2B contracts requiring GDPR compliance",
+        "Investment/acquisition due diligence",
+        "Insurance coverage for privacy violations",
+        "Enterprise customer requirements"
+      ]
+    },
+    "DEVELOPER": {
+      "summary": "Website places cookies without obtaining prior explicit consent from users as required by GDPR Article 7 and ePrivacy Directive. Need to implement cookie consent banner, categorize cookies, implement opt-in mechanism, and store consent records.",
+      "technical": "GDPR cookie consent requirements: 1) Obtain consent BEFORE placing non-essential cookies. 2) Provide clear information about each cookie type. 3) Offer granular consent (per category). 4) Make consent freely given (pre-ticked boxes invalid). 5) Allow easy withdrawal of consent. 6) Store proof of consent (who, when, what, how). Cookie categories: ESSENTIAL (no consent needed): session management, authentication, load balancing, security. FUNCTIONAL (consent needed): preferences, language, accessibility. ANALYTICS (consent needed): Google Analytics, usage tracking. MARKETING (consent needed): advertising, retargeting, social media. Implementation: 1) Audit all cookies currently placed. 2) Categorize each cookie. 3) Block non-essential cookies until consent. 4) Implement cookie banner with granular controls. 5) Store consent preferences (cookie or backend). 6) Respect consent across sessions. 7) Provide consent withdrawal mechanism. Technical approaches: DIY implementation (custom JavaScript), Third-party CMP (OneTrust, Cookiebot, Osano), Framework libraries (react-cookie-consent, vue-cookie-law). Consent storage: LocalStorage (client-side, 'cookie_consent' key), Cookie (ironic but allowed), Backend API (preferred for audit trail). Consent must be recorded with: timestamp, version of policy, categories accepted, method of consent, IP address (optional), user identifier (if logged in).",
+      "vulnerability": "CWE-359 (Exposure of Private Information) - Collecting user data via cookies without consent violates privacy. Not traditional security vulnerability but legal/privacy violation with severe consequences. Also affects: user trust, data minimization principle, privacy by design requirement.",
+      "references": [
+        "https://gdpr.eu/cookies/",
+        "https://gdpr.eu/article-7-conditions-for-consent/",
+        "https://ec.europa.eu/info/law/law-topic/data-protection/reform/rules-business-and-organisations/legal-grounds-processing-data/grounds-processing/what-consent_en",
+        "https://ico.org.uk/for-organisations/guide-to-pecr/guidance-on-the-use-of-cookies-and-similar-technologies/"
+      ]
+    },
+    "SECURITY_ENGINEER": {
+      "summary": "Lack of cookie consent violates GDPR privacy requirements, exposing organization to regulatory enforcement, legal liability, and privacy violations that undermine overall security and privacy posture.",
+      "vulnerability": "CWE-359 (Privacy Violation) - Not technical security vulnerability but legal/privacy violation with similar risk profile to security breach. Consequences: regulatory fines (€20M or 4% revenue), legal liability, criminal charges in some jurisdictions, business suspension, reputational damage. Privacy violations weaken overall security posture by: reducing user trust, creating legal exposure, demonstrating poor privacy hygiene, potentially hiding other privacy issues.",
+      "attackVector": "No direct attack vector - this is regulatory compliance issue. However, non-compliant cookie usage can: expose user tracking data, leak user behavior patterns, enable third-party data collection without consent, violate user privacy expectations. Privacy regulators actively investigate and fine: automated scans detect non-compliant sites, user complaints trigger investigations, competitor reports, routine audits.",
+      "threatLevel": "CRITICAL (REGULATORY) - Not cybersecurity threat but regulatory threat with equally severe consequences. Active enforcement with €100M+ fines levied. Risk increases with: company size, revenue, number of EU users, publicity, prior violations. Cannot be mitigated through technical controls alone - requires legal compliance. Privacy violations can be more costly than security breaches.",
+      "mitigationUrgency": "IMMEDIATE if serving EU traffic. Cannot legally operate in EU without compliance. Enforcement is active and fines are substantial. Implementation timeline: 1-2 weeks for basic compliance, 4-6 weeks for comprehensive solution. Higher urgency if: actively marketing to EU, processing payments from EU users, storing EU citizen data, have EU physical presence. Recommend: halt EU traffic until compliant OR implement immediately."
+    },
+    "OPS_INFRASTRUCTURE": {
+      "summary": "Infrastructure must support cookie consent management including consent banner delivery, consent storage, cookie blocking until consent, and audit logging for regulatory compliance.",
+      "technical": "Infrastructure requirements: Cookie banner delivery (CDN for performance, <50ms load time), Consent storage (cookie, localStorage, or backend database), Consent API (if backend storage), Cookie blocking mechanism (prevent non-essential cookies until consent), Audit logging (consent records with timestamp, IP, version), Geographic detection (EU traffic identification), Consent synchronization (across subdomains if applicable). Technical implementation: Client-side approach (JavaScript banner, localStorage, blocks cookies), Server-side approach (set cookies only after consent received, backend consent API), Hybrid approach (client-side banner, backend logging). Consent Management Platform (CMP) integration: Third-party services (OneTrust, Cookiebot, Osano, CookiePro), API integration, Tag manager integration (Google Tag Manager), CDN hosting for performance. Data retention: Consent records retained 3-7 years (varies by jurisdiction), Audit logs for regulatory inquiry, Ability to retrieve specific user consent history.",
+      "scope": "All web properties: main website, subdomains, mobile web apps, web applications, admin panels if publicly accessible. All environments: production (critical), staging (for testing), development (optional). All regions: EU/EEA (mandatory), UK (post-Brexit PECR), California (CCPA opt-out), other regions (best practice). Cross-domain considerations: shared consent across subdomains, separate consent per domain if different entities.",
+      "monitoring": "Monitor consent metrics: consent rate (% users accepting cookies), category acceptance rates (essential vs marketing), banner abandonment rate, consent withdrawal rate, geographic distribution (EU vs non-EU), time to consent decision. Technical monitoring: banner load time (<50ms target), consent API response time, consent storage success rate, cookie blocking effectiveness (verify non-essential cookies blocked). Compliance monitoring: audit log completeness, consent record retention, cookie inventory current, third-party cookie audit, policy version tracking."
+    },
+    "QA_TESTER": {
+      "summary": "Missing cookie consent prevents validation of GDPR compliance requirements and requires comprehensive testing of consent flows, cookie blocking, and user consent management.",
+      "testImplication": "Cannot validate GDPR compliance without cookie consent implementation. Must test: consent banner appearance (before any non-essential cookies), cookie blocking (verify blocked until consent), granular consent (per category), consent persistence (across sessions), consent withdrawal (easy mechanism), banner UX (not misleading, clear information), accessibility (WCAG compliant), mobile responsiveness, cross-browser compatibility. Testing challenges: verify cookies truly blocked, test EU vs non-EU experiences, validate consent storage, test consent withdrawal flow, verify third-party cookies blocked.",
+      "riskIfNotFixed": "Regulatory fines (€20M or 4% revenue). Failed compliance audits. Legal liability. Business cannot legally serve EU traffic. Payment processor termination. B2B contract violations. Customer complaints. Regulatory investigation. Competitor advantage (compliant sites preferred). Enterprise sales blocked. Investment/acquisition deal breakers. Insurance non-coverage. Criminal liability for officers in extreme cases."
+    }
+  },
+  "actions": {
+    "DEVELOPER": {
+      "frameworks": {
+        "vanilla-javascript": {
+          "code": "// Vanilla JavaScript - GDPR Cookie Consent Implementation\n\n// 1. COOKIE CONSENT BANNER (DIY)\n// ===============================\n\n// cookie-consent.js\n(function() {\n  'use strict';\n  \n  const CONSENT_COOKIE_NAME = 'gdpr_cookie_consent';\n  const CONSENT_VERSION = '1.0';\n  \n  // Cookie categories\n  const COOKIE_CATEGORIES = {\n    essential: true,      // Always enabled\n    functional: false,\n    analytics: false,\n    marketing: false\n  };\n  \n  // Check if consent already given\n  function hasConsent() {\n    const consent = getCookie(CONSENT_COOKIE_NAME);\n    return consent !== null;\n  }\n  \n  // Get cookie value\n  function getCookie(name) {\n    const value = `; ${document.cookie}`;\n    const parts = value.split(`; ${name}=`);\n    if (parts.length === 2) {\n      return parts.pop().split(';').shift();\n    }\n    return null;\n  }\n  \n  // Set cookie\n  function setCookie(name, value, days) {\n    const date = new Date();\n    date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));\n    const expires = `expires=${date.toUTCString()}`;\n    document.cookie = `${name}=${value};${expires};path=/;SameSite=Lax`;\n  }\n  \n  // Get consent preferences\n  function getConsent() {\n    const consent = getCookie(CONSENT_COOKIE_NAME);\n    if (consent) {\n      try {\n        return JSON.parse(decodeURIComponent(consent));\n      } catch (e) {\n        return null;\n      }\n    }\n    return null;\n  }\n  \n  // Save consent\n  function saveConsent(preferences) {\n    const consent = {\n      version: CONSENT_VERSION,\n      timestamp: new Date().toISOString(),\n      preferences: preferences\n    };\n    \n    const value = encodeURIComponent(JSON.stringify(consent));\n    setCookie(CONSENT_COOKIE_NAME, value, 365);\n    \n    // Enable cookies based on consent\n    enableCookies(preferences);\n    \n    // Hide banner\n    hideBanner();\n  }\n  \n  // Enable cookies based on consent\n  function enableCookies(preferences) {\n    // Essential cookies always enabled\n    \n    // Analytics (Google Analytics example)\n    if (preferences.analytics) {\n      // Load Google Analytics\n      window.dataLayer = window.dataLayer || [];\n      function gtag(){dataLayer.push(arguments);}\n      gtag('js', new Date());\n      gtag('config', 'GA_MEASUREMENT_ID');\n    }\n    \n    // Marketing cookies\n    if (preferences.marketing) {\n      // Load marketing scripts (Facebook Pixel, etc.)\n      // Example: loadMarketingScripts();\n    }\n  }\n  \n  // Create banner HTML\n  function createBanner() {\n    const banner = document.createElement('div');\n    banner.id = 'cookie-consent-banner';\n    banner.innerHTML = `\n      <div class=\"cookie-banner\" role=\"dialog\" aria-label=\"Cookie consent\">\n        <div class=\"cookie-banner-content\">\n          <h2>Cookie Consent</h2>\n          <p>\n            We use cookies to enhance your browsing experience, serve personalized \n            content, and analyze our traffic. By clicking \"Accept All\", you consent \n            to our use of cookies. See our \n            <a href=\"/privacy-policy\" target=\"_blank\">Privacy Policy</a> for details.\n          </p>\n          \n          <div class=\"cookie-categories\">\n            <label>\n              <input type=\"checkbox\" id=\"essential\" checked disabled>\n              <strong>Essential Cookies (Required)</strong>\n              <p>Necessary for website functionality</p>\n            </label>\n            \n            <label>\n              <input type=\"checkbox\" id=\"functional\">\n              <strong>Functional Cookies</strong>\n              <p>Remember your preferences</p>\n            </label>\n            \n            <label>\n              <input type=\"checkbox\" id=\"analytics\">\n              <strong>Analytics Cookies</strong>\n              <p>Help us understand how you use our site</p>\n            </label>\n            \n            <label>\n              <input type=\"checkbox\" id=\"marketing\">\n              <strong>Marketing Cookies</strong>\n              <p>Used for targeted advertising</p>\n            </label>\n          </div>\n          \n          <div class=\"cookie-banner-actions\">\n            <button id=\"accept-selected\" class=\"btn-primary\">Accept Selected</button>\n            <button id=\"accept-all\" class=\"btn-primary\">Accept All</button>\n            <button id=\"reject-all\" class=\"btn-secondary\">Reject All</button>\n          </div>\n        </div>\n      </div>\n    `;\n    \n    document.body.appendChild(banner);\n    \n    // Attach event listeners\n    document.getElementById('accept-all').addEventListener('click', () => {\n      saveConsent({\n        essential: true,\n        functional: true,\n        analytics: true,\n        marketing: true\n      });\n    });\n    \n    document.getElementById('reject-all').addEventListener('click', () => {\n      saveConsent({\n        essential: true,\n        functional: false,\n        analytics: false,\n        marketing: false\n      });\n    });\n    \n    document.getElementById('accept-selected').addEventListener('click', () => {\n      saveConsent({\n        essential: true,\n        functional: document.getElementById('functional').checked,\n        analytics: document.getElementById('analytics').checked,\n        marketing: document.getElementById('marketing').checked\n      });\n    });\n  }\n  \n  // Hide banner\n  function hideBanner() {\n    const banner = document.getElementById('cookie-consent-banner');\n    if (banner) {\n      banner.remove();\n    }\n  }\n  \n  // Show banner if no consent\n  function init() {\n    if (!hasConsent()) {\n      createBanner();\n    } else {\n      // Load cookies based on existing consent\n      const consent = getConsent();\n      if (consent && consent.preferences) {\n        enableCookies(consent.preferences);\n      }\n    }\n  }\n  \n  // Initialize when DOM ready\n  if (document.readyState === 'loading') {\n    document.addEventListener('DOMContentLoaded', init);\n  } else {\n    init();\n  }\n  \n  // Expose global API\n  window.CookieConsent = {\n    getConsent: getConsent,\n    updateConsent: saveConsent,\n    showBanner: createBanner\n  };\n})();\n\n// 2. CSS STYLES\n// =============\n\n/*\n.cookie-banner {\n  position: fixed;\n  bottom: 0;\n  left: 0;\n  right: 0;\n  background: #fff;\n  box-shadow: 0 -2px 10px rgba(0,0,0,0.1);\n  padding: 20px;\n  z-index: 9999;\n  max-height: 90vh;\n  overflow-y: auto;\n}\n\n.cookie-banner-content {\n  max-width: 1200px;\n  margin: 0 auto;\n}\n\n.cookie-categories {\n  margin: 20px 0;\n}\n\n.cookie-categories label {\n  display: block;\n  margin: 10px 0;\n  padding: 10px;\n  border: 1px solid #ddd;\n  border-radius: 4px;\n}\n\n.cookie-banner-actions {\n  display: flex;\n  gap: 10px;\n  flex-wrap: wrap;\n}\n\n.btn-primary {\n  background: #007bff;\n  color: white;\n  border: none;\n  padding: 10px 20px;\n  border-radius: 4px;\n  cursor: pointer;\n}\n\n.btn-secondary {\n  background: #6c757d;\n  color: white;\n  border: none;\n  padding: 10px 20px;\n  border-radius: 4px;\n  cursor: pointer;\n}\n*/\n\n// 3. BLOCKING THIRD-PARTY SCRIPTS\n// ================================\n\n// Replace direct script tags with data attributes\n// Before:\n// <script src=\"https://www.googletagmanager.com/gtag/js?id=GA_ID\"></script>\n\n// After:\n// <script type=\"text/plain\" data-cookie-consent=\"analytics\" \n//         src=\"https://www.googletagmanager.com/gtag/js?id=GA_ID\"></script>\n\n// Load scripts when consent given\nfunction loadConsentedScripts() {\n  const consent = window.CookieConsent.getConsent();\n  if (!consent) return;\n  \n  const scripts = document.querySelectorAll('script[data-cookie-consent]');\n  scripts.forEach(script => {\n    const category = script.getAttribute('data-cookie-consent');\n    if (consent.preferences[category]) {\n      // Create new script element with proper type\n      const newScript = document.createElement('script');\n      newScript.src = script.src;\n      newScript.type = 'text/javascript';\n      document.head.appendChild(newScript);\n    }\n  });\n}",
+          "testCode": "// Test cookie consent implementation\n\n// Manual tests:\n// 1. Open browser in incognito mode\n// 2. Navigate to site\n// 3. Verify cookie banner appears\n// 4. Verify no non-essential cookies before consent\n// 5. Accept cookies\n// 6. Verify banner disappears\n// 7. Verify cookies are set\n// 8. Reload page - verify banner doesn't reappear\n// 9. Test cookie preference center\n// 10. Test consent withdrawal\n\n// Automated tests:\nfunction testCookieConsent() {\n  // Clear cookies\n  document.cookie.split(';').forEach(c => {\n    document.cookie = c.trim().split('=')[0] + '=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/';\n  });\n  \n  // Reload page\n  location.reload();\n  \n  // Wait for banner\n  setTimeout(() => {\n    const banner = document.getElementById('cookie-consent-banner');\n    console.assert(banner !== null, 'Banner should appear');\n    \n    // Click accept all\n    document.getElementById('accept-all').click();\n    \n    // Verify banner hidden\n    setTimeout(() => {\n      const bannerAfter = document.getElementById('cookie-consent-banner');\n      console.assert(bannerAfter === null, 'Banner should be hidden');\n      \n      // Verify consent cookie set\n      const consent = document.cookie.split(';').find(c => c.includes('gdpr_cookie_consent'));\n      console.assert(consent !== undefined, 'Consent cookie should be set');\n      \n      console.log('All tests passed');\n    }, 500);\n  }, 500);\n}",
+          "dependencies": "None (vanilla JavaScript)",
+          "packageInstall": "# No installation needed"
+        },
+        "react": {
+          "code": "// React - Cookie Consent Component\n\nimport React, { useState, useEffect } from 'react';\nimport './CookieConsent.css';\n\nconst CONSENT_COOKIE_NAME = 'gdpr_cookie_consent';\nconst CONSENT_VERSION = '1.0';\n\nfunction CookieConsent() {\n  const [showBanner, setShowBanner] = useState(false);\n  const [preferences, setPreferences] = useState({\n    essential: true,\n    functional: false,\n    analytics: false,\n    marketing: false\n  });\n  \n  useEffect(() => {\n    // Check if consent already given\n    const consent = getConsent();\n    if (!consent) {\n      setShowBanner(true);\n    } else {\n      // Enable cookies based on existing consent\n      enableCookies(consent.preferences);\n    }\n  }, []);\n  \n  function getCookie(name) {\n    const value = `; ${document.cookie}`;\n    const parts = value.split(`; ${name}=`);\n    if (parts.length === 2) {\n      return parts.pop().split(';').shift();\n    }\n    return null;\n  }\n  \n  function setCookie(name, value, days) {\n    const date = new Date();\n    date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));\n    const expires = `expires=${date.toUTCString()}`;\n    document.cookie = `${name}=${value};${expires};path=/;SameSite=Lax;Secure`;\n  }\n  \n  function getConsent() {\n    const consent = getCookie(CONSENT_COOKIE_NAME);\n    if (consent) {\n      try {\n        return JSON.parse(decodeURIComponent(consent));\n      } catch (e) {\n        return null;\n      }\n    }\n    return null;\n  }\n  \n  function saveConsent(prefs) {\n    const consent = {\n      version: CONSENT_VERSION,\n      timestamp: new Date().toISOString(),\n      preferences: prefs\n    };\n    \n    const value = encodeURIComponent(JSON.stringify(consent));\n    setCookie(CONSENT_COOKIE_NAME, value, 365);\n    \n    enableCookies(prefs);\n    setShowBanner(false);\n  }\n  \n  function enableCookies(prefs) {\n    // Analytics\n    if (prefs.analytics && window.gtag) {\n      window.gtag('consent', 'update', {\n        'analytics_storage': 'granted'\n      });\n    }\n    \n    // Marketing\n    if (prefs.marketing && window.gtag) {\n      window.gtag('consent', 'update', {\n        'ad_storage': 'granted'\n      });\n    }\n  }\n  \n  const handleAcceptAll = () => {\n    saveConsent({\n      essential: true,\n      functional: true,\n      analytics: true,\n      marketing: true\n    });\n  };\n  \n  const handleRejectAll = () => {\n    saveConsent({\n      essential: true,\n      functional: false,\n      analytics: false,\n      marketing: false\n    });\n  };\n  \n  const handleAcceptSelected = () => {\n    saveConsent(preferences);\n  };\n  \n  const handlePreferenceChange = (category) => {\n    setPreferences(prev => ({\n      ...prev,\n      [category]: !prev[category]\n    }));\n  };\n  \n  if (!showBanner) return null;\n  \n  return (\n    <div className=\"cookie-consent-overlay\" role=\"dialog\" aria-label=\"Cookie consent\">\n      <div className=\"cookie-consent-banner\">\n        <h2>Cookie Consent</h2>\n        <p>\n          We use cookies to enhance your experience. By continuing to visit this site \n          you agree to our use of cookies. Learn more in our{' '}\n          <a href=\"/privacy-policy\" target=\"_blank\" rel=\"noopener\">Privacy Policy</a>.\n        </p>\n        \n        <div className=\"cookie-categories\">\n          <label>\n            <input\n              type=\"checkbox\"\n              checked={preferences.essential}\n              disabled\n            />\n            <div>\n              <strong>Essential Cookies (Required)</strong>\n              <p>Necessary for website functionality</p>\n            </div>\n          </label>\n          \n          <label>\n            <input\n              type=\"checkbox\"\n              checked={preferences.functional}\n              onChange={() => handlePreferenceChange('functional')}\n            />\n            <div>\n              <strong>Functional Cookies</strong>\n              <p>Remember your preferences and settings</p>\n            </div>\n          </label>\n          \n          <label>\n            <input\n              type=\"checkbox\"\n              checked={preferences.analytics}\n              onChange={() => handlePreferenceChange('analytics')}\n            />\n            <div>\n              <strong>Analytics Cookies</strong>\n              <p>Help us improve our website</p>\n            </div>\n          </label>\n          \n          <label>\n            <input\n              type=\"checkbox\"\n              checked={preferences.marketing}\n              onChange={() => handlePreferenceChange('marketing')}\n            />\n            <div>\n              <strong>Marketing Cookies</strong>\n              <p>Used for personalized advertising</p>\n            </div>\n          </label>\n        </div>\n        \n        <div className=\"cookie-actions\">\n          <button onClick={handleAcceptSelected} className=\"btn-primary\">\n            Accept Selected\n          </button>\n          <button onClick={handleAcceptAll} className=\"btn-primary\">\n            Accept All\n          </button>\n          <button onClick={handleRejectAll} className=\"btn-secondary\">\n            Reject All\n          </button>\n        </div>\n      </div>\n    </div>\n  );\n}\n\nexport default CookieConsent;",
+          "testCode": "// React Testing Library tests\nimport { render, screen, fireEvent, waitFor } from '@testing-library/react';\nimport CookieConsent from './CookieConsent';\n\nbeforeEach(() => {\n  // Clear cookies\n  document.cookie.split(';').forEach(c => {\n    document.cookie = c.split('=')[0] + '=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/';\n  });\n});\n\ntest('shows banner when no consent', () => {\n  render(<CookieConsent />);\n  expect(screen.getByText(/Cookie Consent/i)).toBeInTheDocument();\n});\n\ntest('hides banner after accepting all', async () => {\n  render(<CookieConsent />);\n  \n  const acceptButton = screen.getByText(/Accept All/i);\n  fireEvent.click(acceptButton);\n  \n  await waitFor(() => {\n    expect(screen.queryByText(/Cookie Consent/i)).not.toBeInTheDocument();\n  });\n});\n\ntest('saves consent preferences', async () => {\n  render(<CookieConsent />);\n  \n  fireEvent.click(screen.getByText(/Accept All/i));\n  \n  await waitFor(() => {\n    const cookies = document.cookie;\n    expect(cookies).toContain('gdpr_cookie_consent');\n  });\n});",
+          "dependencies": "npm install react\n# Optional: npm install react-cookie-consent",
+          "packageInstall": "npm install"
+        },
+        "third-party-cmp": {
+          "code": "// Third-Party Consent Management Platform Integration\n\n// 1. COOKIEBOT (Popular CMP)\n// ===========================\n\n<!-- Add to <head> -->\n<script id=\"Cookiebot\" \n  src=\"https://consent.cookiebot.com/uc.js\" \n  data-cbid=\"YOUR-COOKIEBOT-ID\" \n  type=\"text/javascript\" \n  async>\n</script>\n\n<!-- Block scripts until consent -->\n<script data-cookieconsent=\"marketing\" type=\"text/plain\">\n  // Google Analytics or other marketing script\n</script>\n\n// JavaScript API\nwindow.addEventListener('CookiebotOnConsentReady', function() {\n  if (Cookiebot.consent.marketing) {\n    // Load marketing scripts\n  }\n  if (Cookiebot.consent.statistics) {\n    // Load analytics\n  }\n});\n\n// 2. ONETRUST\n// ===========\n\n<!-- Add to <head> -->\n<script \n  src=\"https://cdn.cookielaw.org/scripttemplates/otSDKStub.js\" \n  type=\"text/javascript\" \n  charset=\"UTF-8\" \n  data-domain-script=\"YOUR-ONETRUST-ID\">\n</script>\n<script type=\"text/javascript\">\n  function OptanonWrapper() { }\n</script>\n\n// JavaScript API\nfunction OptanonWrapper() {\n  // Callback when consent given\n  OneTrust.OnConsentChanged(function() {\n    const activeGroups = OnetrustActiveGroups;\n    if (activeGroups.includes('C0002')) {\n      // Performance cookies accepted\n    }\n    if (activeGroups.includes('C0004')) {\n      // Marketing cookies accepted\n    }\n  });\n}\n\n// 3. OSANO\n// ========\n\n<!-- Add to <head> -->\n<script src=\"https://cmp.osano.com/YOUR-OSANO-ID/osano.js\"></script>\n\n// JavaScript API\nOsano.cm.addEventListener('osano-cm-consent-saved', function(consent) {\n  if (consent.ANALYTICS === 'ACCEPT') {\n    // Load analytics\n  }\n});\n\n// 4. GOOGLE CONSENT MODE V2\n// =========================\n\n<!-- Add before any Google tags -->\n<script>\n  window.dataLayer = window.dataLayer || [];\n  function gtag(){dataLayer.push(arguments);}\n  \n  // Default consent (denied)\n  gtag('consent', 'default', {\n    'ad_storage': 'denied',\n    'ad_user_data': 'denied',\n    'ad_personalization': 'denied',\n    'analytics_storage': 'denied'\n  });\n</script>\n\n<!-- Load Google Tag Manager -->\n<script async src=\"https://www.googletagmanager.com/gtag/js?id=GA_ID\"></script>\n\n// Update consent when user accepts\nfunction updateGoogleConsent(preferences) {\n  gtag('consent', 'update', {\n    'ad_storage': preferences.marketing ? 'granted' : 'denied',\n    'ad_user_data': preferences.marketing ? 'granted' : 'denied',\n    'ad_personalization': preferences.marketing ? 'granted' : 'denied',\n    'analytics_storage': preferences.analytics ? 'granted' : 'denied'\n  });\n}",
+          "testCode": "// Test CMP integration\n\n// Check if CMP loaded\nfunction testCMPLoaded() {\n  // Cookiebot\n  if (typeof Cookiebot !== 'undefined') {\n    console.log('Cookiebot loaded:', Cookiebot);\n    console.log('Consent:', Cookiebot.consent);\n  }\n  \n  // OneTrust\n  if (typeof OneTrust !== 'undefined') {\n    console.log('OneTrust loaded:', OneTrust);\n    console.log('Active groups:', OnetrustActiveGroups);\n  }\n  \n  // Google Consent Mode\n  if (window.dataLayer) {\n    console.log('Google Consent Mode:', window.dataLayer);\n  }\n}\n\n// Run after page load\nwindow.addEventListener('load', testCMPLoaded);",
+          "dependencies": "# CMP account required\n# Cookiebot: https://www.cookiebot.com\n# OneTrust: https://www.onetrust.com\n# Osano: https://www.osano.com",
+          "packageInstall": "# Sign up for CMP service"
+        }
+      },
+      "verificationSteps": [
+        "1. Audit all cookies currently placed on site",
+        "2. Categorize cookies (essential, functional, analytics, marketing)",
+        "3. Implement cookie consent banner",
+        "4. Block non-essential cookies until consent",
+        "5. Test banner appears before any non-essential cookies",
+        "6. Test granular consent (per category)",
+        "7. Test consent persistence across sessions",
+        "8. Test consent withdrawal mechanism",
+        "9. Verify consent storage (with timestamp, version)",
+        "10. Test from EU IP address",
+        "11. Validate against GDPR checklist",
+        "12. Legal review of implementation"
+      ],
+      "estimatedEffort": "12-16 hours"
+    },
+    "OPS_INFRASTRUCTURE": {
+      "servers": {
+        "cdn": {
+          "config": "# Serve cookie banner from CDN for performance\n\n# CloudFront cache behavior for consent script\n{\n  \"PathPattern\": \"/cookie-consent.js\",\n  \"TargetOriginId\": \"S3Origin\",\n  \"ViewerProtocolPolicy\": \"redirect-to-https\",\n  \"Compress\": true,\n  \"CachePolicyId\": \"658327ea-f89d-4fab-a63d-7e88639e58f6\",\n  \"MinTTL\": 86400,\n  \"MaxTTL\": 31536000\n}\n\n# Ensure consent banner loads quickly\n# Target: <50ms load time",
+          "reload": "# CDN updates automatically",
+          "verify": "# Test load time\ncurl -w '%{time_starttransfer}' -o /dev/null -s https://cdn.your-domain.com/cookie-consent.js"
+        },
+        "geolocation": {
+          "config": "# Detect EU traffic for targeted consent\n\n# CloudFront function to add geo header\nfunction handler(event) {\n  var request = event.request;\n  var headers = request.headers;\n  var country = request.headers['cloudfront-viewer-country'];\n  \n  // EU countries\n  var euCountries = ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR',\n    'DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO',\n    'SK','SI','ES','SE','GB'];\n  \n  if (country && euCountries.includes(country[0].value)) {\n    headers['x-user-region'] = { value: 'EU' };\n  }\n  \n  return request;\n}\n\n# Nginx geo-blocking (optional)\ngeo $is_eu {\n  default 0;\n  # EU IP ranges\n  # Add CIDR blocks for EU countries\n  1.2.3.0/24 1;  # Example\n}",
+          "reload": "# Deploy CloudFront function\naws cloudfront update-function --name geo-header",
+          "verify": "# Test geo detection\ncurl -I https://your-domain.com"
+        }
+      },
+      "rollbackPlan": "1. Backup current site before implementing\n2. If consent banner breaks site:\n   - Remove banner script from HTML\n   - Clear CDN cache\n   - Revert to previous deployment\n3. If cookies breaking after implementation:\n   - Check console for JavaScript errors\n   - Verify cookie category logic\n   - Ensure essential cookies still work\n4. If users cannot access site:\n   - Make banner dismissible as fallback\n   - Fix consent logic, redeploy\n5. Keep banner non-blocking for site functionality",
+      "verificationSteps": [
+        "1. Deploy consent banner to staging",
+        "2. Test all cookie categories",
+        "3. Verify cookies blocked until consent",
+        "4. Test consent persistence",
+        "5. Test from EU IP (use VPN)",
+        "6. Verify site functionality with/without consent",
+        "7. Check performance impact (<50ms)",
+        "8. Legal review before production",
+        "9. Deploy to production",
+        "10. Monitor user consent rates"
+      ],
+      "estimatedEffort": "4-6 hours"
+    },
+    "QA_TESTER": {
+      "manualTests": [
+        {
+          "name": "Cookie Consent Banner Verification",
+          "steps": [
+            "1. Clear all cookies and cache",
+            "2. Open browser DevTools (F12) > Application > Cookies",
+            "3. Navigate to site in incognito mode",
+            "4. Verify NO non-essential cookies before consent",
+            "5. Verify banner appears immediately",
+            "6. Verify banner blocks content minimally",
+            "7. Read consent text - verify clear and accurate",
+            "8. Test 'Accept All' button",
+            "9. Verify banner disappears",
+            "10. Verify cookies now present in DevTools",
+            "11. Reload page - verify banner does not reappear",
+            "12. Clear cookies and test 'Reject All'",
+            "13. Verify only essential cookies set"
+          ],
+          "expected": "Banner appears before any non-essential cookies. Banner text clear and compliant. Accept/Reject buttons work. Consent persists across sessions. Only consented cookies are placed."
+        },
+        {
+          "name": "Granular Consent Testing",
+          "steps": [
+            "1. Clear cookies",
+            "2. Navigate to site",
+            "3. Toggle individual cookie categories",
+            "4. Select only Analytics cookies",
+            "5. Click 'Accept Selected'",
+            "6. Verify only analytics cookies set",
+            "7. Verify marketing cookies NOT set",
+            "8. Check consent cookie value",
+            "9. Verify preferences stored correctly",
+            "10. Test all combinations of categories"
+          ],
+          "expected": "Granular consent works. Only selected categories enabled. Consent preferences accurately stored and respected."
+        },
+        {
+          "name": "Consent Withdrawal Testing",
+          "steps": [
+            "1. Give consent to all cookies",
+            "2. Find cookie settings/preferences page",
+            "3. Verify current consent displayed",
+            "4. Withdraw consent (revoke all)",
+            "5. Verify non-essential cookies deleted",
+            "6. Verify banner reappears or settings saved",
+            "7. Test changing preferences",
+            "8. Verify new preferences take effect"
+          ],
+          "expected": "Easy mechanism to withdraw consent. Preferences can be changed anytime. Non-essential cookies deleted on withdrawal."
+        }
+      ],
+      "automatedTests": {
+        "tool": "Selenium / Playwright",
+        "example": "// Playwright test for cookie consent\nimport { test, expect } from '@playwright/test';\n\ntest('cookie consent banner appears', async ({ page }) => {\n  // Clear cookies\n  await page.context().clearCookies();\n  \n  await page.goto('https://your-domain.com');\n  \n  // Banner should appear\n  await expect(page.locator('.cookie-banner')).toBeVisible();\n  \n  // No non-essential cookies before consent\n  const cookies = await page.context().cookies();\n  const nonEssential = cookies.filter(c => \n    !c.name.includes('session') && !c.name.includes('csrf')\n  );\n  expect(nonEssential.length).toBe(0);\n});\n\ntest('accept all sets cookies', async ({ page }) => {\n  await page.context().clearCookies();\n  await page.goto('https://your-domain.com');\n  \n  // Accept all\n  await page.click('button:has-text(\"Accept All\")');\n  \n  // Banner should disappear\n  await expect(page.locator('.cookie-banner')).toBeHidden();\n  \n  // Consent cookie should be set\n  const cookies = await page.context().cookies();\n  const consentCookie = cookies.find(c => c.name === 'gdpr_cookie_consent');\n  expect(consentCookie).toBeDefined();\n});"
+      },
+      "verificationSteps": [
+        "1. Test banner appearance (before cookies)",
+        "2. Test cookie blocking (verify with DevTools)",
+        "3. Test Accept All functionality",
+        "4. Test Reject All functionality",
+        "5. Test granular consent (individual categories)",
+        "6. Test consent persistence (reload page)",
+        "7. Test consent withdrawal mechanism",
+        "8. Test from EU IP (VPN to EU)",
+        "9. Test accessibility (keyboard navigation, screen readers)",
+        "10. Test mobile responsiveness",
+        "11. Cross-browser testing (Chrome, Firefox, Safari, Edge)",
+        "12. Verify GDPR compliance checklist"
+      ],
+      "estimatedEffort": "6-8 hours"
+    }
+  }
+}

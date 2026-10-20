@@ -1,0 +1,147 @@
+# ===============================================================
+# @file: .gitignore
+# @filepath: .gitignore
+# @version: 5.2
+# @updated: 2026-05-10 11:43:00 AM CDT
+# @author: Greg Paskal
+# @company: MissionWares
+#
+# @description:
+# Files and directories to ignore in Git repositories.
+# This configuration file specifies intentionally untracked files that Git
+# should ignore. Includes system files, build artifacts, test reports, and
+# private/sensitive files that should not be committed to version control.
+#
+# @sections:
+#   01 - Mac System Files
+#   02 - Android / Android Studio
+#   03 - Swift / Xcode / iOS
+#   04 - Maven Build Output
+#   05 - Gradle Build Output
+#   06 - Node / NPM
+#   07 - Electron
+#   08 - PlatformIO
+#   09 - FTP / SFTP
+#   10 - Allure Report Artifacts
+#   11 - Private / Sensitive Files
+#   12 - AI Assist / Generated Files
+#
+# @dependencies:
+#   - Git version control system
+#   - Android Studio / Gradle
+#   - Maven build system
+#   - Allure reporting framework
+#
+# @tags: git, version-control, ignore-patterns, mAi™
+#
+# @changeLog:
+# Date        Author          Version  Description
+# ----------  --------------  -------  --------------------------
+# 2024-07-22  G. Paskal       1.0      Initial version
+# 2025-05-19  G. Paskal       2.0      Added Private Files
+# 2026-01-10  G. Paskal       2.1      Added mAi™ header standard
+# 2026-01-21  G. Paskal       3.0      Added Swift installer files
+# 2026-01-30  G. Paskal       4.0      Added FTP and Node
+# 2026-01-31  G. Paskal       4.1      Added .sftpignore
+# 2026-02-18  G. Paskal       4.2      Added __MACOSX zip artifact
+# 2026-02-26  G. Paskal       4.3      Added .pio for PlatformIO
+# 2026-03-07  G. Paskal       4.4      Added Electron Files
+# 2026-04-09  G. Paskal       5.0      Added Android / Android Studio
+# 2026-05-10  G. Paskal       5.1      Added AI Assist generated files
+# 2026-05-28  G. Paskal       5.2      Assws additional generated file rule
+# ===============================================================
+
+
+# ---------------------------------------------------------------
+# 01 - MAC SYSTEM FILES
+# ---------------------------------------------------------------
+.DS_Store
+__MACOSX/
+
+
+# ---------------------------------------------------------------
+# 02 - ANDROID / ANDROID STUDIO
+# ---------------------------------------------------------------
+*.iml
+.idea/
+local.properties
+*.apk
+*.aab
+*.jks
+*.keystore
+captures/
+.externalNativeBuild/
+.cxx/
+
+
+# ---------------------------------------------------------------
+# 03 - SWIFT / XCODE / iOS
+# ---------------------------------------------------------------
+install*
+dependencies
+.swiftpm
+
+
+# ---------------------------------------------------------------
+# 04 - MAVEN BUILD OUTPUT
+# ---------------------------------------------------------------
+target
+
+
+# ---------------------------------------------------------------
+# 05 - GRADLE BUILD OUTPUT
+# ---------------------------------------------------------------
+.gradle/
+gradle-app.setting
+!gradle-wrapper.jar
+.gradletasknamecache
+
+
+# ---------------------------------------------------------------
+# 06 - NODE / NPM
+# ---------------------------------------------------------------
+node_modules/
+
+
+# ---------------------------------------------------------------
+# 07 - ELECTRON
+# ---------------------------------------------------------------
+dist/
+out/
+staging/
+
+
+# ---------------------------------------------------------------
+# 08 - PLATFORMIO
+# ---------------------------------------------------------------
+.pio
+
+
+# ---------------------------------------------------------------
+# 09 - FTP / SFTP
+# ---------------------------------------------------------------
+sftp.json
+.sftpignore
+.ftpconfig
+
+
+# ---------------------------------------------------------------
+# 10 - ALLURE REPORT ARTIFACTS
+# ---------------------------------------------------------------
+.allure
+allure-report
+allure-results
+
+
+# ---------------------------------------------------------------
+# 11 - PRIVATE / SENSITIVE FILES
+# ---------------------------------------------------------------
+.private
+.private/*.json
+
+
+# ---------------------------------------------------------------
+# 12 - AI ASSIST / GENERATED FILES
+# ---------------------------------------------------------------
+.missionwares/AiAssist/generated/
+**/.missionwares/AiAssist/generated/**

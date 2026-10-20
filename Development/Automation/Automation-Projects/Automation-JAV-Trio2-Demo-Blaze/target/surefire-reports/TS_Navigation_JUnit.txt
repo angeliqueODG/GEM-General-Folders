@@ -1,0 +1,12 @@
+-------------------------------------------------------------------------------
+Test set: TS_Navigation_JUnit
+-------------------------------------------------------------------------------
+Tests run: 2, Failures: 0, Errors: 2, Skipped: 0, Time elapsed: 12.24 s <<< FAILURE! -- in TS_Navigation_JUnit
+TS_Navigation_JUnit.tc_DemoBlaze_Valid_Login -- Time elapsed: 6.183 s <<< ERROR!
+java.lang.NullPointerException: Cannot invoke "org.openqa.selenium.TakesScreenshot.getScreenshotAs(org.openqa.selenium.OutputType)" because "screenshotTaker" is null
+	at TS_Navigation_JUnit.tc_DemoBlaze_Valid_Login(TS_Navigation_JUnit.java:117)
+
+TS_Navigation_JUnit.tc_DemoBlaze_About_Us -- Time elapsed: 5.596 s <<< ERROR!
+java.lang.NullPointerException: Cannot invoke "org.openqa.selenium.TakesScreenshot.getScreenshotAs(org.openqa.selenium.OutputType)" because "screenshotTaker" is null
+	at TS_Navigation_JUnit.tc_DemoBlaze_About_Us(TS_Navigation_JUnit.java:170)
+

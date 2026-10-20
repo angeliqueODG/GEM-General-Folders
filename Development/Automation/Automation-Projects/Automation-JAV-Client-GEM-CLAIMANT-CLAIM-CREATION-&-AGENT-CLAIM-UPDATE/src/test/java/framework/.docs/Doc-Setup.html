@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Setup - mAi™ Framework Documentation</title>
+    <link rel="stylesheet" href="docs-style.css">
+    <link rel="stylesheet" href="pagefind/pagefind-ui.css">
+    <script src="pagefind/pagefind-ui.js" defer></script>
+</head>
+<body>
+    <div class="layout">
+        <nav class="sidebar" id="sidebar" data-pagefind-ignore></nav>
+        <main class="main-content" data-pagefind-body>
+            <h1 data-pagefind-meta="title">Setup Instructions</h1>
+            <p class="page-subtitle">Installation and Environment Configuration Guide</p>
+
+            <p>The following steps provide both automated and manual installation options for setting up the automation framework environment. The automated approach uses the Automation-BSH-AutoTools repository for streamlined setup.</p>
+
+            <div class="callout callout-info">
+                <div class="callout-title">ℹ️ Platform Note</div>
+                <p>This guide is designed primarily for <strong>macOS with Apple Silicon</strong> (M1/M2/M3) processors but is adaptable to other platforms.</p>
+            </div>
+
+            <h2 id="prerequisites">Prerequisites <a href="https://www.perplexity.ai/?q=explain+software+development+environment+prerequisites+java+maven+macos" target="_blank" class="help-link" data-pagefind-ignore>?</a></h2>
+
+            <h3>Hardware Requirements</h3>
+            <table>
+                <thead><tr><th>Component</th><th>Minimum</th><th>Recommended</th></tr></thead>
+                <tbody>
+                    <tr><td><strong>Processor</strong></td><td>Apple Silicon (M1) or Intel</td><td>Apple Silicon (M2/M3)</td></tr>
+                    <tr><td><strong>Memory</strong></td><td>8GB RAM</td><td>16GB RAM</td></tr>
+                    <tr><td><strong>Storage</strong></td><td>10GB free disk space</td><td>20GB+ free disk space</td></tr>
+                </tbody>
+            </table>
+
+            <h3>Software Requirements</h3>
+            <ul class="feature-list">
+                <li><strong>Operating System</strong>: macOS 15.x (Sequoia) or greater</li>
+                <li><strong>Administrator Access</strong>: Required for tool installation</li>
+            </ul>
+
+            <h2 id="automated-installation">Automated Installation <span class="grade-badge grade-a">RECOMMENDED</span> <a href="https://www.perplexity.ai/?q=explain+automated+development+environment+setup+scripts+homebrew" target="_blank" class="help-link" data-pagefind-ignore>?</a></h2>
+
+            <p>The AutoTools script handles the complete environment setup automatically.</p>
+
+            <h3>Step 1: Create Project Directory Structure</h3>
+            <p>Ensure the Automation-Projects directory exists:</p>
+            <div class="command-box">
+                <div class="command-title">Create directory structure</div>
+                <code>mkdir -p ~/Documents/Development/Automation/Automation-Projects</code>
+            </div>
+
+            <h3>Step 2: Clone AutoTools Repository</h3>
+            <p>Clone the Automation-BSH-AutoTools repository:</p>
+            <div class="command-box">
+                <div class="command-title">Clone AutoTools</div>
+                <code>git clone git@github.com:MurahoTech/Automation-BSH-AutoTools.git \<br>    ~/Documents/Development/Automation/Automation-Projects/Automation-BSH-AutoTools</code>
+            </div>
+
+            <h3>Step 3: Launch AutoTools</h3>
+            <p>Execute the AutoTools setup script:</p>
+            <div class="command-box">
+                <div class="command-title">Run AutoTools</div>
+                <code>~/Documents/Development/Automation/Automation-Projects/Automation-BSH-AutoTools/autotools.sh</code>
+            </div>
+
+            <h3>What AutoTools Installs</h3>
+            <p>The automated script will install and configure:</p>
+            <table>
+                <thead><tr><th>Tool</th><th>Purpose</th></tr></thead>
+                <tbody>
+                    <tr><td><strong>Homebrew</strong> <a href="https://www.perplexity.ai/?q=explain+homebrew+package+manager+macos" target="_blank" class="help-link" data-pagefind-ignore>?</a></td><td>Package manager for macOS</td></tr>
+                    <tr><td><strong>Git</strong></td><td>Version control system</td></tr>
+                    <tr><td><strong>Java 23</strong> <a href="https://www.perplexity.ai/?q=explain+OpenJDK+23+features+java" target="_blank" class="help-link" data-pagefind-ignore>?</a></td><td>OpenJDK via Homebrew</td></tr>
+                    <tr><td><strong>Maven</strong> <a href="https://www.perplexity.ai/?q=explain+apache+maven+build+tool+java" target="_blank" class="help-link" data-pagefind-ignore>?</a></td><td>Build and dependency management</td></tr>
+                    <tr><td><strong>Chrome</strong></td><td>Browser for test execution</td></tr>
+                    <tr><td><strong>ChromeDriver</strong> <a href="https://www.perplexity.ai/?q=explain+chromedriver+selenium+webdriver" target="_blank" class="help-link" data-pagefind-ignore>?</a></td><td>WebDriver for Chrome automation</td></tr>
+                    <tr><td><strong>Allure</strong> <a href="https://www.perplexity.ai/?q=explain+allure+test+reporting+framework" target="_blank" class="help-link" data-pagefind-ignore>?</a></td><td>Test reporting framework</td></tr>
+                    <tr><td><strong>VSCode</strong></td><td>Recommended IDE with extensions</td></tr>
+                </tbody>
+            </table>
+
+            <h2 id="manual-installation">Manual Installation <a href="https://www.perplexity.ai/?q=explain+manual+java+development+environment+setup+macos" target="_blank" class="help-link" data-pagefind-ignore>?</a></h2>
+
+            <p>If you prefer manual installation or need to troubleshoot, follow these steps:</p>
+
+            <h3>1. Install Homebrew</h3>
+            <div class="command-box">
+                <div class="command-title">Install Homebrew package manager</div>
+                <code>/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"</code>
+            </div>
+
+            <h3>2. Install Java 23</h3>
+            <div class="command-box">
+                <div class="command-title">Install and link OpenJDK 23</div>
+                <code>brew install openjdk@23<br>brew link --force openjdk@23</code>
+            </div>
+            <p>Verify installation:</p>
+            <div class="command-box">
+                <div class="command-title">Verify Java version</div>
+                <code>java -version</code>
+            </div>
+
+            <h3>3. Install Maven</h3>
+            <div class="command-box">
+                <div class="command-title">Install Maven</div>
+                <code>brew install maven</code>
+            </div>
+            <p>Verify installation:</p>
+            <div class="command-box">
+                <div class="command-title">Verify Maven version</div>
+                <code>mvn -version</code>
+            </div>
+
+            <h3>4. Install Git</h3>
+            <div class="command-box">
+                <div class="command-title">Install Git</div>
+                <code>brew install git</code>
+            </div>
+            <p>Configure Git with your credentials:</p>
+            <div class="command-box">
+                <div class="command-title">Configure Git user</div>
+                <code>git config --global user.name "Your Name"<br>git config --global user.email "your.email@example.com"</code>
+            </div>
+
+            <h3>5. Install Chrome Browser</h3>
+            <p>Download from <a href="https://www.google.com/chrome/" target="_blank">Google Chrome</a> or via Homebrew:</p>
+            <div class="command-box">
+                <div class="command-title">Install Chrome via Homebrew</div>
+                <code>brew install --cask google-chrome</code>
+            </div>
+
+            <h3>6. Install Allure Report</h3>
+            <div class="command-box">
+                <div class="command-title">Install Allure</div>
+                <code>brew install allure</code>
+            </div>
+
+            <h3>7. Install VSCode (Optional but Recommended)</h3>
+            <div class="command-box">
+                <div class="command-title">Install Visual Studio Code</div>
+                <code>brew install --cask visual-studio-code</code>
+            </div>
+
+            <h2 id="project-setup">Project Setup</h2>
+
+            <h3>1. Clone the Test Automation Project</h3>
+            <div class="command-box">
+                <div class="command-title">Clone your project</div>
+                <code>cd ~/Documents/Development/Automation/Automation-Projects<br>git clone [your-automation-project-repository]</code>
+            </div>
+
+            <h3>2. Install Maven Dependencies</h3>
+            <p>Navigate to project directory and run:</p>
+            <div class="command-box">
+                <div class="command-title">Install dependencies (skip tests for speed)</div>
+                <code>mvn clean install -DskipTests</code>
+            </div>
+
+            <h3>3. Verify Setup</h3>
+            <p>Run a simple test to verify everything is working:</p>
+            <div class="command-box">
+                <div class="command-title">Run verification test</div>
+                <code>mvn test -Dtest=TS_Authentication_JUnit#testValidLogin</code>
+            </div>
+
+            <h2 id="environment-variables">Environment Variables <a href="https://www.perplexity.ai/?q=explain+environment+variables+java+home+path+macos+zsh" target="_blank" class="help-link" data-pagefind-ignore>?</a></h2>
+
+            <p>Add these to your <code>~/.zshrc</code> or <code>~/.bash_profile</code>:</p>
+
+            <pre><code># Java Home
+export JAVA_HOME=/opt/homebrew/opt/openjdk@23
+export PATH="$JAVA_HOME/bin:$PATH"
+
+# Maven Options
+export MAVEN_OPTS="-Xmx2048m -XX:MaxPermSize=512m"
+
+# Chrome Driver (if manually installed)
+export PATH="/usr/local/bin/chromedriver:$PATH"</code></pre>
+
+            <p>Reload your shell configuration:</p>
+            <div class="command-box">
+                <div class="command-title">Reload shell configuration</div>
+                <code>source ~/.zshrc</code>
+            </div>
+
+            <h2 id="verification">Verification Checklist</h2>
+
+            <div class="card">
+                <div class="card-title">✅ Setup Verification</div>
+                <div class="card-content">
+                    <ul class="feature-list">
+                        <li>Java 23 installed and accessible</li>
+                        <li>Maven installed and configured</li>
+                        <li>Git installed and configured</li>
+                        <li>Chrome browser installed</li>
+                        <li>Project cloned successfully</li>
+                        <li>Maven dependencies downloaded</li>
+                        <li>Sample test executes successfully</li>
+                        <li>Allure report generates properly</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h2 id="troubleshooting">Troubleshooting</h2>
+
+            <h3>Common Issues</h3>
+
+            <div class="callout callout-warning">
+                <div class="callout-title">⚠️ Java Version Mismatch</div>
+                <p>Ensure Java 23 is the active version. Use <code>java -version</code> to verify. If another version is active, check your <code>JAVA_HOME</code> environment variable.</p>
+            </div>
+
+            <div class="callout callout-warning">
+                <div class="callout-title">⚠️ Maven Build Failures</div>
+                <p>Clear Maven cache and retry:</p>
+                <div class="command-box">
+                    <div class="command-title">Clear Maven cache</div>
+                    <code>rm -rf ~/.m2/repository<br>mvn clean install</code>
+                </div>
+            </div>
+
+            <div class="callout callout-warning">
+                <div class="callout-title">⚠️ ChromeDriver Issues</div>
+                <p>Ensure Chrome browser is up to date. ChromeDriver version must match your Chrome browser version. The framework uses WebDriverManager to handle this automatically in most cases.</p>
+            </div>
+
+            <div class="callout callout-warning">
+                <div class="callout-title">⚠️ Permission Errors</div>
+                <p>You may need to allow apps in <strong>System Preferences → Security & Privacy</strong>. macOS Gatekeeper sometimes blocks unsigned binaries like ChromeDriver.</p>
+            </div>
+
+            <h2 id="next-steps">Next Steps</h2>
+
+            <p>Once your environment is set up, explore these framework capabilities:</p>
+
+            <table>
+                <thead><tr><th>Document</th><th>Description</th></tr></thead>
+                <tbody>
+                    <tr><td><a href="Doc-Overview.html">Framework Overview</a></td><td>Architecture and components</td></tr>
+                    <tr><td><a href="Doc-Test-Development.html">Test Development</a></td><td>Writing tests with Page Object Model</td></tr>
+                    <tr><td><a href="Doc-Test-Execution-VSCode.html">Test Execution</a></td><td>Running tests and generating reports</td></tr>
+                    <tr><td><a href="Diagram-Architecture.html">Architecture Diagrams</a></td><td>Visual understanding of framework design</td></tr>
+                    <tr><td><a href="Doc-HTTP-Assessment.html">HTTP Security Assessment</a></td><td>Automated security audits</td></tr>
+                    <tr><td><a href="Doc-Network-Diagnostics.html">Network Diagnostics</a></td><td>Connectivity and performance testing</td></tr>
+                    <tr><td><a href="Doc-mAi-Advisor.html">mAi Advisor™</a></td><td>Intelligent recommendations</td></tr>
+                </tbody>
+            </table>
+
+            <h2 id="support">Support</h2>
+
+            <p>For additional help:</p>
+            <ul class="feature-list">
+                <li>Check project <code>README.md</code></li>
+                <li>Review <a href="../target/site/index.html" target="_blank">API Documentation</a> (run <code>mvn site</code> first)</li>
+                <li>Contact framework maintainers</li>
+            </ul>
+
+            <hr>
+            <footer class="doc-footer" id="doc-footer" data-pagefind-ignore></footer>
+        </main>
+    </div>
+
+    <script src="docs-config.js"></script>
+    <script src="docs-nav.js"></script>
+    <script src="docs-highlight.js"></script>
+    <script>DocsConfig.renderFooter('doc-footer');</script>
+</body>
+</html>

@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Test Assets Scanner - mAi™ Framework Documentation</title>
+<link rel="stylesheet" href="docs-style.css">
+<link rel="stylesheet" href="pagefind/pagefind-ui.css">
+<script src="pagefind/pagefind-ui.js"></script>
+<script src="mermaid.min.js"></script>
+<script>mermaid.initialize({startOnLoad: true, theme: 'dark'});</script>
+</head>
+<body>
+<div class="layout">
+<nav class="sidebar" id="sidebar" data-pagefind-ignore></nav>
+<main class="main-content" data-pagefind-body>
+<h1 data-pagefind-meta="title">Test Assets Scanner</h1>
+<p class="subtitle">Test suite discovery and metrics collection process</p>
+
+<section class="content-section">
+<h2>Description</h2>
+<p>This document illustrates the workflow for the TestAssetsScanner within the automation framework. It includes a detailed diagram using Mermaid syntax to represent the flow of actions and interactions between different components involved in the test asset scanning process.</p>
+</section>
+
+<section class="content-section">
+<h2>Purpose and Function</h2>
+<p>The TestAssetsScanner performs the following critical functions:</p>
+<ul>
+<li><strong>Discovery:</strong> Identifies all test suite files in the project</li>
+<li><strong>Validation:</strong> Verifies test file structure and accessibility</li>
+<li><strong>Initialization:</strong> Prepares test suite metadata and configurations</li>
+<li><strong>Metrics:</strong> Calculates test counts and complexity metrics</li>
+<li><strong>Reporting:</strong> Generates pre-execution test inventory reports</li>
+</ul>
+</section>
+
+<section class="content-section">
+<h2>Workflow Diagram</h2>
+<pre class="mermaid">
+flowchart TD
+    subgraph POM["Maven POM Configuration"]
+        P1[maven-antrun-plugin&lt;br/&gt;run-test-manager]
+    end
+    subgraph FW_TestRunManager["Test Run Manager"]
+        P1 --> TRM1[main method]
+        TRM1 &lt;--&gt; TRM2[getInstance&lt;br/&gt;Singleton]
+        TRM1 &lt;--&gt; TRM3[prepareTestRun]
+        TRM1 --> TRM4[printTestRunMetrics]
+    end
+    subgraph FW_ReportUtils["Report Utilities"]
+        TRM4 --> RU1[printTestRunMetrics&lt;br/&gt;Console output]
+    end
+    subgraph FW_TestSuite["Test Suite Processor"]
+        TRM3 &lt;--&gt; TS1[getTestSuitesCollection]
+        TS1 &lt;--&gt; TS2[getTestSuiteFiles&lt;br/&gt;Scan for *_JUnit.java]
+        TS1 &lt;--&gt; TS3[processTestSuites]
+        TS3 &lt;--&gt; processTestSuite
+        subgraph processTestSuite["Process Individual Test Suite"]
+            TS_PTS1[new FW_TestSuite instance] --> TS_PTS2
+            TS_PTS2[pathPresentProject&lt;br/&gt;Verify project path] --> TS_PTS3
+            TS_PTS3[fileExists&lt;br/&gt;Validate file presence] --> TS_PTS4
+            TS_PTS4[Initialize test suite details&lt;br/&gt;Extract metadata] --> TS_PTS5
+            TS_PTS5[Start Methods Loop&lt;br/&gt;Process @Test methods] --> TS_PTS6
+            TS_PTS6[Extract test cases] --> TS_PTS7
+            TS_PTS7[Count test steps] --> TS_PTS8
+            TS_PTS8[Calculate metrics]
+        end
+    end
+    subgraph FW_FileDirUtils["File &amp; Directory Utilities"]
+        TS2 &lt;--&gt; FDU1[findFiles&lt;br/&gt;Pattern matching]
+        TS3 &lt;--&gt; FDU2[getFileName&lt;br/&gt;Extract name]
+        TS_PTS3 &lt;--&gt; FDU3[fileExists&lt;br/&gt;Validation]
+    end
+    subgraph FW_SystemUtils["System Utilities"]
+        TS_PTS2 &lt;--&gt; SU1[pathPresentProject&lt;br/&gt;Project root resolution]
+    end
+</pre>
+</section>
+
+<section class="content-section">
+<h2>Process Flow Steps</h2>
+<ol>
+<li><strong>Maven Trigger:</strong> Antrun plugin executes during pre-test phase</li>
+<li><strong>Manager Initialization:</strong> TestRunManager singleton created</li>
+<li><strong>Test Discovery:</strong> Scans for all files matching test suite pattern</li>
+<li><strong>Suite Processing:</strong> Each suite file is validated and parsed</li>
+<li><strong>Method Analysis:</strong> Extracts @Test, @BeforeAll, @BeforeEach annotations</li>
+<li><strong>Metrics Collection:</strong> Counts tests, steps, and complexity</li>
+<li><strong>Report Generation:</strong> Outputs comprehensive test inventory</li>
+</ol>
+</section>
+
+<section class="content-section">
+<h2>Key Components</h2>
+
+<h3>FW_TestRunManager</h3>
+<p>Singleton pattern for test run coordination. Manages test suite collection lifecycle. Aggregates metrics across all test suites.</p>
+
+<h3>FW_TestSuite</h3>
+<p>Represents individual test suite metadata. Processes Java reflection for test discovery. Calculates suite-level metrics.</p>
+
+<h3>Utility Classes</h3>
+<ul>
+<li><strong>FW_FileDirUtils:</strong> File system operations and pattern matching</li>
+<li><strong>FW_SystemUtils:</strong> Project path resolution and system properties</li>
+<li><strong>FW_ReportUtils:</strong> Formatted console and file output</li>
+</ul>
+</section>
+
+<section class="content-section">
+<h2>Output Metrics</h2>
+<p>The scanner produces the following metrics:</p>
+<ul>
+<li>Total test suites discovered</li>
+<li>Total test cases per suite</li>
+<li>Total test steps estimated</li>
+<li>Parameterized test counts</li>
+<li>Disabled test identification</li>
+<li>Execution time estimates</li>
+</ul>
+</section>
+
+<section class="content-section">
+<h2>Related Documentation</h2>
+<table class="data-table">
+<thead><tr><th>Document</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td><a href="Diagram-Maven-to-first-Test-Case.html">Maven to Test Case Flow</a></td><td>Complete test execution flow</td></tr>
+<tr><td><a href="Diagram-Architecture.html">Architecture Overview</a></td><td>Framework layers</td></tr>
+<tr><td><a href="Doc-Test-Development.html">Test Development Guide</a></td><td>Writing tests</td></tr>
+</tbody>
+</table>
+</section>
+
+<footer class="doc-footer" id="doc-footer" data-pagefind-ignore></footer>
+</main>
+</div>
+<script src="docs-config.js"></script>
+<script src="docs-nav.js"></script>
+<script>DocsConfig.renderFooter('doc-footer');</script>
+</body>
+</html>

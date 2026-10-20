@@ -1,0 +1,47 @@
+{
+    "version": "0.3.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "FW_Audit_Traceroute",
+            "request": "launch",
+            "mainClass": "framework.audits.FW_Audit_Traceroute",
+            "projectName": "Template"
+        },
+        {
+            "type": "java",
+            "name": "FW_NetworkUtils",
+            "request": "launch",
+            "mainClass": "framework.utilities.FW_NetworkUtils",
+            "projectName": "Template"
+        },
+        {
+            "type": "java",
+            "name": "FW_Audit_Ping",
+            "request": "launch",
+            "mainClass": "framework.audits.FW_Audit_Ping",
+            "projectName": "Template"
+        },
+        {
+            "type": "java",
+            "name": "FW_NetworkDetails",
+            "request": "launch",
+            "mainClass": "framework.network.FW_NetworkDetails",
+            "projectName": "Template"
+        },
+        {
+            "type": "java",
+            "name": "FW_Audit_SpeedTest",
+            "request": "launch",
+            "mainClass": "framework.audits.FW_Audit_SpeedTest",
+            "projectName": "Template"
+        },
+        {
+            "type": "java",
+            "name": "Attach to Remote Debug",
+            "request": "attach",
+            "hostName": "localhost",
+            "port": 5005
+        }
+    ]
+}

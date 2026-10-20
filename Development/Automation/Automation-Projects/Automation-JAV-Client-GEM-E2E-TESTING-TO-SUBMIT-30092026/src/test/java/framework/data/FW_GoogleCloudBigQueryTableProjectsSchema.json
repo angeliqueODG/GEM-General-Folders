@@ -1,0 +1,12 @@
+[
+  {"name": "clientRefID",        "type": "STRING",    "mode": "REQUIRED"},
+  {"name": "projectRefID",       "type": "STRING",    "mode": "REQUIRED"},
+  {"name": "projectName",        "type": "STRING",    "mode": "REQUIRED"},
+  {"name": "projectLeadName",    "type": "STRING",    "mode": "NULLABLE"},
+  {"name": "projectLeadEmail",   "type": "STRING",    "mode": "NULLABLE"},
+  {"name": "projectLeadPhone",   "type": "STRING",    "mode": "NULLABLE"},
+  {"name": "projectLeadCountry", "type": "STRING",    "mode": "NULLABLE"},
+  {"name": "projectLeadTimezone","type": "STRING",    "mode": "NULLABLE"},
+  {"name": "projectCreatedDate", "type": "TIMESTAMP", "mode": "REQUIRED"},
+  {"name": "projectUpdatedDate", "type": "TIMESTAMP", "mode": "NULLABLE"}
+]

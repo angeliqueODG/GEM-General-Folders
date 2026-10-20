@@ -1,0 +1,220 @@
+{
+  "metadata": {
+    "filename": "no-https.json",
+    "filepath": "src/test/java/framework/advisor/templates/security/no-https.json",
+    "version": "1.0.0",
+    "created": "2025-10-09",
+    "lastUpdated": "2025-10-09",
+    "author": "Greg Paskal",
+    "company": "MissionWares",
+    "methodology": "mAi™ (MissionWares® + AI)",
+    "description": "No HTTPS encryption (plain HTTP only) finding template with comprehensive migration guidance for all audiences including SSL/TLS certificate acquisition, infrastructure deployment procedures, and organizational change management for transitioning from HTTP to HTTPS.",
+    "aiGenerated": true,
+    "humanReviewed": false,
+    "reviewedBy": "Pending",
+    "approvedBy": "Pending",
+    "tags": ["https", "tls", "ssl", "encryption", "security", "critical", "transport-security", "migration"],
+    "relatedFindings": ["SSL_CERTIFICATE_EXPIRED", "HSTS_MISSING", "WEAK_CIPHER", "TLS_VERSION_OLD"],
+    "estimatedRemediationTime": "4-8 hours",
+    "businessImpact": "CRITICAL",
+    "complianceRequirements": ["PCI-DSS 4.1 (REQUIRED)", "GDPR Article 32", "HIPAA", "SOC 2", "NIST 800-53", "ISO 27001"]
+  },
+  "findingId": "SEC-HTTPS-001",
+  "findingType": "NO_HTTPS",
+  "category": "SECURITY",
+  "severity": "CRITICAL",
+  "cveReferences": [
+    "CWE-319",
+    "CWE-311"
+  ],
+  "understanding": {
+    "EXECUTIVE": {
+      "summary": "Your website operates entirely over unencrypted HTTP, transmitting all data in plain text visible to anyone on the network path. This is a CRITICAL security vulnerability requiring immediate remediation.",
+      "businessRisk": "ALL user data transmitted in cleartext: passwords, credit cards, personal information, session tokens. Network attackers can read, modify, or steal any data. Guaranteed PCI-DSS compliance failure - cannot process payments without HTTPS. Modern browsers display prominent 'Not Secure' warnings, damaging trust and conversion rates. Google penalizes HTTP sites in search rankings. Potential for massive data breach with regulatory fines (GDPR: up to €20M or 4% revenue, PCI-DSS: $5,000-$100,000/month).",
+      "complianceImpact": "IMMEDIATE COMPLIANCE FAILURE: PCI-DSS mandates HTTPS for all payment processing - cannot accept credit cards without it. GDPR Article 32 requires encryption of personal data in transit - violation risks mandatory breach notification and fines. HIPAA requires encryption for PHI transmission. SOC 2 Type II requires transport encryption. This is a show-stopper for all security certifications and audits.",
+      "priority": "CRITICAL"
+    },
+    "PROJECT_MANAGER": {
+      "summary": "Site operates on unencrypted HTTP instead of secure HTTPS, creating CRITICAL security vulnerability and blocking all compliance certifications. Migration to HTTPS required immediately.",
+      "timeline": "CRITICAL PRIORITY - must be addressed before any other work. Typical HTTPS migration: 1-2 days for small sites, 1-2 weeks for complex applications. Requires coordination across infrastructure, development, QA teams. Blocks: payment processing, user authentication, PCI-DSS compliance, security audits, production launches.",
+      "effort": "4-8 hours for simple site: 2 hours SSL certificate acquisition, 2 hours server configuration, 2 hours testing, 2 hours deployment. Complex sites with mixed content, third-party integrations, hardcoded URLs: 2-4 weeks. Factor in QA testing, code changes, configuration updates across all environments.",
+      "dependencies": [
+        "SSL/TLS certificate purchase or Let's Encrypt setup",
+        "Server configuration access (Nginx, Apache, IIS, CDN)",
+        "Code review for hardcoded http:// URLs",
+        "Third-party service HTTPS compatibility verification",
+        "DNS configuration changes (if needed)",
+        "Load balancer/CDN SSL termination configuration",
+        "Budget approval for SSL certificate (if not using free option)",
+        "Coordinate with payment processor for HTTPS requirement"
+      ],
+      "blocking": [
+        "Payment processing (PCI-DSS requirement)",
+        "User login/authentication features",
+        "Any security certification or audit",
+        "Production launch or major releases",
+        "Customer data collection",
+        "Integration with HTTPS-only third-party services",
+        "Modern browser compatibility (increasing HTTP restrictions)",
+        "SEO rankings (Google penalizes HTTP)",
+        "User trust and conversion rates"
+      ]
+    },
+    "DEVELOPER": {
+      "summary": "Site serves content over unencrypted HTTP protocol instead of HTTPS (HTTP over TLS/SSL), exposing all data to network interception.",
+      "technical": "HTTP transmits data in plain text without encryption. All form submissions, cookies, API calls, user credentials, and session tokens are visible to anyone monitoring network traffic. HTTPS wraps HTTP in TLS/SSL encryption, making data unreadable to eavesdroppers. Migration requires: (1) Obtain SSL/TLS certificate, (2) Configure web server to handle HTTPS on port 443, (3) Update application code to use https:// URLs, (4) Implement HTTP→HTTPS redirects, (5) Add HSTS headers, (6) Fix mixed content warnings (HTTP resources on HTTPS pages).",
+      "vulnerability": "Cleartext transmission of sensitive information (CWE-319). Network sniffing attacks can capture passwords, session cookies, API keys, personal data, payment information. Man-in-the-middle attacks can modify responses, inject malicious code, steal credentials. No authentication of server identity - users cannot verify they're communicating with legitimate server. Violates basic security principle: encryption in transit.",
+      "references": [
+        "https://letsencrypt.org/getting-started/",
+        "https://developer.mozilla.org/en-US/docs/Web/Security/Transport_Layer_Security",
+        "https://www.ssllabs.com/ssltest/",
+        "https://www.cloudflare.com/learning/ssl/what-is-https/",
+        "https://www.rfc-editor.org/rfc/rfc2818"
+      ]
+    },
+    "SECURITY_ENGINEER": {
+      "summary": "CRITICAL VULNERABILITY: Complete absence of transport encryption allows trivial interception and modification of all traffic.",
+      "vulnerability": "Cleartext protocol vulnerability (CWE-319, CWE-311). Zero encryption protection. All HTTP traffic visible to: ISPs, network administrators, WiFi operators, VPN providers, government surveillance, corporate proxies, malicious actors on network path. Password sniffing, session hijacking, and man-in-the-middle attacks require minimal technical sophistication - automated tools readily available.",
+      "attackVector": "Passive sniffing: Attacker monitors network traffic (WiFi, router, ISP level) using Wireshark, tcpdump, or similar tools. All data captured in plaintext. Active MITM: Attacker positions between client and server, intercepts and potentially modifies traffic in real-time. Can inject malicious JavaScript, steal credentials, redirect to phishing sites. Public WiFi networks are high-risk hunting grounds. 100% of traffic is compromised, not just specific requests.",
+      "threatLevel": "CRITICAL - This is a fundamental security failure. Every connection is vulnerable. Users on public networks (airports, coffee shops, hotels) face guaranteed compromise. Attackers with network access can capture passwords on first login attempt. Session tokens can be stolen and used for account takeover. Payment data transmitted in clear text. This vulnerability makes all other security controls irrelevant - if attacker can read everything, authentication, authorization, and data protection measures provide no benefit.",
+      "mitigationUrgency": "IMMEDIATE - STOP ALL DATA COLLECTION. Do not allow users to submit passwords, personal information, or payment data until HTTPS is deployed. This is a zero-day, always-exploited vulnerability. Every minute of operation over HTTP increases breach likelihood. Prioritize over ALL other work. Recommend taking site offline for sensitive operations until HTTPS implemented."
+    },
+    "OPS_INFRASTRUCTURE": {
+      "summary": "Web servers configured to listen only on HTTP port 80 without TLS/SSL encryption on port 443. CRITICAL infrastructure security gap requiring immediate SSL/TLS deployment.",
+      "technical": "Server accepts connections on TCP port 80 (HTTP) but not port 443 (HTTPS). No SSL/TLS certificate installed or configured. Web server (Nginx, Apache, IIS) not configured for HTTPS virtual hosts. Load balancers and reverse proxies not performing SSL termination. CDN (if used) not configured for HTTPS delivery. DNS records may not point to HTTPS-capable infrastructure.",
+      "scope": "ALL web servers, load balancers, CDN configurations, reverse proxies in entire infrastructure stack. Affects: production, staging, development environments. Impacts: primary domain and all subdomains. Related services: APIs, admin panels, user dashboards, payment systems, authentication endpoints. Any endpoint accepting user data is CRITICAL risk.",
+      "monitoring": "Current state: All traffic over port 80 (HTTP). Target state: All traffic over port 443 (HTTPS) with HTTP→HTTPS redirects. Monitor: Certificate expiration dates (Let's Encrypt: 90 days, commercial: 1-2 years), TLS version and cipher strength, mixed content warnings, SSL Labs grade (target: A or A+), browser security warnings, HTTPS adoption metrics, redirect chain performance."
+    },
+    "QA_TESTER": {
+      "summary": "Cannot perform security testing or validate data protection without HTTPS. All test accounts, test data, and testing credentials transmitted in cleartext, compromising test environment security.",
+      "testImplication": "Security scanning tools will fail with CRITICAL severity. Cannot test: secure authentication flows, payment processing, session management, cookie security (Secure flag requires HTTPS), Content Security Policy, HSTS enforcement, CORS with credentials. Browser automation (Selenium, Playwright) shows security warnings. Cannot verify encryption of sensitive data in transit. API testing exposes test credentials to network monitoring.",
+      "riskIfNotFixed": "Complete security testing blockage. Cannot certify application security. PCI-DSS compliance testing impossible. Penetration testing will immediately identify this as critical finding. User acceptance testing on production will expose real user credentials. Cannot obtain security certifications (SOC 2, ISO 27001). Automated security scanners will fail entire test suite. Browser compatibility testing complicated by security warnings."
+    }
+  },
+  "actions": {
+    "OPS_INFRASTRUCTURE": {
+      "servers": {
+        "letsencrypt-certbot": {
+          "config": "# Let's Encrypt (Free SSL Certificate) - Recommended for most sites\n# Supports automatic renewal every 90 days\n\n# Install Certbot (Ubuntu/Debian)\nsudo apt update\nsudo apt install certbot python3-certbot-nginx  # For Nginx\n# OR\nsudo apt install certbot python3-certbot-apache  # For Apache\n\n# Obtain certificate (Nginx - automatic configuration)\nsudo certbot --nginx -d yourdomain.com -d www.yourdomain.com\n\n# Obtain certificate (Apache - automatic configuration)\nsudo certbot --apache -d yourdomain.com -d www.yourdomain.com\n\n# Manual certificate only (you configure web server yourself)\nsudo certbot certonly --webroot -w /var/www/html -d yourdomain.com\n\n# Test automatic renewal\nsudo certbot renew --dry-run\n\n# Certificate locations after installation:\n# Certificate: /etc/letsencrypt/live/yourdomain.com/fullchain.pem\n# Private Key: /etc/letsencrypt/live/yourdomain.com/privkey.pem",
+          "reload": "# Certbot automatically configures and reloads web server\n# If manual changes needed:\nsudo nginx -t && sudo systemctl reload nginx\n# OR\nsudo apache2ctl configtest && sudo systemctl reload apache2\n\n# Set up automatic renewal (usually configured automatically)\nsudo systemctl status certbot.timer\n\n# Manual renewal test\nsudo certbot renew --dry-run",
+          "verify": "# Verify HTTPS is working\ncurl -I https://yourdomain.com\n\n# Check certificate details\necho | openssl s_client -connect yourdomain.com:443 -servername yourdomain.com 2>/dev/null | openssl x509 -noout -dates\n\n# Test SSL configuration\nssllabs.com/ssltest/analyze.html?d=yourdomain.com"
+        },
+        "nginx": {
+          "config": "# Nginx HTTPS Configuration\n# File: /etc/nginx/sites-available/yourdomain.com\n\n# HTTPS Server Block (Port 443)\nserver {\n    listen 443 ssl http2;\n    listen [::]:443 ssl http2;\n    server_name yourdomain.com www.yourdomain.com;\n\n    # SSL Certificate Files\n    ssl_certificate /etc/letsencrypt/live/yourdomain.com/fullchain.pem;\n    ssl_certificate_key /etc/letsencrypt/live/yourdomain.com/privkey.pem;\n\n    # SSL Configuration - Modern, Secure Settings\n    ssl_protocols TLSv1.2 TLSv1.3;\n    ssl_prefer_server_ciphers on;\n    ssl_ciphers ECDHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384;\n    ssl_session_cache shared:SSL:10m;\n    ssl_session_timeout 10m;\n\n    # HSTS Header (after testing HTTPS works)\n    add_header Strict-Transport-Security \"max-age=31536000; includeSubDomains; preload\" always;\n\n    # Your application configuration\n    root /var/www/html;\n    index index.html index.php;\n\n    location / {\n        try_files $uri $uri/ =404;\n    }\n}\n\n# HTTP to HTTPS Redirect (Port 80)\nserver {\n    listen 80;\n    listen [::]:80;\n    server_name yourdomain.com www.yourdomain.com;\n\n    # Redirect all HTTP traffic to HTTPS\n    return 301 https://$server_name$request_uri;\n}",
+          "enable": "# Enable new configuration\nsudo ln -s /etc/nginx/sites-available/yourdomain.com /etc/nginx/sites-enabled/\n\n# Test configuration\nsudo nginx -t\n\n# Reload Nginx\nsudo systemctl reload nginx\n\n# Verify Nginx is running\nsudo systemctl status nginx",
+          "verify": "# Test HTTPS\ncurl -I https://yourdomain.com\n\n# Test HTTP redirect\ncurl -I http://yourdomain.com\n\n# Should see 301 redirect to HTTPS\n\n# Check certificate\necho | openssl s_client -connect yourdomain.com:443 -servername yourdomain.com"
+        },
+        "apache": {
+          "config": "# Apache HTTPS Configuration\n# File: /etc/apache2/sites-available/yourdomain-ssl.conf\n\n<IfModule mod_ssl.c>\n    <VirtualHost *:443>\n        ServerName yourdomain.com\n        ServerAlias www.yourdomain.com\n        DocumentRoot /var/www/html\n\n        # SSL Engine\n        SSLEngine on\n        \n        # SSL Certificate Files\n        SSLCertificateFile /etc/letsencrypt/live/yourdomain.com/fullchain.pem\n        SSLCertificateKeyFile /etc/letsencrypt/live/yourdomain.com/privkey.pem\n\n        # Modern SSL Configuration\n        SSLProtocol all -SSLv3 -TLSv1 -TLSv1.1\n        SSLCipherSuite ECDHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384\n        SSLHonorCipherOrder on\n\n        # HSTS Header (after testing)\n        Header always set Strict-Transport-Security \"max-age=31536000; includeSubDomains; preload\"\n\n        <Directory /var/www/html>\n            Options Indexes FollowSymLinks\n            AllowOverride All\n            Require all granted\n        </Directory>\n\n        ErrorLog ${APACHE_LOG_DIR}/error.log\n        CustomLog ${APACHE_LOG_DIR}/access.log combined\n    </VirtualHost>\n</IfModule>\n\n# HTTP to HTTPS Redirect\n# File: /etc/apache2/sites-available/yourdomain.conf\n<VirtualHost *:80>\n    ServerName yourdomain.com\n    ServerAlias www.yourdomain.com\n    \n    # Redirect all HTTP to HTTPS\n    Redirect permanent / https://yourdomain.com/\n</VirtualHost>",
+          "enable": "# Enable required modules\nsudo a2enmod ssl\nsudo a2enmod headers\nsudo a2enmod rewrite\n\n# Enable SSL site\nsudo a2ensite yourdomain-ssl.conf\n\n# Test configuration\nsudo apache2ctl configtest\n\n# Reload Apache\nsudo systemctl reload apache2\n\n# Verify\nsudo systemctl status apache2",
+          "verify": "# Test HTTPS\ncurl -I https://yourdomain.com\n\n# Test redirect\ncurl -I http://yourdomain.com\n\n# Check logs if issues\nsudo tail -f /var/log/apache2/error.log"
+        },
+        "cloudflare": {
+          "config": "# Cloudflare SSL Configuration (Easiest Option)\n# Free SSL certificate included with Cloudflare\n\n# Step 1: Add site to Cloudflare\n# 1. Create account at cloudflare.com\n# 2. Add your domain\n# 3. Update nameservers at domain registrar to Cloudflare's nameservers\n# 4. Wait for DNS propagation (5-60 minutes)\n\n# Step 2: Enable SSL/TLS\n# 1. Go to SSL/TLS tab in Cloudflare dashboard\n# 2. Set SSL/TLS encryption mode:\n#    - Flexible: Cloudflare↔User HTTPS, Cloudflare↔Origin HTTP (quick start)\n#    - Full: Cloudflare↔User HTTPS, Cloudflare↔Origin HTTPS (self-signed OK)\n#    - Full (Strict): All HTTPS with valid certificates (recommended)\n\n# Step 3: Enable \"Always Use HTTPS\"\n# 1. Go to SSL/TLS → Edge Certificates\n# 2. Toggle \"Always Use HTTPS\" to On\n# 3. This automatically redirects all HTTP to HTTPS\n\n# Step 4: Enable HSTS (after testing)\n# 1. SSL/TLS → Edge Certificates → HSTS\n# 2. Enable with recommended settings\n\n# Origin Server Configuration (for Full Strict mode):\n# Install Cloudflare Origin Certificate on your server\n# 1. SSL/TLS → Origin Server → Create Certificate\n# 2. Install on your web server (Nginx/Apache)\n# 3. Configure server to accept HTTPS on port 443",
+          "verify": "# Test HTTPS\ncurl -I https://yourdomain.com\n\n# Verify Cloudflare is active\ncurl -I https://yourdomain.com | grep -i cf-ray\n\n# Check SSL Labs\nhttps://www.ssllabs.com/ssltest/analyze.html?d=yourdomain.com"
+        },
+        "aws-acm": {
+          "config": "# AWS Certificate Manager + Application Load Balancer\n# Free SSL certificates for AWS resources\n\n# Step 1: Request Certificate in ACM\naws acm request-certificate \\\n  --domain-name yourdomain.com \\\n  --subject-alternative-names www.yourdomain.com \\\n  --validation-method DNS \\\n  --region us-east-1\n\n# Step 2: Validate Domain Ownership\n# Follow DNS validation instructions in ACM console\n# Add CNAME records provided by ACM to your DNS\n\n# Step 3: Attach Certificate to Load Balancer\n# Via AWS Console:\n# EC2 → Load Balancers → Select your ALB → Listeners → Add listener\n# Protocol: HTTPS, Port: 443, Default action: Forward to target group\n# Security policy: ELBSecurityPolicy-TLS-1-2-2017-01\n# Select ACM certificate\n\n# Step 4: Add HTTP→HTTPS Redirect\n# Edit HTTP:80 listener → Edit rules → Add redirect to HTTPS:443\n\n# Via AWS CLI:\naws elbv2 create-listener \\\n  --load-balancer-arn <your-alb-arn> \\\n  --protocol HTTPS \\\n  --port 443 \\\n  --certificates CertificateArn=<your-cert-arn> \\\n  --default-actions Type=forward,TargetGroupArn=<your-target-group-arn>",
+          "verify": "# Test ALB HTTPS endpoint\ncurl -I https://yourdomain.com\n\n# Verify certificate in ACM console\naws acm describe-certificate --certificate-arn <your-cert-arn>\n\n# Check ALB listeners\naws elbv2 describe-listeners --load-balancer-arn <your-alb-arn>"
+        }
+      },
+      "verificationSteps": [
+        "1. Obtain SSL/TLS certificate (Let's Encrypt recommended)",
+        "2. Configure web server for HTTPS (port 443)",
+        "3. Test HTTPS access: https://yourdomain.com",
+        "4. Configure HTTP→HTTPS redirect (port 80→443)",
+        "5. Test redirect: curl -I http://yourdomain.com",
+        "6. Verify certificate validity: openssl s_client -connect yourdomain.com:443",
+        "7. Check SSL Labs grade: https://www.ssllabs.com/ssltest/",
+        "8. Test across all subdomains and paths",
+        "9. Verify in multiple browsers (Chrome, Firefox, Safari, Edge)",
+        "10. Check for mixed content warnings (HTTP resources on HTTPS page)",
+        "11. Update all hardcoded http:// URLs to https:// or protocol-relative",
+        "12. Test payment processing and third-party integrations",
+        "13. Enable HSTS header after confirming HTTPS stability",
+        "14. Set up certificate renewal automation (Let's Encrypt: 90-day expiry)",
+        "15. Document certificate renewal process and calendar reminders"
+      ],
+      "rollbackPlan": "HTTPS migration should NOT be rolled back. If issues occur:\n1. Keep HTTPS enabled, fix issues forward\n2. If certificate invalid: obtain new certificate immediately\n3. If mixed content: identify and fix HTTP resources\n4. If third-party integration breaks: update integration to HTTPS\n5. Temporary: remove HSTS header if testing needed (allow HTTP temporarily)\n6. Never redirect HTTPS back to HTTP - security regression\n7. Communication plan: inform users of temporary issues, ETA for fix\n8. Rollback only if complete site outage with no forward fix available",
+      "estimatedEffort": "4-8 hours"
+    },
+    "QA_TESTER": {
+      "manualTests": [
+        {
+          "name": "HTTPS Access Test",
+          "steps": [
+            "1. Open browser (Chrome, Firefox, Safari, Edge)",
+            "2. Navigate to https://yourdomain.com",
+            "3. Check address bar for padlock icon",
+            "4. Click padlock → View certificate details",
+            "5. Verify certificate is valid (not expired, correct domain)",
+            "6. Verify connection shows 'Secure' or equivalent",
+            "7. Test main navigation, all pages load over HTTPS",
+            "8. Check for mixed content warnings in DevTools Console"
+          ],
+          "expected": "Site loads successfully over HTTPS with valid certificate, no security warnings, padlock icon displayed in all browsers"
+        },
+        {
+          "name": "HTTP to HTTPS Redirect Test",
+          "steps": [
+            "1. Type http://yourdomain.com in address bar (explicitly HTTP)",
+            "2. Press Enter",
+            "3. Observe browser behavior",
+            "4. Check final URL in address bar",
+            "5. Open DevTools Network tab, repeat test",
+            "6. Verify 301 or 302 redirect from HTTP to HTTPS",
+            "7. Test with www and non-www variants",
+            "8. Test deep links: http://yourdomain.com/page/subpage"
+          ],
+          "expected": "All HTTP requests automatically redirect to HTTPS via 301/302, preserving path and query parameters"
+        },
+        {
+          "name": "Mixed Content Detection Test",
+          "steps": [
+            "1. Load site over HTTPS",
+            "2. Open DevTools Console (F12)",
+            "3. Look for mixed content warnings (yellow/red shield icon)",
+            "4. Identify any HTTP resources loaded on HTTPS page",
+            "5. Check: images, CSS, JavaScript, iframes, video",
+            "6. Test forms submission over HTTPS",
+            "7. Verify all AJAX/API calls use HTTPS"
+          ],
+          "expected": "No mixed content warnings. All resources (images, scripts, styles) loaded over HTTPS"
+        },
+        {
+          "name": "Certificate Validation Test",
+          "steps": [
+            "1. Visit https://yourdomain.com",
+            "2. Click padlock icon → Certificate details",
+            "3. Verify: Issued To matches your domain",
+            "4. Verify: Issuer is trusted CA (Let's Encrypt, DigiCert, etc.)",
+            "5. Verify: Valid From date is in past",
+            "6. Verify: Valid To date is in future (not expired)",
+            "7. Verify: Subject Alternative Names includes all domain variants",
+            "8. Test subdomains if wildcard certificate"
+          ],
+          "expected": "Certificate valid, trusted, covers all required domains, not expired or expiring soon"
+        }
+      ],
+      "automatedTests": {
+        "tool": "Selenium WebDriver + SSL Labs API",
+        "example": "// Selenium HTTPS Verification Test (Java)\nimport org.openqa.selenium.WebDriver;\nimport org.openqa.selenium.chrome.ChromeDriver;\nimport org.junit.Test;\nimport static org.junit.Assert.*;\n\npublic class HttpsVerificationTest {\n    \n    @Test\n    public void testHttpsEnabled() {\n        WebDriver driver = new ChromeDriver();\n        \n        // Test HTTPS access\n        driver.get(\"https://yourdomain.com\");\n        String currentUrl = driver.getCurrentUrl();\n        assertTrue(\"URL should use HTTPS\", currentUrl.startsWith(\"https://\"));\n        \n        // Test HTTP redirect\n        driver.get(\"http://yourdomain.com\");\n        currentUrl = driver.getCurrentUrl();\n        assertTrue(\"HTTP should redirect to HTTPS\", currentUrl.startsWith(\"https://\"));\n        \n        driver.quit();\n    }\n    \n    @Test\n    public void testNoMixedContent() {\n        ChromeOptions options = new ChromeOptions();\n        options.setCapability(CapabilityType.ACCEPT_INSECURE_CERTS, false);\n        WebDriver driver = new ChromeDriver(options);\n        \n        driver.get(\"https://yourdomain.com\");\n        \n        // Check console for mixed content warnings\n        LogEntries logs = driver.manage().logs().get(LogType.BROWSER);\n        for (LogEntry entry : logs) {\n            assertFalse(\"Mixed content detected: \" + entry.getMessage(),\n                entry.getMessage().toLowerCase().contains(\"mixed content\"));\n        }\n        \n        driver.quit();\n    }\n}"
+      },
+      "edgeCases": [
+        "Test with certificate expired or not yet valid",
+        "Test with self-signed certificate (should show warning)",
+        "Test with certificate domain mismatch",
+        "Test with revoked certificate",
+        "Test subdomain access with wildcard vs specific certificate",
+        "Test on mobile browsers (iOS Safari, Android Chrome)",
+        "Test with strict certificate validation in automation tools",
+        "Verify WebSocket connections upgrade to wss://",
+        "Test Service Worker with HTTPS requirement",
+        "Verify Geolocation API works (requires HTTPS)",
+        "Test payment integrations (Stripe, PayPal require HTTPS)",
+        "Verify social media sharing preview generation over HTTPS"
+      ],
+      "estimatedEffort": "3-4 hours"
+    }
+  }
+}

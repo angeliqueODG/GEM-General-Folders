@@ -1,0 +1,568 @@
+AI Instructions - Overview: The following is a Training Data of '--- OLD CODE ---' and '--- NEW CODE ---' for AI tools like Gemini, NotebookLM to learn from.
+Utilize these examples to distinguish between --- OLD CODE --- design patterns that needs to be updated and --- NEW CODE --- design patterns that are correctly implemented.
+You will find each example to follow the format of '// --- OLD CODE - Test Suite - (Begin) ---' indicating this as OLD CODE related to Test Suite and the block following as the Beginning of the example data.
+The example data will end with the following '// --- OLD CODE - Test Suite - (End) ---' indicating this as OLD CODE related to Test Suite and the block following as the End of the example.
+The NEW CODE and desired design patters follow the exact same approach with the only difference being they will contain NEW CODE instead of OLD CODE.
+
+// ======================================================================================================================================================
+// ===================================================================== Training Data (Begin) ==========================================================
+// ======================================================================================================================================================
+
+// --- OLD CODE - JUnit Imports - (Begin) ---
+// PATTERN CHARACTERISTICS:
+// - Undesirable: Imports are not grouped or separated by function.
+// JUnit 5
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
+import org.openqa.selenium.WebDriver;
+// --- OLD CODE - JUnit Imports - (End) ---
+
+// --- OLD CODE - Framework Imports - (Begin) ---
+// PATTERN CHARACTERISTICS:
+// - Undesirable: This group of imports does not begin with a comment or grouping.
+// - Undesirable: These imports just continue from the junit imports lacking comments and organization.
+import framework.audits.FW_Audit_Connectivity;
+import framework.audits.FW_Audit_Sandbox;
+import framework.automation.FW_Network;
+import framework.driver.FW_Browser;
+import framework.formatter.FW_TestSuiteFormatter;
+import framework.junit.FW_CustomAssertJU;
+import framework.utilities.FW_ConfigMgr;
+// --- OLD CODE - Framework Imports - (End) ---
+
+// --- OLD CODE - BeforeAll - (Begin) ---
+// PATTERN CHARACTERISTICS:
+// - Undesirable: Code is broken up across multiple lines.
+    @BeforeAll
+    public static void setupTestSuite() {
+        // Create an anonymous object and get the simple name of its enclosing class
+        String className = new Object() {
+        }.getClass().getEnclosingClass().getSimpleName();
+
+        // Call the beforeAll method of FW_TestSuiteFormatter with the class name
+        FW_TestSuiteFormatter.beforeAll(className);
+
+        // Load testConfig.properties for Test Suite and all Test Cases
+        FW_ConfigMgr.getInstance();
+    }
+// --- OLD CODE - BeforeAll - (End) ---
+
+// --- OLD CODE - BeforeEach - (Begin) ---
+// PATTERN CHARACTERISTICS:
+// - Undesirable: Instantiates framework variables (ao_Audit_Connectivity, ao_Audit_Sandbox, fw_Network)
+// - Undesirable: Contains comments that wrap onto the following line.
+    @BeforeEach
+    public void setupTestCase(TestInfo testInfo) {
+        FW_TestSuiteFormatter.beforeEach(testInfo);
+
+        // Instantiate framework variables for this Test Case
+        ao_Audit_Connectivity = new FW_Audit_Connectivity();
+        ao_Audit_Sandbox = new FW_Audit_Sandbox();
+        fw_Network = new FW_Network();
+
+        // Create WebDriver for Test Case
+        driver = FW_Browser.createWebDriver();
+
+        // [Note: Automation Engineer, instantiate your Page Object (PO) class(es) for
+        // all Test Cases (TC) here.]
+        po_About_Event = new PO_About_Event(driver);
+        po_Claim_Status = new PO_Claim_Status(driver);
+        po_Claim_Types = new PO_Claim_Types(driver);
+        po_Draft_Claim = new PO_Draft_Claim(driver);
+        po_Expenses_Reimbursement = new PO_Expenses_Reimbursement(driver);
+        po_Home = new PO_Home(driver);
+        po_Insurance_Type = new PO_Insurance_Type(driver);
+        po_Insured_Info = new PO_Insured_Info(driver);
+        po_Required_Documents = new PO_Required_Documents(driver);
+        po_Review_Submit = new PO_Review_Submit(driver);
+        po_Save_Claim = new PO_Save_Claim(driver);
+        po_Trip_Cancellation = new PO_Trip_Cancellation(driver);
+        po_Emergency_Medical_Insurance = new PO_Emergency_Medical_Insurance(driver);
+        po_View_Claim_Status = new PO_View_Claim_Status(driver);
+        po_Help_Centre = new PO_Help_Centre(driver);
+        po_Review_And_Submit_Claim = new PO_Review_And_Submit_Claim(driver);
+        po_Save_Claim_As_A_Draft = new PO_Save_Claim_As_A_Draft(driver);
+    }
+// --- OLD CODE - BeforeEach - (End) ---
+
+// --- OLD CODE - Test - (Begin) ---
+// PATTERN CHARACTERISTICS:
+// - Undesirable: A call to FW_CustomAssertJU.autoPass() wraps across multiple lines, usually because its parameter is another method call with a long string literal.
+    /**
+     * Test Case (TC) for Check Claim Status.
+     */
+    // @Disabled // Disables the Test Case (TC)
+    @Test
+    @Tag("C3E2E-T2244")
+    @DisplayName("TC - Claim Portal - Check Status")
+    public void tc_claim_portal_check_status() {
+        String url = "https://portal-qa.globalexcel.com/claims-portal?$locale=en_US&$sp=AAAAAgAAAAAAAAABAAAAEMYk37mfvy9ydZM9IaaBC1j5h98owDzvikz_DAJ86vsfC2VuGqrccCia6-BaEn1_itBDXQZcGgeN61nT7AFlW9KV8JvZgp5If0STkjvBDXff2tDj_k78uQ2Ut__M04woCo4r2etLt3s6VCImEc-idSuzh8OnXnZfBb_dIdrfr1sQwniifc7OIQDigBXcNQTaMB-qyroDNicUoIhbfTO9";
+        FW_CustomAssertJU.autoPass(po_Home.navigateToURL(url));
+        FW_CustomAssertJU.autoPass(po_Home.validateOnPage());
+        FW_CustomAssertJU.autoPass(po_Home.clickCheckClaimStatusButton());
+        // --------------------------------------------------------------------------------------------------------------------
+        FW_CustomAssertJU.autoPass(po_View_Claim_Status.validateOnPage());
+        FW_CustomAssertJU.autoPass(po_View_Claim_Status.validateclaimNumberInputFieldExists());
+        FW_CustomAssertJU.autoPass(po_View_Claim_Status.validateBackButtonExists());
+        FW_CustomAssertJU.autoPass(po_View_Claim_Status.enterClaimNumber("1234"));
+        FW_CustomAssertJU.autoPass(po_View_Claim_Status.validateValidGlobalExcelNumberErrorPresent(
+                "Please enter a valid global excel claim number (i.e. 7 digits)"));
+        FW_CustomAssertJU.autoPass(po_View_Claim_Status.clearOutTheClaimNumberInputField());
+        FW_CustomAssertJU.autoPass(po_View_Claim_Status.enterClaimNumber("1234567"));
+        FW_CustomAssertJU.autoPass(po_View_Claim_Status.clickViewStatusButton());
+        FW_CustomAssertJU.autoPass(po_View_Claim_Status.validateClaimNotFoundErrorPresent(
+                "Claim not found. Please ensure that you have entered the claim number correctly and try again"));
+        FW_CustomAssertJU.autoPass(po_View_Claim_Status.clearOutTheClaimNumberInputField());
+        FW_CustomAssertJU.autoPass(po_View_Claim_Status.enterClaimNumber("2000001"));
+        FW_CustomAssertJU.autoPass(po_View_Claim_Status.clickViewStatusButton());
+        // --------------------------------------------------------------------------------------------------------------------
+        FW_CustomAssertJU.autoPass(po_Claim_Status.validateOnPageClaimStatus());
+        FW_CustomAssertJU.autoPass(po_Claim_Status.validateClaimNumberManulife("2000001"));
+        //FW_CustomAssertJU.autoPass(po_Claim_Status.validateNumberOfClaim());
+        FW_CustomAssertJU.autoPass(
+                po_Claim_Status.validateReviewOfClaimCompleteParagraph("Our review of your claim has been completed. You will be notified via email of the outcome"));
+    }
+// --- OLD CODE - Test - (End) ---
+
+// --- OLD CODE - Test - (Begin) ---
+// PATTERN CHARACTERISTICS:
+// - Undesirable: Has a URL containing complex parameters.
+    /**
+     * Test Case (TC) for Help Centre - Contact Us - Submit Bill or Document.
+     */
+    // @Disabled // Disables the Test Case (TC)
+    @Test
+    @Tag("C3E2E-T2276")
+    @DisplayName("TC - Claim Portal - Help Centre - Contact Us - Submit Bill or Document")
+    public void tc_claim_porta_help_center_contact_us_submit_bill_or_document() {
+        String url = "https://portal-qa.globalexcel.com/claims-portal?$locale=en_US&$sp=AAAAAgAAAAAAAAABAAAAEMYk37mfvy9ydZM9IaaBC1j5h98owDzvikz_DAJ86vsfC2VuGqrccCia6-BaEn1_itBDXQZcGgeN61nT7AFlW9KV8JvZgp5If0STkjvBDXff2tDj_k78uQ2Ut__M04woCo4r2etLt3s6VCImEc-idSuzh8OnXnZfBb_dIdrfr1sQwniifc7OIQDigBXcNQTaMB-qyroDNicUoIhbfTO9";
+        FW_CustomAssertJU.autoPass(po_Home.navigateToURL(url));
+        FW_CustomAssertJU.autoPass(po_Home.validateOnPage());
+        FW_CustomAssertJU.autoPass(po_Home.clickHelpCentreLink());
+        // --------------------------------------------------------------------------------------------------------------------
+        FW_CustomAssertJU.autoPass(po_Help_Centre.validateOnPage());
+        FW_CustomAssertJU.autoPass(po_Help_Centre.clickContactUsButton());
+        FW_CustomAssertJU.autoPass(po_Help_Centre.verifyContactUsHelpCentreSection());
+        FW_CustomAssertJU.autoPass(po_Help_Centre.clickSubmitBillOrDocumentCard());
+        FW_CustomAssertJU.autoPass(po_Help_Centre.verifySubmitBillsOrDocumentsHeader());
+        FW_CustomAssertJU.autoPass(po_Help_Centre.selectWhatYouNeedToSubmit("Documents for an existing Claim"));
+        FW_CustomAssertJU.autoPass(po_Help_Centre.enterPolicyNumber("99"));
+        FW_CustomAssertJU.autoPass(po_Help_Centre.enterClaimNumber("9999998"));
+        FW_CustomAssertJU.autoPass(po_Help_Centre.enterFirstName("Angelique"));
+        FW_CustomAssertJU.autoPass(po_Help_Centre.enterLastName("UWIMANA"));
+        FW_CustomAssertJU.autoPass(po_Help_Centre.enterDOB("02/02/2002"));
+        FW_CustomAssertJU.autoPass(po_Help_Centre.enterEmail("angelique@muraho.tech"));
+        FW_CustomAssertJU.autoPass(po_Help_Centre.enterPhone("7836595900"));
+        FW_CustomAssertJU.autoPass(po_Help_Centre.selectClaimType("Emergency Medical Travel"));
+        FW_CustomAssertJU.autoPass(po_Help_Centre.selectDocumentType("Credit card statement"));
+        FW_CustomAssertJU.autoPass(po_Help_Centre.uploadDocumentType1("test1.txt"));
+        FW_CustomAssertJU.autoPass(po_Help_Centre.clickOnAddAnotherDocument());
+        FW_CustomAssertJU.autoPass(po_Help_Centre.uploadDocumentType2("test1.txt"));
+        FW_CustomAssertJU.autoPass(po_Help_Centre.enterTextInTextArea("Test"));
+    }
+// --- OLD CODE - Test - (End) ---
+
+// --- OLD CODE - Test - (Begin) ---
+// PATTERN CHARACTERISTICS:
+// - Undesirable: Empty line followed by closing }.
+    /**
+     * Test Case (TC) Help Centre - Emergency Assistance claim.
+     */
+    // @Disabled // Disables the Test Case (TC)
+    @Test
+    @Tag("C3E2E-T2369")
+    @DisplayName("TC - Claim Portal - Help Centre - Emergency Assistance")
+    public void tc_claim_portal_help_centre_emergency_assistance() {
+        String url = "https://portal-qa.globalexcel.com/claims-portal?$locale=en_US&$sp=AAAAAgAAAAAAAAABAAAAEMYk37mfvy9ydZM9IaaBC1j5h98owDzvikz_DAJ86vsfC2VuGqrccCia6-BaEn1_itBDXQZcGgeN61nT7AFlW9KV8JvZgp5If0STkjvBDXff2tDj_k78uQ2Ut__M04woCo4r2etLt3s6VCImEc-idSuzh8OnXnZfBb_dIdrfr1sQwniifc7OIQDigBXcNQTaMB-qyroDNicUoIhbfTO9";
+        FW_CustomAssertJU.autoPass(po_Home.navigateToURL(url));
+        FW_CustomAssertJU.autoPass(po_Home.validateOnPage());
+        FW_CustomAssertJU.autoPass(po_Home.clickHelpCentreLink());
+        // -----------------------------------------------------------------
+        FW_CustomAssertJU.autoPass(po_Help_Centre.validateOnPage());
+        FW_CustomAssertJU.autoPass(po_Help_Centre.VerifyEmergencyAssistanceCard());
+
+    }
+// --- OLD CODE - Test - (End) ---
+
+// --- OLD CODE - AfterEach - (Begin) ---
+// PATTERN CHARACTERISTICS:
+// - Undesirable: No indentation of code following method name.
+    // ================================================================================
+    /**
+     * Define what happens after each Test Case (TC) in this Test Suite (TS) is
+     * executed.
+     * 
+     * @param testInfo Information about the current test, provided by JUnit.
+     */
+    @AfterEach
+    public void tearDownEach(TestInfo testInfo) {
+    FW_TestSuiteFormatter.afterEach(testInfo);
+
+    // Dispose WebDriver for Test Case
+    FW_Browser.disposeWebDriver(driver);
+    }
+// --- OLD CODE - AfterEach - (End) ---
+
+// --- OLD CODE - AfterAll - (Begin) ---
+// PATTERN CHARACTERISTICS:
+// - Undesirable: Code wraps across multiple lines.
+// - Undesirable: JavaDocs take up more than a single line.
+    // ================================================================================
+    /**
+     * Define what happens before all Test Case (TC) in this Test Suite (TS) is
+     * executed.
+     */
+    @AfterAll
+    public static void tearDownTestSuite() {
+        String className = new Object() {
+        }.getClass().getEnclosingClass().getSimpleName();
+        FW_TestSuiteFormatter.afterAll(className);
+    }
+// --- OLD CODE - AfterAll - (End) ---
+
+// --- OLD CODE - Page Object - (Begin) ---
+// PATTERN CHARACTERISTICS:
+// - Undesirable: Missing preceeding JavaDocs.
+    public PO_Auto_Rental_Collision_Loss_Damage_Claim(WebDriver driver) {
+        super(driver);
+    }
+// --- OLD CODE - Page Object - (End) ---
+
+// --- OLD CODE - Page Object - (Begin) ---
+// PATTERN CHARACTERISTICS:
+// - Undesirable: Method returns a primitive 'String' instead of a rich result object.
+// - Undesirable: return result is found within the page object method.
+    public String validateOnPage() {
+        String result = validateLocatorExists(LO_TXT_AUTO_RENTAL_COLLISION_PAGE_VERIFY, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval());
+        result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+        return result;
+    }
+// --- OLD CODE - Page Object - (End) ---
+
+// --- OLD CODE - Page Object - (Begin) ---
+// PATTERN CHARACTERISTICS:
+// - Undesirable: String LO_ not preceeded by private static final
+    String LO_TXT_MEDICAL_EMERGENCY_HELPLINE_NON_TOLL_FREE = "//span/a[text()=";
+    String LO_TXT_MEDICAL_EMERGENCY_HELPLINE_TOLL_FREE = "//p[text()=\"(Toll free)\"]//span/a[text()=";
+// --- OLD CODE - Page Object - (End) ---
+
+// --- OLD CODE - Page Object - (Begin) ---
+// PATTERN CHARACTERISTICS:
+// - Undesirable: Code wraps across multiple lines.
+    public String validateMedicalEmergencyHelpLineNonTollFree(String number) {
+        LO_TXT_MEDICAL_EMERGENCY_HELPLINE_NON_TOLL_FREE = LO_TXT_MEDICAL_EMERGENCY_HELPLINE_NON_TOLL_FREE + "'" + number + "']";
+        String result = validateLocatorExists(LO_TXT_MEDICAL_EMERGENCY_HELPLINE_NON_TOLL_FREE, FW_ConfigMgr.getDefaultTimeout(),
+                FW_ConfigMgr.getDefaultInterval());
+        result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+        return result;
+    }
+// --- OLD CODE - Page Object - (End) ---
+
+// --- OLD CODE - Page Object - (Begin) ---
+// PATTERN CHARACTERISTICS:
+// - Undesirable: Method contains result = FW_StringUtils.metaInsert(result, getClass().getSimpleName());
+    public String validateClaimNumber(String claimNumber) {
+        waitForDuration(2, "s", false); // Wait to perform next check
+        String result = validateWithinLocatorText(LO_TXT_VALID_CLAIM_NUMBER,claimNumber,FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval(),true);
+        result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+        return result;
+    }
+// --- OLD CODE - Page Object - (End) ---
+
+// ======================================================================================================================================================
+// ===================================================================== Training Data (Transition) =====================================================
+// ======================================================================================================================================================
+
+// --- NEW CODE - JUnit Imports - (Begin) ---
+// PATTERN CHARACTERISTICS:
+// - Desirable: Imports are grouped and separated by function.
+// - Desirable: Imports have a clear comment describing their purpose or grouping.
+// JUnit 5
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.RepeatedTest;
+import org.junit.jupiter.api.RepetitionInfo;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
+
+// JUnit 5 - Parameterized Test
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvFileSource;
+import org.junit.jupiter.params.provider.CsvSource;
+
+// Selenium WebDriver
+import org.openqa.selenium.WebDriver;
+// --- NEW CODE - JUnit Imports - (End) ---
+
+// --- NEW CODE - Framework Imports - (Begin) ---
+// PATTERN CHARACTERISTICS:
+// - Desirable: Imports entire framework packages using wildcards (*).
+// - Desirable: Begin with a comment indicating it's related to framework imports.
+// Framework imports
+import framework.audits.*;
+import framework.automation.*;
+import framework.driver.*;
+import framework.formatter.*;
+import framework.junit.*;
+import framework.utilities.*;
+// --- NEW CODE - Framework Imports - (End) ---
+
+// --- NEW CODE - BeforeAll - (Begin) ---
+// PATTERN CHARACTERISTICS:
+// - Desirable: All code on a single line without wrapping to the next line.
+// - Desirable: Contains descriptive comments related to the actions of the test case.
+    @BeforeAll
+    public static void setupTestSuite() {
+        // Create an anonymous object and get the simple name of its enclosing class
+        String className = new Object() {}.getClass().getEnclosingClass().getSimpleName();
+
+        // Call the beforeAll method of FW_TestSuiteFormatter with the class name
+        FW_TestSuiteFormatter.beforeAll(className);
+
+        // Load testConfig.properties for Test Suite and all Test Cases
+        FW_ConfigMgr.getInstance();
+    }
+// --- NEW CODE - BeforeAll - (End) ---
+
+// --- NEW CODE - BeforeEach - (Begin) ---
+// PATTERN CHARACTERISTICS:
+// - Desirable: Starts with FW_TestRun.updateCurrentTestRunMetrics(testInfo);
+// - Desirable: Second line is a call to FW_TestSuiteFormatter.beforeEach(testInfo);
+// - Desirable: Contains driver = FW_Browser.createWebDriver();
+// - Desirable: All variables such as po_Cart match their new instation naming such as PO_Cart with the first two letter of the variable being lowercase match.
+    @BeforeEach
+    public void setupTestCase(TestInfo testInfo) {
+        FW_TestRun.updateCurrentTestRunMetrics(testInfo);
+        FW_TestSuiteFormatter.beforeEach(testInfo);
+
+        // Create WebDriver for Test Case
+        driver = FW_Browser.createWebDriver();
+
+        // [Note: Automation Engineer, instantiate Page Object (PO) class(es) for all Test Cases (TC) here.]
+		po_Common_Hamburger = new PO_Common_Hamburger(driver);
+        po_Cart = new PO_Cart(driver);
+        po_Checkout = new PO_Checkout(driver);
+        po_Checkout_Overview = new PO_Checkout_Overview(driver);
+        po_Login = new PO_Login(driver);
+        po_Product = new PO_Product(driver);
+        po_Products = new PO_Products(driver);
+        po_Thank_You = new PO_Thank_You(driver);
+    }
+// --- NEW CODE - BeforeEach - (End) ---
+
+// --- NEW CODE - Test - (Begin) ---
+// PATTERN CHARACTERISTICS:
+// - Desirable: Method begins with JavaDoc that accuratly describes the test intended purpose.
+// - Desirable: Contains @Tag and value (e.g. regression, Jira Reference, sanity)
+// - Desirable: Contains @DisplayName and follows the long hand complement to the method name.
+// - Desirable: Method name follows a short hand, all lowercase reference that follows the @DisplayName.
+// - Desirable: Each line of code performs a single test step.
+// - Desirable: Each line of code begins with FW_CustomAssertJU.autoPass( to allow results to be passed into reporting.
+    /**
+     * Test Case (TC) for SwagLabs locked out user
+     */
+    @Test
+    @Tag("simple")
+    @DisplayName("TC - SwagLabs - Locked out user")
+    @Disabled("Disabled until bug #42 has been resolved")
+    public void tc_swaglabs_locked_out_user() {
+        FW_CustomAssertJU.autoPass(po_Login.navigateToURL("https://www.saucedemo.com/v1/"));
+        FW_CustomAssertJU.autoPass(po_Login.validateOnPage());
+        FW_CustomAssertJU.autoPass(po_Login.enterUsername("locked_out_user"));
+        FW_CustomAssertJU.autoPass(po_Login.enterPassword("secret_sauce"));
+        FW_CustomAssertJU.autoPass(po_Login.clickLogin());
+        FW_CustomAssertJU.autoPass(po_Login.verifyErrorMessage("Epic sadface: Sorry, this user has been locked out."));
+    }
+// --- NEW CODE - Test - (End) ---
+
+// --- NEW CODE - Test - (Begin) ---
+// PATTERN CHARACTERISTICS:
+// - Desirable: Contains @RepeatedTest followed by a value greater than 1 indicating total number of repetitions.
+// - Desirable: Method contains named parameters that are used in the test steps.
+    /**
+     * Test Case (TC) for SwagLabs missing password
+     */
+    //@Disabled // Disables the test case
+    @RepeatedTest(value = 2, name = "{displayName} - Repetition {currentRepetition} of {totalRepetitions}") // [Note: Automation Engineer, formatting this properly is critical for the test report.]
+    @Tag("simple")
+    @Tag("repeated")
+    @DisplayName("TC - SwagLabs - Missing Password")
+    public void tc_swaglabs_missing_password(TestInfo testInfo, RepetitionInfo repetitionInfo) {
+        FW_CustomAssertJU.autoPass(po_Login.navigateToURL("https://www.saucedemo.com/v1/"));
+        FW_CustomAssertJU.autoPass(po_Login.validateOnPage());
+        FW_CustomAssertJU.autoPass(po_Login.enterUsername("standard_user"));
+        FW_CustomAssertJU.autoPass(po_Login.enterPassword(""));
+        FW_CustomAssertJU.autoPass(po_Login.clickLogin());
+        FW_CustomAssertJU.autoPass(po_Login.verifyErrorMessage("Epic sadface: Password is required"));
+    }
+// --- NEW CODE - Test - (End) ---
+
+// --- NEW CODE - Test - (Begin) ---
+// PATTERN CHARACTERISTICS:
+// - Desirable: Contains comments that start like // ------------- bringing logical organization in the test case based on page objects (po_).
+    /**
+     * Test Case (TC) for SwagLabs basic functionality.
+     */
+    //@Disabled // Disables the test case
+    @Test
+    @Tag("e2e_test")
+    @DisplayName("TC - SwagLabs - Basic Functionality")
+    public void tc_swaglabs_basic_functionality() {
+        FW_CustomAssertJU.autoPass(po_Login.navigateToURL("https://www.saucedemo.com/v1/"));
+        FW_CustomAssertJU.autoPass(po_Login.validateOnPage());
+        FW_CustomAssertJU.autoPass(po_Login.takeScreenshot("Screenshot taken right before Login process begins."));
+        FW_CustomAssertJU.autoPass(po_Login.enterUsername("standard_user"));
+        FW_CustomAssertJU.autoPass(po_Login.enterPassword("secret_sauce"));
+        FW_CustomAssertJU.autoPass(po_Login.takeScreenshot("Screenshot taken right before clicking Login button. Manualy review for any exception handling."));
+        FW_CustomAssertJU.autoPass(po_Login.clickLogin());
+        // ------------------------------------------------------------
+        FW_CustomAssertJU.autoPass(po_Products.validateOnPage());
+        FW_CustomAssertJU.autoPass(po_Products.clickSauceLabsBackpack());
+        // ------------------------------------------------------------
+        FW_CustomAssertJU.autoPass(po_Product.validateOnPage());
+        FW_CustomAssertJU.autoPass(po_Product.verifyTitle("Sauce Labs Backpack"));
+        FW_CustomAssertJU.autoPass(po_Product.clickBack());
+        // ------------------------------------------------------------
+        FW_CustomAssertJU.autoPass(po_Products.validateOnPage());
+        FW_CustomAssertJU.autoPass(po_Products.clickSauceLabsOnesie());
+        // ------------------------------------------------------------
+        FW_CustomAssertJU.autoPass(po_Product.validateOnPage());
+        FW_CustomAssertJU.autoPass(po_Product.verifyTitle("Sauce Labs Onesie"));
+        FW_CustomAssertJU.autoPass(po_Product.recordNote("The test forces a failure here."));
+        FW_CustomAssertJU.autoPass(po_Product.verifyPrice("$8.99"));
+        FW_CustomAssertJU.autoPass(po_Product.clickAddToCart());
+        FW_CustomAssertJU.autoPass(po_Product.verifyButtonRemove());
+        FW_CustomAssertJU.autoPass(po_Product.clickButtonCart());
+        // ------------------------------------------------------------
+        FW_CustomAssertJU.autoPass(po_Cart.validateOnPage());
+        FW_CustomAssertJU.autoPass(po_Cart.verifyTitle("Your Cart"));
+        FW_CustomAssertJU.autoPass(po_Cart.clickButtonCheckout());
+        // ------------------------------------------------------------
+        FW_CustomAssertJU.autoPass(po_Checkout.validateOnPage());
+        FW_CustomAssertJU.autoPass(po_Checkout.verifyTitle("Checkout: Your Information"));
+        FW_CustomAssertJU.autoPass(po_Checkout.enterFirstname("Bob"));
+        FW_CustomAssertJU.autoPass(po_Checkout.enterLastname("James"));
+        FW_CustomAssertJU.autoPass(po_Checkout.enterZipcode("12345"));
+        FW_CustomAssertJU.autoPass(po_Checkout.clickButtonContinue());
+        // ------------------------------------------------------------
+        FW_CustomAssertJU.autoPass(po_Checkout_Overview.validateOnPage());
+        FW_CustomAssertJU.autoPass(po_Checkout_Overview.verifyTitle("Checkout: Overview"));
+        FW_CustomAssertJU.autoPass(po_Checkout_Overview.clickButtonFinish());
+        // ------------------------------------------------------------
+        FW_CustomAssertJU.autoPass(po_Thank_You.validateOnPage());
+        FW_CustomAssertJU.autoPass(po_Thank_You.verifyTitle("Finish"));
+        FW_CustomAssertJU.autoPass(po_Thank_You.verifyThankYou("THANK YOU FOR YOUR ORDER"));
+        // ------------------------------------------------------------
+        FW_CustomAssertJU.autoPass(po_Common_Hamburger.clickButtonHamburger());
+        FW_CustomAssertJU.autoPass(po_Common_Hamburger.clickLinkLogout());
+        // ------------------------------------------------------------
+        FW_CustomAssertJU.autoPass(po_Login.validateOnPage());
+    }
+// --- NEW CODE - Test - (End) ---
+
+// --- NEW CODE - AfterEach - (Begin) ---
+// PATTERN CHARACTERISTICS:
+// - Desirable: Indentation of code following method name.
+// - Desirable: First line of code after tearDownEach method decloration is FW_TestSuiteFormatter.afterEach(testInfo);.
+// - Desirable: Second line of code after tearDownEach method decloration is FW_TestRun.updateCurrentTestRunMetricsReset(testInfo);.
+// - Desirable: Contains code call to FW_Browser.disposeWebDriver(driver);.
+    // ================================================================================
+    /**
+     * Define what happens after each Test Case (TC) in this Test Suite (TS) is executed.
+     * 
+     * @param testInfo Information about the current test, provided by JUnit.
+     */
+    @AfterEach
+    public void tearDownEach(TestInfo testInfo) {
+        FW_TestSuiteFormatter.afterEach(testInfo);
+        FW_TestRun.updateCurrentTestRunMetricsReset(testInfo);
+
+        // Dispose WebDriver for Test Case
+        FW_Browser.disposeWebDriver(driver);
+    }
+// --- NEW CODE - AfterEach - (End) ---
+
+// --- NEW CODE - AfterAll - (Begin) ---
+// PATTERN CHARACTERISTICS:
+// - Desirable: JavaDocs on a single line with no wrap.
+    // ================================================================================
+    /**
+     * Define what happens after all Test Case (TC) in this Test Suite (TS) are executed.
+     */
+    @AfterAll
+    public static void tearDownTestSuite() {
+        String className = new Object() {
+        }.getClass().getEnclosingClass().getSimpleName();
+        FW_TestSuiteFormatter.afterAll(className);
+    }
+// --- NEW CODE - AfterAll - (End) ---
+
+// --- NEW CODE - Page Object - (Begin) ---
+// PATTERN CHARACTERISTICS:
+// - Desirable: JavaDocs preceeding.
+    /**
+     * Define the Page Object (PO) constructor.
+     * @param driver The WebDriver object passed from the test method.
+     */
+    public PO_Checkout(WebDriver driver) {
+        super(driver);
+    }
+// --- NEW CODE - Page Object - (End) ---
+
+// --- NEW CODE - Page Object - (Begin) ---
+// PATTERN CHARACTERISTICS:
+// - Desirable: JavaDocs preceeding method.
+// - Desirable: public Object preceeds method name
+// - Desirable: String result = exist to capture framework method call.
+// - Desirable: FW_TestStep resultObj = FW_TestStepUtils.createTestStep(result, Thread.currentThread()); within each page object method.
+// - Desirable: Method explicitly returns a 'FW_TestStep' object.
+// - Desirable: return resultObj is found within the page object method.
+    public Object validateOnPage(){
+        String result = validateLocatorExists(LO_TXT_SUBHEADER, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval());
+        FW_TestStep resultObj = FW_TestStepUtils.createTestStep(result, Thread.currentThread());
+        return resultObj;
+    }
+// --- NEW CODE - Page Object - (End) ---
+
+// --- NEW CODE - Page Object - (Begin) ---
+// PATTERN CHARACTERISTICS:
+// - Desirable: String LO_ preceeded by private static final
+    private static final String LO_TXT_SUBHEADER = "//div[@class='subheader']";
+    private static final String LO_EDT_FIRSTNAME = "//input[@id='first-name']";
+    private static final String LO_EDT_LASTNAME = "//input[@id='last-name']";
+    private static final String LO_EDT_ZIPCODE = "//input[@id='postal-code']";
+    private static final String LO_BUT_CONTINUE = "//input[@value='CONTINUE']";
+// --- NEW CODE - Page Object - (End) ---
+
+// --- NEW CODE - Page Object - (Begin) ---
+// PATTERN CHARACTERISTICS:
+// - Desirable: Contains JavaDocs describing method parameters.
+    /**
+     * Enter username.
+     * 
+     * @param username The text to enter in the username field.
+     * 
+     * @return A string including [PASS] or [FAIL] along with specific result details.
+     * 
+     */
+    public Object enterUsername(String username) {
+        String result = setText(LO_EDT_USERNAME, username, FW_ConfigMgr.getDefaultTimeout(), false);
+        FW_TestStep resultObj = FW_TestStepUtils.createTestStep(result, Thread.currentThread());
+        return resultObj;
+    }
+// --- NEW CODE - Page Object - (End) ---
+
+// ======================================================================================================================================================
+// ===================================================================== Training Data (End) ============================================================
+// ======================================================================================================================================================

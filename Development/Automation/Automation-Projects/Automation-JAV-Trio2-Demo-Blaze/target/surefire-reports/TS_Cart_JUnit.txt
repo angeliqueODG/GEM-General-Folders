@@ -1,0 +1,12 @@
+-------------------------------------------------------------------------------
+Test set: TS_Cart_JUnit
+-------------------------------------------------------------------------------
+Tests run: 2, Failures: 0, Errors: 2, Skipped: 0, Time elapsed: 11.37 s <<< FAILURE! -- in TS_Cart_JUnit
+TS_Cart_JUnit.tc_DemoBlaze_Delete_From_Cart -- Time elapsed: 5.727 s <<< ERROR!
+java.lang.NullPointerException: Cannot invoke "org.openqa.selenium.TakesScreenshot.getScreenshotAs(org.openqa.selenium.OutputType)" because "screenshotTaker" is null
+	at TS_Cart_JUnit.tc_DemoBlaze_Delete_From_Cart(TS_Cart_JUnit.java:190)
+
+TS_Cart_JUnit.tc_DemoBlaze_Unempty_Cart -- Time elapsed: 5.632 s <<< ERROR!
+java.lang.NullPointerException: Cannot invoke "org.openqa.selenium.TakesScreenshot.getScreenshotAs(org.openqa.selenium.OutputType)" because "screenshotTaker" is null
+	at TS_Cart_JUnit.tc_DemoBlaze_Unempty_Cart(TS_Cart_JUnit.java:122)
+

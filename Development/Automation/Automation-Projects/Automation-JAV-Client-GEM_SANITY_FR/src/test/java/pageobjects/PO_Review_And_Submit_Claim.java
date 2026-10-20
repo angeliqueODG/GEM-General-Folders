@@ -1,0 +1,3474 @@
+package pageobjects;
+
+// Import class packages for this Page Object (PO)
+import org.openqa.selenium.WebDriver; // Selenium WebDriver
+
+import customizations.automation.CU_Appian;// Automation framework customizations for Appian
+import framework.utilities.FW_ConfigMgr; // Automation framework Configuration Manager to retrieve testConfig.properties values
+import framework.utilities.FW_StringUtils; // Automation framework String Utilities
+
+/**
+ * Page Object (PO) class used in the Page Object (PO) design pattern. Inherits
+ * from the CU_Appian class.
+ */
+// [Note: Automation Engineer, rename this Page Object (PO) class to match the
+// filename.]
+public class PO_Review_And_Submit_Claim extends CU_Appian {
+
+    // [Note: Automation Engineer, define the Page Object (PO) locators (LO) here.]
+    private static final String LO_TXT_REVIEW_AND_SUBMIT_CLAIM_PAGE_VERIFY = "//h2/span[contains(text(), 'Réviser et soumettre la réclamation')]";
+    private static final String LO_BUT_SAVE_AS_DRAFT = "//span//span[contains(text(),'Enregistrer comme brouillon')]";
+    private static final String LO_TXT_GLOBAL_INSURANCE_TYPE = "//div[div[div/span[contains(text(),\"Type d'assurance\")]]]";
+    private static final String LO_TXT_GLOBAL_INSURANCE_TYPE_FOLLOWING_POLICY_NUMBER = "//div[div//strong[text()=\"Type d'assurance\"] and following-sibling::div[div//strong[text()='Numéro de certificat/police']]]";
+    private static final String LO_TXT_GLOBAL_INSURANCE_TYPE_FOLLOWING_GROUP_NAME = "//div[div//strong[text()='Insurance Type'] and following-sibling::div[div//strong[text()='Group name']]]";
+    private static final String LO_TXT_GLOBAL_FIRST_6_DIGITS = "//div[div[div/span[contains(text(),\"Six premiers chiffres\")]]]";
+    private static final String LO_TXT_GLOBAL_FIRST_6_DIGITS_FOR_OTHER_INSURANCE_TYPE = "(//div[div//strong[text()=\"Six premiers chiffres\"]and following-sibling::div[div//strong[text()='Quatre derniers chiffres']]])[2]";
+    private static final String LO_TXT_GLOBAL_LAST_4_DIGITS = "//div[div[div/span[contains(text(),\"Quatre derniers chiffres\")]]]";
+    private static final String LO_TXT_GLOBAL_LAST_4_DIGITS_FOR_OTHER_INSURANCE_TYPE = "(//div[div[div[div[div/p/strong[contains(text(),\"Quatre derniers chiffres\")]]]]])[2]";
+    private static final String LO_TXT_GLOBAL_THE_INSURED = "//div[div[div/span[contains(text(),\"Nom\")]]]";
+    private static final String LO_TXT_GLOBAL_OTHER_INSURED_PERSONS = "//div[div[div[div[div/p/strong[contains(text(),\"Autre(s) personne(s) assurée(s)\")]]]]]";
+    private static final String LO_LBL_OTHER_INSURED_PERSONS = "//h3[contains(text(),\"AUTRE(S) PERSONNE(S) ASSURÉE(S)\")]";
+    private static final String LO_TXT_GLOBAL_RELATION_OF_OTHER_INSURED_PERSON_TO_POLICY_HOLDER = "//div[div[div[div[div/p/strong[contains(text(),\"Le lien entre l'autre personne assurée et le titulaire de la police\")]]]]]";
+    private static final String LO_TXT_GLOBAL_SECOND_RELATION_OF_OTHER_INSURED_PERSON_TO_POLICY_HOLDER = "(//div[div[div[div[div/p/strong[contains(text(),\"Le lien entre l'autre personne assurée et le titulaire de la police\")]]]]])[2]";
+    private static final String LO_TXT_GLOBAL_OTHER_INSURANCE_TYPE = "//div[div[div[div[div/p/strong[contains(text(),\"Autre type d'assurance\")]]]]]";
+    private static final String LO_TXT_GLOBAL_OTHER_INSURANCE = "//div[div[div[div[div/p/strong[contains(text(),\"Autre assurance\")]]]]]";
+    private static final String LO_TXT_GLOBAL_TRIP_INSURANCE_TYPE = "//div[div[div[div[div/p/strong[contains(text(),\"Quel type d'assurance voyage détenez-vous?\")]]]]]";
+    private static final String LO_TXT_GLOBAL_PREFERRED_METHOD_OF_COMMUNICATION = "//div[div[div/p/span[contains(text(),\"Mode de communication privilégié\")]]]";
+    private static final String LO_TXT_GLOBAL_DATE_OF_LOSS = "//div[div//strong[text()=\"Date de l'incident\"] and following-sibling::div[div//strong[text()='Dates de voyage']]]";
+    private static final String LO_TXT_GLOBAL_TRIP_DATES = "//div[div[div[div[div/p/strong[contains(text(),\"Dates de voyage\")]]]]]";
+    private static final String LO_TXT_GLOBAL_TRAVELLING_FROM = "//div[div[div[div[div/p/strong[contains(text(),\"Lieu de départ\")]]]]]";
+    private static final String LO_TXT_GLOBAL_TRAVEL_DESTINATION = "//div[div[div[div[div/p/strong[contains(text(),\"Destination de voyage\")]]]]]";
+    private static final String LO_TXT_TRAVEL_DESTINATION = "//div[div[div/span[contains(text(),\"Destination de voyage\")]]]";
+    private static final String LO_TXT_GLOBAL_INCIDENT_HAPPENED_AT_TRAVEL_DESTINATION = "//div[div[div[div[div/p/strong[contains(text(),\"L'incident a eu lieu à la destination de voyage\")]]]]]";
+    private static final String LO_TXT_GLOBAL_INCIDENT_LOCATION = "//div[div[div[div[div/p//strong[contains(text(),\"Lieu de l'incident\")]]]]]";
+    private static final String LO_TXT_GLOBAL_PERSONAL_EFFECTS_IN_CUSTODY = "//div[div[div[div[div/p/strong[contains(text(),\"Biens personnels sous la responsabilité de la compagnie aérienne, du transporteur par autobus ou de la croisière\")]]]]]";
+    private static final String LO_TXT_GLOBAL_BAGS_DELAYED = "//div[div//strong[text()=\"Nombre de bagages en retard\"] and following-sibling::div[div//strong[text()=\"Date d'arrivée prévue des bagages\"]]]";
+    private static final String LO_TXT_GLOBAL_BAGGAGE_EXPECTED_DATE = "//div[div//strong[text()=\"Date d'arrivée prévue des bagages\"] and following-sibling::div[div//strong[text()='Date de réception prévue des bagages']]]";
+    private static final String LO_TXT_GLOBAL_BAGGAGE_RECEIVED_DATE = "//div[div//strong[text()='Date de réception prévue des bagages'] and following-sibling::div[div//strong[text()='Date du dépôt de la déclaration']]]";
+    private static final String LO_TXT_GLOBAL_REPORT_FILED_DATE = "//div[div[div[div[div/p/strong[contains(text(),\"Date du dépôt de la déclaration\")]]]]]";
+    private static final String LO_TXT_GLOBAL_WHAT_HAPPENED = "//div[div[div[div[div/p/strong[contains(text(),\"Que s'est-il passé ?\")]]]]]";
+    private static final String LO_TXT_GLOBAL_TYPE_OF_EXPENSE = "//div[div[div[div[div/p/strong[contains(text(),\"Type de dépense\")]]]]]";
+    private static final String LO_TXT_GLOBAL_AMOUNT_PAID = "//div[div[div[div[div/p//strong[contains(text(),\"Montant payé (Équivalence en CAD)\")]]]]]";
+    private static final String LO_TXT_GLOBAL_REFUND_OR_CREDIT_OBTAINED_IN_CAD = "//div[div[div[div[div/p//strong[contains(text(),\"Remboursement ou crédit obtenu (Équivalence en CAD)\")]]]]]";
+    private static final String LO_TXT_GLOBAL_REFUND_OBTAINED = "//div[div[div[div[div/p/strong[contains(text(),\"Remboursement obtenu (Équivalence en CAD)\")]]]]]";
+    private static final String LO_TXT_GLOBAL_TOTAL_AMOUNT_OF_EXPENSES_CLAIMED = "//div[div[div[div[div/p/strong[contains(text(),\"Montant total des dépenses réclamées \")]]]]]";
+    private static final String LO_TXT_GLOBAL_TOTAL_AMOUNT_OF_EXPENSES_CLAIMED_WITHOUT_DOTS = "//div[div//strong[text()='Total Amount of Expenses Claimed'] and preceding-sibling::div[div//strong[text()='Refund Obtained (Equivalent in CAD)']]]";
+    private static final String LO_TXT_GLOBAL_PREFERRED_METHOD_OF_PAYMENT_REIMBURSEMENT = "//div[div[div[div[div/p//strong[contains(text(),\"Mode de remboursement/paiement privilégié\")]]]]]";
+    private static final String LO_TXT_GLOBAL_MAILING_ADDRESS = "//div[div[div[div[div[p[strong[contains(text(), \"L'adresse postale est la même que l'adresse à domicile inscrite à la section \")] and strong[contains(text(), \"«\")] and strong[contains(text(), \"À propos de vous\")] and strong[contains(text(), \"»\")]]]]]]]";
+    private static final String LO_TXT_GLOBAL_REASON_FOR_DELAY = "//div[div//strong[text()='Raison du retard'] and following-sibling::div[div//strong[text()='Numéro de réclamation Global Excel']]]";
+    private static final String LO_TXT_GLOBAL_WHEN_DID_THE_INCIDENT_OCCUR = "//div[div[div[div[div/p//strong[contains(text(),\"À quelle date l'incident a-t-il eu lieu?\")]]]]]";
+    private static final String LO_TXT_GLOBAL_WHEN_WAS_YOUR_SCHEDULED_DATE_AND_DEPARTURE_TIME = "//div[div[div[div[div/p/strong[contains(text(),\"Quelles étaient la date et l'heure de départ prévues? \")]]]]]";
+    private static final String LO_TXT_GLOBAL_WHEN_WAS_YOUR_ACTUAL_DATE_AND_DEPARTURE_TIME = "//div[div[div[div[div/p/strong[contains(text(),\"Quelles étaient la date et l'heure de départ réelles?\")]]]]]";
+    private static final String LO_TXT_GLOBAL_FLIGHT_TRIP_WAS_DELAYED_FOR = "//div[div[div[div[div/p/strong[contains(text(),\"Le vol/voyage a été retardé pendant :\")]]]]]";
+    private static final String LO_TXT_GLOBAL_DID_YOUR_FLIGHT_OR_TRIP_DELAY_CAUSE_YOU_TO_MISS_A_CONNECTION = "//div[div//strong[text()=\"Le retard de vol ou de voyage vous a-t-il fait manquer votre correspondance?\"] and following-sibling::div[div//strong[text()=\"Que s'est-il passé ?\"]]]";
+    private static final String LO_TXT_GLOBAL_EMAIL_ADDRESS = "//div[div[div/span[contains(text(),\"Adresse courriel\")]]]";
+    private static final String LO_TXT_GLOBAL_TRAVELLING_FROM_PRECEDING_INCIDENT_OCCURANCE = "//div[div//strong[text()=\"Lieu de départ\"] and following-sibling::div[div//strong[text()=\"Quelles étaient la date et l'heure de départ prévues? \"]]]";
+    private static final String LO_TXT_GLOBAL_WHAT_HAPPENED_FOR_FLIGHT_DELAY = "//div[div//strong[text()=\"Que s'est-il passé ?\"]and preceding-sibling::div[div//strong[text()=\"Le retard de vol ou de voyage vous a-t-il fait manquer votre correspondance?\"]]]";
+    private static final String LO_TXT_GLOBAL_PREFERRED_METHOD_OF_PAYMENT_REIMBURSEMENT_ON_FLIGHT_DELAY = "//div[div//strong[text()=\"Mode de remboursement/paiement privilégié\"] and following-sibling::div[div//strong[text()='Adresse courriel']]]";
+    private static final String LO_TXT_GLOBAL_INCIDENT_DATE = "//div[div[div[div[div/p/strong[contains(text(),\"Date de l'incident\")]]]]]";
+    private static final String LO_TXT_GLOBAL_INCIDENT_DATE_FOLLOWING_NOM_HOTEL_MOTEL = "//div[div//strong[text()=\"Date de l'incident\"] and following-sibling::div[div//strong[text()=\"Nom de l'hôtel/du motel :\"]]]";
+    private static final String LO_TXT_GLOBAL_NAME_OF_HOTEL_MOTEL = "//div[div//strong[text()=\"Nom de l'hôtel/du motel :\"] and following-sibling::div[div//strong[text()=\"Adresse de l'hôtel/du motel :\"]]]";
+    private static final String LO_TXT_GLOBAL_HOTEL_MOTEL_ADDRESS = "//div[div//strong[text()=\"Adresse de l'hôtel/du motel :\"] and following-sibling::div[div//strong[text()=\"Que s'est-il passé ?\"]]]";
+    private static final String LO_TXT_GLOBAL_POLICY_HOLDER_HOME_ADDRESS = "//div[div//strong[text()=\"Adresse du domicile du titulaire de la police (au Canada)\"] and following-sibling::div[div//strong[text()=\"Autre(s) personne(s) assurée(s)\"]]]";
+    private static final String LO_TXT_GLOBAL_WHAT_HAPPENED_FOR_HOTEL = "//div[div//strong[text()=\"Que s'est-il passé ?\"]and preceding-sibling::div[div//strong[text()=\"Adresse de l'hôtel/du motel :\"]]]";
+    private static final String LO_TXT_GLOBAL_REASON_FOR_CLAIM = "//div[div//strong[text()=\"Raison de la réclamation\"] and following-sibling::div[div//strong[text()='Numéro de réclamation Global Excel']]]";
+    private static final String LO_TXT_GLOBAL_PRINCIPAL_REASON_OF_INTERRUPTION = "//div[div[div/span[contains(text(),\"Principale raison de l'interruption\")]]]";
+    private static final String LO_TXT_GLOBAL_GLOBAL_INSURANCE_COMPANY = "//div[div[div[div[div/p/strong[contains(text(),\"Compagnie d'assurance\")]]]]]";
+    private static final String LO_TXT_GLOBAL_GLOBAL_INSURANCE_COMPANY_FOR_OTHER_INSURANCE_TYPE = "(//div[div[div[div[div/p/strong[contains(text(),\"Compagnie d'assurance\")]]]]])[2]";
+    private static final String LO_TXT_GLOBAL_POLICY_NUMBER_CERTIFICATE_ID = "//div[div[div[div[div/p/strong[contains(text(),\"Numéro de certificat/police\")]]]]]";
+    private static final String LO_TXT_GLOBAL_POLICY_NUMBER_CERTIFICATE_ID_NEW = "//div[div[div/span[contains(text(),\"Numéro de certificat/police\")]]]";
+    private static final String LO_TXT_GLOBAL_POLICY_NUMBER_CERTIFICATE_ID_FOR_OTHER_INSURANCE_TYPE = "(//div[div[div[div[div/p/strong[contains(text(),\"Numéro de certificat/police\")]]]]])[2]";
+    private static final String LO_TXT_GLOBAL_GLOBAL_EXCEL_CLAIM_NUMBER_FOR_BAGGAGE_LOSS = "//div[div//strong[text()=\"Numéro de réclamation Global Excel\"] and preceding-sibling::div[div//strong[text()='Raison de la réclamation']]]";
+    private static final String LO_TXT_GLOBAL_INSURANCE_TYPE_FOR_BAGGAGE_LOSS = "//div[div//strong[text()=\"Type d'assurance\"] and following-sibling::div[div//strong[text()=\"Compagnie d'assurance\"]]]";
+    private static final String LO_TXT_GLOBAL_INCIDENT_HAPPENED_AT_TRAVEL_DESTINATION_FOR_BAGGAGE_LOSS = "//div[div//strong[text()=\"L'incident a eu lieu à la destination de voyage\"] and following-sibling::div[div//strong[text()='Biens personnels sous la responsabilité de la compagnie aérienne, du transporteur par autobus ou de la croisière']]]";
+    private static final String LO_TXT_GLOBAL_PERSONAL_EFFECTS_IN_CUSTODY_FOR_BAGGAGE_LOSS = "//div[div//strong[text()=\"Biens personnels sous la responsabilité de la compagnie aérienne, du transporteur par autobus ou de la croisière\"] and following-sibling::div[div//strong[text()='Date du dépôt de la déclaration']]]";
+    private static final String LO_TXT_GLOBAL_MAIN_REASON_FOR_CANCELLING_YOUR_TRIP = "//div[div//strong[text()=\"Raison principale de l'annulation\"] and following-sibling::div[div//strong[text()='Autre en raison de']]]";
+    private static final String LO_TXT_GLOBAL_PRINCIPAL_REASON_OF_CANCELLATION = "//div[div[div/span[contains(text(),\"Raison principale de l'annulation\")]]]";
+    private static final String LO_TXT_GLOBAL_OTHER_DUE_TO = "//div[div[div/span[contains(text(),\"Autre en raison de\")]]]";
+    private static final String LO_TXT_GLOBAL_GLOBAL_EXCEL_CLAIM_NUMBER_FOR_PRECEDING_OTHER_DUE_TO = "//div[div//strong[text()=\"Numéro de réclamation Global Excel\"] and preceding-sibling::div[div//strong[text()='Autre en raison de']]]";
+    private static final String LO_TXT_GLOBAL_TRIP_DATES_FOLLOWING_TRAVEL_DESTINATION = "//div[div//strong[text()=\"Dates de voyage\"] and following-sibling::div[div//strong[text()='Destination de voyage']]]";
+    private static final String LO_TXT_GLOBAL_TRAVEL_DESTINATION_FOLLOWING_INCIDENT_DATE = "//div[div//strong[text()=\"Destination de voyage\"] and following-sibling::div[div//strong[text()=\"Date de l'incident\"]]]";
+    private static final String LO_TXT_GLOBAL_INCIDENT_DATE_FOLLOWING_CANCELLATION_DATE = "//div[div//strong[text()=\"Date de l'incident\"] and following-sibling::div[div//strong[text()=\"Date de l'annulation\"]]]";
+    private static final String LO_TXT_GLOBAL_INCIDENT_DATE_FOLLOWING_TRIP_PURCHASE_DATE = "//div[div//strong[text()=\"Date de l'incident\"] and following-sibling::div[div//strong[text()=\"Date d'achat du voyage\"]]]";
+    private static final String LO_TXT_GLOBAL_CANCELLATION_DATE_FOLLOWING_TRIP_PURCHASE_DATE = "//div[div[div[div[div/p/strong[contains(text(),\"Date de l'annulation\")]]]]]";
+    private static final String LO_TXT_GLOBAL_TRIP_PURCHASE_DATE = "//div[div//strong[text()=\"Date d'achat du voyage\"] and following-sibling::div[div//strong[text()=\"Que s'est-il passé ?\"]]]";
+    private static final String LO_TXT_GLOBAL_WHAT_HAPPENED_PREDEDING_TRIP_PURCHASE_DATE = "//div[div//strong[text()=\"Que s'est-il passé ?\"]and preceding-sibling::div[div//strong[text()=\"Date d'achat du voyage\"]]]";
+    private static final String LO_TXT_GLOBAL_ASSIGNMENT_OF_BENEFIT = "//div[div[div[div[div/p/strong[contains(text(),\"Cession des prestations\")]]]]]";
+    private static final String LO_TXT_GLOBAL_GROUP_NAME = "//div[div//strong[text()='Group name'] and following-sibling::div[div//strong[text()='Policy Number/Certificate ID']]]";
+    private static final String LO_TXT_GLOBAL_POLICY_REFUND_OBTAINED_EQUIVALENT_IN_CAD_WITH_SPACE = "//div[div//strong[text()='Refund Obtained (Equivalent in CAD)'] and following-sibling::div[div//strong[text()='Total Amount of Expenses Claimed ']]]";
+    private static final String LO_TXT_GLOBAL_TOTAL_AMOUNT_OF_EXPENSES_CLAIMED_WITH_SPACE = "//div[div//strong[text()='Total Amount of Expenses Claimed '] and preceding-sibling::div[div//strong[text()='Refund Obtained (Equivalent in CAD)']]]";
+    private static final String LO_TXT_GLOBAL_MAIN_REASON_FOR_CANCELLING_YOUR_TRIP_MEDICAL = "//div[div//strong[text()='Main Reason for Cancelling your Trip'] and following-sibling::div[div//strong[text()='Medical due to']]]";
+    private static final String LO_TXT_GLOBAL_MEDICAL_DUE_TO = "//div[div[div/span[contains(text(),\"Médical en raison de\")]]]";
+    private static final String LO_TXT_GLOBAL_GLOBAL_EXCEL_CLAIM_NUMBER_FOR_PRECEDING_MEDICAL_DUE_TO = "//div[div//strong[text()='Global Excel Claim Number'] and preceding-sibling::div[div//strong[text()='Medical due to']]]";
+    private static final String LO_TXT_GLOBAL_CLAIM_TYPE = "//div[div[div[div[div/p/strong[contains(text(),\"Type de réclamation \")]]]]]";
+    private static final String LO_TXT_GLOBAL_CLAIM_TYPE_NEW = "//div[div[div/span[contains(text(),\"Type de réclamation \")]]]";
+    private static final String LO_TXT_GLOBAL_CLAIM_TYPE_FOLLOWING_GLOBAL_EXCEL_CLAIM_NUMBER = "//div[div//strong[text()='Claim Type '] and following-sibling::div[div//strong[text()='Global Excel Claim Number']]]";
+    private static final String LO_TXT_GLOBAL_PROVINCE = "//div[div[div[div[div/p/strong[contains(text(),\"Province\")]]]]]";
+    private static final String LO_TXT_GLOBAL_GLOBAL_EXCEL_CLAIM_NUMBER_PRECEDING_PROVINCE = "//div[div//strong[text()='Global Excel Claim Number'] and preceding-sibling::div[div//strong[text()='Province']]]";
+    private static final String LO_TXT_GLOBAL_EMPLOYER_NAME = "//div[div[div[div[div/p/strong[contains(text(),\"Nom de votre employeur\")]]]]]";
+    private static final String LO_TXT_GLOBAL_EMPLOYER_NAME_PRECEDING_INSURANCE_TYPE = "//div[div//strong[text()=\"Nom de votre employeur\"] and preceding-sibling::div[div//strong[text()=\"Type d'assurance\"]]]";
+    private static final String LO_TXT_GLOBAL_PROVINCIAL_HEALTH_CARD_NUMBER = "//div[div[div[div[div/p/strong[contains(text(),\"Numéro de la carte d'assurance maladie provinciale\")]]]]]";
+    private static final String LO_TXT_GLOBAL_TRAVEL_DESTINATION_FOLLOWING_TRIP_DATES = "//div[div//strong[text()='Travel destination'] and following-sibling::div[div//strong[text()='Trip Dates']]]";
+    private static final String LO_TXT_GLOBAL_TRIP_DATES_FOLLOWING_ORIGINAL_RETURN_DATE = "//div[div[div[div[div/p/strong[contains(text(),\"Dates de voyage\")]]]]]";
+    private static final String LO_TXT_GLOBAL_ORIGINAL_RETURN_DATE = "//div[div[div[div[div/p/strong[contains(text(),\"Date de retour prévue\")]]]]]";
+    private static final String LO_TXT_GLOBAL_REASON_FOR_CONSULT = "//div[div[div[div[div/p/strong[contains(text(),\"Raison de la consultation\")]]]]]";
+    private static final String LO_TXT_GLOBAL_FIRST_DATE_OF_TREATMENT = "//div[div[div[div[div/p/strong[contains(text(),\"Date du premier traitement\")]]]]]";
+    private static final String LO_TXT_GLOBAL_WHEN_DID_FIRST_SYMPTOMS_APPEAR = "//div[div[div[div[div/p/strong[contains(text(),\"Quand les premiers symptômes sont-ils apparus?\")]]]]]";
+    private static final String LO_TXT_GLOBAL_WHAT_HAPPENED_PRECEDING_WHEN_DID_FIRST_SYMPTOMS_APPEAR = "//div[div//strong[text()='What Happened?'] and preceding-sibling::div[div//strong[text()='When did first symptoms appear?']]]";
+    private static final String LO_TXT_GLOBAL_EXPENSES = "//div[div[div[div[div/p/strong[contains(text(),\"Dépenses\")]]]]]";
+    private static final String LO_TXT_GLOBAL_EXPENSE_ITEM_1 = "//div[div[div[div[div/p//strong[contains(text(),\"Dépense 1\")]]]]]";
+    private static final String LO_TXT_GLOBAL_AMOUNT_BILLED_EQUIVALENT_IN_CAD = "//div[div[div[div[div/p//strong[contains(text(),\"Montant facturé (Équivalence en CAD)\")]]]]]";
+    private static final String LO_TXT_GLOBAL_AMOUNT_PAID_EQUIVALENT_IN_CAD = "//div[div//strong[text()='Amount Paid (Equivalent in CAD)'] and following-sibling::div[div//strong[text()='Receipt Included']]]";
+    private static final String LO_TXT_GLOBAL_RECEIPT_INCLUDED = "//div[div[div[div[div/p//strong[contains(text(),\"Reçu inclus\")]]]]]";
+    private static final String LO_TXT_GLOBAL_TOTAL_ESTIMATED_PAID_AMOUNT = "//div[div[div[div[div/p//strong[contains(text(),\"Estimation du montant total payé (CAD)\")]]]]]";
+    private static final String LO_TXT_GLOBAL_PREFERRED_METHOD_OF_PAYMENT_REIMBURSEMENT_FOLLOWING_IS_THE_EMAIL_ADDRESS_THE_SAME = "//div[div[div[div[div/p/strong[contains(text(),\"Mode de remboursement/paiement privilégié\")]]]]]";
+    private static final String LO_TXT_GLOBAL_IS_THE_EMAIL_ADDRESS_THE_SAME_AS_THE_CLAIMANTS_EMAIL_ADDRESS = "//div[div[div[div[div/p/strong[contains(text(),\"L'adresse postale est la même que l'adresse à domicile inscrite à la section\")]]]]]";
+    private static final String LO_TXT_GLOBAL_IS_THE_EMAIL_ADDRESS_THE_SAME = "//div[div[div[div[div/p/strong[contains(text(),\"L’adresse courriel est-elle la même que celle du demandeur?\")]]]]]";
+    private static final String LO_TXT_GLOBAL_GLOBAL_EXCEL_CLAIM_NUMBER_PRECEDING_CLAIM_TYPE = "//div[div//strong[text()='Global Excel Claim Number'] and preceding-sibling::div[div//strong[text()='Claim Type ']]]";
+    private static final String LO_TXT_GLOBAL_COUNTRY_OF_ORIGIN = "//div[div[div[div[div/p/strong[contains(text(),\"Pays d'origine\")]]]]]";
+    private static final String LO_TXT_GLOBAL_TEMPORARY_TRAVEL_DESTINATION = "//div[div[div[div[div/p/strong[contains(text(),\"Destination du voyage temporaire\")]]]]]";
+    private static final String LO_TXT_GLOBAL_TEMPORARY_TRIP_DATES = "//div[div[div[div[div/p/strong[contains(text(),\"Dates du voyage temporaire\")]]]]]";
+    private static final String LO_TXT_GLOBAL_GLOBAL_EXCEL_CLAIM_NUMBER_FOLLOWING_ABOUT_YOUR_INSURANCE = "//div[div[div/span[contains(text(),\"Numéro de réclamation Global Excel\")]]]";
+    private static final String LO_TXT_GLOBAL_GLOBAL_EXCEL_CLAIM_NUMBER_CL = "//div[div[div/span[contains(text(),\"Numéro de réclamation Global Excel\")]]]";
+    private static final String LO_TXT_GLOBAL_CREDIT_CARD_TYPE = "//div[div[div[div[div/p/strong[contains(text(),\"Type de carte de crédit\")]]]]]";
+    private static final String LO_TXT_GLOBAL_ITEM_DESCRIPTION = "//div[div[div[div[div/p/strong[contains(text(),\"Description de l'article\")]]]]]";
+    private static final String LO_TXT_GLOBAL_ORIGINAL_PURCHASE_DATE = "//div[div[div[div[div/p/strong[contains(text(),\"Date d'achat initiale :  \")]]]]]";
+    private static final String LO_TXT_GLOBAL_INCIDENT_DATE_FOLLOWING_DID_YOU_PAY_FOR_THE_ITEM_IN_MULTIPLE_INSTALLMENTS = "//div[div//strong[text()='Incident Date'] and following-sibling::div[div//strong[text()='Did you pay for the item in multiple installments?']]]";
+    private static final String LO_TXT_GLOBAL_DID_YOU_PAY_FOR_THE_ITEM_IN_MULTIPLE_INSTALLMENTS = "//div[div[div[div[div/p/strong[contains(text(),\"Avez-vous payé l'article en plusieurs versements échelonnés?\")]]]]]";
+    private static final String LO_TXT_GLOBAL_MANUFACTURER_NAME = "//div[div[div[div[div/p/strong[contains(text(),\"Nom du fabricant\")]]]]]";
+    private static final String LO_TXT_GLOBAL_DURATION_OF_MANUFACTURER_WARRANTY = "//div[div[div[div[div/p/strong[contains(text(),\"Durée de la garantie du fabricant\")]]]]]";
+    private static final String LO_TXT_GLOBAL_SERIAL_NUMBER = "//div[div[div[div[div/p/strong[contains(text(),\"Numéro de série:\")]]]]]";
+    private static final String LO_TXT_GLOBAL_THE_INSURED_FOLLOWING_OTHER_INSURANCE_TYPE = "//div[div//strong[text()='The Insured'] and preceding-sibling::div[div//strong[text()='Last 4 Digits']]] and //div[div//strong[text()='The Insured'] and following-sibling::div[div//strong[text()='Other Insurance Type']]]";
+    private static final String LO_TXT_GLOBAL_OTHER_INSURANCE_TYPE_FOLLOWING_THE_INSURED = "//div[div//strong[text()='Other Insurance Type']and preceding-sibling::div[div//strong[text()='The Insured']]]";
+    private static final String LO_TXT_GLOBAL_WHAT_HAPPENED_PRECEDING_SERIAL_NUMBER = "//div[div//strong[text()='What Happened?']and preceding-sibling::div[div//strong[text()='Serial Number ']]]";
+    private static final String LO_TXT_GLOBAL_REFUND_OBTAINED_FOLLOWING_TOTAL_AMOUNT_OF_EXPENSES_CLAIMED = "//div[div[div[div[div[p[strong[contains(text(), 'Estimation du montant total payé (CAD):')]]]]]]]";
+    private static final String LO_TXT_GLOBAL_REFUND_OBTAINED_FOLLOWING_TOTAL_AMOUNT_OF_EXPENSES_CLAIMED_WITHOUT_DOTS = "//div[div//strong[text()='Refund Obtained (Equivalent in CAD)'] and following-sibling::div[div//strong[text()='Total Amount of Expenses Claimed']]]";
+    private static final String LO_TXT_GLOBAL_INCIDENT_HAPPENED_AT_TRAVEL_DESTINATION_PRECEDING_TRAVEL_DESTINATION = "//div[div//strong[text()='Incident happened at travel destination'] and preceding-sibling::div[div//strong[text()='Travel destination']]]";
+    private static final String LO_TXT_GLOBAL_NAME_OF_TRAVEL_PROVIDER = "//div[div[div[div[div/p/strong[contains(text(),\"Nom du fournisseur de voyage\")]]]]]";
+    private static final String LO_TXT_GLOBAL_REASON_FOR_LOSS = "//div[div[div[div[div/p/strong[contains(text(),\"Raison de la perte\")]]]]]";
+    private static final String LO_TXT_GLOBAL_GLOBAL_EXCEL_CLAIM_NUMBER_PRECEDING_REASON_FOR_LOSS = "//div[div//strong[text()='Global Excel Claim Number'] and preceding-sibling::div[div//strong[text()='Reason for Loss: ']]]";
+    private static final String LO_TXT_GLOBAL_COUNTRY = "//div[div//strong[text()='Country'] and following-sibling::div[div//strong[text()='Province']]]";
+    private static final String LO_TXT_GLOBAL_PROVINCE_FOLLOWING_CITY = "//div[div//strong[text()='Province'] and following-sibling::div[div//strong[text()='City']]]";
+    private static final String LO_TXT_GLOBAL_CITY = "//div[div//strong[text()='City'] and preceding-sibling::div[div//strong[text()='Province']]]";
+    private static final String LO_TXT_GLOBAL_WHAT_HAPPENED_PRECEDING_CITY = "//div[div//strong[text()='What Happened?']and preceding-sibling::div[div//strong[text()='City']]]";
+    private static final String LO_TXT_GLOBAL_INCIDENT_DATE_FOLLOWING_COUNTRY = "//div[div//strong[text()='Incident Date'] and following-sibling::div[div//strong[text()='Country']]]";
+    private static final String LO_TXT_GLOBAL_REASON_FOR_LOSS_WITH_SPACE = "//div[div[div[div[div/p/strong[contains(text(),\"Raison de la perte\")]]]]]";
+    private static final String LO_TXT_GLOBAL_GLOBAL_EXCEL_CLAIM_NUMBER_PRECEDING_REASON_FOR_LOSS_WITH_SPACE = "//div[div//strong[text()='Global Excel Claim Number'] and preceding-sibling::div[div//strong[text()='Reason for loss']]]";
+    private static final String LO_TXT_GLOBAL_RENTAL_AGENCY_NAME = "//div[div[div[div[div/p/strong[contains(text(),\"Nom de l'agence de location : \")]]]]]";
+    private static final String LO_TXT_GLOBAL_WAS_THE_FULL_COST_OF_THE_RENTAL_CHARGED_TO_YOUR_CREDIT_CARD = "//div[div[div[div[div/p/strong[contains(text(),\"La totalité des frais de location a-t-elle été portée à votre compte de carte de crédit?\")]]]]]";
+    private static final String LO_TXT_GLOBAL_DID_YOU_HAVE_ANOTHER_RENTAL_AGREEMENT_WITHIN_A_48H_PERIOD_FROM_THE_START_OR_THE_END_OF_THIS_CURRENT_RENTAL = "//div[div[div[div[div/p/strong[contains(text(),\"Aviez-vous signé un autre contrat de location dans les 48h suivant le début ou la fin de cette location? \")]]]]]";
+    private static final String LO_TXT_GLOBAL_WHEN_DID_THE_INCIDENT_OCCUR_FOLLOWING_WAS_THE_POLICY_HOLDER_THE_DRIVER = "//div[div[div[div[div/p/strong[contains(text(),\"À quelle date l'incident a-t-il eu lieu?\")]]]]]";
+    private static final String LO_TXT_GLOBAL_WAS_THE_POLICY_HOLDER_THE_DRIVER_AT_THE_TIME_OF_INCIDENT = "//div[div[div[div[div/p/strong[contains(text(),\"Le titulaire de police était-il au volant au moment de l'incident? \")]]]]]";
+    private static final String LO_TXT_GLOBAL_DID_THE_INCIDENT_INVOLVE_ANOTHER_VEHICLE = "//div[div[div[div[div/p/strong[contains(text(),\"L'incident impliquait-il un autre véhicule? \")]]]]]";
+    private static final String LO_TXT_GLOBAL_EMPLOYER_NAME_FOLLOWING_THE_INSURED = "//div[div//strong[text()='Employer Name'] and following-sibling::div[div//strong[text()='The Insured']]]";
+    private static final String LO_TXT_GLOBAL_PLAN_NUMBER = "//div[div[div[div[div/p/strong[contains(text(),\"Numéro de plan\")]]]]]";
+    private static final String LO_TXT_GLOBAL_THE_INSURED_FOLLOWING_OTHER_INSURED_PERSONS = "//div[div//strong[text()=\"La personne assurée\"] and following-sibling::div[div//strong[text()='Autre(s) personne(s) assurée(s)']]]";
+    private static final String LO_TXT_GLOBAL_DESCRIPTION_OF_DAMAGE = "//div[div//strong[text()='Description of Damage :'] and following-sibling::div[div//strong[text()='What Happened?']]]";
+    private static final String LO_TXT_GLOBAL_MAIN_REASON_FOR_INTERRUPTION = "//div[div//strong[text()='Main Reason for Interruption'] and following-sibling::div[div//strong[text()='Deceased Person Insurance']]]";
+    private static final String LO_TXT_GLOBAL_DECEASED_PERSON_INSURANCE = "//div[div[div[div[div/p/strong[contains(text(),\"Assurance de la personne décédée\")]]]]]";
+    private static final String LO_TXT_GLOBAL_GLOBAL_EXCEL_CLAIM_NUMBER_PRECEDING_DECEASED_PERSON_INSURANCE = "//div[div//strong[text()='Global Excel Claim Number'] and preceding-sibling::div[div//strong[text()='Deceased Person Insurance']]]";
+    private static final String LO_TXT_GLOBAL_WHAT_WERE_YOUR_ORIGINAL_TRIP_DATES = "//div[div//strong[text()=\"Quelles étaient vos dates de voyage initiales?\"] and following-sibling::div[div//strong[text()=\"Que s'est-il passé ?\"]]]";
+    private static final String LO_TXT_GLOBAL_INCIDENT_DATE_FOLLOWING_WHAT_HAPPENED = "//div[div//strong[text()='Incident Date'] and following-sibling::div[div//strong[text()='What Happened?']]]";
+    private static final String LO_TXT_GLOBAL_WHAT_HAPPENED_PRECEDING_WHAT_WERE_YOUR_ORIGINAL_TRIP_DATES = "//div[div//strong[text()=\"Que s'est-il passé ?\"]and preceding-sibling::div[div//strong[text()=\"Quelles étaient vos dates de voyage initiales?\"]]]";
+    private static final String LO_TXT_GLOBAL_CONTRACT_NUMBER = "//div[div[div[div[div/p/strong[contains(text(),\"Numéro de contrat\")]]]]]";
+    private static final String LO_TXT_GLOBAL_MEMBER_CERTIFICATE_NUMBER = "//div[div[div[div[div/p/strong[contains(text(),\"Numéro de certificat du membre\")]]]]]";
+    private static final String LO_TXT_GLOBAL_INSURANCE_TYPE_FOLLOWING_EMPLOYER_GROUP_NAME = "//div[div//strong[text()=\"Type d'assurance\"] and following-sibling::div[div//strong[text()=\"Compagnie d'assurance\"]]]";
+    private static final String LO_TXT_GLOBAL_GROUP_NAME_PLAN_NUMBER = "//div[div//strong[text()='Group name'] and following-sibling::div[div//strong[text()='Plan Number']]]";
+    private static final String LO_TXT_GLOBAL_EMPLOYER_GROUP_NAME = "//div[div//strong[text()='Employer/Group Name '] and following-sibling::div[div//strong[text()='Contract Number']]]";
+    private static final String LO_TXT_GLOBAL_ARE_YOU_CURRENTLY_TRAVELLING = "//div[div[div[div[div/p/strong[contains(text(),\"Êtes-vous présentement en voyage?\")]]]]]";
+    private static final String LO_TXT_GLOBAL_DATE_OF_INJURY = "//div[div[div[div[div/p/strong[contains(text(),\"Date de la blessure\")]]]]]";
+    private static final String LO_TXT_GLOBAL_REASON_FOR_CONSULT_FOLLOWING_DATE_OF_INJURY = "//div[div//strong[text()='Reason for Consult'] and following-sibling::div[div//strong[text()='Date of Injury']]]";
+    private static final String LO_TXT_GLOBAL_INCIDENT_LOCATION_FOLLOWING_WHAT_HAPPENED = "//div[div//strong[text()='Incident Location'] and following-sibling::div[div//strong[text()='What Happened?']]]";
+    private static final String LO_TXT_GLOBAL_WHAT_HAPPENED_PRECEDING_INCIDENT_LOCATION = "//div[div//strong[text()='What Happened?'] and preceding-sibling::div[div//strong[text()='Incident Location']]]";
+    private static final String LO_TXT_GLOBAL_EMPLOYER_NAME_FOLLOWING_PLAN_NUMBER = "//div[div//strong[text()='Employer Name'] and following-sibling::div[div//strong[text()='Plan Number']]]";
+    private static final String LO_TXT_GLOBAL_THE_INSURED_FOLLOWING_OTHER_INSURANCE = "//div[div//strong[text()='The Insured']and following-sibling::div[div//strong[text()='Other Insurance Type']]]";
+    private static final String LO_TXT_GLOBAL_MANUFACTURER_NAME_FOLLOWING_WHERE_DID_THE_INCIDENT_OCCUR = "//div[div//strong[text()='Manufacturer Name'] and following-sibling::div[div//strong[text()='Where did the incident occur? ']]]";
+    private static final String LO_TXT_GLOBAL_WHERE_DID_THE_INCIDENT_OCCUR = "//div[div[div[div[div/p/strong[contains(text(),\"À quel endroit l'incident a-t-il eu lieu?\")]]]]]";
+    private static final String LO_TXT_GLOBAL_TRANSIT_NUMBER = "//div[div[div[div[div/p/strong[contains(text(),\"Numéro de transit \")]]]]]";
+    private static final String LO_TXT_GLOBAL_INSTITUTION_NUMBER = "//div[div[div[div[div/p/strong[contains(text(),\"Numéro de l'institution\")]]]]]";
+    private static final String LO_TXT_GLOBAL_ACCOUNT_NUMBER = "//div[div[div[div[div/p/strong[contains(text(),\"Numéro du compte\")]]]]]";
+    private static final String LO_TXT_GLOBAL_WHAT_HAPPENED_PRECEDING_INCIDENT_DATE = "//div[div//strong[text()='What Happened?']and preceding-sibling::div[div//strong[text()='Incident Date']]]";
+    private static final String LO_TXT_GLOBAL_PREFERRED_METHOD_OF_PAYMENT_REIMBURSEMENT_FOLLOWING_TRANSIT_NUMBER = "//div[div//strong[text()='Preferred Method of Payment/Reimbursement'] and following-sibling::div[div//strong[text()='Transit Number']]]";
+    private static final String LO_TXT_GLOBAL_TRAVELLING_FROM_FOLLOWING_WHEN_WAS_YOUR_SCHEDULED_DATE_AND_DEPARTURE_TIME = "//div[div//strong[text()='Travelling from'] and following-sibling::div[div//strong[text()='When was your scheduled date and departure time?']]]"; 
+    private static final String LO_TXT_GLOBAL_MEMBER_ID = "//div[div[div[div[div/p/strong[contains(text(),\"Numéro du membre/de l'employé\")]]]]]";
+    private static final String LO_TXT_GLOBAL_MEMBER_NUMBER = "//div[div[div[div[div/p/strong[contains(text(),\"Numéro du membre\")]]]]]";
+    private static final String LO_TXT_GLOBAL_CONTRACT_GROUP_NUMBER = "//div[div//strong[text()='Contract/Group Number'] and following-sibling::div[div//strong[text()='Member ID']]]";
+    private static final String LO_TXT_GLOBAL_EMPLOYER_NAME_FOLLOWING_CONTRACT_GROUP_NUMBER = "//div[div//strong[text()='Employer Name'] and following-sibling::div[div//strong[text()='Contract/Group Number']]]";
+    private static final String LO_TXT_GLOBAL_PREFERRED_METHOD_OF_PAYMENT_REIMBURSEMENT_FOLLOWING_IS_THE_EMAIL_ADDRESS_THE_SAME_AS_THE_CLAIMANTS_EMAIL_ADDRESS = "//div[div//strong[text()='Preferred Method of Payment/Reimbursement'] and following-sibling::div[div//strong[text()=\"Is the email address the same as the Claimant's email address?|\"]]]";
+    private static final String LO_TXT_GLOBAL_IS_THE_EMAIL_ADDRESS_THE_SAME_AS_THE_CLAIMANTS_EMAIL_ADDRESS_SYMBOL = "//div[div[div[div[div/p//strong[contains(text(),\"L’adresse courriel est-elle la même que celle du demandeur?\")]]]]]";
+    private static final String LO_TXT_GLOBAL_EXPENSE_ITEM_1_FOLLOWING_TYPE_OF_EXPENSE = "//div[div//strong[text()='Expense Item 1'] and following-sibling::div[div//strong[text()='Type of Expense']]]";
+    private static final String LO_TXT_GLOBAL_WHEN_DID_THE_INCIDENT_OCCUR_FOLLOWING_WHERE_DID_THE_INCIDENT_OCCUR = "//div[div//strong[text()='When did the incident occur?'] and following-sibling::div[div//strong[text()='Where did the incident occur? ']]]";
+    private static final String LO_TXT_GLOBAL_WHERE_DID_THE_INCIDENT_OCCUR_FOLLOWING_WAS_THE_POLICYHOLDER_THE_DRIVER = "//div[div//strong[text()='Where did the incident occur? '] and following-sibling::div[div//strong[text()='Was the Policyholder the driver at the time of incident? ']]]";
+    private static final String LO_TXT_GLOBAL_WHAT_HAPPENED_PRECEDING_DID_THE_INCIDENT_INVOLVE_ANOTHER_VEHICLE = "//div[div//strong[text()='What Happened?'] and preceding-sibling::div[div//strong[text()='Did the incident involve another vehicle? ']]]";
+    private static final String LO_TXT_GLOBAL_PREFERRED_METHOD_OF_PAYMENT_REIMBURSEMENT_FOLLOWING_IS_THE_EMAIL_ADDRESS = "//div[div//strong[text()='Preferred Method of Payment/Reimbursement'] and following-sibling::div[div//strong[text()=\"Is the email address the same as the Claimant's email address?\"]]]";
+    private static final String LO_TXT_GLOBAL_POSTAL_ADDRESS = "//div[div[div[div[div/p/strong[contains(text(),\"Adresse postale\")]]]]]";
+    private static final String LO_TXT_GLOBAL_RELATION_OF_INSURED_PERSON_TO_POLICY_HOLDER = "//div[div//strong[text()='Le lien entre le demandeur et le titulaire de la police'] and following-sibling::div[div//strong[text()=\"Adresse du domicile du titulaire de la police (au Canada)\"]]]";
+    private static final String LO_TXT_GLOBAL_FIRST_NAME = "//div[div[div[div[div/p/strong[contains(text(),\"Prénom\")]]]]]";
+    private static final String LO_TXT_GLOBAL_LAST_NAME = "//div[div[div[div[div/p/strong[contains(text(),\"Nom de famille\")]]]]]";
+    private static final String LO_TXT_GLOBAL_DATE_OF_BIRTH = "//div[div[div/span[contains(text(),\"Date de naissance\")]]]";
+    private static final String LO_TXT_GLOBAL_CARD_ISSUER_NAME = "//div[div//strong[text()=\"Émetteur de la carte\"]and following-sibling::div[div//strong[text()=\"Six premiers chiffres\"]]]";
+    private static final String LO_TXT_GLOBAL_LAST_4_DIGITS_PRECEDING_FIRST_6_DIGITS = "//div[div//strong[text()=\"Quatre derniers chiffres\"]and preceding-sibling::div[div//strong[text()='Six premiers chiffres']]]";
+    private static final String LO_TXT_GLOBAL_OTHER_INSURED_PERSONS_FOLLOWING_OTHER_INSURANCE_TYPE = "//div[div//strong[text()=\"Autre(s) personne(s) assurée(s)\"]and following-sibling::div[div//strong[text()=\"Autre type d'assurance\"]]]";
+    private static final String LO_TXT_GLOBAL_OTHER_INSURANCE_TYPE_PRECEDING_OTHER_INSURED_PERSONS = "//div[div//strong[text()=\"Autre type d'assurance\"]and preceding-sibling::div[div//strong[text()=\"Autre(s) personne(s) assurée(s)\"]]]";
+    private static final String LO_TXT_GLOBAL_INSURANCE_TYPE_FOLLOWING_EMPLOYER_NAME = "//div[div//strong[text()=\"Type d'assurance\"]and following-sibling::div[div//strong[text()=\"Nom de votre employeur\"]]]";
+    private static final String LO_TXT_GLOBAL_CONTRACT_ASSOCIATION_NUMBER = "//div[div[div[div[div/p/strong[contains(text(),\"Numéro de contrat/d'association\")]]]]]";
+    private static final String LO_TXT_GLOBAL_BENEFICIARY_NAME = "//div[div[div[div[div/p/strong[contains(text(),\"Bénéficiaire désigné\")]]]]]";
+    private static final String LO_TXT_GLOBAL_OTHER_VEHICLE_RENTAL_DATES = "//div[div[div[div[div/p/strong[contains(text(),\"Quelles étaient les dates de location de l'autre véhicule? \")]]]]]";
+    private static final String LO_TXT_GLOBAL_DRIVER_FIRST_NAME = "//div[div[div[div[div/p/strong[contains(text(),\"Prénom du conducteur\")]]]]]";
+    private static final String LO_TXT_GLOBAL_DRIVER_LAST_NAME = "//div[div[div[div[div/p/strong[contains(text(),\"Nom de famille du conducteur\")]]]]]";
+    private static final String LO_TXT_GLOBAL_VEHICLE_OWNER_FIRST_NAME = "//div[div[div[div[div/p/strong[contains(text(),\"Prénom du propriétaire du véhicule\")]]]]]";
+    private static final String LO_TXT_GLOBAL_VEHICLE_OWNER_LAST_NAME = "//div[div[div[div[div/p/strong[contains(text(),\"Nom de famille du propriétaire du véhicule \")]]]]]";
+    private static final String LO_TXT_GLOBAL_POLICE_REPORT_NUMBER = "//div[div[div[div[div/p/strong[contains(text(),\"Numéro du rapport de police \")]]]]]";
+    private static final String LO_TXT_GLOBAL_FIRST_NAME_SECOND_INSURED_PERSON = "(//div[div[div[div[div/p/strong[contains(text(),\"Prénom\")]]]]])[2]";
+    private static final String LO_TXT_GLOBAL_LAST_NAME_SECOND_INSURED_PERSON = "(//div[div[div[div[div/p/strong[contains(text(),\"Nom de famille\")]]]]])[2]";
+    private static final String LO_TXT_GLOBAL_DATE_OF_BIRTH_SECOND_INSURED_PERSON = "(//div[div[div[div[div/p/strong[contains(text(),\"Date de naissance\")]]]]])[2]";
+    private static final String LO_TXT_GLOBAL_PHONE_NUMBER = "//div[div[div/span[contains(text(),\"Numéro de téléphone\")]]]";
+    private static final String LO_TXT_GLOBAL_ADDRESS = "(//div[div[div/span[contains(text(),\"Adresse\")]]])[2]";
+    private static final String LO_TXT_GLOBAL_TRIP_DATES_FROM_NO_SPACE = "//div[div[span[contains(text(),\"De:\")]]]";
+    private static final String LO_TXT_GLOBAL_TRIP_DATES_FROM = "(//div[div[span[contains(text(),\"De :\")]]])[1]";
+    private static final String LO_TXT_GLOBAL_TRIP_DATES_TO = "(//div[div[span[contains(text(),\"À :\")]]])[1]";
+    private static final String LO_TXT_GLOBAL_REQUIRED_DOCUMENTS = "//div//div//h3[text()=\"DOCUMENTS REQUIS\"]";
+    private static final String LO_TXT_ABOUT_THE_INSURED_TITLE= "//h2[contains(text(), \"INFORMATIONS SUR L'ASSURÉ\")]";
+    private static final String LO_TXT_GLOBAL_PROVINCIAL_HEALTH_CARD_NUMBER_ZURICH = "//div[div[div[div[span[contains(text(),\"Numéro de la carte d'assurance maladie provinciale\")]]]]]";
+    private static final String LO_TXT_GLOBAL_ORIGINAL_RETURN_DATE_ZURICH = "//div[div[div[span[contains(text(),\"Date de retour prévue\")]]]]";
+    private static final String LO_TXT_GLOBAL_REASON_FOR_CONSULT_ZURICH = "//div[div[div[span[contains(text(),\"Raison de la consultation\")]]]]";
+    private static final String LO_TXT_GLOBAL_FIRST_DATE_OF_TREATMENT_ZURICH = "//div[div[div[span[contains(text(),\"Date du premier traitement\")]]]]";
+    private static final String LO_TXT_GLOBAL_WHEN_DID_FIRST_SYMPTOMS_APPEAR_ZURICH = "//div[div[div[span[contains(text(),\"Quand les premiers symptômes sont-ils apparus?\")]]]]";
+    private static final String LO_TXT_GLOBAL_ORIGINAL_PURCHASE_DATE_SPAN = "//div[div[div/span[contains(text(),\"Date d'achat initiale :  \")]]]";
+    private static final String LO_TXT_GLOBAL_LOSS_REASON = "//div//span[contains(text(),\"Raison de la perte\")]";
+    private static final String LO_TXT_GLOBAL_TRANSIT_NUMBER_ZURICH = "//div[div[div[span[contains(text(),\"Numéro de transit \")]]]]";
+    private static final String LO_TXT_GLOBAL_INSTITUTION_NUMBER_ZURICH = "//div[div[div[span[contains(text(),\"Numéro de l'institution\")]]]]";
+    private static final String LO_TXT_GLOBAL_ACCOUNT_NUMBER_ZURICH = "//div[div[div[span[contains(text(),\"Numéro du compte\")]]]]";
+    private static final String LO_TXT_GLOBAL_INITIAL_TRIP_DATES_FROM = "(//div[div[span[contains(text(),\"De :\")]]])[2]";
+    private static final String LO_TXT_GLOBAL_INITIAL_TRIP_DATES_TO = "(//div[div[span[contains(text(),\"À :\")]]])[2]";
+    private static final String LO_TXT_INVOICE_DESCRIPTION = "//div[div[span[contains(text(),\"Description de la facture\")]]]";
+    private static final String LO_TXT_OTHER_INSURED_PERSON_TITLE= "//h3[contains(text(), 'OTHER INSURED PERSON(S)')]";
+    private static final String LO_TXT_OTHER_INSURANCE_TYPE_TITLE= "//h3[contains(text(), 'OTHER INSURANCE TYPE')]";
+    private static final String LO_TXT_DONT_HAVE_OTHER_INSURED_PERSON= "//p[contains(text(), 'I') and strong[contains(text(), 'am not')] and text()='claiming for any other insured person']";
+    private static final String LO_TXT_DONT_HAVE_OTHER_INSURANCE_TYPE= "//p[contains(text(), \"I don't have any other insurance.\")]";
+    private static final String LO_TXT_CONTACT_INFORMATION_TITLE= "//h3[contains(text(), 'CONTACT INFORMATION')]";
+    private static final String LO_TXT_EMAIL_AUTHORIZATION_TXT= "//p[contains(text(), 'I authorize Global Excel to communicate with me regarding my claim using this e-mail address with the understanding that these communications may contain personal information')]";
+    private static final String LO_TXT_PHONE_NUMBER_AUTHORIZATION_TXT= "//p[contains(text(), 'I authorize Global Excel to communicate with me regarding my claim using this phone number with the understanding that these communications may contain personal information')]";
+    private static final String LO_TXT_ABOUT_THE_EVENT_TITLE= "//h3[contains(text(), 'ABOUT THE EVENT')]";
+    private static final String LO_TXT_ADDRESS = "//div[span[contains(text(), 'Address')]]/following-sibling::div";
+    private static final String LO_TXT_TRIP_DATES_TO = "//div[div[span[contains(text(), 'Trip Dates')]]]/following-sibling::div/div[div//span[contains(text(), 'To :')]]";
+    private static final String LO_TXT_INCIDENT_DATE_NEW = "//div[div[span[contains(text(), 'Incident Date')]]]";
+    private static final String LO_TXT_GLOBAL_TYPE_OF_EXPENSE_DONE = "//div[div[span[contains(text(),\"Type de dépense\")]]]";
+    private static final String LO_TXT_GLOBAL_BILLED_AMOUNT_IN_CAD = "//div[div[span[contains(text(),\"Montant facturé (équivalent en CAD)\")]]]";
+    private static final String LO_TXT_GLOBAL_DOWNLOADED_DOCUMENT = "//div[div[span[contains(text(),\"Document téléchargé\")]]]";
+    private static final String LO_TXT_GLOBAL_BILLED_AMOUNT_IN_CAD_END = "//div//div[div[div[div[div[p[contains(text(),\"Montant facturé en CAD\")]]]]]]";
+    private static final String LO_TXT_GLOBAL_AMOUNT_PAID_IN_CAD = "//div//div[div[div[div[div[p[contains(text(),\"Montant payé en CAD\")]]]]]]";
+    private static final String LO_TXT_GLOBAL_TOTAL_ESTIMATED_PAID_AMOUNT_END = "//div//div[div[div[div[div[p[contains(text(),\"Estimation du montant total payé:\")]]]]]]";
+    private static final String LO_TXT_GLOBAL_BAGGAGE_DELAY_VERIFY = "//h3[contains(text(),\"RETARD DE BAGAGES\")]";
+    private static final String LO_TXT_GLOBAL_TOTAL_IN_CAD = "//div[div[span[contains(text(),\"Total en CAD\")]]]";
+    private static final String LO_TXT_GLOBAL_TRIP_DATES_TO_NO_SPACE = "//div[div[span[contains(text(),\"À:\")]]]";
+    private static final String LO_TXT_GLOBAL_PURCHASE_ASSURANCE = "//h3[contains(text(),\"ASSURANCE ACHATS\")]";
+    private static final String LO_TXT_GLOBAL_LOST_STOLEN_BAGGAGE = "//h3[contains(text(),\"PERTE DES BAGAGES\")]";
+    private static final String LO_TXT_STATUS = "//h3[contains(text(),\"STATUT DU VOYAGE ET MOTIF DE L'INTERRUPTION\")]";
+    private static final String LO_TXT_ABOUT_INSURED = "//h3[contains(text(), \"A PROPOS DE L'ASSURÉ\")]";
+    private static final String LO_TXT_TRIP_SITUATION = "//h3[contains(text(), \"SITUATION DE VOYAGE ET RAISON DE L'ANNULATION\")]";
+    private static final String LO_TXT_TRIP_SITUATION_GEM = "//h3[contains(text(), \"SITUATION DE VOYAGE\")]";
+    private static final String LO_TXT_NAME = "//div[div[div/span[contains(text(),\"Nom\")]]]";
+    private static final String LO_TXT_DOB = "//div[div[div/span[contains(text(),\"Date de naissance\")]]]";
+    private static final String LO_TXT_PHONE_NUMBER = "//div[div[div/span[contains(text(),\"Numéro de téléphone\")]]]";
+    private static final String LO_TXT_EMAIL = "//div[div[div/span[contains(text(),\"Adresse courriel\")]]]";
+    private static final String LO_TXT_HOME_ADDRESS = "//div[div[div/span[contains(text(),\"Adresse à domicile (au Canada)\")]]]";
+    private static final String LO_TXT_OTHER_INSURANCE = "//h3[contains(text(),\"AUTRE ASSURANCE\")]";
+    private static final String LO_TXT_OTHER_INSURANCE_TYPE = "//h3[contains(text(),\"AUTRE TYPE D'ASSURANCE\")]";
+    private static final String LO_TXT_CONTACT_DETAILS = "//h3[contains(text(),\"COORDONNÉES\")]";
+    private static final String LO_TXT_AUTHORIZATION_TEXT = "//div[div[div/p[contains(text(),\"J'autorise Global Excel à communiquer avec moi concernant ma réclamation en utilisant cette adresse courriel, et je comprends que ces communications peuvent contenir des informations personnelles.\")]]]";
+    private static final String LO_TXT_ABOUT_THE_INCIDENT = "//h3[contains(text(),\"À PROPOS DE L'INCIDENT\")]";
+    private static final String LO_TXT_TRIP_DATES_FROM = "//div[div[div/span[contains(text(),\"De :\")]]]";
+    private static final String LO_TXT_TRIP_DATES_TO_NEW = "//div[div[div/span[contains(text(),\"À :\")]]]";
+    private static final String LO_TXT_PURCHASE_DATE = "//div[div[div/span[contains(text(),\"Date d'achat du voyage\")]]]";
+    private static final String LO_TXT_INCIDENT_DATE = "//div[div[div/span[contains(text(),\"Date de l'incident\")]]]";
+    private static final String LO_TXT_CANCELLATION_DATE = "//div[div[div/span[contains(text(),\"Date de l'annulation\")]]]";
+    private static final String LO_TXT_WHAT_HAPPENED_NEW = "//div[div[div/span[contains(text(),\"Que s'est-il passé ?\")]]]";
+    private static final String LO_TXT_EXPENSES = "//h3[contains(text(),\"DÉPENSES ENGAGÉES\")]";
+    private static final String LO_TXT_REIMBURSEMENT_DETAILS = "//h3[contains(text(),\"DÉTAILS DU REMBOURSEMENT\")]";
+    private static final String LO_TXT_REQUIRED_DOCUMENTS = "//h3[contains(text(),\"DOCUMENTS REQUIS\")]";
+    private static final String LO_TXT_FLIGHT_DELAY_TITLE = "//h3[contains(text(),'RETARD DE VOL ET DE VOYAGE')]"; 
+    private static final String LO_TXT_NON_MENDATORY_DOCUMENTS = "//h3[contains(text(),\"DOCUMENTS SUPPLÉMENTAIRES (FACULTATIF)\")]";   
+
+
+    /**
+     * Scrolls at a given locator.
+     * 
+     * @return A string including [PASS] or [FAIL] along with specific result
+     *         details.
+     */
+    public String scrollTop() {
+        String result = scrollToLocator(LO_TXT_REVIEW_AND_SUBMIT_CLAIM_PAGE_VERIFY);
+        result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+        return result;
+    }
+
+    /**
+     * Define the Page Object (PO) constructor.
+     * 
+     * @param driver The WebDriver object passed from the test method.
+     */
+    // [Note: Automation Engineer, rename this Page Object (PO) class to match the
+    // filename.]
+    public PO_Review_And_Submit_Claim(WebDriver driver) {
+        super(driver);
+    }
+
+    /**
+     * Validates if current webpage is loaded and correct.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result
+     *         details.
+     */
+    public String validateOnPage() {
+        String result = validateLocatorExists(LO_TXT_REVIEW_AND_SUBMIT_CLAIM_PAGE_VERIFY, FW_ConfigMgr.getDefaultTimeout(),
+                FW_ConfigMgr.getDefaultInterval());
+        result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+        return result;
+    }
+
+     /**
+     * Validates Insurance type provided is correct.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result
+     *         details.
+     */
+    public String verifyInsuranceType(String insuranceType) {
+        String result = validateWithinLocatorText(LO_TXT_GLOBAL_INSURANCE_TYPE,insuranceType ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+        result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+        return result;
+    }
+
+    /**
+     * Click "Save As Draft" button.
+     * 
+     * @return A string including [PASS] or [FAIL] along with specific result
+     *         details.
+     */
+    public String clickSaveAsDraftButton() {
+        String result = clickLocator(LO_BUT_SAVE_AS_DRAFT, 30000);
+        result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+        return result;
+
+    }
+
+    /**
+     * Validates If the First 6 Digits of the credit card number entered is correct.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result
+     *         details.
+     */
+    public String verifyFirst6Digits(String first6Digits) {
+        String result = validateWithinLocatorText(LO_TXT_GLOBAL_FIRST_6_DIGITS,first6Digits ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+        result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+        return result;
+    }
+
+    /**
+     * Validates If the First 6 Digits of the credit card number entered is correct.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result
+     *         details.
+     */
+    public String verifyFirst6DigitsOfTheCreditCardNumber(String first6Digits) {
+        String result = validateWithinLocatorText(LO_TXT_GLOBAL_FIRST_6_DIGITS_FOR_OTHER_INSURANCE_TYPE,first6Digits ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+        result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+        return result;
+    }
+
+    /**
+     * Validates If the Last 4 Digits of the credit card number entered is correct.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result
+     *         details.
+     */
+    public String verifyLast4Digits(String last4Digits) {
+        String result = validateWithinLocatorText(LO_TXT_GLOBAL_LAST_4_DIGITS,last4Digits ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+        result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+        return result;
+    }
+
+    /**
+     * Validates If the Last 4 Digits of the credit card number entered is correct.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result
+     *         details.
+     */
+    public String verifyLast4DigitsOfTheCreditCardNumber(String last4Digits) {
+        String result = validateWithinLocatorText(LO_TXT_GLOBAL_LAST_4_DIGITS_FOR_OTHER_INSURANCE_TYPE,last4Digits ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+        result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+        return result;
+    }
+
+    /**
+     * Validates If the Insured information entered is correct.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result
+     *         details.
+     */
+
+    public String verifyTheInsured(String insured) {
+        String result = validateWithinLocatorText(LO_TXT_GLOBAL_THE_INSURED,insured ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+        result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+        return result;
+    }
+
+    /**
+     * Validates If Other Insured Persons is correct.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result
+     *         details.
+     */
+
+    public String verifyOtherInsuredPersons(String otherInsuredPersons) {
+        String result = validateWithinLocatorText(LO_TXT_GLOBAL_OTHER_INSURED_PERSONS,otherInsuredPersons ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+        result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+        return result;
+    }
+
+    /**
+     * Validates If Other Insurance Type selection is Yes or No.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result
+     *         details.
+     */
+
+    public String verifyOtherInsuranceType(String otherInsuranceType) {
+        String result = validateWithinLocatorText(LO_TXT_GLOBAL_OTHER_INSURANCE_TYPE,otherInsuranceType ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+        result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+        return result;
+    }
+
+    /**
+     * Validates If the preferred method of communication is correct.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result
+     *         details.
+     */
+
+    public String verifyPreferredMethodOfCommunication(String preferredMethodOfCommunication) {
+        String result = validateWithinLocatorText(LO_TXT_GLOBAL_PREFERRED_METHOD_OF_COMMUNICATION,preferredMethodOfCommunication ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+        result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+        return result;
+    }
+
+    /**
+     * Validates If Date of loss is correct.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result
+     *         details.
+     */
+
+    public String verifyDateOfLoss(String dateOfLoss) {
+        String result = validateWithinLocatorText(LO_TXT_GLOBAL_DATE_OF_LOSS,dateOfLoss ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+        result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+        return result;
+    }
+
+    /**
+     * Validates If Trip Dates entered are correct.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result
+     *         details.
+     */
+
+    public String verifyTripDates(String tripDates) {
+        String result = validateWithinLocatorText(LO_TXT_GLOBAL_TRIP_DATES,tripDates ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+        result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+        return result;
+    }
+
+    /**
+     * Validates If "Travelling From" place entered is correct.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result
+     *         details.
+     */
+
+    public String verifyTravellingFrom(String travellingFrom) {
+        String result = validateWithinLocatorText(LO_TXT_GLOBAL_TRAVELLING_FROM,travellingFrom ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+        result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+        return result;
+    }
+
+    /**
+     * Validates If "Travel Destination" place entered is correct.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result
+     *         details.
+     */
+
+    public String verifyTravelDestination(String travelDestination) {
+        String result = validateWithinLocatorText(LO_TXT_GLOBAL_TRAVEL_DESTINATION,travelDestination ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+        result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+        return result;
+    }
+
+
+    /**
+     * Validates If "Incident location" entered is correct.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result
+     *         details.
+     */
+
+    public String verifyIncidentLocation(String incidentLocation) {
+        String result = validateWithinLocatorText(LO_TXT_GLOBAL_INCIDENT_LOCATION,incidentLocation ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+        result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+        return result;
+    }
+
+    /**
+     * Validates If there were Personal effects in custody(airline,bus,cruise). Yes or No
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result
+     *         details.
+     */
+
+    public String verifyPersonalEffectsInCustody(String yesToPersonalEffectsInCustody) {
+        String result = validateWithinLocatorText(LO_TXT_GLOBAL_PERSONAL_EFFECTS_IN_CUSTODY,yesToPersonalEffectsInCustody ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+        result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+        return result;
+    }
+
+    /**
+     * Validates If "Name of Travel Provider" entered is correct.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result
+     *         details.
+     */
+
+    public String verifyNameOfTravelProvider(String nameOfTravelProvider) {
+        String result = validateWithinLocatorText(LO_TXT_GLOBAL_NAME_OF_TRAVEL_PROVIDER,nameOfTravelProvider ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+        result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+        return result;
+    }
+
+    /**
+     * Validates If "Bags Delayed" number is displayed correcty.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result
+     *         details.
+     */
+
+    public String verifyBagsDelayed(String bagsDelayed) {
+        String result = validateWithinLocatorText(LO_TXT_GLOBAL_BAGS_DELAYED,bagsDelayed ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+        result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+        return result;
+    }
+
+    /**
+     * Validates If "Baggage(s) expected date" is displayed correcty.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result
+     *         details.
+     */
+
+    public String verifyBagsExpectedDate(String bagsExpectedDate) {
+        String result = validateWithinLocatorText(LO_TXT_GLOBAL_BAGGAGE_EXPECTED_DATE,bagsExpectedDate ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+        result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+        return result;
+    }
+
+    /**
+     * Validates If "Baggage(s) received date" is displayed correcty.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result
+     *         details.
+     */
+
+    public String verifyBagsReceivedDate(String bagsReceivedDate) {
+        String result = validateWithinLocatorText(LO_TXT_GLOBAL_BAGGAGE_RECEIVED_DATE,bagsReceivedDate ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+        result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+        return result;
+    }
+
+    /**
+     * Validates If "Report filed date" is displayed correcty.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result
+     *         details.
+     */
+
+    public String verifyReportFiledDate(String reportFiledDate) {
+        String result = validateWithinLocatorText(LO_TXT_GLOBAL_REPORT_FILED_DATE,reportFiledDate ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+        result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+        return result;
+    }
+
+    /**
+     * Validates If "What Happened?" entered is correct.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result
+     *         details.
+     */
+
+    public String verifyWhatHappened(String whatHappened) {
+        String result = validateWithinLocatorText(LO_TXT_GLOBAL_WHAT_HAPPENED,whatHappened ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+        result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+        return result;
+    }
+
+    /**
+     * Validates if "Type of Expense" entered is correct
+     * 
+     * @return AA string including [PASS] or [FAIL] along with specific result
+     *         details.
+     */
+
+    public String verifyTypeOfExpense(String typeOfExpense) {
+        String result = validateWithinLocatorText(LO_TXT_GLOBAL_TYPE_OF_EXPENSE,typeOfExpense ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+        result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+        return result;
+    }
+
+    /**
+     * Validates if "Amount Paid" entered is correct
+     * 
+     * @return AA string including [PASS] or [FAIL] along with specific result
+     *         details.
+     */
+
+    public String verifyAmountPaid(String amountPaid) {
+        String result = validateWithinLocatorText(LO_TXT_GLOBAL_AMOUNT_PAID,amountPaid ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+        result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+        return result;
+    }
+
+    /**
+     * Validates if "Refund Obtained" entered is correct
+     * 
+     * @return AA string including [PASS] or [FAIL] along with specific result
+     *         details.
+     */
+
+    public String verifyRefundObtained(String refundObtained) {
+        String result = validateWithinLocatorText(LO_TXT_GLOBAL_REFUND_OBTAINED,refundObtained ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+        result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+        return result;
+    }
+
+    /**
+     * Validates if "Total Amount of Expenses Claimed" entered is correct
+     * 
+     * @return AA string including [PASS] or [FAIL] along with specific result
+     *         details.
+     */
+
+    public String verifyTotalAmountOfExpensesClaimed(String totalAmountOfExpensesClaimed) {
+        String result = validateWithinLocatorText(LO_TXT_GLOBAL_TOTAL_AMOUNT_OF_EXPENSES_CLAIMED,totalAmountOfExpensesClaimed ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+        result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+        return result;
+    }
+
+    /**
+     * Validates if "Preferred Method of Payment/Reimbursement" entered is correct
+     * 
+     * @return AA string including [PASS] or [FAIL] along with specific result
+     *         details.
+     */
+
+    public String verifyPreferredMethodOfPaymentReimbursement(String preferredMethodOfPaymentReimbursement) {
+        String result = validateWithinLocatorText(LO_TXT_GLOBAL_PREFERRED_METHOD_OF_PAYMENT_REIMBURSEMENT,preferredMethodOfPaymentReimbursement ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+        result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+        return result;
+    }
+
+    /**
+     * Validates if "Mailing Address" entered is correct
+     * 
+     * @return AA string including [PASS] or [FAIL] along with specific result
+     *         details.
+     */
+
+    public String verifyMailingAddress(String mailingAddress) {
+        String result = validateWithinLocatorText(LO_TXT_GLOBAL_MAILING_ADDRESS,mailingAddress ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+        result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+        return result;
+    }
+
+    /**
+     * Validates if "Reason for delay" entered is correct
+     * 
+     * @return AA string including [PASS] or [FAIL] along with specific result
+     *         details.
+     */
+
+    public String verifyReasonForDelay(String reasonForDelay) {
+        String result = validateWithinLocatorText(LO_TXT_GLOBAL_REASON_FOR_DELAY,reasonForDelay ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+        result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+        return result;
+    }
+
+
+    /**
+     * Validates if "When did the incident occur?" entered is correct
+     * 
+     * @return AA string including [PASS] or [FAIL] along with specific result
+     *         details.
+     */
+
+    public String verifyWhenDidTheIncidentOccur(String whenDidTheIncidentOccur) {
+        String result = validateWithinLocatorText(LO_TXT_GLOBAL_WHEN_DID_THE_INCIDENT_OCCUR,whenDidTheIncidentOccur ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+        result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+        return result;
+    }
+
+    /**
+     * Validates if "When was your scheduled date and departure time?" entered is correct
+     * 
+     * @return AA string including [PASS] or [FAIL] along with specific result
+     *         details.
+     */
+
+    public String verifyWhenWasYourScheduledDateAndDepartureTime(String whenWasYourScheduledDateAndDepartureTime) {
+        String result = validateWithinLocatorText(LO_TXT_GLOBAL_WHEN_WAS_YOUR_SCHEDULED_DATE_AND_DEPARTURE_TIME,whenWasYourScheduledDateAndDepartureTime ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+        result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+        return result;
+    }
+
+    /**
+     * Validates if "When was your actual date and departure time?" entered is correct
+     * 
+     * @return AA string including [PASS] or [FAIL] along with specific result
+     *         details.
+     */
+
+    public String verifyWhenWasYourActualDateAndDepartureTime(String whenWasYourActualDateAndDepartureTime) {
+        String result = validateWithinLocatorText(LO_TXT_GLOBAL_WHEN_WAS_YOUR_ACTUAL_DATE_AND_DEPARTURE_TIME,whenWasYourActualDateAndDepartureTime ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+        result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+        return result;
+    }
+
+    /**
+     * Validates if "Flight/Trip was delayed for: " entered is correct
+     * 
+     * @return AA string including [PASS] or [FAIL] along with specific result
+     *         details.
+     */
+
+    public String verifyFlightTripWasDelayedFor(String flightTripWasDelayedFor) {
+        String result = validateWithinLocatorText(LO_TXT_GLOBAL_FLIGHT_TRIP_WAS_DELAYED_FOR,flightTripWasDelayedFor ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+        result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+        return result;
+    }
+
+    /**
+     * Validates if "Did your flight or trip delay cause you to miss a connection?" entered is correct
+     * 
+     * @return AA string including [PASS] or [FAIL] along with specific result
+     *         details.
+     */
+
+    public String verifyDidYourFlightOrTripDelayCauseYouToMissAConnection(String didYourFlightOrTripDelayCauseYouToMissAConnection) {
+        String result = validateWithinLocatorText(LO_TXT_GLOBAL_DID_YOUR_FLIGHT_OR_TRIP_DELAY_CAUSE_YOU_TO_MISS_A_CONNECTION,didYourFlightOrTripDelayCauseYouToMissAConnection ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+        result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+        return result;
+    }
+
+    /**
+     * Validates if "Email Address" entered is correct.
+     * 
+     * @return A string including [PASS] or [FAIL] along with specific result
+     *         details.
+     */
+
+    public String verifyEmailAddress(String emailAddress) {
+        String result = validateWithinLocatorText(LO_TXT_GLOBAL_EMAIL_ADDRESS,emailAddress ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+        result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+        return result;
+    }
+
+    /**
+     * Validates if "Travelling from" entered is correct.
+     * 
+     * @return A string including [PASS] or [FAIL] along with specific result
+     *         details.
+     */
+
+    public String verifyTravellingFromPrecedingIncidentOccurance(String travellingFromPrecedingIncidentOccurance) {
+        String result = validateWithinLocatorText(LO_TXT_GLOBAL_TRAVELLING_FROM_PRECEDING_INCIDENT_OCCURANCE,travellingFromPrecedingIncidentOccurance ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+        result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+        return result;
+    }
+
+    /**
+     * Validates if "What Happened?" for flight delay was entered is correct.
+     * 
+     * @return A string including [PASS] or [FAIL] along with specific result
+     *         details.
+     */
+
+    public String verifyWhatHappenedForFlightDelay(String whatHappenedForFlightDelay) {
+        String result = validateWithinLocatorText(LO_TXT_GLOBAL_WHAT_HAPPENED_FOR_FLIGHT_DELAY,whatHappenedForFlightDelay ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+        result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+        return result;
+    }
+
+    /**
+     * Validates if "Preferred Method of Payment/Reimbursement" for flight delay was entered is correct.
+     * 
+     * @return A string including [PASS] or [FAIL] along with specific result
+     *         details.
+     */
+
+    public String verifyPreferredMethodOfPaymentOnFlightDelay(String preferredMethodOfPaymentOnFlightDelay) {
+        String result = validateWithinLocatorText(LO_TXT_GLOBAL_PREFERRED_METHOD_OF_PAYMENT_REIMBURSEMENT_ON_FLIGHT_DELAY,preferredMethodOfPaymentOnFlightDelay ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+        result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+        return result;
+    }
+
+    /*
+        * Validates if "Incident Date" entered is correct.
+        * 
+        * @return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+    
+         public String verifyIncidentDate(String incidentDate) {
+              String result = validateWithinLocatorText(LO_TXT_GLOBAL_INCIDENT_DATE,incidentDate ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+              result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+              return result;
+         }
+
+         /*
+        * Validates if "Name of Hotel/Motel" entered is correct.
+        *
+        * @return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+    
+         public String verifyNameOfHotelMotel(String nameOfHotelMotel) {
+              String result = validateWithinLocatorText(LO_TXT_GLOBAL_NAME_OF_HOTEL_MOTEL,nameOfHotelMotel ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+              result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+              return result;
+         }
+
+         /*
+        * Validates if "Hotel/Motel Address is" entered is correct.
+        *
+        * @return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+    
+         public String verifyHotelMotelAddress(String hotelMotelAddress) {
+              String result = validateWithinLocatorText(LO_TXT_GLOBAL_HOTEL_MOTEL_ADDRESS,hotelMotelAddress ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+              result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+              return result;
+         }
+
+            /*
+        * Validates if "What Happened?" for Hotel/Motel entered is correct.
+        *
+        * @return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+    
+         public String verifyWhatHappenedForHotel(String whatHappenedForHotel) {
+              String result = validateWithinLocatorText(LO_TXT_GLOBAL_WHAT_HAPPENED_FOR_HOTEL,whatHappenedForHotel ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+              result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+              return result;
+         }
+
+            /*
+        * Validates if "Reason for Claim" entered is correct.
+        *
+        * @return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+    
+         public String verifyReasonForClaim(String reasonForClaim) {
+              String result = validateWithinLocatorText(LO_TXT_GLOBAL_REASON_FOR_CLAIM,reasonForClaim ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+              result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+              return result;
+         }
+
+            /*
+        * Validates if "Insurance Company" entered is correct.
+        *
+        * @return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+    
+         public String verifyInsuranceCompany(String insuranceCompany) {
+              String result = validateWithinLocatorText(LO_TXT_GLOBAL_GLOBAL_INSURANCE_COMPANY,insuranceCompany ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+              result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+              return result;
+         }
+
+            /*
+        * Validates if "Policy Number/Certificate ID" entered is correct.
+        *
+        * @return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+    
+         public String verifyPolicyNumberCertificateID(String policyNumberCertificateID) {
+              String result = validateWithinLocatorText(LO_TXT_GLOBAL_POLICY_NUMBER_CERTIFICATE_ID,policyNumberCertificateID ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+              result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+              return result;
+         }
+
+           /*
+        * Validates if "Policy Number/Certificate ID" entered is correct.
+        *
+        * @return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+    
+         public String verifyPolicyNumberCertificateIDNew(String policyNumberCertificateID) {
+              String result = validateWithinLocatorText(LO_TXT_GLOBAL_POLICY_NUMBER_CERTIFICATE_ID_NEW,policyNumberCertificateID ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+              result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+              return result;
+         }
+
+
+           /*
+        * Validates if "Policy Number/Certificate ID for other insurance type" entered is correct.
+        *
+        * @return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+            public String verifyPolicyNumberCertificateIDForOtherInsuranceType(String policyNumberCertificateIDForOtherInsuranceType) {
+                String result = validateWithinLocatorText(LO_TXT_GLOBAL_POLICY_NUMBER_CERTIFICATE_ID_FOR_OTHER_INSURANCE_TYPE,policyNumberCertificateIDForOtherInsuranceType ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                return result;
+            }
+
+            /*
+        * Validates if "Global Excel Claim Number" for Baggage Loss entered is correct.
+        *
+        * @return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+    
+         public String verifyGlobalExcelClaimNumberForBaggageLoss(String globalExcelClaimNumberForBaggageLoss) {
+              String result = validateWithinLocatorText(LO_TXT_GLOBAL_GLOBAL_EXCEL_CLAIM_NUMBER_FOR_BAGGAGE_LOSS,globalExcelClaimNumberForBaggageLoss ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+              result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+              return result;
+         }
+
+            /*
+        * Validates if "Insurance Type" for Baggage Loss entered is correct.
+        *
+        * @return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+    
+         public String verifyInsuranceTypeForBaggageLoss(String insuranceTypeForBaggageLoss) {
+              String result = validateWithinLocatorText(LO_TXT_GLOBAL_INSURANCE_TYPE_FOR_BAGGAGE_LOSS,insuranceTypeForBaggageLoss ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+              result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+              return result;
+         }
+
+            /*
+        * Validates if "Incident happened at travel destination" for Baggage Loss entered is correct.
+        *
+        * @return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+    
+         public String verifyIncidentHappenedAtTravelDestinationForBaggageLoss(String incidentHappenedAtTravelDestinationForBaggageLoss) {
+              String result = validateWithinLocatorText(LO_TXT_GLOBAL_INCIDENT_HAPPENED_AT_TRAVEL_DESTINATION_FOR_BAGGAGE_LOSS,incidentHappenedAtTravelDestinationForBaggageLoss ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+              result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+              return result;
+         }
+
+            /*
+        * Validates if "Personal effects in custody(airline,bus,cruise)" for Baggage Loss entered is correct.
+        *
+        * @return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+    
+         public String verifyPersonalEffectsInCustodyForBaggageLoss(String personalEffectsInCustodyForBaggageLoss) {
+              String result = validateWithinLocatorText(LO_TXT_GLOBAL_PERSONAL_EFFECTS_IN_CUSTODY_FOR_BAGGAGE_LOSS,personalEffectsInCustodyForBaggageLoss ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+              result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+              return result;
+         }
+
+            /*
+        * Validates if "Main Reason for Cancelling your Trip" entered is correct.
+        *
+        * @return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+    
+         public String verifyMainReasonForCancellingYourTrip(String mainReasonForCancellingYourTrip) {
+              String result = validateWithinLocatorText(LO_TXT_GLOBAL_MAIN_REASON_FOR_CANCELLING_YOUR_TRIP,mainReasonForCancellingYourTrip ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+              result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+              return result;
+         }
+
+            /*
+        * Validates if "Other due to" entered is correct.
+        *
+        * @return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+    
+         public String verifyOtherDueTo(String otherDueTo) {
+              String result = validateWithinLocatorText(LO_TXT_GLOBAL_OTHER_DUE_TO,otherDueTo ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+              result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+              return result;
+         }
+
+            /*
+        * Validates if "Global Excel Claim Number" for preceding "Other due to" entered is correct.
+        *
+        * @return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+    
+         public String verifyGlobalExcelClaimNumberForPrecedingOtherDueTo(String globalExcelClaimNumberForPrecedingOtherDueTo) {
+              String result = validateWithinLocatorText(LO_TXT_GLOBAL_GLOBAL_EXCEL_CLAIM_NUMBER_FOR_PRECEDING_OTHER_DUE_TO,globalExcelClaimNumberForPrecedingOtherDueTo ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+              result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+              return result;
+         }
+
+            /*
+        * Validates if "Trip Dates" for following travel destination entered is correct.
+        *
+        * @return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+    
+         public String verifyTripDatesFollowingTravelDestination(String tripDatesForAmexExploratory) {
+              String result = validateWithinLocatorText(LO_TXT_GLOBAL_TRIP_DATES_FOLLOWING_TRAVEL_DESTINATION,tripDatesForAmexExploratory ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+              result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+              return result;
+         }
+
+            /*
+        * Validates if "Travel destination" Following Incident Date entered is correct.
+        *
+        * @return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+    
+         public String verifyTravelDestinationFollowingIncidentDate(String travelDestinationFollowingIncidentDate) {
+              String result = validateWithinLocatorText(LO_TXT_GLOBAL_TRAVEL_DESTINATION_FOLLOWING_INCIDENT_DATE,travelDestinationFollowingIncidentDate ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+              result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+              return result;
+         }
+
+            /*
+        * Validates if "Incident Date" for Amex Exploratory entered is correct.
+        *
+        * @return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+    
+         public String verifyIncidentDateFollowingCancellationDate(String incidentDateFollowingCancellationDate) {
+              String result = validateWithinLocatorText(LO_TXT_GLOBAL_INCIDENT_DATE_FOLLOWING_CANCELLATION_DATE,incidentDateFollowingCancellationDate ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+              result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+              return result;
+         }
+
+            /*
+        * Validates if "Cancellation Date" for Amex Exploratory entered is correct.
+        *
+        * @return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+    
+         public String verifyCancellationDate(String cancellationDateFollowingTripPurchaseDate) {
+              String result = validateWithinLocatorText(LO_TXT_GLOBAL_CANCELLATION_DATE_FOLLOWING_TRIP_PURCHASE_DATE,cancellationDateFollowingTripPurchaseDate ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+              result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+              return result;
+         }
+
+            /*
+        * Validates if "Trip Purchase Date" entered is correct.
+        *
+        * @return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+    
+         public String verifyTripPurchaseDate(String tripPurchaseDate) {
+              String result = validateWithinLocatorText(LO_TXT_GLOBAL_TRIP_PURCHASE_DATE,tripPurchaseDate ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+              result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+              return result;
+         }
+
+            /*
+        * Validates if "What Happened" for Amex Exploratory entered is correct.
+        *
+        * @return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+
+            public String verifyWhatHappenedPrecedingTripPurchaseDate(String whatHappenedForAmexExploratory) {
+                String result = validateWithinLocatorText(LO_TXT_GLOBAL_WHAT_HAPPENED_PREDEDING_TRIP_PURCHASE_DATE,whatHappenedForAmexExploratory ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                return result;
+            }
+
+            /*
+        * Validates if "Insurance Type" following policy number entered is correct.
+        *
+        * @return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+
+            public String verifyInsuranceTypeFollowingPolicyNumber(String insuranceTypeFollowingPolicyNumber) {
+                String result = validateWithinLocatorText(LO_TXT_GLOBAL_INSURANCE_TYPE_FOLLOWING_POLICY_NUMBER,insuranceTypeFollowingPolicyNumber ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                return result;
+            }
+
+            /*
+        * Validates if "Assignment of benefit" entered is correct.
+        
+        * @return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+
+            public String verifyAssignmentOfBenefits(String assignmentOfBenefit) {
+                String result = validateWithinLocatorText(LO_TXT_GLOBAL_ASSIGNMENT_OF_BENEFIT,assignmentOfBenefit ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                return result;
+            }
+
+            /*
+        * Validates if "Group name" entered is correct.
+
+        * @return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+
+            public String verifyGroupName(String groupName) {
+                String result = validateWithinLocatorText(LO_TXT_GLOBAL_GROUP_NAME,groupName ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                return result;
+            }
+
+            /*
+        * Validates if "Insurance Type" following Group Name entered is correct.
+        *
+        * @return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+
+            public String verifyInsuranceTypeFollowingGroupName(String insuranceTypeFollowingGroupName) {
+                String result = validateWithinLocatorText(LO_TXT_GLOBAL_INSURANCE_TYPE_FOLLOWING_GROUP_NAME,insuranceTypeFollowingGroupName ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                return result;
+            }
+
+            /*
+        * Validates if "Refund Obtained (Equivalent in CAD)" for Amex Exploratory entered is correct.
+        *
+        * @return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+
+            public String verifyRefundObtainedWithSpace(String refundObtainedEquivalentInCAD) {
+                String result = validateWithinLocatorText(LO_TXT_GLOBAL_POLICY_REFUND_OBTAINED_EQUIVALENT_IN_CAD_WITH_SPACE,refundObtainedEquivalentInCAD ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                return result;
+            }
+
+            /*
+        * Validates if "Total Amount of Expenses obtained" with space entered is correct.
+        *
+        * @return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+
+            public String verifyTotalAmountOfExpensesObtainedWithSpace(String totalAmountOfExpensesObtainedWithSpace) {
+                String result = validateWithinLocatorText(LO_TXT_GLOBAL_TOTAL_AMOUNT_OF_EXPENSES_CLAIMED_WITH_SPACE,totalAmountOfExpensesObtainedWithSpace ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                return result;
+            }
+
+            /*
+        * Validates if "Main Reason for cancelling your trip" medical entered is correct.
+        *
+        * @return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+
+            public String verifyMainReasonForCancellingYourTripMedical(String mainReasonForCancellingYourTripMedical) {
+                String result = validateWithinLocatorText(LO_TXT_GLOBAL_MAIN_REASON_FOR_CANCELLING_YOUR_TRIP_MEDICAL,mainReasonForCancellingYourTripMedical ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                return result;
+            }
+
+            /*
+        * Validates if "Medical due to" entered is correct.
+        *
+        * @return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+
+            public String verifyMedicalDueTo(String medicalDueTo) {
+                String result = validateWithinLocatorText(LO_TXT_GLOBAL_MEDICAL_DUE_TO,medicalDueTo ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                return result;
+            }
+
+            /*
+        * Validates if "Global Excel Claim Number" for preceding "Medical due to" entered is correct.
+        *
+        * @return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+
+            public String verifyGlobalExcelClaimNumberPrecedingMedicalDueTo(String globalExcelClaimNumberForPrecedingMedicalDueTo) {
+                String result = validateWithinLocatorText(LO_TXT_GLOBAL_GLOBAL_EXCEL_CLAIM_NUMBER_FOR_PRECEDING_MEDICAL_DUE_TO,globalExcelClaimNumberForPrecedingMedicalDueTo ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                return result;
+            }
+
+            /*
+        * Validates if "Claim Type" entered is correct.
+        *
+        * @return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+
+            public String verifyClaimType(String claimType) {
+                String result = validateWithinLocatorText(LO_TXT_GLOBAL_CLAIM_TYPE,claimType ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                return result;
+            }
+
+                /*
+        * Validates if "Claim Type" entered is correct.
+        *
+        * @return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+
+            public String verifyClaimTypeNew(String claimType) {
+                String result = validateWithinLocatorText(LO_TXT_GLOBAL_CLAIM_TYPE_NEW,claimType ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                return result;
+            }
+
+            /*
+        * Validates if "Province" entered is correct.
+        *
+        * @return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+
+            public String verifyProvince(String province) {
+                String result = validateWithinLocatorText(LO_TXT_GLOBAL_PROVINCE,province ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                return result;
+            }
+
+            /*
+        * Validates if "Global Excel Claim Number" preceding "Province" entered is correct.
+        *
+        * @return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+
+            public String verifyGlobalExcelClaimNumberPrecedingProvince(String globalExcelClaimNumberPrecedingProvince) {
+                String result = validateWithinLocatorText(LO_TXT_GLOBAL_GLOBAL_EXCEL_CLAIM_NUMBER_PRECEDING_PROVINCE,globalExcelClaimNumberPrecedingProvince ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                return result;
+            }
+
+            /*
+        * Validates if "Employer Name" entered is correct.
+        *
+        * @return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+
+            public String verifyEmployerName(String employerName) {
+                String result = validateWithinLocatorText(LO_TXT_GLOBAL_EMPLOYER_NAME,employerName ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                return result;
+            }
+
+            /*
+        * Validates if "Provincial Health Card Number" entered is correct.
+        *
+        * @return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+
+            public String verifyProvincialHealthCardNumber(String provincialHealthCardNumber) {
+                String result = validateWithinLocatorText(LO_TXT_GLOBAL_PROVINCIAL_HEALTH_CARD_NUMBER,provincialHealthCardNumber ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                return result;
+            }
+
+            /*
+        * Validates if "Travel destination" following "Trip Dates" entered is correct.
+        *
+        * @return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+
+            public String verifyTravelDestinationFollowingTripDates(String travelDestinationFollowingTripDates) {
+                String result = validateWithinLocatorText(LO_TXT_GLOBAL_TRAVEL_DESTINATION_FOLLOWING_TRIP_DATES,travelDestinationFollowingTripDates ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                return result;
+            }
+
+            /*
+        * Validates if "Trip Dates" following "Original Return Date" entered is correct.
+        *
+        * @return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+
+            public String verifyTripDatesFollowingOriginalReturnDate(String tripDates) {
+                String result = validateWithinLocatorText(LO_TXT_GLOBAL_TRIP_DATES_FOLLOWING_ORIGINAL_RETURN_DATE,tripDates ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                return result;
+            }
+
+            /*
+        * Validates if "Original Return Date" entered is correct.
+        *
+        * @return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+
+            public String verifyOriginalReturnDate(String originalReturnDate) {
+                String result = validateWithinLocatorText(LO_TXT_GLOBAL_ORIGINAL_RETURN_DATE,originalReturnDate ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                return result;
+            }
+
+            /*
+        * Validates if "Reason for consult" entered is correct.
+        *
+        * @return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+
+            public String verifyReasonForConsult(String reasonForConsult) {
+                String result = validateWithinLocatorText(LO_TXT_GLOBAL_REASON_FOR_CONSULT,reasonForConsult ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                return result;
+            }
+
+            /*
+        * Validates if "First date of treatment" entered is correct.
+        *
+        * @return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+
+            public String verifyFirstDateOfTreatment(String firstDateOfTreatment) {
+                String result = validateWithinLocatorText(LO_TXT_GLOBAL_FIRST_DATE_OF_TREATMENT,firstDateOfTreatment ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                return result;
+            }
+
+            /*
+        * Validates if "When did first symptoms appear" entered is correct.
+        *
+        * @return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+
+            public String verifyWhenDidFirstSymptomsAppear(String whenDidFirstSymptomsAppear) {
+                String result = validateWithinLocatorText(LO_TXT_GLOBAL_WHEN_DID_FIRST_SYMPTOMS_APPEAR,whenDidFirstSymptomsAppear ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                return result;
+            }
+
+            /*
+        * Validates if "What Happened" entered is correct.
+        *
+        * @return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+
+            public String verifyWhatHappenedPrecedingWhenDidFirstSymptomsAppear(String whatHappened) {
+                String result = validateWithinLocatorText(LO_TXT_GLOBAL_WHAT_HAPPENED_PRECEDING_WHEN_DID_FIRST_SYMPTOMS_APPEAR,whatHappened ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                return result;
+            }
+
+            /*
+        * Validates if "Expenses" entered is correct.
+        *
+        * @return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+
+            public String verifyExpenses(String expenses) {
+                String result = validateWithinLocatorText(LO_TXT_GLOBAL_EXPENSES,expenses ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                return result;
+            }
+
+            /*
+        * Validates if "Expense Item 1" is correct.
+        *
+        * @return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+
+            public String verifyExpenseItem1(String expenseItem1) {
+                String result = validateWithinLocatorText(LO_TXT_GLOBAL_EXPENSE_ITEM_1,expenseItem1 ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                return result;
+            }
+
+            /*
+        * Validates if "Amount Billed" is correct.
+
+        * @return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+
+            public String verifyAmountBilled(String amountBilled) {
+                String result = validateWithinLocatorText(LO_TXT_GLOBAL_AMOUNT_BILLED_EQUIVALENT_IN_CAD,amountBilled ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                return result;
+            }
+
+            /*
+        * Validates if "Amount Paid" is correct.
+        *
+        * @return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+
+            public String verifyAmountPaidFollowingReceiptIncluded(String amountPaid) {
+                String result = validateWithinLocatorText(LO_TXT_GLOBAL_AMOUNT_PAID_EQUIVALENT_IN_CAD,amountPaid ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                return result;
+            }
+
+            /*
+        * Validates if "Receipt Included" is correct.
+        *
+        * @return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+
+            public String verifyReceiptIncluded(String receiptIncluded) {
+                String result = validateWithinLocatorText(LO_TXT_GLOBAL_RECEIPT_INCLUDED,receiptIncluded ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                return result;
+            }
+
+            /*
+        * Validates if "Total Estimated Paid Amount" is correct.
+        *
+        * @return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+
+            public String verifyTotalEstimatedPaidAmount(String totalEstimatedPaidAmount) {
+                String result = validateWithinLocatorText(LO_TXT_GLOBAL_TOTAL_ESTIMATED_PAID_AMOUNT,totalEstimatedPaidAmount ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                return result;
+            }
+
+            /*
+        * Validates if "Insurance Type" following Employer Name is correct.
+        *
+        * @return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+
+            public String verifyInsuranceTypeFollowingEmployerName(String insuranceTypeFollowingEmployerName) {
+                String result = validateWithinLocatorText(LO_TXT_GLOBAL_INSURANCE_TYPE_FOLLOWING_EMPLOYER_NAME,insuranceTypeFollowingEmployerName ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                return result;
+            }
+
+            /*
+        * Validates if "Preferred Method of Payment/Reimbursement" following "Is the email address the same as the Claimant's email address?" is correct.
+        *
+        * @return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+
+            public String verifyPreferredMethodOfPaymentFollowingIsTheEmailAddressTheSame(String preferredMethodOfPaymentFollowingIsTheEmailAddressTheSame) {
+                String result = validateWithinLocatorText(LO_TXT_GLOBAL_PREFERRED_METHOD_OF_PAYMENT_REIMBURSEMENT_FOLLOWING_IS_THE_EMAIL_ADDRESS_THE_SAME,preferredMethodOfPaymentFollowingIsTheEmailAddressTheSame ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                return result;
+            }
+
+            /*
+        * Validates if "Is the email address the same as the Claimant's email address?" is correct.
+        *
+        * @return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+
+            public String verifyIsTheEmailAddressTheSameAsTheClaimantsEmailAddress(String isTheEmailAddressTheSameAsTheClaimantsEmailAddress) {
+                String result = validateWithinLocatorText(LO_TXT_GLOBAL_IS_THE_EMAIL_ADDRESS_THE_SAME_AS_THE_CLAIMANTS_EMAIL_ADDRESS,isTheEmailAddressTheSameAsTheClaimantsEmailAddress ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                return result;
+            }
+
+            /*
+        * Validates if "Claim Type" following "Global Excel Claim Number" is correct.
+        *
+        * @return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+
+            public String verifyClaimTypeFollowingGlobalExcelClaimNumber(String claimTypeFollowingGlobalExcelClaimNumber) {
+                String result = validateWithinLocatorText(LO_TXT_GLOBAL_CLAIM_TYPE_FOLLOWING_GLOBAL_EXCEL_CLAIM_NUMBER,claimTypeFollowingGlobalExcelClaimNumber ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                return result;
+            }
+
+            /*
+        * Validates if "Global Excel Claim Number" for preceding "Claim Type" is correct.
+        *
+        * @return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+
+            public String verifyGlobalExcelClaimNumberPrecedingClaimType(String globalExcelClaimNumberPrecedingClaimType) {
+                String result = validateWithinLocatorText(LO_TXT_GLOBAL_GLOBAL_EXCEL_CLAIM_NUMBER_PRECEDING_CLAIM_TYPE,globalExcelClaimNumberPrecedingClaimType ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                return result;
+            }
+
+            /*
+        * Validates if "Country of origin" is correct.
+        *
+        * @return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+
+            public String verifyCountryOfOrigin(String countryOfOrigin) {
+                String result = validateWithinLocatorText(LO_TXT_GLOBAL_COUNTRY_OF_ORIGIN,countryOfOrigin ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                return result;
+            }
+
+            /*
+        * Validates if "Temporary Travel Destination" is correct.
+        *
+        * @return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+
+            public String verifyTemporaryTravelDestination(String temporaryTravelDestination) {
+                String result = validateWithinLocatorText(LO_TXT_GLOBAL_TEMPORARY_TRAVEL_DESTINATION,temporaryTravelDestination ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                return result;
+            }
+
+            /*
+        * Validates if "Temporary Trip Dates" is correct.
+        *
+        * @return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+
+            public String verifyTemporaryTripDates(String temporaryTripDates) {
+                String result = validateWithinLocatorText(LO_TXT_GLOBAL_TEMPORARY_TRIP_DATES,temporaryTripDates ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                return result;
+            }
+
+            /*
+        * Validates if "Global Excel Claim Number" is correct.
+        *
+        * @return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+
+            public String verifyGlobalExcelClaimNumber(String globalExcelClaimNumber) {
+                String result = validateWithinLocatorText(LO_TXT_GLOBAL_GLOBAL_EXCEL_CLAIM_NUMBER_FOLLOWING_ABOUT_YOUR_INSURANCE,globalExcelClaimNumber ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                return result;
+            }
+
+            /*
+        * Validates if "Credit Card Type" is correct.
+        *
+        * @return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+
+            public String verifyCreditCardType(String creditCardType) {
+                String result = validateWithinLocatorText(LO_TXT_GLOBAL_CREDIT_CARD_TYPE,creditCardType ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                return result;
+            }
+
+            /*
+        * Validates if "Item Description" is correct.
+        *
+        * @return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+
+            public String verifyItemDescription(String itemDescription) {
+                String result = validateWithinLocatorText(LO_TXT_GLOBAL_ITEM_DESCRIPTION,itemDescription ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                return result;
+            }
+
+            /*
+            * Validates if "Original Purchase Date" is correct.
+            *
+            * @return A string including [PASS] or [FAIL] along with specific result
+            * details.
+            */
+
+            public String verifyOriginalPurchaseDate(String originalPurchaseDate) {
+                String result = validateWithinLocatorText(LO_TXT_GLOBAL_ORIGINAL_PURCHASE_DATE,originalPurchaseDate ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                return result;
+            }
+
+            /*
+            * Validates if "Incident Date" is correct.
+            *
+            * @return A string including [PASS] or [FAIL] along with specific result
+            * details.
+            */
+
+            public String verifyIncidentDateFollowingDidYouPayForTheItemInMultipleInstallments(String incidentDate) {
+                String result = validateWithinLocatorText(LO_TXT_GLOBAL_INCIDENT_DATE_FOLLOWING_DID_YOU_PAY_FOR_THE_ITEM_IN_MULTIPLE_INSTALLMENTS,incidentDate ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                return result;
+            }
+
+            /*
+            * Validates if "Did you pay for the item in multiple installments?" is correct.
+            *
+            * @return A string including [PASS] or [FAIL] along with specific result
+            * details.
+            */
+
+            public String verifyDidYouPayForTheItemInMultipleInstallments(String didYouPayForTheItemInMultipleInstallments) {
+                String result = validateWithinLocatorText(LO_TXT_GLOBAL_DID_YOU_PAY_FOR_THE_ITEM_IN_MULTIPLE_INSTALLMENTS,didYouPayForTheItemInMultipleInstallments ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                return result;
+            }
+
+            /*
+            * Validates if "Manufacturer name" is correct.
+            *
+            * @return A string including [PASS] or [FAIL] along with specific result
+            * details.
+            */
+
+            public String verifyManufacturerName(String manufacturerName) {
+                String result = validateWithinLocatorText(LO_TXT_GLOBAL_MANUFACTURER_NAME,manufacturerName ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                return result;
+            }
+
+            /*
+            * Validates if "Duration of Manufacturer's Warranty" is correct.
+
+            * @return A string including [PASS] or [FAIL] along with specific result
+            * details.
+            */
+
+            public String verifyDurationOfManufacturersWarranty(String durationOfManufacturersWarranty) {
+                String result = validateWithinLocatorText(LO_TXT_GLOBAL_DURATION_OF_MANUFACTURER_WARRANTY,durationOfManufacturersWarranty ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                return result;
+            }
+
+            /*
+            * Validates if "Serial Number" is correct.
+            *
+            * @return A string including [PASS] or [FAIL] along with specific result
+            * details.
+            */
+
+            public String verifySerialNumber(String serialNumber) {
+                String result = validateWithinLocatorText(LO_TXT_GLOBAL_SERIAL_NUMBER,serialNumber ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                return result;
+            }
+
+            /*
+             * Validates if "The Insured" following Insurance Typeis correct.
+             * @return A string including [PASS] or [FAIL] along with specific result
+             * details.
+             * 
+             */
+
+            public String verifyTheInsuredFollowingInsuranceType(String theInsuredFollowingInsuranceType) {
+                String result = validateWithinLocatorText(LO_TXT_GLOBAL_THE_INSURED_FOLLOWING_OTHER_INSURANCE_TYPE,theInsuredFollowingInsuranceType ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                return result;
+            }
+
+            /*
+             * Validates if "Other Insurance Type" is correct.
+             * @return A string including [PASS] or [FAIL] along with specific result
+             * details.
+             * 
+             */
+
+            public String verifyOtherInsuranceTypeFollowingTheInsured(String otherInsuranceType) {
+                String result = validateWithinLocatorText(LO_TXT_GLOBAL_OTHER_INSURANCE_TYPE_FOLLOWING_THE_INSURED,otherInsuranceType ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                return result;
+            }
+
+            /*
+             * Validates if "What Happened" preceding "Serial Number" is correct.
+             * @return A string including [PASS] or [FAIL] along with specific result
+             * details.
+             * 
+             */
+
+            public String verifyWhatHappenedPrecedingSerialNumber(String whatHappened) {
+                String result = validateWithinLocatorText(LO_TXT_GLOBAL_WHAT_HAPPENED_PRECEDING_SERIAL_NUMBER,whatHappened ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                return result;
+            }
+
+            /*
+             * Validates if "Refund Obtained" following "Total Amount of Expenses Claimed" is correct.
+             * @return A string including [PASS] or [FAIL] along with specific result
+             * details.
+             * 
+             */
+
+             public String verifyRefundObtainedFollowingTotalAmountOfExpensesClaimed(String amountPaid) {
+                String result = validateWithinLocatorText(LO_TXT_GLOBAL_REFUND_OBTAINED_FOLLOWING_TOTAL_AMOUNT_OF_EXPENSES_CLAIMED,amountPaid ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                return result;
+             }
+
+            /*
+                * Validates if "Total Amount of Expenses Claimed" is correct.
+                * @return A string including [PASS] or [FAIL] along with specific result
+                * details.
+                * 
+                */
+    
+                public String verifyTotalAmountOfExpensesClaimedPrecedingRefundObtained(String totalAmountOfExpensesClaimed) {
+                    String result = validateWithinLocatorText(LO_TXT_GLOBAL_TOTAL_AMOUNT_OF_EXPENSES_CLAIMED,totalAmountOfExpensesClaimed ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                    result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                    return result;
+                }
+
+            /*
+                * Validates if "Incident happened at travel destination" preceding travel destination is correct.
+                * @return A string including [PASS] or [FAIL] along with specific result
+                * details.
+                * 
+                */
+
+                public String verifyIncidentHappenedAtTravelDestinationPrecedingTravelDestination(String incidentHappenedAtTravelDestination) {
+                    String result = validateWithinLocatorText(LO_TXT_GLOBAL_INCIDENT_HAPPENED_AT_TRAVEL_DESTINATION_PRECEDING_TRAVEL_DESTINATION,incidentHappenedAtTravelDestination ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                    result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                    return result;
+                }
+
+                /*
+                * Validates if "The Insured" following other Insurance Type is correct.
+                * @return A string including [PASS] or [FAIL] along with specific result
+                * details.
+                * 
+                */
+
+                public String verifyTheInsuredFollowingOtherInsuranceType(String theInsuredFollowingOtherInsuranceType) {
+                    String result = validateWithinLocatorText(LO_TXT_GLOBAL_THE_INSURED_FOLLOWING_OTHER_INSURANCE_TYPE,theInsuredFollowingOtherInsuranceType ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                    result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                    return result;
+                }
+
+                /*
+                * Validates if "Reason for loss" is correct.
+                * @return A string including [PASS] or [FAIL] along with specific result
+                * details.
+                * 
+                */
+
+                public String verifyReasonForLoss(String reasonForLoss) {
+                    String result = validateWithinLocatorText(LO_TXT_GLOBAL_REASON_FOR_LOSS,reasonForLoss ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                    result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                    return result;
+                }
+
+                /*
+                * Validates if "Global Excel Claim Number" preceing "Reason for loss" is correct.
+                * @return A string including [PASS] or [FAIL] along with specific result
+                * details.
+                * 
+                */
+
+                public String verifyGlobalExcelClaimNumberPrecedingReasonForLoss(String globalExcelClaimNumber) {
+                    String result = validateWithinLocatorText(LO_TXT_GLOBAL_GLOBAL_EXCEL_CLAIM_NUMBER_PRECEDING_REASON_FOR_LOSS,globalExcelClaimNumber ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                    result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                    return result;
+                }
+
+                /*
+                * Validates if "Country" is correct.
+                * @return A string including [PASS] or [FAIL] along with specific result
+                * details.
+                * 
+                */
+
+                public String verifyCountry(String country) {
+                    String result = validateWithinLocatorText(LO_TXT_GLOBAL_COUNTRY,country ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                    result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                    return result;
+                }
+
+                /*
+                * Validates if "Province" following "City" is correct.
+                * @return A string including [PASS] or [FAIL] along with specific result
+                * details.
+                * 
+                */
+
+                public String verifyProvinceFollowingCity(String province) {
+                    String result = validateWithinLocatorText(LO_TXT_GLOBAL_PROVINCE_FOLLOWING_CITY,province ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                    result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                    return result;
+                }
+
+                /*
+                * Validates if "City" is correct.
+                * @return A string including [PASS] or [FAIL] along with specific result
+                * details.
+                * 
+                */
+
+                public String verifyCity(String city) {
+                    String result = validateWithinLocatorText(LO_TXT_GLOBAL_CITY,city ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                    result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                    return result;
+                }
+
+                /*
+                * Validates if "What Happened" preceding "City"is correct.
+                * @return A string including [PASS] or [FAIL] along with specific result
+                * details.
+                * 
+                */
+
+                public String verifyWhatHappenedPrecedingCity(String whatHappened) {
+                    String result = validateWithinLocatorText(LO_TXT_GLOBAL_WHAT_HAPPENED_PRECEDING_CITY,whatHappened ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                    result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                    return result;
+                }
+
+                /*
+                * Validates if "Incident Date" following "Country"is correct.
+                * @return A string including [PASS] or [FAIL] along with specific result
+                * details.
+                * 
+                */
+
+                public String verifyIncidentDateFollowingCountry(String incidentDate) {
+                    String result = validateWithinLocatorText(LO_TXT_GLOBAL_INCIDENT_DATE_FOLLOWING_COUNTRY,incidentDate ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                    result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                    return result;
+                }
+
+                /*
+                * Validates if "Reason For Loss" is correct.
+                * @return A string including [PASS] or [FAIL] along with specific result
+                * details.
+                * 
+                */
+
+                public String verifyReasonForLossFollowingGlobalExcelClaimNumber(String reasonForLoss) {
+                    String result = validateWithinLocatorText(LO_TXT_GLOBAL_REASON_FOR_LOSS_WITH_SPACE,reasonForLoss ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                    result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                    return result;
+                }
+
+                /*
+                * Validates if "Global Excel Claim Number" is correct.
+                * @return A string including [PASS] or [FAIL] along with specific result
+                * details.
+                * 
+                */
+
+                public String verifyGlobalExcelClaimNumberPrecedingReasonForLoss2(String globalExcelClaimNumber) {
+                    String result = validateWithinLocatorText(LO_TXT_GLOBAL_GLOBAL_EXCEL_CLAIM_NUMBER_PRECEDING_REASON_FOR_LOSS_WITH_SPACE,globalExcelClaimNumber ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                    result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                    return result;
+                }
+
+                /*
+                * Validates if "Rental Agency Name" is correct.
+                * @return A string including [PASS] or [FAIL] along with specific result
+                * details.
+
+                */
+
+                public String verifyRentalAgencyName(String rentalAgencyName) {
+                    String result = validateWithinLocatorText(LO_TXT_GLOBAL_RENTAL_AGENCY_NAME,rentalAgencyName ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                    result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                    return result;
+                }
+
+                /*
+                * Validates if "Was the full cost of the rental charged to your credit card?" is correct.
+                * @return A string including [PASS] or [FAIL] along with specific result
+                * details.
+                * 
+                */
+
+                public String verifyWasTheFullCostOfTheRentalChargedToYourCreditCard(String wasTheFullCostOfTheRentalChargedToYourCreditCard) {
+                    String result = validateWithinLocatorText(LO_TXT_GLOBAL_WAS_THE_FULL_COST_OF_THE_RENTAL_CHARGED_TO_YOUR_CREDIT_CARD,wasTheFullCostOfTheRentalChargedToYourCreditCard ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                    result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                    return result;
+                }
+
+                /*
+                * Validates if "Did you have another rental agreement within a 48h period from the start or the end of this current rental?" is correct.
+                * @return A string including [PASS] or [FAIL] along with specific result
+                * details.
+                * 
+                */
+
+                public String verifyRentalAgreementWithinA48h(String rentalAgreementWithinA48h) {
+                    String result = validateWithinLocatorText(LO_TXT_GLOBAL_DID_YOU_HAVE_ANOTHER_RENTAL_AGREEMENT_WITHIN_A_48H_PERIOD_FROM_THE_START_OR_THE_END_OF_THIS_CURRENT_RENTAL,rentalAgreementWithinA48h ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                    result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                    return result;
+                }
+
+                /*
+                * Validates if "When Did the Incident Occur" is correct.
+                * @return A string including [PASS] or [FAIL] along with specific result
+                * details.
+                * 
+                */
+
+                public String verifyWhenDidTheIncidentOccurFollowingWasThePolicyHolderTheDriver(String whenDidTheIncidentOccur) {
+                    String result = validateWithinLocatorText(LO_TXT_GLOBAL_WHEN_DID_THE_INCIDENT_OCCUR_FOLLOWING_WAS_THE_POLICY_HOLDER_THE_DRIVER,whenDidTheIncidentOccur ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                    result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                    return result;
+                }
+
+                /*
+                * Validates if "Was the policy holder the driver?" is correct.
+                * @return A string including [PASS] or [FAIL] along with specific result
+                * details.
+                * 
+                */
+
+                public String verifyWasThePolicyHolderTheDriver(String wasThePolicyHolderTheDriver) {
+                    String result = validateWithinLocatorText(LO_TXT_GLOBAL_WAS_THE_POLICY_HOLDER_THE_DRIVER_AT_THE_TIME_OF_INCIDENT,wasThePolicyHolderTheDriver ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                    result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                    return result;
+                }
+
+                /*
+                * Validates if "Did the incident involve another vehicle" is correct.
+                * @return A string including [PASS] or [FAIL] along with specific result
+                * details.
+                * 
+                */
+
+                public String verifyDidTheIncidentInvolveAnotherVehicle(String didTheIncidentInvolveAnotherVehicle) {
+                    String result = validateWithinLocatorText(LO_TXT_GLOBAL_DID_THE_INCIDENT_INVOLVE_ANOTHER_VEHICLE,didTheIncidentInvolveAnotherVehicle ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                    result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                    return result;
+                }
+
+                /*
+                * Validates if "What Happened" preceding "Did the incident involve another vehicle" is correct.
+                * @return A string including [PASS] or [FAIL] along with specific result
+                * details.
+                * 
+                */
+
+                public String verifyWhatHappenedPrecedingDidTheIncidentInvolveAnotherVehicle(String whatHappened) {
+                    String result = validateWithinLocatorText(LO_TXT_GLOBAL_WHAT_HAPPENED_PRECEDING_DID_THE_INCIDENT_INVOLVE_ANOTHER_VEHICLE,whatHappened ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                    result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                    return result;
+                }
+
+                /*
+                * Validates if "Employer Name" following "The Insured" is correct.
+                * @return A string including [PASS] or [FAIL] along with specific result
+                * details.
+                * 
+                */
+
+                public String verifyEmployerNameFollowingTheInsured(String employerName) {
+                    String result = validateWithinLocatorText(LO_TXT_GLOBAL_EMPLOYER_NAME_FOLLOWING_THE_INSURED,employerName ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                    result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                    return result;
+                }
+
+                 /*
+                * Validates if "Refund Obtained" following "Total Amount of Expenses Claimed without dots" is correct.
+                * @return A string including [PASS] or [FAIL] along with specific result
+                * details.
+                * 
+                */
+
+                public String verifyRefundObtainedFollowingTotalAmountOfExpensesClaimedWithoutDots(String refundObtained) {
+                    String result = validateWithinLocatorText(LO_TXT_GLOBAL_REFUND_OBTAINED_FOLLOWING_TOTAL_AMOUNT_OF_EXPENSES_CLAIMED_WITHOUT_DOTS,refundObtained ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                    result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                    return result;
+                }
+
+                /*
+                * Validates if "Total Amount of Expenses Claimed without dots" is correct.
+                * @return A string including [PASS] or [FAIL] along with specific result
+                * details.
+                * 
+                */
+
+                public String verifyTotalAmountOfExpensesClaimedWithoutDotsPrecedingRefundObtained(String totalAmountOfExpensesClaimedWithoutDots) {
+                    String result = validateWithinLocatorText(LO_TXT_GLOBAL_TOTAL_AMOUNT_OF_EXPENSES_CLAIMED_WITHOUT_DOTS,totalAmountOfExpensesClaimedWithoutDots ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                    result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                    return result;
+                }
+
+                /*
+                * Validates if "Plan Number" is correct.
+                * @return A string including [PASS] or [FAIL] along with specific result
+                * details.
+                * 
+                */
+
+                public String verifyPlanNumber(String planNumber) {
+                    String result = validateWithinLocatorText(LO_TXT_GLOBAL_PLAN_NUMBER,planNumber ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                    result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                    return result;
+                }
+
+                /*
+                * Validates if "The Insured" "Other Insured Persons" is correct.
+                * @return A string including [PASS] or [FAIL] along with specific result
+                * details.
+                * 
+                */
+
+                public String verifyTheInsuredFollowingOtherInsuredPersons(String theInsured) {
+                    String result = validateWithinLocatorText(LO_TXT_GLOBAL_THE_INSURED_FOLLOWING_OTHER_INSURED_PERSONS,theInsured ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                    result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                    return result;
+                }
+
+                /*
+                * Validates if "Description of Damage" is correct.
+                * @return A string including [PASS] or [FAIL] along with specific result
+                * details.
+                * 
+                */
+
+                public String verifyDescriptionOfDamage(String descriptionOfDamage) {
+                    String result = validateWithinLocatorText(LO_TXT_GLOBAL_DESCRIPTION_OF_DAMAGE,descriptionOfDamage ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                    result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                    return result;
+                }
+
+                /*
+                * Validates if "Main Reason for Interruption" is correct.
+                * @return A string including [PASS] or [FAIL] along with specific result
+                * details.
+                * 
+                */
+
+                public String verifyMainReasonForInterruption(String mainReasonForInterruption) {
+                    String result = validateWithinLocatorText(LO_TXT_GLOBAL_MAIN_REASON_FOR_INTERRUPTION,mainReasonForInterruption ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                    result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                    return result;
+                }
+
+                /*
+                * Validates if "Deceased Person Insurance" is correct.
+                * @return A string including [PASS] or [FAIL] along with specific result
+                * details.
+                * 
+                */
+
+                public String verifyDeceasedPersonInsurance(String deceasedPersonInsurance) {
+                    String result = validateWithinLocatorText(LO_TXT_GLOBAL_DECEASED_PERSON_INSURANCE,deceasedPersonInsurance ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                    result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                    return result;
+                }
+
+                /*
+                * Validates if "Global Excel Claim Number" Preceding "Deceased Person Insurance" is correct.
+                * @return A string including [PASS] or [FAIL] along with specific result
+                * details.
+                * 
+                */
+
+                public String verifyGlobalExcelClaimNumberPrecedingDeceasedPersonInsurance(String globalExcelClaimNumber) {
+                    String result = validateWithinLocatorText(LO_TXT_GLOBAL_GLOBAL_EXCEL_CLAIM_NUMBER_PRECEDING_DECEASED_PERSON_INSURANCE,globalExcelClaimNumber ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                    result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                    return result;
+                }
+
+                /*
+                * Validates if "What were your original trip dates" is correct.
+                * @return A string including [PASS] or [FAIL] along with specific result
+                * details.
+                * 
+                */
+
+                public String verifyWhatWereYourOriginalTripDates(String whatWereYourOriginalTripDates) {
+                    String result = validateWithinLocatorText(LO_TXT_GLOBAL_WHAT_WERE_YOUR_ORIGINAL_TRIP_DATES,whatWereYourOriginalTripDates ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                    result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                    return result;
+                }
+
+                /*
+                * Validates if "Incident Date" following "Trip Purchase Date" is correct.
+                * @return A string including [PASS] or [FAIL] along with specific result
+                * details.
+                * 
+                */
+
+                public String verifyIncidentDateFollowingWhatHappened(String incidentDate) {
+                    String result = validateWithinLocatorText(LO_TXT_GLOBAL_INCIDENT_DATE_FOLLOWING_WHAT_HAPPENED,incidentDate ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                    result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                    return result;
+                }
+
+                /*
+                * Validates if "What Happened" preceding "What were your original trip dates" is correct.
+                * @return A string including [PASS] or [FAIL] along with specific result
+                * details.
+                * 
+                */
+
+                public String verifyWhatHappenedPrecedingWhatWereYourOriginalTripDates(String whatHappened) {
+                    String result = validateWithinLocatorText(LO_TXT_GLOBAL_WHAT_HAPPENED_PRECEDING_WHAT_WERE_YOUR_ORIGINAL_TRIP_DATES,whatHappened ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                    result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                    return result;
+                }
+
+                /*
+                * Validates if "Contract Number" is correct.
+                * @return A string including [PASS] or [FAIL] along with specific result
+                * details.
+                * 
+                */
+
+                public String verifyContractNumber(String contractNumber) {
+                    String result = validateWithinLocatorText(LO_TXT_GLOBAL_CONTRACT_NUMBER,contractNumber ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                    result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                    return result;
+                }
+
+                /*
+                * Validates if "Member Certificate Number" is correct.
+                * @return A string including [PASS] or [FAIL] along with specific result
+                * details.
+                * 
+                */
+
+                public String verifyMemberCertificateNumber(String memberCertificateNumber) {
+                    String result = validateWithinLocatorText(LO_TXT_GLOBAL_MEMBER_CERTIFICATE_NUMBER,memberCertificateNumber ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                    result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                    return result;
+                }
+
+                /*
+                * Validates if "Insurance Type" following "Employer/Group Name" is correct.
+                * @return A string including [PASS] or [FAIL] along with specific result
+                * details.
+                * 
+                */
+
+                public String verifyInsuranceTypeFollowingEmployerGroupName(String insuranceType) {
+                    String result = validateWithinLocatorText(LO_TXT_GLOBAL_INSURANCE_TYPE_FOLLOWING_EMPLOYER_GROUP_NAME,insuranceType ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                    result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                    return result;
+                }
+
+                /*
+        * Validates if "Group name" entered is correct.
+
+        * @return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+
+            public String verifyGroupNamePlanNumber(String groupNamePlanNumber) {
+                String result = validateWithinLocatorText(LO_TXT_GLOBAL_GROUP_NAME_PLAN_NUMBER,groupNamePlanNumber ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                return result;
+            }
+
+            /*
+        * Validates if "Employer Group Name" entered is correct.
+        *@return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+
+            public String verifyEmployerGroupName(String employerGroupName) {
+                String result = validateWithinLocatorText(LO_TXT_GLOBAL_EMPLOYER_GROUP_NAME,employerGroupName ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                return result;
+            }
+
+            /*
+        * Validates if "Are you currently Travelling" chose option is correct.
+        *@return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+
+            public String verifyAreYouCurrentlyTravelling(String areYouCurrentlyTravelling) {
+                String result = validateWithinLocatorText(LO_TXT_GLOBAL_ARE_YOU_CURRENTLY_TRAVELLING,areYouCurrentlyTravelling ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                return result;
+            }
+
+            /*
+        * Validates if "Date of Injury" entered is correct.
+        *@return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+
+            public String verifyDateOfInjury(String dateOfInjury) {
+                String result = validateWithinLocatorText(LO_TXT_GLOBAL_DATE_OF_INJURY,dateOfInjury ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                return result;
+            }
+
+            /*
+        * Validates if "Reason For Consult" following Date of Injury entered is correct.
+        *@return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+
+            public String verifyReasonForConsultFollowingDateOfInjury(String reasonForConsult) {
+                String result = validateWithinLocatorText(LO_TXT_GLOBAL_REASON_FOR_CONSULT_FOLLOWING_DATE_OF_INJURY,reasonForConsult ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                return result;
+            }
+
+            /*
+        * Validates if "Incident Location" following What Happened is correct.
+        *@return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+
+            public String verifyIncidentLocationFollowingWhatHappened(String incidentLocation) {
+                String result = validateWithinLocatorText(LO_TXT_GLOBAL_INCIDENT_LOCATION_FOLLOWING_WHAT_HAPPENED,incidentLocation ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                return result;
+            }
+
+            /*
+        * Validates if "What Happened" preceding Incident Location is correct.
+        *@return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+
+            public String verifyWhatHappenedPrecedingIncidentLocation(String whatHappened) {
+                String result = validateWithinLocatorText(LO_TXT_GLOBAL_WHAT_HAPPENED_PRECEDING_INCIDENT_LOCATION,whatHappened ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                return result;
+            }
+
+            /*
+        * Validates if "Employer Name" following "Plan Number" is correct.
+        *@return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+
+            public String verifyEmployerNameFollowingPlanNumber(String employerName) {
+                String result = validateWithinLocatorText(LO_TXT_GLOBAL_EMPLOYER_NAME_FOLLOWING_PLAN_NUMBER,employerName ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                return result;
+            }
+
+            /*
+        * Validates if "The Insured" Following "Other Insurance" entered is correct.
+        *@return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+
+            public String verifyTheInsuredFollowingOtherInsurance(String theInsured) {
+                String result = validateWithinLocatorText(LO_TXT_GLOBAL_THE_INSURED_FOLLOWING_OTHER_INSURANCE,theInsured ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                return result;
+            }
+
+            /*
+        * Validates if "Manufacturer Name" following "Where did the incident occur" entered is correct.
+        *@return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+
+            public String verifyManufacturerNameFollowingWhereDidTheIncidentOccur(String manufacturerName) {
+                String result = validateWithinLocatorText(LO_TXT_GLOBAL_MANUFACTURER_NAME_FOLLOWING_WHERE_DID_THE_INCIDENT_OCCUR,manufacturerName ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                return result;
+            }
+
+            /*
+        * Validates if "Where did the incident occur" entered is correct.
+        *@return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+
+            public String verifyWhereDidTheIncidentOccur(String whereDidTheIncidentOccur) {
+                String result = validateWithinLocatorText(LO_TXT_GLOBAL_WHERE_DID_THE_INCIDENT_OCCUR,whereDidTheIncidentOccur ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                return result;
+            }
+
+            /*
+        * Validates if "Transit Number" entered is correct.
+        *@return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+
+            public String verifyTransitNumber(String transitNumber) {
+                String result = validateWithinLocatorText(LO_TXT_GLOBAL_TRANSIT_NUMBER,transitNumber ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                return result;
+            }
+
+            /*
+        * Validates if "Institution Number" entered is correct.
+        *@return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+
+            public String verifyInstitutionNumber(String institutionNumber) {
+                String result = validateWithinLocatorText(LO_TXT_GLOBAL_INSTITUTION_NUMBER,institutionNumber ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                return result;
+            }
+
+            /*
+        * Validates if "Account Number" entered is correct.
+        *@return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+
+            public String verifyAccountNumber(String accountNumber) {
+                String result = validateWithinLocatorText(LO_TXT_GLOBAL_ACCOUNT_NUMBER,accountNumber ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                return result;
+            }
+
+            /*
+        * Validates if "What Happened" preceding "Incident Date" entered is correct.
+        *@return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+
+            public String verifyWhatHappenedPrecedingIncidentDate(String whatHappened) {
+                String result = validateWithinLocatorText(LO_TXT_GLOBAL_WHAT_HAPPENED_PRECEDING_INCIDENT_DATE,whatHappened ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                return result;
+            }
+
+            /*
+        * Validates if "Preferred Method Of Payment?Reimbursement" following Transit Number entered is correct.
+        *@return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+
+            public String verifyPreferredMethodOfPaymentReimbursementFollowingTransitNumber(String preferredMethodOfPaymentReimbursement) {
+                String result = validateWithinLocatorText(LO_TXT_GLOBAL_PREFERRED_METHOD_OF_PAYMENT_REIMBURSEMENT_FOLLOWING_TRANSIT_NUMBER,preferredMethodOfPaymentReimbursement ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                return result;
+            }
+
+            /*
+        * Validates if "Travelling From" following "When was your scheduled date and departure time?" entered is correct.
+        *@return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+
+            public String verifyTravellingFromFollowingWhenWasYourScheduledDateAndDepartureTime(String travellingFrom) {
+                String result = validateWithinLocatorText(LO_TXT_GLOBAL_TRAVELLING_FROM_FOLLOWING_WHEN_WAS_YOUR_SCHEDULED_DATE_AND_DEPARTURE_TIME,travellingFrom ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                return result;
+            }
+
+            /*
+        * Validates if "Member ID" entered is correct.
+        *@return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+
+            public String verifyMemberID(String memberID) {
+                String result = validateWithinLocatorText(LO_TXT_GLOBAL_MEMBER_ID,memberID ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                return result;
+            }
+
+            /*
+        * Validates if "Contract/Group Number" entered is correct.
+        *@return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+
+            public String verifyContractGroupNumber(String contractGroupNumber) {
+                String result = validateWithinLocatorText(LO_TXT_GLOBAL_CONTRACT_GROUP_NUMBER,contractGroupNumber ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                return result;
+            }
+
+            /*
+        * Validates if "Employer Name" following "contract/Group Number" entered is correct.
+        *@return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+
+            public String verifyEmployerNameFollowingContractGroupNumber(String employerName) {
+                String result = validateWithinLocatorText(LO_TXT_GLOBAL_EMPLOYER_NAME_FOLLOWING_CONTRACT_GROUP_NUMBER,employerName ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                return result;
+            }
+
+            /*
+        * Validates if "Preferred Method of Payment/Reimbursement" following "Is the email address the same as the Claimant's email address?|" entered is correct.
+        *@return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+
+            public String verifyPreferredMethodOfPaymentReimbursementFollowingIsTheEmailAddressTheSameAsTheClaimantsEmailAddress(String preferredMethodOfPaymentReimbursement) {
+                String result = validateWithinLocatorText(LO_TXT_GLOBAL_PREFERRED_METHOD_OF_PAYMENT_REIMBURSEMENT_FOLLOWING_IS_THE_EMAIL_ADDRESS_THE_SAME_AS_THE_CLAIMANTS_EMAIL_ADDRESS,preferredMethodOfPaymentReimbursement ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                return result;
+            }
+
+            /*
+        * Validates if "Is the email address the same as the Claimant's email address?" entered is correct.
+        *@return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+
+            public String verifyIsTheEmailAddressTheSameAsTheClaimantsEmailAddressWithSymbol(String isTheEmailAddressTheSameAsTheClaimantsEmailAddress) {
+                String result = validateWithinLocatorText(LO_TXT_GLOBAL_IS_THE_EMAIL_ADDRESS_THE_SAME_AS_THE_CLAIMANTS_EMAIL_ADDRESS_SYMBOL,isTheEmailAddressTheSameAsTheClaimantsEmailAddress ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                return result;
+            }
+
+            /*
+        * Validates if "Expense Item 1" following "Type of Expense" entered is correct.
+        *@return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+
+            public String verifyExpenseItem1FollowingTypeOfExpense(String expenseItem1) {
+                String result = validateWithinLocatorText(LO_TXT_GLOBAL_EXPENSE_ITEM_1_FOLLOWING_TYPE_OF_EXPENSE,expenseItem1 ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                return result;
+            }
+
+            /*
+        * Validates if "When Did the Incident Occur" following "Where did the incident occur? "entered is correct.
+        *@return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+
+            public String verifyWhenDidTheIncidentOccurFollowingWhereDidTheIncidentOccur(String whenDidTheIncidentOccur) {
+                String result = validateWithinLocatorText(LO_TXT_GLOBAL_WHEN_DID_THE_INCIDENT_OCCUR_FOLLOWING_WHERE_DID_THE_INCIDENT_OCCUR,whenDidTheIncidentOccur ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                return result;
+            }
+
+            /*
+        * Validates if "Where did the incident occur?" entered is correct.
+        *@return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+
+            public String verifyWhereDidTheIncidentOccurFollowingWasThePolicyHolderTheDriverAtTheTimeOfIncident(String whereDidTheIncidentOccur) {
+                String result = validateWithinLocatorText(LO_TXT_GLOBAL_WHERE_DID_THE_INCIDENT_OCCUR_FOLLOWING_WAS_THE_POLICYHOLDER_THE_DRIVER,whereDidTheIncidentOccur ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                return result;
+            }
+
+            /*
+        * Validates if "Preferred Method of Payment/Reimbursement" following "Preferred Method of Payment/Reimbursement'] and following-sibling::div[div//strong[text()="Is the email address the same as the Claimant's email address?" entered is correct.
+        *@return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+
+            public String verifyPreferredMethodOfPaymentReimbursementFollowingIsTheEmailAddress(String preferredMethodOfPaymentReimbursement) {
+                String result = validateWithinLocatorText(LO_TXT_GLOBAL_PREFERRED_METHOD_OF_PAYMENT_REIMBURSEMENT_FOLLOWING_IS_THE_EMAIL_ADDRESS,preferredMethodOfPaymentReimbursement ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                return result;
+            }
+
+            /*
+        * Validates if "Postal Address" entered is correct.
+        *@return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+
+            public String verifyPostalAddress(String postalAddress) {
+                String result = validateWithinLocatorText(LO_TXT_GLOBAL_POSTAL_ADDRESS,postalAddress ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                return result;
+            }
+
+            /*
+        * Validates if "Incident Date" following "Hotel/Motel Name'] and following-sibling::div[div//strong[text()="Is the email address the same as the Claimant's email address?" entered is correct.
+        *@return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+
+            public String verifyIncidentDateFollowingHotelMotelName(String incidentDate) {
+                String result = validateWithinLocatorText(LO_TXT_GLOBAL_INCIDENT_DATE_FOLLOWING_NOM_HOTEL_MOTEL,incidentDate ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                return result;
+            }
+
+            /*
+        * Validates if "Relation of Insured Person to policy holder" entered is correct.
+        *@return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+
+            public String verifyRelationOfInsuredPersonToPolicyHolder(String relationOfInsuredPersonToPolicyHolder) {
+                String result = validateWithinLocatorText(LO_TXT_GLOBAL_RELATION_OF_INSURED_PERSON_TO_POLICY_HOLDER,relationOfInsuredPersonToPolicyHolder ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                return result;
+            }
+
+            /*
+        * Validates if "Policy holder Home Address" entered is correct.
+        *@return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+
+            public String verifyPolicyHolderHomeAddress(String policyHolderHomeAddress) {
+                String result = validateWithinLocatorText(LO_TXT_GLOBAL_POLICY_HOLDER_HOME_ADDRESS,policyHolderHomeAddress ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                return result;
+            }
+
+            /**
+         * Validates If "Name" entered is correct.
+         * @return A string including [PASS] or [FAIL] along with specific result
+         * details.
+         */
+
+        public String verifyFirstName(String name) {
+            String result = validateWithinLocatorText(LO_TXT_GLOBAL_FIRST_NAME,name ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+            result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+            return result;
+        }
+
+        /**
+         * Validates If "Last Name" entered is correct.
+         * @return A string including [PASS] or [FAIL] along with specific result
+         * details.
+         */
+
+        public String verifyLastName(String lastName) {
+            String result = validateWithinLocatorText(LO_TXT_GLOBAL_LAST_NAME,lastName ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+            result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+            return result;
+        }
+
+        /**
+         * Validates If "Date of Birth" entered is correct.
+         * @return A string including [PASS] or [FAIL] along with specific result
+         * details.
+         */
+
+        public String verifyDateOfBirth(String dateOfBirth) {
+            String result = validateWithinLocatorText(LO_TXT_GLOBAL_DATE_OF_BIRTH,dateOfBirth ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+            result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+            return result;
+        }
+
+        /**
+         * Validates If "Trip Insurance Type" entered is correct.
+         * @return A string including [PASS] or [FAIL] along with specific result
+         * details.
+         */
+
+        public String verifyTripInsuranceType(String tripInsuranceType) {
+            String result = validateWithinLocatorText(LO_TXT_GLOBAL_TRIP_INSURANCE_TYPE,tripInsuranceType ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+            result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+            return result;
+        }
+
+        /**
+         * Validates If "Card Issuer Name" entered is correct.
+         * @return A string including [PASS] or [FAIL] along with specific result
+         * details.
+         */
+
+        public String verifyCardIssuerName(String cardIssuerName) {
+            String result = validateWithinLocatorText(LO_TXT_GLOBAL_CARD_ISSUER_NAME,cardIssuerName ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+            result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+            return result;
+        }
+
+        /**
+         * Validates If "Last 4 Digits" "preceding first 6 digits" entered is correct.
+         * @return A string including [PASS] or [FAIL] along with specific result
+         * details.
+         */
+
+        public String verifyLast4DigitsPrecedingFirst6Digits(String last4Digits) {
+            String result = validateWithinLocatorText(LO_TXT_GLOBAL_LAST_4_DIGITS_PRECEDING_FIRST_6_DIGITS,last4Digits ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+            result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+            return result;
+        }
+
+        /**
+         * Validates If "relation of other insured person to policy holder" entered is correct.
+         * @return A string including [PASS] or [FAIL] along with specific result
+         * details.
+         */
+
+        public String verifyRelationOfOtherInsuredPersonToPolicyHolder(String relationOfOtherInsuredPersonToPolicyHolder) {
+            String result = validateWithinLocatorText(LO_TXT_GLOBAL_RELATION_OF_OTHER_INSURED_PERSON_TO_POLICY_HOLDER,relationOfOtherInsuredPersonToPolicyHolder ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+            result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+            return result;
+        }
+
+        /**
+         * Validates If "Principal reason of interruption" entered is correct.
+         * @return A string including [PASS] or [FAIL] along with specific result
+         * details.
+         */
+
+        public String verifyPrincipalReasonOfInterruption(String principalReasonOfInterruption) {
+            String result = validateWithinLocatorText(LO_TXT_GLOBAL_PRINCIPAL_REASON_OF_INTERRUPTION,principalReasonOfInterruption ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+            result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+            return result;
+        }
+
+        /**
+         * Validates If "Incident date" following trip purchase date entered is correct.
+         * @return A string including [PASS] or [FAIL] along with specific result
+         * details.
+         */
+
+        public String verifyIncidentDateFollowingTripPurchaseDate(String incidentDate) {
+            String result = validateWithinLocatorText(LO_TXT_GLOBAL_INCIDENT_DATE_FOLLOWING_TRIP_PURCHASE_DATE,incidentDate ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+            result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+            return result;
+        }
+
+        /**
+         * Validates If "Other Insured Persons" following Other Insurance Type entered is correct.
+         * @return A string including [PASS] or [FAIL] along with specific result
+         * details.
+         */
+
+        public String verifyOtherInsuredPersonsFollowingOtherInsuranceType(String otherInsuredPersons) {
+            String result = validateWithinLocatorText(LO_TXT_GLOBAL_OTHER_INSURED_PERSONS_FOLLOWING_OTHER_INSURANCE_TYPE,otherInsuredPersons ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+            result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+            return result;
+        }
+
+        /**
+         * Validates If "Other Insurance Type" entered is correct.
+         * @return A string including [PASS] or [FAIL] along with specific result
+         * details.
+         */
+
+        public String verifyOtherInsuranceTypePrecedingOtherInsuredPersons(String otherInsuranceType) {
+            String result = validateWithinLocatorText(LO_TXT_GLOBAL_OTHER_INSURANCE_TYPE_PRECEDING_OTHER_INSURED_PERSONS,otherInsuranceType ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+            result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+            return result;
+        }
+
+        /**
+         * Validates If "Principal reason of cancellation"  entered is correct.
+         * @return A string including [PASS] or [FAIL] along with specific result
+         * details.
+         */
+
+        public String verifyPrincipalReasonOfCancellation(String principalReasonOfCancellation) {
+            String result = validateWithinLocatorText(LO_TXT_GLOBAL_PRINCIPAL_REASON_OF_CANCELLATION,principalReasonOfCancellation ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+            result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+            return result;
+        }
+
+        /**
+         * Validates If "Employer Name" preceding "Insurance Type" entered is correct.
+         * @return A string including [PASS] or [FAIL] along with specific result
+         * details.
+         */
+
+        public String verifyEmployerNamePrecedingInsuranceType(String employerName) {
+            String result = validateWithinLocatorText(LO_TXT_GLOBAL_EMPLOYER_NAME_PRECEDING_INSURANCE_TYPE,employerName ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+            result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+            return result;
+        }
+
+        /**
+         * Validates If "Other Insurance" entered is correct.
+         * @return A string including [PASS] or [FAIL] along with specific result
+         * details.
+         */
+
+        public String verifyOtherInsurance(String otherInsurance) {
+            String result = validateWithinLocatorText(LO_TXT_GLOBAL_OTHER_INSURANCE,otherInsurance ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+            result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+            return result;
+        }
+
+        /**
+         * Validates If "Contract or Association number" entered is correct.
+         * @return A string including [PASS] or [FAIL] along with specific result
+         * details.
+         */
+
+        public String verifyContractOrAssociationNumber(String contractOrAssociationNumber) {
+            String result = validateWithinLocatorText(LO_TXT_GLOBAL_CONTRACT_ASSOCIATION_NUMBER,contractOrAssociationNumber ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+            result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+            return result;
+        }
+
+        /**
+         * Validates If "Member Number" entered is correct.
+         * @return A string including [PASS] or [FAIL] along with specific result
+         * details.
+         */
+
+        public String verifyMemberNumber(String memberNumber) {
+            String result = validateWithinLocatorText(LO_TXT_GLOBAL_MEMBER_NUMBER,memberNumber ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+            result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+            return result;
+        }
+
+        /**
+         * Validates If "Incident happened at travel destination" entered is correct.
+         * @return A string including [PASS] or [FAIL] along with specific result
+         * details.
+         */
+
+        public String verifyIncidentHappenedAtTravelDestination(String incidentHappenedAtTravelDestination) {
+            String result = validateWithinLocatorText(LO_TXT_GLOBAL_INCIDENT_HAPPENED_AT_TRAVEL_DESTINATION,incidentHappenedAtTravelDestination ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+            result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+            return result;
+        }
+
+        /**
+         * Validates If "the email address is the same as the claimant" entered is correct.
+         * @return A string including [PASS] or [FAIL] along with specific result
+         * details.
+         */
+
+        public String verifyTheEmailAddressIsTheSameAsTheClaimant(String theEmailAddressIsTheSameAsTheClaimant) {
+            String result = validateWithinLocatorText(LO_TXT_GLOBAL_IS_THE_EMAIL_ADDRESS_THE_SAME,theEmailAddressIsTheSameAsTheClaimant ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+            result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+            return result;
+        }
+
+        /**
+         * Validates If "Beneficiary name" entered is correct.
+         * @return A string including [PASS] or [FAIL] along with specific result
+         * details.
+         */
+
+        public String verifyBeneficiaryName(String beneficiaryName) {
+            String result = validateWithinLocatorText(LO_TXT_GLOBAL_BENEFICIARY_NAME,beneficiaryName ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+            result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+            return result;
+        }
+
+        /**
+         * Validates If "Other Vehicle's rental dates" entered are correct.
+         * @return A string including [PASS] or [FAIL] along with specific result
+         * details.
+         */
+        public String verifyOtherVehiclesRentalDates(String otherVehiclesRentalDates) {
+            String result = validateWithinLocatorText(LO_TXT_GLOBAL_OTHER_VEHICLE_RENTAL_DATES,otherVehiclesRentalDates ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+            result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+            return result;
+        }
+
+        /**
+         * Validates If "Driver's First name" entered is correct.
+         * @return A string including [PASS] or [FAIL] along with specific result
+         * details.
+         */
+
+        public String verifyDriverFirstName(String driversFirstName) {
+            String result = validateWithinLocatorText(LO_TXT_GLOBAL_DRIVER_FIRST_NAME,driversFirstName ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+            result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+            return result;
+        }
+
+        /**
+         * Validates If "Driver's Last name" entered is correct.
+         * @return A string including [PASS] or [FAIL] along with specific result
+         * details.
+         */
+        public String verifyDriverLastName(String driversLastName) {
+            String result = validateWithinLocatorText(LO_TXT_GLOBAL_DRIVER_LAST_NAME,driversLastName ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+            result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+            return result;
+        }
+
+        /**
+         * Validates If "vehicle's owner first name" entered is correct.
+         * @return A string including [PASS] or [FAIL] along with specific result
+         * details.
+         */
+        public String verifyVehicleOwnerFirstName(String vehiclesOwnerFirstName) {
+            String result = validateWithinLocatorText(LO_TXT_GLOBAL_VEHICLE_OWNER_FIRST_NAME,vehiclesOwnerFirstName ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+            result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+            return result;
+        }
+
+        /**
+         * Validates If "vehicle's owner last name" entered is correct.
+         * @return A string including [PASS] or [FAIL] along with specific result
+         * details.
+         */
+        public String verifyVehicleOwnerLastName(String vehiclesOwnerLastName) {
+            String result = validateWithinLocatorText(LO_TXT_GLOBAL_VEHICLE_OWNER_LAST_NAME,vehiclesOwnerLastName ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+            result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+            return result;
+        }
+
+        /**
+         * Validates If "Police Report Number" entered is correct.
+         * @return A string including [PASS] or [FAIL] along with specific result
+         * details.
+         */
+        public String verifyPoliceReportNumber(String policeReportNumber) {
+            String result = validateWithinLocatorText(LO_TXT_GLOBAL_POLICE_REPORT_NUMBER,policeReportNumber ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+            result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+            return result;
+        }
+
+        /**
+         * Validates If "Insurance Company for other insurance type" entered is correct.
+         * @return A string including [PASS] or [FAIL] along with specific result
+         * details.
+         */
+
+        public String verifyInsuranceCompanyForOtherInsuranceType(String insuranceCompanyForOtherInsuranceType) {
+            String result = validateWithinLocatorText(LO_TXT_GLOBAL_GLOBAL_INSURANCE_COMPANY_FOR_OTHER_INSURANCE_TYPE,insuranceCompanyForOtherInsuranceType ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+            result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+            return result;
+        }
+
+        /**
+         * Validates If "firstname" of second insured persons entered is correct.
+         * @return A string including [PASS] or [FAIL] along with specific result
+         * details.
+         */
+        public String verifyFirstNameOfSecondInsuredPerson(String firstNameForSecondInsuredPersons) {
+            String result = validateWithinLocatorText(LO_TXT_GLOBAL_FIRST_NAME_SECOND_INSURED_PERSON,firstNameForSecondInsuredPersons ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+            result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+            return result;
+        }
+
+        /**
+         * Validates If "lastname" of second insured persons entered is correct.
+         * @return A string including [PASS] or [FAIL] along with specific result
+         * details.
+         */
+        public String verifyLastNameOfSecondInsuredPerson(String lastNameForSecondInsuredPersons) {
+            String result = validateWithinLocatorText(LO_TXT_GLOBAL_LAST_NAME_SECOND_INSURED_PERSON,lastNameForSecondInsuredPersons ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+            result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+            return result;
+        }
+
+        /**
+         * Validates If "date of birth" of second insured persons entered is correct.
+         * @return A string including [PASS] or [FAIL] along with specific result
+         * details.
+         */
+        public String verifyDateOfBirthOfSecondInsuredPerson(String dateOfBirthForSecondInsuredPersons) {
+            String result = validateWithinLocatorText(LO_TXT_GLOBAL_DATE_OF_BIRTH_SECOND_INSURED_PERSON,dateOfBirthForSecondInsuredPersons ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+            result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+            return result;
+        }
+
+        /**
+         * Validates If "socond Relation Of Other Insured Person To PolicyHolder" entered is correct.
+         * @return A string including [PASS] or [FAIL] along with specific result
+         * details.
+         */
+        public String verifyRelationOfSecondInsuredPersonToPolicyHolder(String relationOfSecondInsuredPersonToPolicyHolder) {
+            String result = validateWithinLocatorText(LO_TXT_GLOBAL_SECOND_RELATION_OF_OTHER_INSURED_PERSON_TO_POLICY_HOLDER,relationOfSecondInsuredPersonToPolicyHolder ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+            result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+            return result;
+        }
+
+        /**
+         * Validates If "Refund or Credit obtained in CAD" entered is correct.
+         * @return A string including [PASS] or [FAIL] along with specific result
+         * details.
+         */
+        public String verifyRefundOrCreditObtainedInCAD(String refundOrCreditObtainedInCAD) {
+            String result = validateWithinLocatorText(LO_TXT_GLOBAL_REFUND_OR_CREDIT_OBTAINED_IN_CAD,refundOrCreditObtainedInCAD ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+            result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+            return result;
+        }
+
+         /**
+         * Validates if phone number entered is correct.
+         * @return A string including [PASS] or [FAIL] along with specific result
+         * details.
+         */
+        public String verifyPhoneNumber(String phoneNumber) {
+            String result = validateWithinLocatorText(LO_TXT_GLOBAL_PHONE_NUMBER,phoneNumber ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+            result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+            return result;
+        }
+
+          /**
+         * Validates if Address entered is correct.
+         * @return A string including [PASS] or [FAIL] along with specific result
+         * details.
+         */
+        public String verifyAddress(String address) {
+            String result = validateWithinLocatorText(LO_TXT_GLOBAL_ADDRESS,address ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+            result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+            return result;
+        }
+
+         /**
+     * Validates If Trip Dates entered are correct.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result
+     *         details.
+     */
+
+    public String verifyTripDatesFromNoSpace(String tripDates) {
+        String result = validateWithinLocatorText(LO_TXT_GLOBAL_TRIP_DATES_FROM_NO_SPACE,tripDates ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+        result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+        return result;
+    }
+
+    /**
+     * Validates If Trip Dates entered are correct.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result
+     *         details.
+     */
+
+    public String verifyTripDatesFrom(String tripDates) {
+        String result = validateWithinLocatorText(LO_TXT_GLOBAL_TRIP_DATES_FROM,tripDates ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+        result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+        return result;
+    }
+
+      /*
+         * Validates if "Trip Date To" entered is correct.
+         * @return A string including [PASS] or [FAIL] along with specific result
+         * details.
+         */
+        public String verifyTripDateTo(String tripDateTo) {
+            String result = validateWithinLocatorText(LO_TXT_GLOBAL_TRIP_DATES_TO,tripDateTo ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+            result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+            return result;
+        }
+
+          /**
+         * Validates if Required Documents exists.
+         * @return A string including [PASS] or [FAIL] along with specific result
+         * details.
+         */
+        public String verifyRequiredDocuments(String requiredDocuments) {
+            String result = validateWithinLocatorText(LO_TXT_GLOBAL_REQUIRED_DOCUMENTS,requiredDocuments ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+            result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+            return result;
+        }
+
+         public String verifyAboutTheInsuredHeading() {
+        String result = validateLocatorExists(LO_TXT_ABOUT_THE_INSURED_TITLE, FW_ConfigMgr.getDefaultTimeout(),
+                FW_ConfigMgr.getDefaultInterval());
+        result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+        return result;
+    }
+
+           /*
+        * Validates if "Provincial Health Card Number" entered is correct.
+        *
+        * @return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+
+            public String verifyProvincialHealthCardNumberZurich(String provincialHealthCardNumber) {
+                String result = validateWithinLocatorText(LO_TXT_GLOBAL_PROVINCIAL_HEALTH_CARD_NUMBER_ZURICH,provincialHealthCardNumber ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                return result;
+            }
+
+                /*
+        * Validates if "Original Return Date" entered is correct.
+        *
+        * @return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+
+            public String verifyOriginalReturnDateZurich(String originalReturnDate) {
+                String result = validateWithinLocatorText(LO_TXT_GLOBAL_ORIGINAL_RETURN_DATE_ZURICH,originalReturnDate ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                return result;
+            }
+
+               /*
+        * Validates if "Reason for consult" entered is correct.
+        *
+        * @return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+
+            public String verifyReasonForConsultZurich(String reasonForConsult) {
+                String result = validateWithinLocatorText(LO_TXT_GLOBAL_REASON_FOR_CONSULT_ZURICH,reasonForConsult ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                return result;
+            }
+
+             /*
+        * Validates if "First date of treatment" entered is correct.
+        *
+        * @return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+
+            public String verifyFirstDateOfTreatmentZurich(String firstDateOfTreatment) {
+                String result = validateWithinLocatorText(LO_TXT_GLOBAL_FIRST_DATE_OF_TREATMENT_ZURICH,firstDateOfTreatment ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                return result;
+            }
+
+                /*
+        * Validates if "When did first symptoms appear" entered is correct.
+        *
+        * @return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+
+            public String verifyWhenDidFirstSymptomsAppearZurich(String whenDidFirstSymptomsAppear) {
+                String result = validateWithinLocatorText(LO_TXT_GLOBAL_WHEN_DID_FIRST_SYMPTOMS_APPEAR_ZURICH,whenDidFirstSymptomsAppear ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                return result;
+            }
+
+                 /*
+        * Validates if "Transit Number" entered is correct.
+        *@return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+
+            public String verifyTransitNumberZurich(String transitNumber) {
+                String result = validateWithinLocatorText(LO_TXT_GLOBAL_TRANSIT_NUMBER_ZURICH,transitNumber ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                return result;
+            }
+
+             /*
+        * Validates if "Institution Number" entered is correct.
+        *@return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+
+            public String verifyInstitutionNumberZurich(String institutionNumber) {
+                String result = validateWithinLocatorText(LO_TXT_GLOBAL_INSTITUTION_NUMBER_ZURICH,institutionNumber ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                return result;
+            }
+
+             /*
+        * Validates if "Account Number" entered is correct.
+        *@return A string including [PASS] or [FAIL] along with specific result
+        * details.
+        */
+
+            public String verifyAccountNumberZurich(String accountNumber) {
+                String result = validateWithinLocatorText(LO_TXT_GLOBAL_ACCOUNT_NUMBER_ZURICH,accountNumber ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+                result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+                return result;
+            }
+
+        /*
+         * Validates if "Baggage Delay" exists.
+         * @return A string including [PASS] or [FAIL] along with specific result
+         * details.
+         */
+        public String verifyBaggageDelay(String baggageDelay) {
+            String result = validateWithinLocatorText(LO_TXT_GLOBAL_BAGGAGE_DELAY_VERIFY,baggageDelay ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+            result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+            return result;
+        }
+
+        /*
+         * Validates if "Lost or stolen Baggage" exists.
+         * @return A string including [PASS] or [FAIL] along with specific result
+         * details.
+         */
+        public String verifyLostBaggage(String lostBaggage) {
+            String result = validateWithinLocatorText(LO_TXT_GLOBAL_LOST_STOLEN_BAGGAGE,lostBaggage ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+            result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+            return result;
+        }
+
+        /*
+         * Validates if "Purchase Assurance" exists.
+         * @return A string including [PASS] or [FAIL] along with specific result
+         * details.
+         */
+        public String verifyPurchaseAssurance(String purchaseAssurance) {
+            String result = validateWithinLocatorText(LO_TXT_GLOBAL_PURCHASE_ASSURANCE,purchaseAssurance ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+            result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+            return result;
+        }
+
+        /*
+            * Validates if "Loss Reason" exists.
+            * @return A string including [PASS] or [FAIL] along with specific result
+            * details.
+            */
+        public String verifyLossReason(String lossReason) {
+            String result = validateWithinLocatorText(LO_TXT_GLOBAL_LOSS_REASON,lossReason ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+            result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+            return result;
+        }
+
+        /*
+         * Validates if "Original Purchase Date" with Span exists.
+         * @return A string including [PASS] or [FAIL] along with specific result
+         * details.
+         */
+        public String verifyOriginalPurchaseDateWithSpan(String originalPurchaseDate) {
+            String result = validateWithinLocatorText(LO_TXT_GLOBAL_ORIGINAL_PURCHASE_DATE_SPAN,originalPurchaseDate ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+            result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+            return result;
+        }
+
+         /*
+         * Validates if "Trip Date To" entered is correct.
+         * @return A string including [PASS] or [FAIL] along with specific result
+         * details.
+         */
+        public String verifyTripDateToNoSpace(String tripDateTo) {
+            String result = validateWithinLocatorText(LO_TXT_GLOBAL_TRIP_DATES_TO_NO_SPACE,tripDateTo ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+            result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+            return result;
+        }
+
+        /*
+         * Validates if "Initial Trip Dates From" entered is correct.
+         * @return A string including [PASS] or [FAIL] along with specific result
+         * details.
+         */
+        public String verifyInitialTripDatesFrom(String initialTripDatesFrom) {
+            String result = validateWithinLocatorText(LO_TXT_GLOBAL_INITIAL_TRIP_DATES_FROM,initialTripDatesFrom ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+            result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+            return result;
+        }
+
+        /*
+         * Validates if "Initial Trip Dates To" entered is correct.
+         * @return A string including [PASS] or [FAIL] along with specific result
+         * details.
+         */
+        public String verifyInitialTripDatesTo(String initialTripDatesTo) {
+            String result = validateWithinLocatorText(LO_TXT_GLOBAL_INITIAL_TRIP_DATES_TO,initialTripDatesTo ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+            result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+            return result;
+        }   
+
+        /*
+         * Validates if "Total in CAD" entered is correct.
+         * @return A string including [PASS] or [FAIL] along with specific result
+         * details.
+         */
+        public String verifyTotalInCAD(String totalInCAD) {
+            String result = validateWithinLocatorText(LO_TXT_GLOBAL_TOTAL_IN_CAD,totalInCAD ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+            result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+            return result;
+        }
+
+        /*
+         * Validates if "Invoice descrption" entered is correct.
+         * @return A string including [PASS] or [FAIL] along with specific result
+         * details.
+         */
+        public String verifyInvoiceDescription(String invoiceDescription) {
+            String result = validateWithinLocatorText(LO_TXT_INVOICE_DESCRIPTION,invoiceDescription ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+            result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+            return result;
+        }
+
+       public String verifyLine1AndLine2CityProvinceAddresses(String address) {
+        String result = validateWithinLocatorText(LO_TXT_ADDRESS,address ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+        result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+        return result;
+    }
+       public String verifyCountryAndPostalCodeAddress(String address) {
+        String result = validateWithinLocatorText(LO_TXT_ADDRESS,address ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+        result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+        return result;
+    }
+
+    public String verifyOtherInsuredPersonHeading() {
+        String result = validateLocatorExists(LO_TXT_OTHER_INSURED_PERSON_TITLE, FW_ConfigMgr.getDefaultTimeout(),
+                FW_ConfigMgr.getDefaultInterval());
+        result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+        return result;
+    }
+    public String verifyOtherInsuranceTypeHeading() {
+        String result = validateLocatorExists(LO_TXT_OTHER_INSURANCE_TYPE_TITLE, FW_ConfigMgr.getDefaultTimeout(),
+                FW_ConfigMgr.getDefaultInterval());
+        result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+        return result;
+    }
+    public String verifyIDontHaveOtherInsuredPerson() {
+        String result = validateLocatorExists(LO_TXT_DONT_HAVE_OTHER_INSURED_PERSON, FW_ConfigMgr.getDefaultTimeout(),
+                FW_ConfigMgr.getDefaultInterval());
+        result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+        return result;
+    }
+     public String verifyIDontHaveOtherInsuranceType() {
+        String result = validateLocatorExists(LO_TXT_DONT_HAVE_OTHER_INSURANCE_TYPE, FW_ConfigMgr.getDefaultTimeout(),
+                FW_ConfigMgr.getDefaultInterval());
+        result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+        return result;
+    }
+     public String verifyEmailAuthorizationTxt() {
+        String result = validateLocatorExists(LO_TXT_EMAIL_AUTHORIZATION_TXT, FW_ConfigMgr.getDefaultTimeout(),
+                FW_ConfigMgr.getDefaultInterval());
+        result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+        return result;
+    }
+
+    public String verifyPhoneNumberAuthorizationTxt() {
+        String result = validateLocatorExists(LO_TXT_PHONE_NUMBER_AUTHORIZATION_TXT, FW_ConfigMgr.getDefaultTimeout(),
+                FW_ConfigMgr.getDefaultInterval());
+        result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+        return result;
+    }
+     public String verifyContactInformationHeading() {
+        String result = validateLocatorExists(LO_TXT_CONTACT_INFORMATION_TITLE, FW_ConfigMgr.getDefaultTimeout(),
+                FW_ConfigMgr.getDefaultInterval());
+        result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+        return result;
+    }
+    public String verifyAboutTheEventHeading() {
+        String result = validateLocatorExists(LO_TXT_ABOUT_THE_EVENT_TITLE, FW_ConfigMgr.getDefaultTimeout(),
+                FW_ConfigMgr.getDefaultInterval());
+        result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+        return result;
+    }
+    public String verifyTripDatesTo(String tripDatesTo) {
+        String result = validateWithinLocatorText(LO_TXT_TRIP_DATES_TO,tripDatesTo ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+        result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+        return result;
+    }
+    public String verifyIncidentDateNew(String incidentDate) {
+              String result = validateWithinLocatorText(LO_TXT_INCIDENT_DATE_NEW,incidentDate ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+              result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+              return result;
+         }
+
+    public String verifyTypeOfExpenseDone(String typeOfExpenseDone) {
+        String result = validateWithinLocatorText(LO_TXT_GLOBAL_TYPE_OF_EXPENSE_DONE,typeOfExpenseDone ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+        result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+        return result;
+    }
+
+    public String verifyBilledAmountInCAD(String billedAmountInCAD) {
+        String result = validateWithinLocatorText(LO_TXT_GLOBAL_BILLED_AMOUNT_IN_CAD,billedAmountInCAD ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+        result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+        return result;
+    }
+
+    public String verifyDownloadedDocument(String downloadedDocument) {
+        String result = validateWithinLocatorText(LO_TXT_GLOBAL_DOWNLOADED_DOCUMENT,downloadedDocument ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+        result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+        return result;
+    }
+
+    public String verifyBilledAmountInCADEnd(String billedAmountInCADEnd) {
+        String result = validateWithinLocatorText(LO_TXT_GLOBAL_BILLED_AMOUNT_IN_CAD_END,billedAmountInCADEnd ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+        result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+        return result;
+    }
+
+    public String verifyAmountPaidInCADEnd(String amountPaidInCADEnd) {
+        String result = validateWithinLocatorText(LO_TXT_GLOBAL_AMOUNT_PAID_IN_CAD,amountPaidInCADEnd ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+        result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+        return result;
+    }
+
+    public String verifyTotalEstimatedPaidAmountEnd(String totalEstimatedPaidAmountEnd) {
+        String result = validateWithinLocatorText(LO_TXT_GLOBAL_TOTAL_ESTIMATED_PAID_AMOUNT_END,totalEstimatedPaidAmountEnd ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+        result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+        return result;
+    }
+
+    public String verifyStatus(String status) {
+        String result = validateWithinLocatorText(LO_TXT_STATUS,status ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+        result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+        return result;
+    }
+
+    public String verifyClaimNumberCL(String claimNumber) {
+        String result = validateWithinLocatorText(LO_TXT_GLOBAL_GLOBAL_EXCEL_CLAIM_NUMBER_CL,claimNumber ,FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval(),true);
+        result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+        return result;
+    }
+
+     public String validateAboutTheInsured() {
+        String result = validateLocatorExists(LO_TXT_ABOUT_INSURED, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval());
+        result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+        return result;
+    }
+
+    public String validateTripSituation(){
+        String result = validateLocatorExists(LO_TXT_TRIP_SITUATION, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval());
+        result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+        return result;
+    }
+
+      public String validateTripSituationGEM(){
+        String result = validateLocatorExists(LO_TXT_TRIP_SITUATION_GEM, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval());
+        result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+        return result;
+    }
+
+    public String verifyName(String name) {
+        String result = validateWithinLocatorText(LO_TXT_NAME, "", FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval(), true);
+        result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+        return result;
+    }
+
+    public String verifyDOB(String dob) {
+        String result = validateWithinLocatorText(LO_TXT_DOB, dob, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval(), true);
+        result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+        return result;
+    }
+
+    public String verifyPhoneNumberNew(String phoneNumber) {
+        String result = validateWithinLocatorText(LO_TXT_PHONE_NUMBER, "", FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval(), true);
+        result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+        return result;
+    }
+
+    public String verifyEmail(String email) {
+        String result = validateWithinLocatorText(LO_TXT_EMAIL, "", FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval(), true);
+        result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+        return result;
+    }
+
+    public String verifyHomeAddress(String homeAddress) {
+        String result = validateWithinLocatorText(LO_TXT_HOME_ADDRESS, homeAddress, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval(), true);
+        result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+        return result;
+    }
+
+    public String validateOtherInsuredPersons(){
+        String result = validateLocatorExists(LO_LBL_OTHER_INSURED_PERSONS, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval());
+        result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+        return result;
+    
+    }
+
+    public String validateOtherInsurance(){
+        String result = validateLocatorExists(LO_TXT_OTHER_INSURANCE, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval());
+        result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+        return result;
+    }
+
+    public String validateOtherInsuranceType(){
+        String result = validateLocatorExists(LO_TXT_OTHER_INSURANCE_TYPE, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval());
+        result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+        return result;
+    }
+
+    public String validateContactDetails(){
+        String result = validateLocatorExists(LO_TXT_CONTACT_DETAILS, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval());
+        result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+        return result;
+    }
+
+    public String validateAuthorizationText(){
+        String result = validateLocatorExists(LO_TXT_AUTHORIZATION_TEXT, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval());
+        result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+        return result;
+    }
+
+    public String validateAboutIncidentDetails(){
+        String result = validateLocatorExists(LO_TXT_ABOUT_THE_INCIDENT, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval());
+        result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+        return result;
+    }
+
+    public String verifyTravelDestinationNew(String travelDestination) {
+        String result = validateWithinLocatorText(LO_TXT_TRAVEL_DESTINATION, travelDestination, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval(), true);
+        result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+        return result;
+    }
+
+    public String verifyTripDatesFromNew(String tripDatesFrom) {
+        String result = validateWithinLocatorText(LO_TXT_TRIP_DATES_FROM, tripDatesFrom, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval(), true);
+        result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+        return result;
+    }
+
+    public String verifyTripDatesToNew(String tripDatesTo) {
+        String result = validateWithinLocatorText(LO_TXT_TRIP_DATES_TO_NEW, tripDatesTo, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval(), true);
+        result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+        return result;
+    }
+
+    public String verifyPurchaseDateCL(String purchaseDate) {
+        String result = validateWithinLocatorText(LO_TXT_PURCHASE_DATE, purchaseDate, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval(), true);
+        result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+        return result;
+    }
+
+    public String verifyIncidentDateCL(String incidentDate){
+        String result = validateWithinLocatorText(LO_TXT_INCIDENT_DATE, incidentDate, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval(), true);
+        result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+        return result;
+    }
+
+    public String verifyCancellationDateNew(String cancellationDate) {
+        String result = validateWithinLocatorText(LO_TXT_CANCELLATION_DATE, cancellationDate, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval(), true);
+        result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+        return result;
+    }
+
+    public String verifyWhatHappenedNew(String whatHappened) {
+        String result = validateWithinLocatorText(LO_TXT_WHAT_HAPPENED_NEW, whatHappened, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval(), true);
+        result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+        return result;
+    }
+
+    public String verifyExpensesNew() {
+        String result = validateLocatorExists(LO_TXT_EXPENSES, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval());
+        result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+        return result;
+    }
+
+    public String verifyReimbursementDetails() {
+        String result = validateLocatorExists(LO_TXT_REIMBURSEMENT_DETAILS, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval());
+        result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+        return result;
+    }
+
+    public String verifyRequiredDocumentsNew() {
+        String result = validateLocatorExists(LO_TXT_REQUIRED_DOCUMENTS, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval());
+        result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+        return result;
+    }
+
+    public String verifyFlightDelayTitle() {
+        String result = validateLocatorExists(LO_TXT_FLIGHT_DELAY_TITLE, FW_ConfigMgr.getDefaultTimeout(),
+                FW_ConfigMgr.getDefaultInterval());
+        result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+        return result;
+    }
+
+    public String verifyNonMandatoryDocuments() {
+        String result = validateLocatorExists(LO_TXT_NON_MENDATORY_DOCUMENTS, FW_ConfigMgr.getDefaultTimeout(),
+                FW_ConfigMgr.getDefaultInterval());
+        result = FW_StringUtils.metaInsert(result, getClass().getSimpleName()); // Insert PO name into results
+        return result;
+    }
+    }

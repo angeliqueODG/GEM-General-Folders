@@ -1,0 +1,209 @@
+{
+  "metadata": {
+    "filename": "slow-response.json",
+    "filepath": "src/test/java/framework/advisor/templates/performance/slow-response.json",
+    "version": "1.0.0",
+    "created": "2025-10-09",
+    "lastUpdated": "2025-10-09 07:00:00 PM CDT",
+    "author": "Greg Paskal",
+    "company": "MissionWares",
+    "methodology": "mAi™ (MissionWares® + AI)",
+    "description": "Slow HTTP response time finding template with comprehensive guidance for all audiences including framework-specific optimization techniques, database query tuning, async processing patterns, caching strategies, and infrastructure scaling to improve server response times and user experience.",
+    "aiGenerated": true,
+    "humanReviewed": false,
+    "reviewedBy": "Pending",
+    "approvedBy": "Pending",
+    "tags": ["performance", "response-time", "optimization", "database", "async", "scalability", "ttfb"],
+    "relatedFindings": ["DATABASE_SLOW_QUERY", "N_PLUS_ONE_QUERY", "HIGH_SERVER_LOAD", "POOR_CACHING", "NO_HTTP_COMPRESSION", "BLOCKING_IO"],
+    "estimatedRemediationTime": "4-8 hours",
+    "businessImpact": "CRITICAL",
+    "complianceRequirements": ["Google Core Web Vitals", "Web Performance Best Practices", "SLA Requirements"]
+  },
+  "findingId": "PERF-RESP-001",
+  "findingType": "SLOW_RESPONSE_TIME",
+  "category": "PERFORMANCE",
+  "severity": "HIGH",
+  "cveReferences": [
+    "CWE-400"
+  ],
+  "understanding": {
+    "EXECUTIVE": {
+      "summary": "Your application has slow server response times (TTFB > 600ms), directly impacting user experience, conversions, and revenue. Slow responses cause page abandonment, lost sales, and poor search rankings.",
+      "businessRisk": "Critical risk of revenue loss through poor performance. Studies show 1-second delay reduces conversions by 7%, 2 seconds by 20%, 3+ seconds causes 53% abandonment (Google). Slow responses compound with network latency, causing total page loads of 5-10+ seconds. E-commerce loses $1.6M annually per 100ms delay (Amazon data). Customer satisfaction drops 16% per second of delay. Poor Core Web Vitals (TTFB > 800ms) harm SEO rankings, reducing organic traffic 20-40%. Competitors with faster backends gain market share. High bounce rates damage brand perception. Mobile users particularly affected. Server response time often the largest contributor to total page load time.",
+      "complianceImpact": "Google Core Web Vitals require TTFB < 800ms (good), < 1800ms (needs improvement). SLA violations if response time SLAs exist. Web Performance Best Practices mandate optimization. Industry standards: TTFB < 200ms (excellent), < 600ms (acceptable), > 1000ms (poor).",
+      "priority": "CRITICAL"
+    },
+    "PROJECT_MANAGER": {
+      "summary": "Server response times exceed acceptable thresholds (TTFB > 600ms), indicating backend performance issues requiring database optimization, caching implementation, or infrastructure scaling.",
+      "timeline": "Should be addressed immediately if TTFB > 1000ms. Current sprint if 600-1000ms. Medium complexity - may require database tuning, caching, code optimization, or infrastructure changes. Critical priority for customer-facing applications.",
+      "effort": "4-8 hours for initial diagnosis and quick wins (caching, query optimization). 1-2 weeks for comprehensive optimization (database indexing, code refactoring, async processing). Ongoing monitoring and tuning required.",
+      "dependencies": [
+        "Access to application performance monitoring (APM) tools",
+        "Database query analysis tools",
+        "Server resource monitoring",
+        "Development team for code changes",
+        "DBA for database optimization",
+        "Infrastructure team for scaling if needed",
+        "Load testing tools"
+      ],
+      "blocking": [
+        "Customer satisfaction goals",
+        "Performance SLA compliance",
+        "Core Web Vitals optimization",
+        "Revenue/conversion targets",
+        "Product launch readiness",
+        "Scalability roadmap",
+        "User retention initiatives"
+      ]
+    },
+    "DEVELOPER": {
+      "summary": "Server response time (Time To First Byte - TTFB) exceeds acceptable thresholds, indicating backend bottlenecks in database queries, business logic, external API calls, or resource constraints.",
+      "technical": "TTFB measures time from request initiation to first byte of response. Components: Network latency (out of control), Server processing time (optimize this), Database query time (often biggest factor), External API calls, CPU/memory constraints. Common causes: N+1 query problems (ORM lazy loading), Missing database indexes, Unoptimized queries (full table scans), Blocking I/O operations, Synchronous external API calls, Inefficient algorithms (O(n²) vs O(n log n)), Memory leaks causing GC pauses, Thread pool exhaustion, Connection pool exhaustion, Cold start issues (serverless), Lack of caching. Optimization strategies: Database query optimization (indexes, query tuning, connection pooling), Caching (Redis, Memcached for database results, API responses), Async processing (message queues for non-critical tasks), Code profiling (identify hot paths), Algorithm optimization, External API timeout/circuit breakers, Horizontal scaling (load balancing), Vertical scaling (more CPU/RAM), CDN for static content offload. Tools: APM (New Relic, DataDog, Dynatrace), Database query analyzers (EXPLAIN, slow query log), Profilers (Java Flight Recorder, Node.js Clinic, Python cProfile).",
+      "vulnerability": "CWE-400 (Uncontrolled Resource Consumption). Slow responses consume server resources longer, reducing capacity and creating DoS vulnerability. Under load, slow endpoints amplify problems causing cascading failures. Not primary security vulnerability but affects availability and resilience.",
+      "references": [
+        "https://web.dev/ttfb/",
+        "https://developer.mozilla.org/en-US/docs/Glossary/Time_to_first_byte",
+        "https://www.cloudflare.com/learning/performance/what-is-ttfb/",
+        "https://web.dev/vitals/"
+      ]
+    },
+    "SECURITY_ENGINEER": {
+      "summary": "Slow response times create availability vulnerability by consuming excessive server resources, reducing capacity for legitimate traffic, and increasing attack surface for resource exhaustion attacks.",
+      "vulnerability": "CWE-400 (Uncontrolled Resource Consumption). Slow endpoints consume server resources (threads, connections, memory) for extended periods. Under attack or high load, slow responses amplify impact causing resource exhaustion, thread pool depletion, connection timeouts, and eventual service unavailability. Attackers can exploit slow endpoints to amplify DoS attacks. Particularly vulnerable: endpoints with database queries without indexes, endpoints calling slow external APIs synchronously, endpoints with O(n²) algorithms. Slow responses also mask other issues and make monitoring/alerting less effective.",
+      "attackVector": "Attacker identifies slow endpoints through reconnaissance. Sends moderate traffic targeting slow endpoints to exhaust server resources. Each request holds resources much longer than fast endpoints. Thread pools deplete, new requests queue or timeout. Database connection pools exhaust. Application becomes unresponsive to all users. Not high-severity direct exploit but contributes to overall availability posture. Combined with other vulnerabilities creates cascading failures.",
+      "threatLevel": "MEDIUM - Primarily availability concern with security implications. Main risk is degraded availability under load or attack rather than direct exploit. However, critical for system resilience and defense-in-depth. Slow endpoints are force multipliers for DoS attacks. Fix improves both performance and security posture.",
+      "mitigationUrgency": "Immediate if TTFB > 2000ms (critical). Within 1 week if > 1000ms (high). Within 2 weeks if > 600ms (medium). Medium complexity requiring systematic analysis. Higher priority if: public-facing APIs, high-traffic endpoints, endpoints handling payments/transactions, applications with SLAs, or identified as DoS risk."
+    },
+    "OPS_INFRASTRUCTURE": {
+      "summary": "Application servers returning slow responses indicate backend resource constraints, database bottlenecks, or architectural issues requiring performance tuning, caching, or infrastructure scaling.",
+      "technical": "Slow TTFB indicates backend processing delays. Investigate: Application servers (CPU usage > 70%, memory pressure, GC pauses), Database (slow queries, missing indexes, connection pool exhaustion), Network (high latency to dependencies, DNS issues), External services (third-party API delays). Monitoring metrics: TTFB (target < 200ms excellent, < 600ms acceptable), P50/P95/P99 response times, Database query time, External API call time, CPU/Memory utilization, Thread pool metrics, Connection pool metrics, Error rates. Optimization approaches: Horizontal scaling (add more servers, load balance), Vertical scaling (larger instances), Database optimization (read replicas, sharding), Caching layer (Redis/Memcached), CDN for static content, Async processing (queues for background tasks), Connection pooling tuning, Database connection limits. Infrastructure as Code: Auto-scaling based on metrics, Load balancer configuration, Health checks, Circuit breakers for external dependencies.",
+      "scope": "All application servers, databases, load balancers, and external service dependencies. Affects user-facing endpoints most critically. Consider: Geographic distribution (multi-region), Database replication lag, Cache hit rates, Queue depths. Must optimize across full stack: Frontend (already fast but waiting on backend), Backend API servers, Databases, External services, Network infrastructure.",
+      "monitoring": "Monitor comprehensive metrics: TTFB (P50/P95/P99), Response time breakdown (DB time, API time, business logic), Error rates (timeouts, 500s), Infrastructure metrics (CPU, memory, disk I/O, network), Database metrics (query time, connections, locks), Cache metrics (hit rate, evictions), Queue metrics (depth, processing time). Set alerts: TTFB P95 > 1000ms (warning), > 2000ms (critical), Error rate > 1% (warning), > 5% (critical), CPU > 80% (warning), Database connections > 80% capacity (warning). Use APM tools for distributed tracing."
+    },
+    "QA_TESTER": {
+      "summary": "Slow server response times prevent validation of performance requirements and indicate need for load testing to identify bottlenecks and capacity limits.",
+      "testImplication": "Cannot validate performance SLAs with slow TTFB. Performance testing shows unacceptable response times under load. Need to: Establish baseline response times, Identify slow endpoints, Conduct load testing to find breaking points, Profile application under load, Test different user scenarios, Measure impact of optimizations. Tools: Apache JMeter, k6, Gatling, Locust for load testing. Browser DevTools for TTFB measurement. APM tools for production monitoring.",
+      "riskIfNotFixed": "Failed performance testing. SLA violations. Poor user experience metrics. Customer complaints. High abandonment rates. Failed capacity planning. Production incidents under load. Inability to scale. Poor Core Web Vitals scores. SEO ranking penalties. Revenue loss from slow checkouts. Competitive disadvantage."
+    }
+  },
+  "actions": {
+    "DEVELOPER": {
+      "frameworks": {
+        "spring-boot": {
+          "code": "// Spring Boot - Response Time Optimization Techniques\n\n// 1. DATABASE QUERY OPTIMIZATION\n// ================================\n\n// BAD: N+1 Query Problem\n@GetMapping(\"/users\")\npublic List<UserDTO> getUsers() {\n    List<User> users = userRepository.findAll();\n    // Each user.getOrders() triggers separate query!\n    return users.stream()\n        .map(user -> new UserDTO(user, user.getOrders()))\n        .collect(Collectors.toList());\n}\n\n// GOOD: Use JOIN FETCH to load in single query\n@Repository\npublic interface UserRepository extends JpaRepository<User, Long> {\n    @Query(\"SELECT u FROM User u LEFT JOIN FETCH u.orders\")\n    List<User> findAllWithOrders();\n}\n\n@GetMapping(\"/users\")\npublic List<UserDTO> getUsers() {\n    // Single query with JOIN\n    List<User> users = userRepository.findAllWithOrders();\n    return users.stream()\n        .map(user -> new UserDTO(user, user.getOrders()))\n        .collect(Collectors.toList());\n}\n\n// 2. CACHING WITH SPRING CACHE\n// =============================\n\nimport org.springframework.cache.annotation.Cacheable;\nimport org.springframework.cache.annotation.EnableCaching;\n\n@Configuration\n@EnableCaching\npublic class CacheConfig {\n    \n    @Bean\n    public CacheManager cacheManager() {\n        // Use Redis for distributed cache\n        return RedisCacheManager.builder(redisConnectionFactory())\n            .cacheDefaults(RedisCacheConfiguration.defaultCacheConfig()\n                .entryTtl(Duration.ofMinutes(10)))\n            .build();\n    }\n}\n\n@Service\npublic class UserService {\n    \n    @Cacheable(value = \"users\", key = \"#id\")\n    public User getUserById(Long id) {\n        // This will be cached - subsequent calls return cached value\n        return userRepository.findById(id).orElseThrow();\n    }\n    \n    @CacheEvict(value = \"users\", key = \"#user.id\")\n    public User updateUser(User user) {\n        // This evicts cache entry when user updated\n        return userRepository.save(user);\n    }\n}\n\n// 3. ASYNC PROCESSING\n// ===================\n\nimport org.springframework.scheduling.annotation.Async;\nimport org.springframework.scheduling.annotation.EnableAsync;\n\n@Configuration\n@EnableAsync\npublic class AsyncConfig {\n    \n    @Bean\n    public Executor taskExecutor() {\n        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();\n        executor.setCorePoolSize(10);\n        executor.setMaxPoolSize(20);\n        executor.setQueueCapacity(100);\n        executor.setThreadNamePrefix(\"async-\");\n        executor.initialize();\n        return executor;\n    }\n}\n\n@Service\npublic class EmailService {\n    \n    @Async\n    public CompletableFuture<Void> sendEmailAsync(String to, String subject, String body) {\n        // This runs in background thread - doesn't block request\n        emailClient.send(to, subject, body);\n        return CompletableFuture.completedFuture(null);\n    }\n}\n\n@RestController\npublic class OrderController {\n    \n    @PostMapping(\"/orders\")\n    public ResponseEntity<Order> createOrder(@RequestBody OrderRequest request) {\n        Order order = orderService.createOrder(request);\n        \n        // Send confirmation email asynchronously - don't wait\n        emailService.sendEmailAsync(order.getEmail(), \"Order Confirmed\", \"...\");\n        \n        // Return immediately without waiting for email\n        return ResponseEntity.ok(order);\n    }\n}\n\n// 4. DATABASE CONNECTION POOLING\n// ===============================\n\n// application.properties\nspring.datasource.hikari.maximum-pool-size=20\nspring.datasource.hikari.minimum-idle=5\nspring.datasource.hikari.connection-timeout=20000\nspring.datasource.hikari.idle-timeout=300000\nspring.datasource.hikari.max-lifetime=1200000\n\n// 5. PAGINATION FOR LARGE DATASETS\n// =================================\n\n@GetMapping(\"/products\")\npublic Page<Product> getProducts(\n        @RequestParam(defaultValue = \"0\") int page,\n        @RequestParam(defaultValue = \"20\") int size) {\n    \n    Pageable pageable = PageRequest.of(page, size, Sort.by(\"name\"));\n    // Don't load all products - use pagination\n    return productRepository.findAll(pageable);\n}\n\n// 6. EXTERNAL API CALLS WITH TIMEOUT\n// ===================================\n\nimport org.springframework.web.reactive.function.client.WebClient;\n\n@Service\npublic class ExternalApiService {\n    \n    private final WebClient webClient;\n    \n    public ExternalApiService(WebClient.Builder webClientBuilder) {\n        this.webClient = webClientBuilder\n            .baseUrl(\"https://api.external.com\")\n            .build();\n    }\n    \n    public Data fetchData(String id) {\n        return webClient.get()\n            .uri(\"/data/{id}\", id)\n            .retrieve()\n            .bodyToMono(Data.class)\n            .timeout(Duration.ofSeconds(5))  // Timeout after 5 seconds\n            .block();\n    }\n    \n    // Better: Async with fallback\n    public Mono<Data> fetchDataAsync(String id) {\n        return webClient.get()\n            .uri(\"/data/{id}\", id)\n            .retrieve()\n            .bodyToMono(Data.class)\n            .timeout(Duration.ofSeconds(5))\n            .onErrorResume(e -> {\n                // Fallback on error/timeout\n                return Mono.just(Data.defaultData());\n            });\n    }\n}\n\n// 7. PROFILING AND MONITORING\n// ===========================\n\nimport io.micrometer.core.annotation.Timed;\n\n@RestController\npublic class ApiController {\n    \n    @Timed(value = \"api.users.get\", description = \"Time to get user\")\n    @GetMapping(\"/api/users/{id}\")\n    public User getUser(@PathVariable Long id) {\n        return userService.getUserById(id);\n    }\n}\n\n// 8. LAZY LOADING PREVENTION\n// ===========================\n\n@Entity\npublic class User {\n    // BAD: Lazy loading causes N+1\n    // @OneToMany(fetch = FetchType.LAZY)\n    \n    // GOOD: Eager loading or use DTO projection\n    @OneToMany(fetch = FetchType.EAGER)\n    private List<Order> orders;\n}\n\n// Better: Use DTO projection to load only needed fields\n@Query(\"SELECT new com.example.UserDTO(u.id, u.name, COUNT(o)) \" +\n       \"FROM User u LEFT JOIN u.orders o GROUP BY u.id, u.name\")\nList<UserDTO> findAllUserSummaries();",
+          "testCode": "// JUnit Performance Testing\nimport org.junit.jupiter.api.Test;\nimport org.springframework.boot.test.context.SpringBootTest;\nimport org.springframework.boot.test.web.client.TestRestTemplate;\nimport org.springframework.http.ResponseEntity;\nimport java.time.Duration;\nimport java.time.Instant;\nimport static org.junit.jupiter.api.Assertions.*;\n\n@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)\npublic class ResponseTimeTest {\n\n    @Autowired\n    private TestRestTemplate restTemplate;\n\n    @Test\n    public void apiResponseShouldBeFast() {\n        Instant start = Instant.now();\n        \n        ResponseEntity<String> response = restTemplate\n            .getForEntity(\"/api/users\", String.class);\n        \n        Duration duration = Duration.between(start, Instant.now());\n        \n        assertEquals(200, response.getStatusCodeValue());\n        assertTrue(duration.toMillis() < 600, \n            \"API response took \" + duration.toMillis() + \"ms (expected < 600ms)\");\n    }\n    \n    @Test\n    public void databaseQueriesShouldBeOptimized() {\n        // Enable query logging to detect N+1\n        Instant start = Instant.now();\n        \n        List<User> users = userService.getAllUsers();\n        \n        Duration duration = Duration.between(start, Instant.now());\n        \n        assertFalse(users.isEmpty());\n        // Should complete in < 100ms with proper joins\n        assertTrue(duration.toMillis() < 100,\n            \"Database query took \" + duration.toMillis() + \"ms (expected < 100ms)\");\n    }\n    \n    @Test\n    public void cachesShouldReduceResponseTime() {\n        // First call - cache miss\n        Instant start1 = Instant.now();\n        User user1 = userService.getUserById(1L);\n        Duration duration1 = Duration.between(start1, Instant.now());\n        \n        // Second call - cache hit\n        Instant start2 = Instant.now();\n        User user2 = userService.getUserById(1L);\n        Duration duration2 = Duration.between(start2, Instant.now());\n        \n        assertEquals(user1.getId(), user2.getId());\n        // Cached call should be much faster\n        assertTrue(duration2.toMillis() < duration1.toMillis() / 10,\n            \"Cached response not faster: \" + duration2.toMillis() + \"ms vs \" + duration1.toMillis() + \"ms\");\n    }\n}",
+          "dependencies": "<!-- Spring Boot with caching -->\n<dependency>\n    <groupId>org.springframework.boot</groupId>\n    <artifactId>spring-boot-starter-cache</artifactId>\n</dependency>\n<dependency>\n    <groupId>org.springframework.boot</groupId>\n    <artifactId>spring-boot-starter-data-redis</artifactId>\n</dependency>\n<!-- Async support (included in spring-boot-starter-web) -->\n<!-- Metrics -->\n<dependency>\n    <groupId>io.micrometer</groupId>\n    <artifactId>micrometer-core</artifactId>\n</dependency>",
+          "packageInstall": "mvn clean install"
+        },
+        "express-nodejs": {
+          "code": "// Express.js - Response Time Optimization\n\nconst express = require('express');\nconst redis = require('redis');\nconst { promisify } = require('util');\nconst app = express();\n\n// 1. REDIS CACHING\n// ================\n\nconst redisClient = redis.createClient({\n  host: 'localhost',\n  port: 6379\n});\n\nconst getAsync = promisify(redisClient.get).bind(redisClient);\nconst setAsync = promisify(redisClient.set).bind(redisClient);\n\n// Cache middleware\nconst cache = (duration) => async (req, res, next) => {\n  const key = `cache:${req.originalUrl}`;\n  \n  try {\n    const cached = await getAsync(key);\n    if (cached) {\n      // Cache hit - return immediately\n      return res.json(JSON.parse(cached));\n    }\n    \n    // Cache miss - continue to handler\n    res.sendResponse = res.json;\n    res.json = async (body) => {\n      // Cache the response\n      await setAsync(key, JSON.stringify(body), 'EX', duration);\n      res.sendResponse(body);\n    };\n    next();\n  } catch (err) {\n    next();\n  }\n};\n\n// Use caching middleware\napp.get('/api/users', cache(300), async (req, res) => {\n  // This will be cached for 5 minutes\n  const users = await db.query('SELECT * FROM users');\n  res.json(users);\n});\n\n// 2. DATABASE CONNECTION POOLING\n// ===============================\n\nconst { Pool } = require('pg');\n\nconst pool = new Pool({\n  host: 'localhost',\n  database: 'mydb',\n  user: 'user',\n  password: 'pass',\n  max: 20,              // Max connections\n  idleTimeoutMillis: 30000,\n  connectionTimeoutMillis: 2000\n});\n\n// Good: Use pool for queries\napp.get('/api/users/:id', async (req, res) => {\n  const client = await pool.connect();\n  try {\n    const result = await client.query(\n      'SELECT * FROM users WHERE id = $1',\n      [req.params.id]\n    );\n    res.json(result.rows[0]);\n  } finally {\n    client.release();\n  }\n});\n\n// 3. ASYNC/AWAIT FOR NON-BLOCKING I/O\n// ====================================\n\nconst axios = require('axios');\n\n// BAD: Synchronous/blocking\napp.get('/api/data', (req, res) => {\n  // Multiple sequential API calls - slow!\n  const user = fetchUser(req.userId);\n  const orders = fetchOrders(user.id);\n  const products = fetchProducts(orders);\n  res.json({ user, orders, products });\n});\n\n// GOOD: Parallel async calls\napp.get('/api/data', async (req, res) => {\n  try {\n    // Fetch in parallel - much faster!\n    const [user, orders, products] = await Promise.all([\n      fetchUser(req.userId),\n      fetchOrders(req.userId),\n      fetchProducts(req.userId)\n    ]);\n    res.json({ user, orders, products });\n  } catch (err) {\n    res.status(500).json({ error: err.message });\n  }\n});\n\n// 4. EXTERNAL API TIMEOUTS\n// ========================\n\nconst axiosWithTimeout = axios.create({\n  timeout: 5000,  // 5 second timeout\n  headers: { 'Content-Type': 'application/json' }\n});\n\nasync function fetchExternalData(id) {\n  try {\n    const response = await axiosWithTimeout.get(\n      `https://api.external.com/data/${id}`\n    );\n    return response.data;\n  } catch (err) {\n    if (err.code === 'ECONNABORTED') {\n      console.error('Request timeout');\n      return { error: 'Service unavailable' };\n    }\n    throw err;\n  }\n}\n\n// 5. PAGINATION\n// =============\n\napp.get('/api/products', async (req, res) => {\n  const page = parseInt(req.query.page) || 1;\n  const limit = parseInt(req.query.limit) || 20;\n  const offset = (page - 1) * limit;\n  \n  // Don't load all products - use LIMIT/OFFSET\n  const result = await pool.query(\n    'SELECT * FROM products ORDER BY name LIMIT $1 OFFSET $2',\n    [limit, offset]\n  );\n  \n  const countResult = await pool.query('SELECT COUNT(*) FROM products');\n  const total = parseInt(countResult.rows[0].count);\n  \n  res.json({\n    data: result.rows,\n    pagination: {\n      page,\n      limit,\n      total,\n      pages: Math.ceil(total / limit)\n    }\n  });\n});\n\n// 6. BACKGROUND JOBS (Bull Queue)\n// ================================\n\nconst Queue = require('bull');\nconst emailQueue = new Queue('email', {\n  redis: { host: 'localhost', port: 6379 }\n});\n\n// Process jobs in background\nemailQueue.process(async (job) => {\n  await sendEmail(job.data.to, job.data.subject, job.data.body);\n});\n\napp.post('/api/orders', async (req, res) => {\n  const order = await createOrder(req.body);\n  \n  // Queue email - don't wait for it\n  await emailQueue.add({\n    to: order.email,\n    subject: 'Order Confirmed',\n    body: `Order ${order.id} confirmed`\n  });\n  \n  // Return immediately\n  res.json(order);\n});\n\n// 7. RESPONSE TIME MONITORING\n// ===========================\n\nconst responseTime = require('response-time');\n\n// Log slow requests\napp.use(responseTime((req, res, time) => {\n  if (time > 1000) {\n    console.warn(`Slow request: ${req.method} ${req.url} took ${time}ms`);\n  }\n}));\n\n// 8. QUERY OPTIMIZATION\n// =====================\n\n// BAD: N+1 query\napp.get('/api/users-with-orders', async (req, res) => {\n  const users = await pool.query('SELECT * FROM users');\n  \n  for (let user of users.rows) {\n    // Separate query for each user - N+1 problem!\n    const orders = await pool.query(\n      'SELECT * FROM orders WHERE user_id = $1',\n      [user.id]\n    );\n    user.orders = orders.rows;\n  }\n  \n  res.json(users.rows);\n});\n\n// GOOD: Single query with JOIN\napp.get('/api/users-with-orders', async (req, res) => {\n  const result = await pool.query(`\n    SELECT \n      u.*,\n      json_agg(o.*) as orders\n    FROM users u\n    LEFT JOIN orders o ON u.id = o.user_id\n    GROUP BY u.id\n  `);\n  \n  res.json(result.rows);\n});\n\napp.listen(3000);",
+          "testCode": "// Mocha performance tests\nconst request = require('supertest');\nconst { expect } = require('chai');\nconst app = require('../app');\n\ndescribe('Response Time Tests', () => {\n  \n  it('API should respond within 600ms', (done) => {\n    const start = Date.now();\n    \n    request(app)\n      .get('/api/users')\n      .expect(200)\n      .end((err, res) => {\n        const duration = Date.now() - start;\n        \n        expect(duration).to.be.below(600,\n          `Response took ${duration}ms (expected < 600ms)`);\n        done(err);\n      });\n  });\n  \n  it('cached responses should be faster', (done) => {\n    let firstDuration, secondDuration;\n    \n    // First request - cache miss\n    const start1 = Date.now();\n    request(app)\n      .get('/api/products')\n      .expect(200)\n      .end(() => {\n        firstDuration = Date.now() - start1;\n        \n        // Second request - cache hit\n        const start2 = Date.now();\n        request(app)\n          .get('/api/products')\n          .expect(200)\n          .end(() => {\n            secondDuration = Date.now() - start2;\n            \n            expect(secondDuration).to.be.below(firstDuration / 5,\n              `Cached: ${secondDuration}ms, Original: ${firstDuration}ms`);\n            done();\n          });\n      });\n  });\n});",
+          "dependencies": "npm install express redis pg bull axios response-time",
+          "packageInstall": "npm install"
+        },
+        "generic": {
+          "code": "# Response Time Optimization Checklist\n\n## 1. Database Optimization\n- Add indexes on frequently queried columns\n- Optimize slow queries (use EXPLAIN)\n- Fix N+1 query problems\n- Use connection pooling\n- Consider read replicas for read-heavy loads\n\n## 2. Caching Strategy\n- Implement Redis/Memcached for frequently accessed data\n- Cache database query results\n- Cache API responses\n- Use CDN for static assets\n- Browser caching for repeat visits\n\n## 3. Async Processing\n- Move non-critical tasks to background queues\n- Use async/await for I/O operations\n- Don't block requests waiting for emails, notifications, etc.\n- Parallel processing where possible\n\n## 4. Code Optimization\n- Profile code to find hot paths\n- Optimize algorithms (O(n²) → O(n log n))\n- Reduce unnecessary computations\n- Lazy load data when possible\n- Use pagination for large datasets\n\n## 5. External API Calls\n- Set timeouts (5-10 seconds max)\n- Use circuit breakers for failing services\n- Cache external API responses\n- Call external APIs asynchronously\n- Have fallback mechanisms\n\n## 6. Infrastructure\n- Horizontal scaling (more servers)\n- Vertical scaling (larger instances)\n- Load balancing\n- Auto-scaling based on metrics\n- Regional distribution",
+          "testCode": "# Measure response time\ncurl -w \"@curl-format.txt\" -o /dev/null -s https://your-domain.com/api/users\n\n# curl-format.txt:\ntime_namelookup:  %{time_namelookup}s\ntime_connect:  %{time_connect}s\ntime_appconnect:  %{time_appconnect}s\ntime_pretransfer:  %{time_pretransfer}s\ntime_redirect:  %{time_redirect}s\ntime_starttransfer:  %{time_starttransfer}s (TTFB)\ntime_total:  %{time_total}s\n\n# Target: time_starttransfer < 0.6s",
+          "dependencies": "curl, APM tools, database query analyzers",
+          "packageInstall": "# Tool-specific"
+        }
+      },
+      "verificationSteps": [
+        "1. Measure baseline TTFB: curl -w '%{time_starttransfer}' -o /dev/null -s URL",
+        "2. Identify slow endpoints using APM tools",
+        "3. Profile database queries - find slow queries and N+1 problems",
+        "4. Implement optimizations (caching, query tuning, async)",
+        "5. Measure improved TTFB - should see 50-80% reduction",
+        "6. Load test to verify performance under load",
+        "7. Monitor P95/P99 response times in production",
+        "8. Set up alerts for response time degradation",
+        "9. Run Lighthouse - TTFB should be < 600ms",
+        "10. Verify Core Web Vitals pass"
+      ],
+      "estimatedEffort": "6-8 hours"
+    },
+    "OPS_INFRASTRUCTURE": {
+      "servers": {
+        "monitoring": {
+          "config": "# Application Performance Monitoring Setup\n\n## New Relic APM\nnewrelic:\n  app_name: 'MyApp Production'\n  license_key: 'YOUR_LICENSE_KEY'\n  log_level: 'info'\n  transaction_tracer:\n    enabled: true\n    transaction_threshold: apdex_f\n    record_sql: obfuscated\n  error_collector:\n    enabled: true\n\n## DataDog APM\nDD_AGENT_HOST: 'datadog-agent'\nDD_TRACE_ENABLED: true\nDD_SERVICE: 'myapp'\nDD_ENV: 'production'\n\n## Prometheus + Grafana\n# Track response time metrics\nhttp_request_duration_seconds:\n  type: histogram\n  help: 'HTTP request duration'\n  buckets: [0.1, 0.3, 0.5, 1.0, 2.0, 5.0]\n\n## Database Slow Query Log\n# MySQL\nSET GLOBAL slow_query_log = 'ON';\nSET GLOBAL long_query_time = 1;  # Log queries > 1 second\nSET GLOBAL slow_query_log_file = '/var/log/mysql/slow.log';\n\n# PostgreSQL (postgresql.conf)\nlog_min_duration_statement = 1000  # Log queries > 1 second",
+          "reload": "# Restart application with monitoring enabled\nsystemctl restart myapp\n\n# Verify monitoring agent running\nsystemctl status newrelic-infra",
+          "verify": "# Check metrics are being collected\ncurl http://localhost:9090/metrics  # Prometheus\n\n# View APM dashboard\n# NewRelic: https://one.newrelic.com\n# DataDog: https://app.datadoghq.com"
+        },
+        "database": {
+          "config": "# Database Performance Tuning\n\n## PostgreSQL\n# postgresql.conf\nshared_buffers = 4GB              # 25% of RAM\neffective_cache_size = 12GB       # 75% of RAM\nwork_mem = 64MB\nmaintenance_work_mem = 1GB\nmax_connections = 200\nrandom_page_cost = 1.1            # For SSD\n\n# Enable query performance monitoring\nshared_preload_libraries = 'pg_stat_statements'\npg_stat_statements.track = all\n\n## MySQL\n# my.cnf\ninnodb_buffer_pool_size = 4G      # 70% of RAM\ninnodb_log_file_size = 512M\nmax_connections = 200\nquery_cache_size = 128M\nquery_cache_limit = 2M\nslow_query_log = 1\nlong_query_time = 1\n\n## Add Indexes\n# Find missing indexes\nSELECT schemaname, tablename, attname\nFROM pg_stats\nWHERE schemaname NOT IN ('pg_catalog', 'information_schema')\n  AND n_distinct < 0.1\nORDER BY n_distinct;\n\n# Add index example\nCREATE INDEX idx_users_email ON users(email);\nCREATE INDEX idx_orders_user_date ON orders(user_id, created_at);",
+          "reload": "# PostgreSQL\nsudo systemctl reload postgresql\n\n# MySQL\nsudo systemctl reload mysql",
+          "verify": "# Check slow queries\nSELECT * FROM pg_stat_statements\nORDER BY mean_time DESC\nLIMIT 10;\n\n# Check index usage\nSELECT schemaname, tablename, indexname, idx_scan\nFROM pg_stat_user_indexes\nORDER BY idx_scan ASC;"
+        },
+        "autoscaling": {
+          "config": "# AWS Auto Scaling Configuration\n\n## EC2 Auto Scaling Group\naws autoscaling create-auto-scaling-group \\\n  --auto-scaling-group-name myapp-asg \\\n  --launch-configuration-name myapp-lc \\\n  --min-size 2 \\\n  --max-size 10 \\\n  --desired-capacity 4 \\\n  --target-group-arns arn:aws:elasticloadbalancing:... \\\n  --health-check-type ELB \\\n  --health-check-grace-period 300\n\n## Target Tracking Policy (Scale on CPU)\naws autoscaling put-scaling-policy \\\n  --auto-scaling-group-name myapp-asg \\\n  --policy-name cpu-target-tracking \\\n  --policy-type TargetTrackingScaling \\\n  --target-tracking-configuration '{\n    \"PredefinedMetricSpecification\": {\n      \"PredefinedMetricType\": \"ASGAverageCPUUtilization\"\n    },\n    \"TargetValue\": 70.0\n  }'\n\n## Kubernetes HPA\napiVersion: autoscaling/v2\nkind: HorizontalPodAutoscaler\nmetadata:\n  name: myapp-hpa\nspec:\n  scaleTargetRef:\n    apiVersion: apps/v1\n    kind: Deployment\n    name: myapp\n  minReplicas: 2\n  maxReplicas: 10\n  metrics:\n  - type: Resource\n    resource:\n      name: cpu\n      target:\n        type: Utilization\n        averageUtilization: 70\n  - type: Resource\n    resource:\n      name: memory\n      target:\n        type: Utilization\n        averageUtilization: 80",
+          "reload": "# Auto scaling updates automatically\n# Verify policy\naws autoscaling describe-policies \\\n  --auto-scaling-group-name myapp-asg",
+          "verify": "# Monitor scaling activities\naws autoscaling describe-scaling-activities \\\n  --auto-scaling-group-name myapp-asg \\\n  --max-records 10\n\n# Kubernetes\nkubectl get hpa\nkubectl describe hpa myapp-hpa"
+        }
+      },
+      "rollbackPlan": "1. Keep baseline performance metrics before changes\n2. Implement changes incrementally\n3. Monitor each change for impact\n4. If performance degrades:\n   - Revert recent code deployments\n   - Restore previous database configuration\n   - Check for resource exhaustion (CPU, memory, connections)\n   - Review recent traffic spikes\n5. Scale horizontally as temporary fix\n6. Analyze root cause before re-implementing\n7. Load test in staging before production",
+      "verificationSteps": [
+        "1. Establish baseline TTFB for key endpoints",
+        "2. Implement monitoring (APM, slow query log)",
+        "3. Identify and fix top 5 slowest endpoints",
+        "4. Verify 50-80% response time improvement",
+        "5. Load test to verify performance under stress",
+        "6. Monitor P95/P99 response times",
+        "7. Check database query performance",
+        "8. Verify cache hit rates (target 80%+)",
+        "9. Monitor error rates (should not increase)",
+        "10. Set up alerting for response time degradation"
+      ],
+      "estimatedEffort": "4-6 hours"
+    },
+    "QA_TESTER": {
+      "manualTests": [
+        {
+          "name": "Measure TTFB with DevTools",
+          "steps": [
+            "1. Open Chrome DevTools (F12)",
+            "2. Go to Network tab",
+            "3. Check 'Disable cache'",
+            "4. Navigate to application",
+            "5. Click on HTML document request",
+            "6. Go to Timing tab",
+            "7. Check 'Waiting (TTFB)' value",
+            "8. Test multiple pages",
+            "9. Document TTFB for each"
+          ],
+          "expected": "TTFB < 200ms (excellent), < 600ms (acceptable), < 1000ms (needs improvement). Green in Timing tab."
+        },
+        {
+          "name": "Load Testing with JMeter",
+          "steps": [
+            "1. Install Apache JMeter",
+            "2. Create test plan for key endpoints",
+            "3. Configure 100 concurrent users",
+            "4. Run test for 5 minutes",
+            "5. Analyze response times (P50, P95, P99)",
+            "6. Check error rate",
+            "7. Identify slow endpoints",
+            "8. Document bottlenecks"
+          ],
+          "expected": "P95 response time < 1000ms. Error rate < 1%. No timeout errors. Consistent performance throughout test."
+        }
+      ],
+      "automatedTests": {
+        "tool": "k6 Load Testing",
+        "example": "// k6 load test script\nimport http from 'k6/http';\nimport { check, sleep } from 'k6';\n\nexport const options = {\n  stages: [\n    { duration: '2m', target: 100 },  // Ramp up\n    { duration: '5m', target: 100 },  // Steady state\n    { duration: '2m', target: 0 },    // Ramp down\n  ],\n  thresholds: {\n    http_req_duration: ['p(95)<1000'],  // 95% < 1s\n    http_req_failed: ['rate<0.01'],     // < 1% errors\n  },\n};\n\nexport default function () {\n  const res = http.get('https://your-domain.com/api/users');\n  \n  check(res, {\n    'status is 200': (r) => r.status === 200,\n    'response time < 600ms': (r) => r.timings.waiting < 600,\n  });\n  \n  sleep(1);\n}"
+      },
+      "verificationSteps": [
+        "1. Measure baseline TTFB for all key pages",
+        "2. Run load tests to identify breaking points",
+        "3. Profile slow endpoints",
+        "4. Implement optimizations",
+        "5. Re-measure TTFB - verify improvement",
+        "6. Run load tests again",
+        "7. Verify P95 < 1000ms, P99 < 2000ms",
+        "8. Check Lighthouse performance score",
+        "9. Monitor production for 7 days",
+        "10. Verify no performance regressions"
+      ],
+      "estimatedEffort": "4-6 hours"
+    }
+  }
+}

@@ -1,0 +1,2546 @@
+User: what configurations do i need on a windows computer to run this exact framework on a windows laptop
+
+GitHub Copilot: I’ll inspect the project’s build file, README, and VS Code settings to identify the exact Java, Maven, browser, driver, environment-variable, and path requirements, then I’ll translate them into a Windows laptop setup checklist.
+
+Read 
+
+Read , lines 1 to 260
+
+Read 
+
+Search complete: Inspect runtime requirements
+
+Searched codebase for "project-specific runtime configuration Java Maven versions browser WebDriver environment variables system properties", no results
+
+Searched for files matching `**/pom.xml`, 1 match
+
+Searched for files matching `**/README.md`, 2 matches
+
+Searched for files matching `**/*WebDriver*`, no matches
+
+Searched for files matching `**/*browser*`, 1 match
+
+Searched for regex `maven|version.*java|java.*version`, 362 results
+
+Searched for regex `WebDriver|browser|chrome|firefox|headless`, 717 results
+
+Searched for regex `environment.*variable|system.*property|os.*specific|path.*variable`, 64 results
+
+Searched for files matching `**/*config*`, 7 matches
+
+Searched for files matching `**/*credentials*`, no matches
+
+Read , lines 1 to 260
+
+Read , lines 1 to 260
+
+Read , lines 1 to 260
+
+Read , lines 1 to 260
+
+Read 
+
+Read , lines 1 to 260
+
+Read , lines 200 to 360
+
+Read , lines 140 to 240
+
+The local evidence points to a Java 23 Maven project using Selenium 4 with WebDriverManager, so Windows does not need a manually installed driver by default. I’m checking the remaining Maven plugins and configuration references now, especially for Allure, Google credentials, GeoIP files, and any hard-coded macOS paths that need a Windows equivalent.
+
+Read , lines 260 to 620
+
+Read , lines 200 to 255
+
+Searched for regex `System.getenv|System.getProperty|JAVA_HOME|/opt/homebrew|/usr/local|\.private|GeoLite2|allure|gcloud|Perplexity|https://|http://` (`**/src/test/java/**`), 456 results
+
+Searched for regex `<artifactId>|<groupId>org.apache.maven.plugins|allure|maven-surefire|exec-maven|antrun|pagefind|java.version|maven.compiler.release` (`**/pom.xml`), 83 results
+
+The Windows-specific difference is small but important: the checked-in VS Code setting points to `openjdk`, which is macOS-only and must be overridden on Windows. The Maven build also invokes `npx pagefind` during initialization, so Node.js/npm should be installed even though the framework is Java-based; I’m doing one final check for bundled browser data, credentials, and test login configuration before giving you the setup.
+
+Searched for files matching `**/{package.json,.nvmrc,mvnw,mvnw.cmd,*.mmdb,*.json}`, 28 matches
+
+Searched for regex `username|password|credential|secret|login|user|pass|serviceAccount|googleCloudServiceAccountJsonFile|geoLite2` (`**/src/test/**`), 783 results
+
+No matches found. Your search pattern might be excluded completely by either the search.exclude settings or .*ignore files.
+If you believe that it should have results, you can check into the .*ignore files and the exclude setting (here are some excluded patterns for reference:[**/node_modules,**/bower_components,**/*.code-search]).
+Then if you want to include those files you can call the tool again by setting "includeIgnoredFiles" to true.
+
+Read , lines 1 to 155
+
+For this exact framework, configure a Windows 10/11 laptop as follows.
+
+**Required software**
+
+- 64-bit Windows
+- JDK **23**, not only a JRE
+- Apache Maven 3.9+
+- Git
+- Node.js LTS, including `npm`/`npx`
+- Google Chrome
+- VS Code with:
+  - Extension Pack for Java
+  - Maven for Java
+- Optional: Firefox
+
+The project requires Java 23 in `pom.xml:80-83`. Selenium’s WebDriverManager downloads the matching ChromeDriver automatically, so manual ChromeDriver installation is normally unnecessary.
+
+**Windows environment variables**
+
+Set these under **System Properties → Environment Variables**:
+
+```text
+JAVA_HOME=C:\Program Files\Eclipse Adoptium\jdk-23...
+MAVEN_HOME=C:\Program Files\Apache\Maven
+```
+
+Add these to `Path`:
+
+```text
+%JAVA_HOME%\bin
+%MAVEN_HOME%\bin
+C:\Program Files\nodejs
+```
+
+Verify in PowerShell:
+
+```powershell
+java -version
+javac -version
+mvn -version
+git --version
+node --version
+npm --version
+```
+
+The checked-in VS Code setting is macOS-specific:
+
+```json
+"java.home": "/opt/homebrew/opt/openjdk/"
+```
+
+Override or replace it in `settings.json` with your Windows JDK path, for example:
+
+```json
+"java.jdt.ls.java.home": "C:\\Program Files\\Eclipse Adoptium\\jdk-23.0.x-hotspot"
+```
+
+The setting is currently visible in `settings.json:78-86`.
+
+**Project setup**
+
+From PowerShell:
+
+```powershell
+cd C:\path\to\Automation-JAV-Client-GEM_QA_CC_PRODUCT_MAPPING
+mvn clean install -DskipTests
+mvn test -Dtest=TS_BCAA_Claim_Portal_Product_Mapping_JUnit
+```
+
+The framework loads configuration from `testConfig.properties:75-125`. The default configuration uses:
+
+```properties
+browser=chrome
+headless=false
+parallelExecution=false
+```
+
+Use headless execution when needed:
+
+```powershell
+mvn verify "-Dheadless=true"
+```
+
+The Maven documentation also uses `-Dbrowser.headless=true`, but the Java configuration currently uses the property name `headless`; use `headless` for this codebase.
+
+**Access and network requirements**
+
+The laptop must have:
+
+- Access to the GEM QA/Appian environment
+- Required VPN or corporate network connection
+- Valid Google/Microsoft login and MFA access
+- Outbound access to Maven Central, WebDriverManager downloads, npm, and the tested application
+- Permission to write inside the project’s `target` and `allure-results` directories
+
+Google Cloud exports are disabled by default. If enabled, you must provide a service-account JSON file and configure the Google Cloud project, bucket, BigQuery dataset, and Google Sheet values in `testConfig.properties:150-230`.
+
+The GeoLite2 database files are already bundled in the repository, so no Windows path conversion is needed.
+
+**Important issues to resolve**
+
+- Safari tests cannot run on Windows because Safari and SafariDriver are macOS-only. Use Chrome or Firefox.
+- The POM references a Mockito Java-agent path for version `5.14.2`, while the declared dependency is `5.20.0`. A fresh Windows Maven cache may therefore fail during test startup; the POM should be corrected to use the declared version.
+- Some test suites contain credentials directly in Java source. Do not copy or reuse those credentials; rotate them and move credentials to secure environment variables or a secret store before running on another laptop.
+
+User: do i need to manually do each step or is there a one way fix
+
+GitHub Copilot: You only need to do the setup steps once. After that, running the framework is normally just:
+
+```powershell
+cd C:\path\to\project
+mvn test
+```
+
+There is not currently a Windows one-click installer in this repository. The quickest one-time setup is with Windows Package Manager:
+
+```powershell
+winget install EclipseAdoptium.Temurin.23.JDK
+winget install Apache.Maven
+winget install Git.Git
+winget install OpenJS.NodeJS.LTS
+winget install Google.Chrome
+winget install Microsoft.VisualStudioCode
+```
+
+Then restart VS Code and verify:
+
+```powershell
+java -version
+mvn -version
+node --version
+```
+
+You do **not** need to manually install ChromeDriver because WebDriverManager handles it.
+
+The only remaining manual items are environment-specific: VPN/application access, login credentials, and optional Google Cloud configuration. Also, the VS Code Java path must be changed from the macOS path in `settings.json:78-86`, or removed so VS Code uses `JAVA_HOME`.
+
+User: on mac i used to run on test case at a time. Comment out the @AfterEach, then the browser would not close. but also there is a green triangle i press and i am able to run one test case how can i do this on windows
+
+GitHub Copilot: I’ll inspect this test class and the project’s VS Code launch/test settings to confirm how `@AfterEach` is used and which Windows equivalent matches the macOS green-triangle workflow.
+
+Read , lines 1 to 260
+
+Searched for regex `@AfterEach|@BeforeEach|@AfterAll|@BeforeAll|@Test` (`**/src/test/java/testsuites/TS_CL_Claim_Portal_Policy_Wording_Junit.java`), 7 results
+
+Read 
+
+This class has three test methods, and its setup creates a fresh browser in `@BeforeEach`; the teardown is already commented out in the current file. I’m checking that teardown block so I can give you the exact VS Code Windows steps and the safest way to keep the browser open for a single test.
+
+Read , lines 350 to 392
+
+Windows works the same way as macOS. The green triangle comes from the **Extension Pack for Java** in VS Code, not from the operating system.
+
+For this class:
+
+1. Install **Extension Pack for Java** in VS Code.
+2. Open the project folder containing `pom.xml`.
+3. Wait for Maven/Java indexing to finish.
+4. Open `TS_CL_Claim_Portal_Policy_Wording_Junit.java`.
+5. Place the cursor inside the desired method.
+6. Click the green triangle beside that `@Test` method and choose **Run Test**.
+
+`@BeforeEach` will still run and create the browser. The current `@AfterEach` block is already commented out, so the browser should remain open after the test finishes. The relevant block is near the bottom of the class.
+
+To restore normal cleanup later, uncomment:
+
+```java
+@AfterEach
+public void tearDownEach(TestInfo testInfo) {
+    FW_TestSuiteFormatter.afterEach(testInfo);
+    FW_TestRun.updateCurrentTestRunMetricsReset(testInfo);
+    FW_Browser.disposeWebDriver(driver);
+}
+```
+
+You can also run exactly one test from the Windows PowerShell terminal:
+
+```powershell
+mvn test "-Dtest=TS_CL_Claim_Portal_Policy_Wording_Junit#tc_claim_portal_policy_wording_product_TELUS_GMA"
+```
+
+For debugging, click the triangle and select **Debug Test**. The browser will pause at breakpoints instead of closing, provided `@AfterEach` remains disabled.
+
+User: ok. thanks. Show me step by step what i need to do and how in order to achieve all the above methions on my windows pc
+
+GitHub Copilot: ## Windows Setup: Step by Step
+
+### 1. Install the required software
+
+Open **PowerShell as Administrator** and run:
+
+```powershell
+winget install EclipseAdoptium.Temurin.23.JDK
+winget install Apache.Maven
+winget install Git.Git
+winget install OpenJS.NodeJS.LTS
+winget install Google.Chrome
+winget install Microsoft.VisualStudioCode
+```
+
+Restart Windows after installation.
+
+You do not need to manually install ChromeDriver. The project uses WebDriverManager to download the correct driver automatically.
+
+### 2. Verify the installations
+
+Open a new PowerShell window:
+
+```powershell
+java -version
+javac -version
+mvn -version
+git --version
+node --version
+npm --version
+```
+
+Java must report version 23.
+
+If `java` or `mvn` is not recognized, restart Windows or add their installation folders to the Windows `Path`.
+
+### 3. Configure `JAVA_HOME`
+
+Open:
+
+**Start → View advanced system settings → Environment Variables**
+
+Under **System variables**, add:
+
+```text
+JAVA_HOME
+```
+
+Set its value to your JDK 23 folder, for example:
+
+```text
+C:\Program Files\Eclipse Adoptium\jdk-23.0.2.7-hotspot
+```
+
+Edit the `Path` system variable and add:
+
+```text
+%JAVA_HOME%\bin
+```
+
+Open a new PowerShell window and verify:
+
+```powershell
+echo $env:JAVA_HOME
+java -version
+```
+
+### 4. Open the project in VS Code
+
+In PowerShell, navigate to the project folder:
+
+```powershell
+cd "C:\path\to\Automation-JAV-Client-GEM_QA_CC_PRODUCT_MAPPING"
+code .
+```
+
+Alternatively, open VS Code and choose:
+
+**File → Open Folder**
+
+Select the folder containing:
+
+```text
+pom.xml
+src
+.vscode
+```
+
+### 5. Install VS Code extensions
+
+In VS Code, install:
+
+- Extension Pack for Java
+- Maven for Java
+- Test Runner for Java
+
+The Java extension provides the green triangle beside each JUnit test.
+
+### 6. Fix the macOS Java setting
+
+Open `settings.json:78-86`.
+
+The current setting points to a macOS path:
+
+```json
+"java.home": "/opt/homebrew/opt/openjdk/"
+```
+
+On Windows, either remove that line and let VS Code use `JAVA_HOME`, or change it to your Windows JDK path:
+
+```json
+"java.jdt.ls.java.home": "C:\\Program Files\\Eclipse Adoptium\\jdk-23.0.2.7-hotspot"
+```
+
+Use the actual folder name installed on your computer.
+
+Reload VS Code:
+
+1. Press `Ctrl+Shift+P`
+2. Select **Developer: Reload Window**
+
+### 7. Check the test configuration
+
+Open `testConfig.properties:75-125`.
+
+For normal visible Chrome execution, use:
+
+```properties
+browser=chrome
+headless=false
+parallelExecution=false
+```
+
+For headless execution:
+
+```properties
+headless=true
+```
+
+The browser setting is read from the project configuration file, so use `headless`, not `browser.headless`.
+
+### 8. Install the Maven dependencies
+
+In the VS Code terminal, run:
+
+```powershell
+mvn clean install -DskipTests
+```
+
+This downloads the Java dependencies and prepares the project.
+
+Because the Maven build invokes `npx pagefind`, Node.js must be installed even though this is a Java framework.
+
+### 9. Run one test with the green triangle
+
+Open:
+
+`TS_CL_Claim_Portal_Policy_Wording_Junit.java`
+
+You will see green triangles beside methods such as:
+
+```java
+@Test
+public void tc_claim_portal_policy_wording_product_TELUS_GMA()
+```
+
+To run one test:
+
+1. Place the cursor inside the test method.
+2. Click the green triangle beside the method.
+3. Select **Run Test**.
+
+To debug one test:
+
+1. Click the same green triangle.
+2. Select **Debug Test**.
+
+`@BeforeEach` runs automatically and opens Chrome before the test.
+
+### 10. Keep the browser open after the test
+
+In the current file, the `@AfterEach` method is already commented out:
+
+```java
+// @AfterEach
+// public void tearDownEach(TestInfo testInfo) {
+//     ...
+//     FW_Browser.disposeWebDriver(driver);
+// }
+```
+
+Leave it commented out when you want Chrome to remain open after the test finishes.
+
+When you are finished debugging, uncomment it so the browser closes normally after each test.
+
+### 11. Run one test from PowerShell
+
+You can run the exact test without using the green triangle:
+
+```powershell
+mvn test "-Dtest=TS_CL_Claim_Portal_Policy_Wording_Junit#tc_claim_portal_policy_wording_product_TELUS_GMA"
+```
+
+Run another method by replacing the method name after `#`.
+
+### 12. Run the complete test class
+
+```powershell
+mvn test "-Dtest=TS_CL_Claim_Portal_Policy_Wording_Junit"
+```
+
+Run all tests and generate the project reports:
+
+```powershell
+mvn verify
+```
+
+Test results are written to:
+
+```text
+target\surefire-reports
+allure-results
+allure-report
+target\screenshots
+```
+
+### 13. Required application access
+
+Before running the business tests, confirm that the Windows laptop has:
+
+- VPN or corporate network access
+- Access to the GEM QA/Appian URL
+- A valid authorized account
+- Ability to complete MFA or sign-in prompts
+- Network access to Maven Central, npm, and the test application
+
+The test files currently contain login information directly in source code. Do not transfer or reuse those credentials on another computer. They should be rotated and moved to secure environment variables or a secret manager.
+
+### 14. Windows-specific limitations
+
+Chrome and Firefox work on Windows.
+
+Safari tests do not work on Windows because SafariDriver requires macOS. Keep the configuration set to:
+
+```properties
+browser=chrome
+```
+
+The normal daily workflow after setup is:
+
+```powershell
+cd "C:\path\to\project"
+mvn test "-Dtest=ClassName#methodName"
+```
+
+Or use the green triangle beside the individual JUnit method in VS Code.
+
+User: ok. before this. i downloaded this folder to my windows but there is a couple of this i am not seeing. here i have Automation-JAV-Client-GEM_QA_CC_PRODUCT_MAPPING. I see Timeline, I see Java Projects, I see Maven, I see Projects, and I see Run Configuration. But on my windows machine. I only see Automation-JAV-Client-GEM_QA_CC_PRODUCT_MAPPING, I see Outline, and i See Timeline. Nothing else what is that and what can i do to run my test cases
+
+GitHub Copilot: Those items are **VS Code panels provided by extensions**. Your Windows copy is not necessarily missing project files.
+
+- **Outline** and **Timeline** are standard VS Code panels.
+- **Java Projects** and **Projects** come from the Java extensions.
+- **Maven** comes from Maven for Java.
+- **Run Configuration** comes from Java debugging/testing support.
+- **Run and Debug** is the sidebar with the play/bug icon.
+
+## Fix it on Windows
+
+### 1. Open the correct project folder
+
+In VS Code:
+
+1. Select **File → Open Folder**
+2. Open `Automation-JAV-Client-GEM_QA_CC_PRODUCT_MAPPING`
+3. Confirm the VS Code Explorer shows:
+
+```text
+pom.xml
+src
+.vscode
+```
+
+If you do not see `pom.xml`, you opened the outer folder. Look for another nested `Automation-JAV-Client-GEM_QA_CC_PRODUCT_MAPPING` folder and open that one.
+
+### 2. Install the required VS Code extensions
+
+Open Extensions with `Ctrl+Shift+X` and install:
+
+1. **Extension Pack for Java** by Microsoft
+2. **Maven for Java** by Microsoft
+3. **Test Runner for Java** by Microsoft
+
+Then reload VS Code:
+
+1. Press `Ctrl+Shift+P`
+2. Choose **Developer: Reload Window**
+
+After Java finishes loading, the missing Java and Maven panels should appear.
+
+### 3. Confirm Java and Maven are installed
+
+Open **Terminal → New Terminal** in VS Code and run:
+
+```powershell
+java -version
+javac -version
+mvn -version
+```
+
+Java must be version **23**. If `java` or `mvn` is not recognized, install/configure the JDK and Maven first.
+
+### 4. Import the Maven project
+
+In the VS Code terminal, run:
+
+```powershell
+mvn clean install -DskipTests
+```
+
+Or:
+
+1. Press `Ctrl+Shift+P`
+2. Run **Java: Clean Java Language Server Workspace**
+3. Choose **Restart and delete**
+
+Then wait for Java indexing to finish.
+
+### 5. Run one test case
+
+Open:
+
+```text
+src\test\java\testsuites\TS_CL_Claim_Portal_Policy_Wording_Junit.java
+```
+
+You should see a green triangle next to each `@Test` method.
+
+1. Place the cursor inside the test method.
+2. Click the green triangle.
+3. Select **Run Test** or **Debug Test**.
+
+The `@BeforeEach` method opens Chrome automatically. Since this class currently has `@AfterEach` commented out, Chrome should remain open after the test.
+
+### 6. Run from PowerShell instead
+
+```powershell
+mvn test "-Dtest=TS_CL_Claim_Portal_Policy_Wording_Junit#tc_claim_portal_policy_wording_product_TELUS_GMA"
+```
+
+If the panels still do not appear, check **View → Open View** and search for `Java Projects` or `Maven`. If they are not listed, the extensions are not installed or VS Code has not recognized the folder as a Java Maven project.
+
+User: Ok. I see you are giving instructions but i need step by step instructions every step one by one
+
+GitHub Copilot: Follow these steps in order. Do not skip a step.
+
+## Part 1: Install the programs
+
+### Step 1: Open PowerShell
+
+1. Click the **Windows Start** button.
+2. Type `PowerShell`.
+3. Right-click **Windows PowerShell**.
+4. Select **Run as administrator**.
+5. Select **Yes** if Windows asks for permission.
+
+### Step 2: Check whether Windows Package Manager is available
+
+Run:
+
+```powershell
+winget --version
+```
+
+If a version appears, continue to Step 3.
+
+### Step 3: Install Java 23
+
+Run:
+
+```powershell
+winget install EclipseAdoptium.Temurin.23.JDK
+```
+
+When prompted, type `Y` and press Enter.
+
+### Step 4: Install Maven
+
+Run:
+
+```powershell
+winget install Apache.Maven
+```
+
+### Step 5: Install Git
+
+Run:
+
+```powershell
+winget install Git.Git
+```
+
+### Step 6: Install Node.js
+
+Run:
+
+```powershell
+winget install OpenJS.NodeJS.LTS
+```
+
+### Step 7: Install Google Chrome
+
+Run:
+
+```powershell
+winget install Google.Chrome
+```
+
+### Step 8: Install VS Code
+
+Run:
+
+```powershell
+winget install Microsoft.VisualStudioCode
+```
+
+### Step 9: Restart Windows
+
+Restart the computer so Windows applies the new environment variables.
+
+---
+
+## Part 2: Verify the installations
+
+### Step 10: Open a new PowerShell window
+
+Do not use the old PowerShell window.
+
+1. Click **Start**.
+2. Type `PowerShell`.
+3. Open PowerShell normally.
+
+### Step 11: Verify Java
+
+Run:
+
+```powershell
+java -version
+```
+
+You should see version `23`.
+
+Then run:
+
+```powershell
+javac -version
+```
+
+You should also see version `23`.
+
+### Step 12: Verify Maven
+
+Run:
+
+```powershell
+mvn -version
+```
+
+You should see Maven information and Java 23.
+
+### Step 13: Verify Git and Node.js
+
+Run:
+
+```powershell
+git --version
+node --version
+npm --version
+```
+
+Each command should display a version number.
+
+If any command says “not recognized,” stop there and resolve that installation before continuing.
+
+---
+
+## Part 3: Extract and open the project
+
+### Step 14: Find the downloaded folder
+
+Open **File Explorer** and locate the downloaded ZIP file.
+
+### Step 15: Extract the ZIP file
+
+1. Right-click the ZIP file.
+2. Select **Extract All**.
+3. Choose a simple location, such as:
+
+```text
+C:\Automation
+```
+
+4. Click **Extract**.
+
+### Step 16: Find the actual project folder
+
+Open the extracted folders until you find a folder containing:
+
+```text
+pom.xml
+src
+.vscode
+README.md
+```
+
+That is the folder you must open in VS Code.
+
+### Step 17: Open the project in VS Code
+
+1. Open VS Code.
+2. Select **File**.
+3. Select **Open Folder**.
+4. Select the folder containing `pom.xml`.
+5. Click **Select Folder**.
+
+The Explorer should now show `pom.xml` and `src`.
+
+---
+
+## Part 4: Install the VS Code extensions
+
+### Step 18: Open the Extensions window
+
+Press:
+
+```text
+Ctrl+Shift+X
+```
+
+### Step 19: Install Extension Pack for Java
+
+1. Search for `Extension Pack for Java`.
+2. Select the Microsoft extension.
+3. Click **Install**.
+4. Wait until installation finishes.
+
+### Step 20: Install Maven for Java
+
+1. Search for `Maven for Java`.
+2. Select the Microsoft extension.
+3. Click **Install**.
+
+### Step 21: Install Test Runner for Java
+
+1. Search for `Test Runner for Java`.
+2. Select the Microsoft extension.
+3. Click **Install**.
+
+### Step 22: Reload VS Code
+
+1. Press `Ctrl+Shift+P`.
+2. Type `Developer: Reload Window`.
+3. Select it.
+4. Wait for VS Code to reload.
+
+---
+
+## Part 5: Fix the Java configuration
+
+### Step 23: Open the VS Code settings file
+
+In the VS Code Explorer:
+
+1. Open the `.vscode` folder.
+2. Open `settings.json`.
+
+### Step 24: Find the macOS Java setting
+
+Find this line:
+
+```json
+"java.home": "/opt/homebrew/opt/openjdk/"
+```
+
+That path is for macOS and will not work on Windows.
+
+### Step 25: Remove the macOS Java setting
+
+Delete this line:
+
+```json
+"java.home": "/opt/homebrew/opt/openjdk/",
+```
+
+Save the file with:
+
+```text
+Ctrl+S
+```
+
+VS Code should now use the Java installation configured by Windows.
+
+### Step 26: Reload VS Code again
+
+Press:
+
+```text
+Ctrl+Shift+P
+```
+
+Select:
+
+```text
+Developer: Reload Window
+```
+
+---
+
+## Part 6: Download the project dependencies
+
+### Step 27: Open the VS Code terminal
+
+Select:
+
+```text
+Terminal → New Terminal
+```
+
+### Step 28: Confirm that the terminal is inside the project folder
+
+Run:
+
+```powershell
+dir
+```
+
+You should see:
+
+```text
+pom.xml
+src
+.vscode
+```
+
+If you do not see `pom.xml`, change folders using `cd`. For example:
+
+```powershell
+cd "C:\Automation\Automation-JAV-Client-GEM_QA_CC_PRODUCT_MAPPING"
+```
+
+Then run:
+
+```powershell
+dir
+```
+
+### Step 29: Download and compile the framework
+
+Run:
+
+```powershell
+mvn clean install -DskipTests
+```
+
+Wait for it to finish. The first run may take several minutes because Maven downloads dependencies.
+
+You want to see:
+
+```text
+BUILD SUCCESS
+```
+
+---
+
+## Part 7: Configure Chrome and the tests
+
+### Step 30: Open the test configuration
+
+Open:
+
+```text
+src\test\resources\testConfig.properties
+```
+
+### Step 31: Confirm Chrome configuration
+
+Make sure these values exist:
+
+```properties
+browser=chrome
+headless=false
+parallelExecution=false
+```
+
+This opens a normal visible Chrome window and runs tests one at a time.
+
+### Step 32: Do not install ChromeDriver manually
+
+The framework uses WebDriverManager. It automatically downloads the appropriate ChromeDriver when the test starts.
+
+---
+
+## Part 8: Run one test with the green triangle
+
+### Step 33: Open the test class
+
+Open:
+
+```text
+src\test\java\testsuites\TS_CL_Claim_Portal_Policy_Wording_Junit.java
+```
+
+### Step 34: Wait for the green triangle
+
+Look beside a method beginning with `@Test`.
+
+You should see a green triangle beside a test method such as:
+
+```java
+tc_claim_portal_policy_wording_product_TELUS_GMA()
+```
+
+### Step 35: Run one test
+
+1. Place your mouse over the green triangle beside the method.
+2. Click the triangle.
+3. Select **Run Test**.
+4. Wait for Chrome to open.
+5. Watch the test run.
+
+Only that test method should run.
+
+### Step 36: Keep Chrome open after the test
+
+At the bottom of the test class, leave this section commented out:
+
+```java
+// @AfterEach
+// public void tearDownEach(TestInfo testInfo) {
+//     ...
+//     FW_Browser.disposeWebDriver(driver);
+// }
+```
+
+Because `@AfterEach` is commented out, the browser should remain open after the test finishes.
+
+### Step 37: Debug one test
+
+To pause at breakpoints:
+
+1. Click the green triangle beside the test method.
+2. Select **Debug Test**.
+3. Add a breakpoint by clicking beside a line number.
+4. Run the test again.
+
+---
+
+## Part 9: Run one test from the terminal
+
+You can also run one specific test with PowerShell:
+
+```powershell
+mvn test "-Dtest=TS_CL_Claim_Portal_Policy_Wording_Junit#tc_claim_portal_policy_wording_product_TELUS_GMA"
+```
+
+Replace the method name after `#` to run a different test.
+
+---
+
+## Part 10: Login and network requirements
+
+Before running the business tests:
+
+1. Connect to your company VPN.
+2. Confirm you can access:
+
+```text
+https://gem-qa.appiancloud.com
+```
+
+3. Make sure your authorized account can sign in.
+4. Complete MFA if requested.
+5. Confirm Chrome can access the QA application.
+
+The test files contain login information directly in the source code. Do not copy or share those credentials. They should be changed to secure environment variables before another person runs the project.
+
+---
+
+## Normal daily usage
+
+After all setup is complete:
+
+1. Open VS Code.
+2. Open the project folder.
+3. Open the test class.
+4. Click the green triangle beside the desired test.
+5. Select **Run Test**.
+
+You do not repeat the installation steps each time.
+
+User: what does the following message mean. The java.home variable defined in Visual Studio Code settings points to a missing or inaccessible folder. (/opt/homebrew/opt/openjdk/)
+
+GitHub Copilot: That message means VS Code is configured to look for Java here:
+
+```text
+/opt/homebrew/opt/openjdk/
+```
+
+That is a **macOS Homebrew path**. It does not exist on your Windows computer, so VS Code cannot find Java.
+
+Fix it on Windows:
+
+1. Open `settings.json`.
+2. Find:
+
+```json
+"java.home": "/opt/homebrew/opt/openjdk/",
+```
+
+3. Delete that line.
+4. Save with `Ctrl+S`.
+5. Press `Ctrl+Shift+P`.
+6. Run **Developer: Reload Window**.
+
+Then open PowerShell and verify:
+
+```powershell
+java -version
+javac -version
+```
+
+If Java 23 is installed and those commands work, VS Code should detect it automatically through `JAVA_HOME`.
+
+If VS Code still cannot find Java, find the installed JDK folder. It may look like:
+
+```text
+C:\Program Files\Eclipse Adoptium\jdk-23.0.2.7-hotspot
+```
+
+Then add this to `settings.json`:
+
+```json
+"java.jdt.ls.java.home": "C:\\Program Files\\Eclipse Adoptium\\jdk-23.0.2.7-hotspot"
+```
+
+Use the exact folder name on your computer. Do not use `openjdk` on Windows.
+
+User: the setting.json is empty. it has {}on line one and 2. also, in front of settings.json we have C:\Users\LENOVO\AppData\Roaming\Code\User
+
+GitHub Copilot: That is normal.
+
+`C:\Users\LENOVO\AppData\Roaming\Code\User` is your **Windows VS Code user-settings folder**. The `settings.json` file containing:
+
+```json
+{}
+```
+
+means you currently have no custom VS Code user settings.
+
+The macOS setting is probably inside the **project’s settings file**, not your Windows user settings. Check this location inside the downloaded project:
+
+```text
+C:\path\to\Automation-JAV-Client-GEM_QA_CC_PRODUCT_MAPPING\.vscode\settings.json
+```
+
+### Do this
+
+1. In VS Code, open the project folder containing `pom.xml`.
+2. In the Explorer, open the `.vscode` folder.
+3. Open its `settings.json`.
+4. If it contains this:
+
+```json
+"java.home": "/opt/homebrew/opt/openjdk/",
+```
+
+delete that line.
+5. Save with `Ctrl+S`.
+6. Press `Ctrl+Shift+P`.
+7. Select **Developer: Reload Window**.
+
+If the project’s `.vscode\settings.json` does not exist, you can leave your user `settings.json` as:
+
+```json
+{}
+```
+
+Then make sure Java is installed and recognized in PowerShell:
+
+```powershell
+java -version
+javac -version
+```
+
+If those commands work, VS Code should detect Java automatically. You can also open **Command Palette → Java: Configure Java Runtime** and confirm that JDK 23 is listed.
+
+User: does Ctrl+S mean i press Ctrl and S or i Do Ctrl, shift and S to bring up the save pop up
+
+GitHub Copilot: `Ctrl+S` means press and hold **Ctrl**, then press **S** once.
+
+It saves the file immediately. It does **not** open the Save As window.
+
+- `Ctrl+S` = Save
+- `Ctrl+Shift+S` = Save As, which opens the save dialog
+
+So use **Ctrl+S** after editing `settings.json`.
+
+User: I don't understand what you meant with this line: If the project’s `.vscode\settings.json` does not exist, you can leave your user `settings.json` as:
+
+GitHub Copilot: It means there are two different `settings.json` files:
+
+1. **User settings** for all VS Code projects:
+
+```text
+C:\Users\LENOVO\AppData\Roaming\Code\User\settings.json
+```
+
+2. **Project settings** for only this automation project:
+
+```text
+C:\path\to\Automation-JAV-Client-GEM_QA_CC_PRODUCT_MAPPING\.vscode\settings.json
+```
+
+If the second file does not exist, leave the first file as:
+
+```json
+{}
+```
+
+You do not need to create another settings file just for Java if Java is already installed correctly.
+
+### Check your project folder
+
+In VS Code’s Explorer, look inside the project folder:
+
+```text
+Automation-JAV-Client-GEM_QA_CC_PRODUCT_MAPPING
+```
+
+You should see:
+
+```text
+.vscode
+pom.xml
+src
+```
+
+Open `.vscode`, then open `settings.json`.
+
+- If it exists and contains the macOS path, remove that path.
+- If `.vscode` or its `settings.json` does not exist, leave your user file as `{}`.
+
+Then verify Java in the VS Code terminal:
+
+```powershell
+java -version
+javac -version
+```
+
+If both commands show Java 23, continue with the Maven setup.
+
+User: how do i know the path. Actually it has the exact same data as the one here in this folder. maybe you can check and tell me
+
+GitHub Copilot: I checked the project file. The file in this project is:
+
+`settings.json`
+
+On this Mac, its full path is:
+
+```text
+/Users/blandine/Documents/Development/Automation/Automation-Projects/Automation-JAV-Client-GEM_QA_CC_PRODUCT_MAPPING/.vscode/settings.json
+```
+
+On Windows, the beginning will be different, but the ending should be exactly:
+
+```text
+\Automation-JAV-Client-GEM_QA_CC_PRODUCT_MAPPING\.vscode\settings.json
+```
+
+For example, if you extracted the project under `C:\Users\LENOVO\Downloads`, the path would be:
+
+```text
+C:\Users\LENOVO\Downloads\Automation-JAV-Client-GEM_QA_CC_PRODUCT_MAPPING\.vscode\settings.json
+```
+
+To find the exact path on Windows:
+
+1. In VS Code Explorer, right-click the project’s `.vscode` folder.
+2. Select **Reveal in File Explorer**.
+3. File Explorer will open the exact location.
+4. Click the address bar to see or copy the full path.
+
+The file under:
+
+```text
+C:\Users\LENOVO\AppData\Roaming\Code\User\settings.json
+```
+
+is a different file. That is your general VS Code settings file. The project-specific file is the one inside the downloaded project folder.
+
+User: where did you check because in this folder. the .vscode, inside it, i see settings.json but i don't see that path you mentioned above
+
+GitHub Copilot: You are correct to question that. I checked the **Mac copy of the project** currently open in this workspace, not the Windows computer.
+
+There are two different things:
+
+### 1. The file location
+
+This is where the file is stored:
+
+```text
+...\Automation-JAV-Client-GEM_QA_CC_PRODUCT_MAPPING\.vscode\settings.json
+```
+
+That full path is not normally written inside the file.
+
+### 2. The file contents
+
+The Mac copy originally contained this setting:
+
+```json
+"java.home": "/opt/homebrew/opt/openjdk/"
+```
+
+On your Windows computer, open the `.vscode\settings.json` file and press:
+
+```text
+Ctrl+F
+```
+
+Search for:
+
+```text
+java.home
+```
+
+Then:
+
+- If you find `openjdk`, delete that complete line and save with `Ctrl+S`.
+- If the file contains only:
+
+```json
+{}
+```
+
+then that project file is already fine. Leave it unchanged.
+
+The Windows error may be coming from **VS Code user settings** or another workspace setting. To check the actual setting VS Code is using:
+
+1. Press `Ctrl+,`.
+2. Search for `java home`.
+3. Click **Edit in settings.json** if a Java path appears.
+4. Remove any path containing:
+
+```text
+/opt/homebrew/opt/openjdk/
+```
+
+5. Restart VS Code.
+
+Then open the VS Code terminal and run:
+
+```powershell
+java -version
+```
+
+The important point is: the path I mentioned was the **Mac file path and Mac Java configuration**, not a path you should expect to see as a folder on Windows.
+
+User: Well i see. C:\Users\LENOVO\Documents\Automation-JAV-GEM_QA_CC_PRODUCT_MAPPING
+
+GitHub Copilot: That is your **project folder**:
+
+```text
+C:\Users\LENOVO\Documents\Automation-JAV-GEM_QA_CC_PRODUCT_MAPPING
+```
+
+The project-specific settings file should be:
+
+```text
+C:\Users\LENOVO\Documents\Automation-JAV-GEM_QA_CC_PRODUCT_MAPPING\.vscode\settings.json
+```
+
+Now do this:
+
+1. In VS Code, open the project folder:
+   ```text
+   C:\Users\LENOVO\Documents\Automation-JAV-GEM_QA_CC_PRODUCT_MAPPING
+   ```
+
+2. Open `.vscode`.
+
+3. Open `settings.json`.
+
+4. Press `Ctrl+F` and search for:
+   ```text
+   java.home
+   ```
+
+5. If you find:
+   ```text
+   "java.home": "/opt/homebrew/opt/openjdk/"
+   ```
+   delete that line.
+
+6. Save using `Ctrl+S`.
+
+7. Press `Ctrl+Shift+P`.
+
+8. Select **Developer: Reload Window**.
+
+9. Open **Terminal → New Terminal** and run:
+   ```powershell
+   cd "C:\Users\LENOVO\Documents\Automation-JAV-GEM_QA_CC_PRODUCT_MAPPING"
+   java -version
+   mvn -version
+   ```
+
+10. Confirm that:
+    - Java reports version 23.
+    - Maven displays its version.
+    - The terminal is inside the project folder.
+
+Then open your test file and use the green triangle beside the individual `@Test` method.
+
+User: i don't see java.home
+
+GitHub Copilot: That is okay. If you do not see `java.home` in:
+
+```text
+C:\Users\LENOVO\Documents\Automation-JAV-GEM_QA_CC_PRODUCT_MAPPING\.vscode\settings.json
+```
+
+then there is nothing to remove from that project file.
+
+Now check whether Java is installed and available.
+
+1. In VS Code, click **Terminal → New Terminal**.
+2. Run:
+
+```powershell
+java -version
+```
+
+3. Then run:
+
+```powershell
+mvn -version
+```
+
+### If both commands show version information
+
+Continue with:
+
+```powershell
+mvn clean install -DskipTests
+```
+
+### If Java is not recognized
+
+Install Java 23:
+
+```powershell
+winget install EclipseAdoptium.Temurin.23.JDK
+```
+
+Close and reopen VS Code, then run:
+
+```powershell
+java -version
+```
+
+### If VS Code still reports the old `homebrew` error
+
+Check your **user settings**:
+
+1. Press `Ctrl+Shift+P`.
+2. Select **Preferences: Open User Settings (JSON)**.
+3. Search for:
+   ```text
+   java.home
+   ```
+4. Remove any setting containing:
+   ```text
+   /opt/homebrew/opt/openjdk/
+   ```
+5. Save with `Ctrl+S`.
+6. Press `Ctrl+Shift+P`.
+7. Select **Developer: Reload Window**.
+
+Your user settings file is:
+
+```text
+C:\Users\LENOVO\AppData\Roaming\Code\User\settings.json
+```
+
+It is fine for that file to contain only:
+
+```json
+{}
+```
+
+User: java -version. returned an error and it said. java: the term java is not recognized as the name of cmdlet, fuction, script file, or operable program. check the spelling of the name, or if a path was included, verify that the path is correct and try again
+
+GitHub Copilot: That means Java is **not installed**, or Windows cannot find it in `Path`.
+
+Do this step by step.
+
+### 1. Close VS Code
+
+Close all VS Code windows.
+
+### 2. Open PowerShell as administrator
+
+1. Click **Start**.
+2. Type `PowerShell`.
+3. Right-click **Windows PowerShell**.
+4. Select **Run as administrator**.
+5. Click **Yes**.
+
+### 3. Install Java 23
+
+Run:
+
+```powershell
+winget install EclipseAdoptium.Temurin.23.JDK
+```
+
+Wait until the installation finishes.
+
+### 4. Close PowerShell
+
+Close the administrator PowerShell window.
+
+### 5. Open a new PowerShell window
+
+Open PowerShell normally from the Start menu. A new window is important because it reloads Windows environment variables.
+
+### 6. Check Java
+
+Run:
+
+```powershell
+java -version
+```
+
+Then:
+
+```powershell
+javac -version
+```
+
+Both should show version `23`.
+
+### 7. Reopen VS Code
+
+Open VS Code again and open:
+
+```text
+C:\Users\LENOVO\Documents\Automation-JAV-GEM_QA_CC_PRODUCT_MAPPING
+```
+
+### 8. Check Java inside VS Code
+
+Open **Terminal → New Terminal** and run:
+
+```powershell
+java -version
+```
+
+### 9. If `winget` is also not recognized
+
+Install Java manually:
+
+1. Open a browser.
+2. Go to [https://adoptium.net/](https://adoptium.net/).
+3. Select:
+   - Operating System: **Windows**
+   - Architecture: ** x64**
+   - Package Type: **JDK**
+   - Version: **23**
+4. Download and run the installer.
+5. During installation, enable:
+   - **Set JAVA_HOME**
+   - **Add to PATH**
+6. Finish installation.
+7. Restart Windows.
+8. Run:
+
+```powershell
+java -version
+```
+
+Once Java works, the next command is:
+
+```powershell
+mvn -version
+```
+
+Do not try to run the test until `java -version` works successfully.
+
+User: in powershell am i not supposed to see what i am typing? because when i try to type i am not seeing the characters
+
+GitHub Copilot: Normally, PowerShell shows the characters you type.
+
+If nothing appears, check these possibilities:
+
+1. Click inside the PowerShell window.
+2. Press `Ctrl+C` to cancel any command currently waiting.
+3. Press `Enter`.
+4. Type:
+
+```powershell
+echo hello
+```
+
+5. Press `Enter`.
+
+You should see:
+
+```text
+hello
+```
+
+If characters still do not appear:
+
+1. Close PowerShell.
+2. Open a new PowerShell window.
+3. Click inside it.
+4. Type again.
+
+If this happens only when entering a password, that is normal. PowerShell hides password characters for security. Just type the password and press `Enter`.
+
+For the Java installation command, no password should be required:
+
+```powershell
+winget install EclipseAdoptium.Temurin.23.JDK
+```
+
+You should see the command appear while typing.
+
+User: winget install EclipseAdoptium.Temurin.23.JDK. I see this mentions eclipse. is it right when i using vscode
+
+GitHub Copilot: Yes, it is correct.
+
+**Eclipse Adoptium Temurin** is the distribution of Java, specifically the JDK. **VS Code** is the editor. They are separate programs and work together:
+
+- **Temurin JDK 23**: runs and compiles your Java/Maven tests.
+- **VS Code**: edits the code and provides the green Run/Debug buttons.
+- **Maven**: builds the project and runs the JUnit tests.
+
+Run:
+
+```powershell
+winget install EclipseAdoptium.Temurin.23.JDK
+```
+
+After it completes:
+
+1. Close PowerShell.
+2. Open a new PowerShell window.
+3. Run:
+
+```powershell
+java -version
+javac -version
+```
+
+You should see version 23.
+
+Then reopen VS Code. Eclipse Adoptium does not replace VS Code; it provides the Java installation that VS Code needs.
+
+User: mvn -version. returns an error. mn: The term in not recorgined. just like it previously status with java -versio
+
+GitHub Copilot: The error means either:
+
+1. You typed `mn` instead of `mvn`, or
+2. Maven is not installed or not in Windows `Path`.
+
+The correct command is:
+
+```powershell
+mvn -version
+```
+
+There is a **v** in `mvn`.
+
+### Do this
+
+1. Open PowerShell as administrator.
+2. Run:
+
+```powershell
+winget install Apache.Maven
+```
+
+3. Wait for the installation to finish.
+4. Close PowerShell completely.
+5. Open a new PowerShell window.
+6. Run:
+
+```powershell
+mvn -version
+```
+
+You should see Maven information.
+
+If `winget` is not recognized, install Maven manually from:
+
+```text
+https://maven.apache.org/download.cgi
+```
+
+Download the **Binary zip archive**, extract it, then add Maven’s `bin` folder to the Windows `Path`.
+
+Also make sure Java is working first:
+
+```powershell
+java -version
+```
+
+You need both commands to work:
+
+```powershell
+java -version
+mvn -version
+```
+
+Only after both work should you run the project:
+
+```powershell
+cd "C:\Users\LENOVO\Documents\Automation-JAV-GEM_QA_CC_PRODUCT_MAPPING"
+mvn clean install -DskipTests
+```
+
+User: winget install Apache.Maven. Returned No package found matching input criteria
+
+GitHub Copilot: That means `winget` could not find Maven using that package name. Install Maven manually.
+
+## Step 1: Download Maven
+
+1. Open a browser.
+2. Go to:
+
+```text
+https://maven.apache.org/download.cgi
+```
+
+3. Find **Binary zip archive**.
+4. Download the file similar to:
+
+```text
+apache-maven-3.9.11-bin.zip
+```
+
+Do not download the source archive.
+
+## Step 2: Extract Maven
+
+1. Open your **Downloads** folder.
+2. Right-click the Maven ZIP file.
+3. Select **Extract All**.
+4. Set the destination to:
+
+```text
+C:\Tools
+```
+
+5. Click **Extract**.
+
+You should now have a folder similar to:
+
+```text
+C:\Tools\apache-maven-3.9.11
+```
+
+Inside that folder, you should see:
+
+```text
+bin
+boot
+conf
+lib
+```
+
+## Step 3: Add Maven to Windows
+
+1. Click the Windows **Start** button.
+2. Search for:
+
+```text
+environment variables
+```
+
+3. Select **Edit the system environment variables**.
+4. Click **Environment Variables**.
+5. Under **User variables**, click **New**.
+6. Enter:
+
+```text
+Variable name: MAVEN_HOME
+Variable value: C:\Tools\apache-maven-3.9.11
+```
+
+Use your actual Maven folder name.
+
+7. Under **User variables**, select `Path`.
+8. Click **Edit**.
+9. Click **New**.
+10. Add:
+
+```text
+%MAVEN_HOME%\bin
+```
+
+11. Click **OK** on every open window.
+
+## Step 4: Restart PowerShell
+
+Close every PowerShell window, including the terminal inside VS Code.
+
+Open a new PowerShell window and run:
+
+```powershell
+mvn -version
+```
+
+You should see Maven information.
+
+Also verify Java:
+
+```powershell
+java -version
+```
+
+Both commands must work before continuing.
+
+## Step 5: Run the project
+
+Open a new VS Code terminal and run:
+
+```powershell
+cd "C:\Users\LENOVO\Documents\Automation-JAV-GEM_QA_CC_PRODUCT_MAPPING"
+mvn clean install -DskipTests
+```
+
+You should eventually see:
+
+```text
+BUILD SUCCESS
+```
+
+The `Maven for Java` VS Code panel will appear after Maven is installed and the project is opened from the folder containing `pom.xml`.
+
+User: apache-maven-3.9.11-bin.zip. i see apache-maven-3.9.16-bin.zip. should i keep looking for 11
+
+GitHub Copilot: No, you do not need to keep looking. **Apache Maven 3.9.16** is newer than 3.9.11 and is suitable for this project.
+
+Download:
+
+```text
+apache-maven-3.9.16-bin.zip
+```
+
+Choose **Binary zip archive**, not the source archive.
+
+Then extract it to:
+
+```text
+C:\Tools
+```
+
+Your Maven folder will be:
+
+```text
+C:\Tools\apache-maven-3.9.16
+```
+
+Set:
+
+```text
+MAVEN_HOME=C:\Tools\apache-maven-3.9.16
+```
+
+Add this to your Windows `Path`:
+
+```text
+%MAVEN_HOME%\bin
+```
+
+Close and reopen PowerShell, then verify:
+
+```powershell
+mvn -version
+```
+
+Maven 3.9.16 will work with this project as long as Java 23 is installed and active.
+
+User: how do set the destination to C:\Tools
+
+GitHub Copilot: ### Set the extraction destination to `C:\Tools`
+
+1. Open your **Downloads** folder.
+2. Find `apache-maven-3.9.16-bin.zip`.
+3. Right-click the ZIP file.
+4. Select **Extract All...**
+5. In the destination field, replace the existing text with:
+
+```text
+C:\Tools
+```
+
+6. Click **Extract**.
+
+If Windows says the folder does not exist:
+
+1. Open **File Explorer**.
+2. Click **This PC**.
+3. Open the `C:` drive.
+4. Right-click an empty area.
+5. Select **New → Folder**.
+6. Name it:
+
+```text
+Tools
+```
+
+7. Return to the ZIP file.
+8. Right-click it and choose **Extract All...** again.
+9. Select:
+
+```text
+C:\Tools
+```
+
+After extraction, confirm this folder exists:
+
+```text
+C:\Tools\apache-maven-3.9.16
+```
+
+Inside it, you should see:
+
+```text
+bin
+boot
+conf
+lib
+```
+
+The exact Maven home path is therefore:
+
+```text
+C:\Tools\apache-maven-3.9.16
+```
+
+User: do i have to first click OK. before this step. Use your actual Maven folder name. that is after entering Variable name: MAVEN_HOME and Variable value: C:\Tools\apache-maven-3.9.16?
+
+GitHub Copilot: Yes. After entering:
+
+```text
+Variable name: MAVEN_HOME
+Variable value: C:\Tools\apache-maven-3.9.16
+```
+
+click **OK**.
+
+Then:
+
+1. Under **User variables**, select `Path`.
+2. Click **Edit**.
+3. Click **New**.
+4. Enter:
+
+```text
+%MAVEN_HOME%\bin
+```
+
+5. Click **OK**.
+6. Click **OK** again on the remaining Environment Variables window.
+7. Click **OK** on System Properties.
+
+Then close PowerShell and open a new PowerShell window. Test Maven:
+
+```powershell
+mvn -version
+```
+
+You should see Maven 3.9.16.
+
+User: what does this command do. mvn clean install -DskipTests
+
+GitHub Copilot: ```powershell
+mvn clean install -DskipTests
+```
+
+This command prepares and builds the project **without running the test cases**.
+
+- `mvn` starts Maven.
+- `clean` deletes the previous `target` build folder.
+- `install` compiles the project and installs the built package into your local Maven repository.
+- `-DskipTests` skips executing tests, which makes the setup faster.
+
+It verifies that Java, Maven, the project structure, and dependencies are working.
+
+After it succeeds, you can run one test with:
+
+```powershell
+mvn test "-Dtest=TS_CL_Claim_Portal_Policy_Wording_Junit#testMethodName"
+```
+
+You should see:
+
+```text
+BUILD SUCCESS
+```
+
+Note: this command may still compile the test source code; it only prevents the tests from executing.
+
+User: how can run one test case like i would do in this TS_BCAA by just clicking on the green triange that points to the right
+
+GitHub Copilot: To run one test case using the green triangle in Windows:
+
+1. Open this file in VS Code:
+
+```text
+src\test\java\testsuites\TS_BCAA_Claim_Portal_Policy_Wording_JUnit.java
+```
+
+2. Wait until Java finishes loading. The status bar should not show Java errors.
+
+3. Find the test method. It will look similar to:
+
+```java
+@Test
+public void someTestName() {
+```
+
+4. Look to the left of the `@Test` line or the method declaration.
+
+5. Click the green triangle pointing right.
+
+6. Select **Run Test**.
+
+VS Code will run only that individual test method. It will still run `@BeforeAll` and `@BeforeEach` automatically.
+
+To debug instead:
+
+1. Click the green triangle.
+2. Select **Debug Test**.
+
+Before running, make sure the file’s teardown section is commented out if you want Chrome to remain open:
+
+```java
+// @AfterEach
+// public void tearDownEach(TestInfo testInfo) {
+//     ...
+//     FW_Browser.disposeWebDriver(driver);
+// }
+```
+
+If you do not see the green triangle:
+
+1. Confirm the file is inside the opened project folder.
+2. Confirm the project folder contains `pom.xml`.
+3. Install **Extension Pack for Java** and **Test Runner for Java**.
+4. Press `Ctrl+Shift+P`.
+5. Select **Java: Clean Java Language Server Workspace**.
+6. Select **Restart and delete**.
+7. Wait for VS Code to reload.
+8. Reopen the test file.
+
+You can also run the test directly from the VS Code terminal:
+
+```powershell
+mvn test "-Dtest=TS_BCAA_Claim_Portal_Policy_Wording_JUnit#YOUR_TEST_METHOD_NAME"
+```
+
+Replace `YOUR_TEST_METHOD_NAME` with the exact method name after `public void`.
+
+User: mvn clean install -DskipTests. completed. but i see an error. it says. ERROR. Failed to execute goal org.apache.maven.plugins:maven-antrun-plugin:3.1.0:run (rebuild-pagefind-index) on project Template: An Ant BuildException has occured: Execute failed: java.io.IOException: Cannot run program"npx"(in directory: "C:\Users\LENOVO\Documents\Automation-JAV-Client-GEM_QA_CC_PRODUCT_MAPPING\src\test\java\framework/.docs" executable="npx" timeout="30000">...@5:174 in C:\Users\LENOVO\Documents\Automation-JAV-Client-GEM_QA_CC_PRODUCT_MAPPING\target\antrun\build-main.xml)
+
+GitHub Copilot: This error means Maven is working, but Windows cannot find the `npx` command.
+
+`npx` is installed with **Node.js**. The project uses it to rebuild the Pagefind documentation search index during Maven startup.
+
+### Step 1: Check Node.js
+
+Open a **new PowerShell** window and run:
+
+```powershell
+node --version
+```
+
+Then:
+
+```powershell
+npx --version
+```
+
+### Step 2: If either command fails, install Node.js
+
+Run PowerShell as administrator:
+
+```powershell
+winget install OpenJS.NodeJS.LTS
+```
+
+After installation:
+
+1. Close PowerShell.
+2. Close VS Code.
+3. Open VS Code again.
+4. Open a new terminal.
+
+### Step 3: Verify `npx`
+
+Run:
+
+```powershell
+node --version
+npm --version
+npx --version
+```
+
+Each command should display a version number.
+
+### Step 4: Run Maven again
+
+From the project folder:
+
+```powershell
+cd "C:\Users\LENOVO\Documents\Automation-JAV-GEM_QA_CC_PRODUCT_MAPPING"
+mvn clean install -DskipTests
+```
+
+The important part of the error is:
+
+```text
+Cannot run program "npx"
+```
+
+The `.docs` path shown in the message is not the problem. The Maven build is trying to run `npx pagefind`, but Windows cannot locate `npx` in its `Path`.
+
+If Node.js is installed but `npx` still is not recognized, close and reopen both VS Code and PowerShell so Windows reloads the updated `Path`.
+
+User: only node --version displayed a number the other two failed with a error. npm: File C:\Program Files\nodejs\npm.ps1 cannot be loaded because running scripts is dispabled on this system. For more information, see about_Execution_Policies at https:/go.microsoft.com/fwlink/?LinkID=135170. similar to npx
+
+GitHub Copilot: Node.js is installed correctly. PowerShell is blocking the `npm.ps1` and `npx.ps1` scripts because of its execution policy.
+
+Use this fix:
+
+### Step 1: Open PowerShell normally
+
+Do not need administrator mode.
+
+### Step 2: Allow locally installed scripts for your user
+
+Copy and run:
+
+```powershell
+Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
+```
+
+If PowerShell asks for confirmation:
+
+1. Type:
+   ```text
+   Y
+   ```
+2. Press **Enter**.
+
+This changes the policy only for your Windows user account.
+
+### Step 3: Close PowerShell
+
+Close the current PowerShell window.
+
+### Step 4: Open a new PowerShell window
+
+Then run:
+
+```powershell
+npm --version
+```
+
+and:
+
+```powershell
+npx --version
+```
+
+Both should now display version numbers.
+
+### Step 5: Run Maven again
+
+In the project folder:
+
+```powershell
+cd "C:\Users\LENOVO\Documents\Automation-JAV-GEM_QA_CC_PRODUCT_MAPPING"
+mvn clean install -DskipTests
+```
+
+### Temporary alternative
+
+If your company prevents changing the execution policy, use the Windows command files instead:
+
+```powershell
+npm.cmd --version
+npx.cmd --version
+```
+
+Maven specifically looks for `npx`, so the execution-policy fix is the better solution.
+
+User: i ran mvn clean install -DskipTests. i got an error again. this time it this one. [ERROR] Failed to execute goal org.apache.maven.plugins:maven-antrun-plugin:3.1.0:run (rebuild-pagefind-index) on project Template: An Ant BuildException has occured: Execute failed: java.io.IOException: Cannot run program "npx" (in directory "C:\Users\LENOVO\Documents\Automation-JAV-Client-GEM_QA_CC_PRODUCT_MAPPING\src\test\java\framework\.docs"): CreateProcess error=2, The system cannot find the file specified
+[ERROR] around Ant part ...<exec failonerror="false" dir="C:\Users\LENOVO\Documents\Automation-JAV-Client-GEM_QA_CC_PRODUCT_MAPPING/src/test/java/framework/.docs" executable="npx" timeout="30000">... @ 5:174 in C:\Users\LENOVO\Documents\Automation-JAV-Client-GEM_QA_CC_PRODUCT_MAPPING\target\antrun\build-main.xml
+
+GitHub Copilot: The error is now specific: Node.js is installed, but Maven’s Ant process cannot launch the Windows command name `npx`. Windows exposes it as `npx.cmd`; I’m updating the project’s Maven configuration to use that Windows executable so the build can proceed.
+
+Generating patch (6 lines) in []()
+
+
+```
+
+```
+The Maven build now points at `npx.cmd`, which is the Windows-resolvable command file. The next focused check is to confirm the POM remains valid before you rerun the build on Windows.
+
+Checked [](), no problems found
+
+The problem is that Maven cannot launch `npx` directly on Windows. I changed the project configuration to use:
+
+```xml
+<exec executable="npx.cmd">
+```
+
+The POM is valid.
+
+On your Windows computer:
+
+1. Make sure the updated `pom.xml` is copied/downloaded.
+2. Close and reopen VS Code.
+3. Open a new VS Code terminal.
+4. Run:
+
+```powershell
+cd "C:\Users\LENOVO\Documents\Automation-JAV-GEM_QA_CC_PRODUCT_MAPPING"
+mvn clean install -DskipTests
+```
+
+This should resolve the `Cannot run program "npx"` error.
+
+If a new error says that `pagefind` is missing, run:
+
+```powershell
+cd "C:\Users\LENOVO\Documents\Automation-JAV-GEM_QA_CC_PRODUCT_MAPPING\src\test\java\framework\.docs"
+npm install
+```
+
+Then rerun:
+
+```powershell
+cd "C:\Users\LENOVO\Documents\Automation-JAV-GEM_QA_CC_PRODUCT_MAPPING"
+mvn clean install -DskipTests
+```
+
+Made changes.
+
+User: what does these points mean. The POM is valid.
+
+On your Windows computer:
+
+1. Make sure the updated `pom.xml` is copied/downloaded.
+
+GitHub Copilot: “The POM is valid” means the `pom.xml` file has correct XML structure and Maven can read it.
+
+“Make sure the updated `pom.xml` is copied/downloaded” means the Windows computer must have the version containing this change:
+
+```xml
+<exec executable="npx.cmd">
+```
+
+Your Windows copy may still contain the old line:
+
+```xml
+<exec executable="npx">
+```
+
+### Check your Windows file
+
+1. Open this folder:
+
+```text
+C:\Users\LENOVO\Documents\Automation-JAV-GEM_QA_CC_PRODUCT_MAPPING
+```
+
+2. Right-click `pom.xml`.
+3. Open it with VS Code.
+4. Press `Ctrl+F`.
+5. Search for:
+
+```text
+executable="npx"
+```
+
+6. Confirm it says:
+
+```xml
+<exec executable="npx.cmd"
+```
+
+If it says `npx`, change only that part to `npx.cmd`.
+
+7. Press `Ctrl+S` to save.
+8. Close and reopen the VS Code terminal.
+9. Run:
+
+```powershell
+cd "C:\Users\LENOVO\Documents\Automation-JAV-GEM_QA_CC_PRODUCT_MAPPING"
+mvn clean install -DskipTests
+```
+
+The updated `pom.xml` is required because Maven reads its instructions from that file. Changing the Mac copy does not automatically change the copy on your Windows computer.
+
+User: ok. made the change and saved. closed vs code upon reopening vs code i am seeing a pop up that says. powershell. process ID (PID): 2464. command line: ...\powershell.exe -nonexist -command 'try {."c:Users\LENOVO\AppData\Local\Programs\Microsoft VS Code\08d4889f9e\resources\app\out\vs\workbench\contrib\terminal\common\scripts\shellIntegration.ps1"}catch{}'. Shell integration:Basic. The following extensions want to relaunch the terminal to contribute to its environment. does this has something to do with the setting i just made, or it's something different i should just ignore it and simply run the mvn clean install -DskipTests
+
+GitHub Copilot: This is unrelated to the `pom.xml` change. It is a normal VS Code PowerShell terminal message.
+
+VS Code is asking to relaunch PowerShell so installed extensions can add their environment settings. Choose:
+
+```text
+Relaunch
+```
+
+Then wait for the new terminal prompt to appear.
+
+After that, run:
+
+```powershell
+cd "C:\Users\LENOVO\Documents\Automation-JAV-GEM_QA_CC_PRODUCT_MAPPING"
+mvn clean install -DskipTests
+```
+
+You can also choose **Skip** or close the message, but **Relaunch** is recommended. The `npx.cmd` change in `pom.xml` is separate and is what addresses the Maven error.
+
+User: it just disappeard not sure if i clicked the relaunch. should i go ahead do the run or there is something i need to do first
+
+GitHub Copilot: Yes, you can continue.
+
+First open a **new terminal** in VS Code:
+
+1. Click **Terminal** in the top menu.
+2. Click **New Terminal**.
+3. Wait for the PowerShell prompt to appear.
+
+Then run:
+
+```powershell
+cd "C:\Users\LENOVO\Documents\Automation-JAV-GEM_QA_CC_PRODUCT_MAPPING"
+```
+
+Confirm you are in the correct folder:
+
+```powershell
+dir
+```
+
+You should see `pom.xml` and `src`.
+
+Then run:
+
+```powershell
+mvn clean install -DskipTests
+```
+
+If the terminal message disappeared, it likely completed or was dismissed. It does not affect the Maven command.
+
+Wait for:
+
+```text
+BUILD SUCCESS
+```
+
+If you receive another error, copy the final error section and share it.
+
+User: if i close vs code then reopen it and by default Terminal is open do i need to close that terminal and open a new one or i should just use this one
+
+GitHub Copilot: You can use the terminal that opens automatically. You do not need to close it.
+
+First check that it is PowerShell and is in the project folder:
+
+```powershell
+pwd
+```
+
+You should see:
+
+```text
+C:\Users\LENOVO\Documents\Automation-JAV-GEM_QA_CC_PRODUCT_MAPPING
+```
+
+If it shows a different folder, run:
+
+```powershell
+cd "C:\Users\LENOVO\Documents\Automation-JAV-GEM_QA_CC_PRODUCT_MAPPING"
+```
+
+Then confirm the project files:
+
+```powershell
+dir
+```
+
+You should see `pom.xml` and `src`.
+
+Now run:
+
+```powershell
+mvn clean install -DskipTests
+```
+
+Only open a new terminal if the current terminal shows an error, is frozen, or is running another command.
+
+User: well i am not sure if this was a a success but i see some errors after running the mvn clean install -DskipTests. #attachment:Pasted text #1 
+
+GitHub Copilot: It was **not a successful build** because the final line says:
+
+```text
+BUILD FAILURE
+```
+
+However, most of the project compiled successfully. Here is what happened:
+
+1. **Java compilation succeeded**
+   ```text
+   Compiling 142 source files
+   ```
+
+2. **Tests were skipped**
+   ```text
+   Tests are skipped.
+   ```
+
+3. **Pagefind had a timeout**
+   ```text
+   Timeout: killed the sub-process
+   ```
+   This did not stop the build because that task allows failures.
+
+4. **Allure is not installed**
+   ```text
+   Cannot run program "allure"
+   ```
+   This also did not immediately stop the build.
+
+5. **Maven failed at the end**
+   ```text
+   The packaging plugin ... did not assign a file to the build artifact
+   ```
+   This happens because this project disables JAR creation but still uses `install`.
+
+For your goal, you do **not** need to run `install`. Use `test` instead.
+
+Run this:
+
+```powershell
+cd "C:\Users\LENOVO\Documents\Automation-JAV-GEM_QA_CC_PRODUCT_MAPPING"
+mvn test "-Dtest=TS_BCAA_Claim_Portal_Policy_Wording_JUnit#YOUR_TEST_METHOD_NAME"
+```
+
+Replace `YOUR_TEST_METHOD_NAME` with the exact method name from the test file.
+
+For example, if the method is:
+
+```java
+public void tc_claim_portal_policy_wording_product_TELUS_GMA()
+```
+
+run:
+
+```powershell
+mvn test "-Dtest=TS_BCAA_Claim_Portal_Policy_Wording_JUnit#tc_claim_portal_policy_wording_product_TELUS_GMA"
+```
+
+You can also use the green triangle in VS Code. The important result to look for is:
+
+```text
+BUILD SUCCESS
+```
+
+The Selenium warning about `selenium-devtools-v119` is not the main failure. The missing Allure program affects report generation, but it should not prevent you from running one test through the green triangle.
+
+User: when i clicked on the green triange there is a pop up that says do you want to allow public and private networks to acess this app. open jdk platform binary. allow, cancel. what should i do with this and what does it mean
+
+GitHub Copilot: That is a **Windows Firewall** message. It is asking whether Java may communicate through the network.
+
+For this Selenium framework:
+
+1. Select **Private networks**, such as your home or company network.
+2. Leave **Public networks** unchecked.
+3. Click **Allow access**.
+
+This lets Java communicate with Chrome, WebDriver, and the QA application while avoiding access from public Wi-Fi networks.
+
+Do **not** enable Public networks unless your company specifically requires it. If your computer is managed by your organization and Windows will not allow the change, contact IT.
+
+After clicking **Allow access**, let the test continue. You should then see Chrome open.
+
+User: what happens if i do cancel
+
+GitHub Copilot: If you click **Cancel**:
+
+- Windows will block the requested **incoming network access** for Java.
+- The test may still run because Selenium usually connects outward to Chrome and the QA site.
+- Some features may fail, especially local WebDriver communication, network diagnostics, or remote debugging.
+- Windows may ask again next time Java starts.
+- It will not damage Java or your project.
+
+For this framework, **Allow access with Private networks only** is recommended. Do not allow Public networks.
+
+User: if i want all the questions i asked in this chat and the answers to save them in file how do i do it
+
+GitHub Copilot: You have two easy options.
+
+**Option 1: Copy the chat**
+
+1. Click the `...` menu at the top of the Copilot Chat panel.
+2. Choose **Copy All** or **Export Chat**, if available.
+3. Open Notepad or Word.
+4. Press `Ctrl+V`.
+5. Save the file as:
+
+```text
+Windows-Automation-Setup.md
+```
+
+**Option 2: Save it in VS Code**
+
+1. Open VS Code.
+2. Select **File → New Text File**.
+3. Paste the copied conversation with `Ctrl+V`.
+4. Press `Ctrl+Shift+S`.
+5. Save it as:
+
+```text
+Windows-Automation-Setup.md
+```
+
+Use `Ctrl+S` afterward to save normal changes. Use `Ctrl+Shift+S` only when choosing the filename or location.
+
+If the chat menu does not offer **Copy All**, select the questions and answers manually, copy them, and paste them into the new file.
+
+User: i dont see the option to copy or export
+
+GitHub Copilot: That is okay. Use manual copying.
+
+### Copy the conversation
+
+1. Move your mouse over the first question in the chat.
+2. Click and drag down through the conversation to select the text.
+3. Press `Ctrl+C`.
+4. Open Notepad, Word, or a new VS Code text file.
+5. Press `Ctrl+V`.
+6. Save the file with `Ctrl+Shift+S`.
+
+Use this filename:
+
+```text
+Windows-Automation-Setup.md
+```
+
+If selecting the entire conversation is difficult, copy it in smaller sections:
+
+1. Select one question and its answer.
+2. Press `Ctrl+C`.
+3. Paste it into the file.
+4. Repeat for each section.
+
+### Save it in VS Code
+
+1. In VS Code, select **File → New Text File**.
+2. Paste the copied conversation.
+3. Press `Ctrl+Shift+S`.
+4. Enter:
+
+```text
+Windows-Automation-Setup.md
+```
+
+5. Choose your project folder.
+6. Click **Save**.
+
+Be careful: the conversation includes sensitive login information shown earlier. Remove or replace passwords, usernames, and private URLs before sharing or storing the file.

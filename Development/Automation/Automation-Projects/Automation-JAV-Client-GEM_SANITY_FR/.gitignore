@@ -1,0 +1,22 @@
+# ============================================================================================== 
+# Files and directories to ignore in Git repositories
+#
+# version=1.0
+#
+# Written by: Greg Paskal
+# Created on: 2024-07-22
+#
+# 2024-07-22: v1.0 - Initial version				
+#
+# ============================================================================================== 
+
+# Ignore Mac system files
+.DS_Store
+
+# Allure report files
+.allure
+allure-report
+allure-results
+
+# Ignore Maven target folder
+target

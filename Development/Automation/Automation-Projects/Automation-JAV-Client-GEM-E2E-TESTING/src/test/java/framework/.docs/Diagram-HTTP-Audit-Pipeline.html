@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HTTP Audit Pipeline - mAi™ Framework Documentation</title>
+<link rel="stylesheet" href="docs-style.css">
+<link rel="stylesheet" href="pagefind/pagefind-ui.css">
+<script src="pagefind/pagefind-ui.js"></script>
+<script src="mermaid.min.js"></script>
+<script>mermaid.initialize({startOnLoad: true, theme: 'dark', flowchart: { useMaxWidth: true }});</script>
+</head>
+<body>
+<div class="layout">
+<nav class="sidebar" id="sidebar" data-pagefind-ignore></nav>
+<main class="main-content" data-pagefind-body>
+<h1 data-pagefind-meta="title">HTTP Audit Pipeline</h1>
+<p class="subtitle">HTTP security assessment flow and analysis phases</p>
+
+<section class="content-section">
+<h2>Introduction</h2>
+<p>This document visualizes the complete HTTP audit pipeline, showing how a simple test command transforms into comprehensive security reports with actionable recommendations.</p>
+<h3>Pipeline Stages</h3>
+<ol>
+<li>Test suite execution and initialization</li>
+<li>HTTP request/response capture</li>
+<li>7-phase comprehensive analysis</li>
+<li>Finding collection and scoring</li>
+<li>mAi Advisor™ recommendation generation</li>
+<li>Report assembly (diagnostic + summary)</li>
+<li>Output delivery to filesystem</li>
+</ol>
+</section>
+
+<section class="content-section">
+<h2>Complete Pipeline Overview</h2>
+<pre class="mermaid">
+flowchart TD
+    Start([Test Execution&lt;br/&gt;mvn test]) --> InitSuite[JUnit @BeforeAll&lt;br/&gt;Initialize Test Suite]
+    InitSuite --> LoadConfig[FW_ConfigMgr&lt;br/&gt;Load testConfig.properties]
+    LoadConfig --> InitTest[JUnit @Test&lt;br/&gt;Test Case Start]
+    InitTest --> CallAudit[Call FW_AuditManager&lt;br/&gt;performHttpAudit]
+    CallAudit --> AuditMgr{FW_AuditManager&lt;br/&gt;INSTANCE}
+    AuditMgr --> GetReview[getAuditHttpReview]
+    GetReview --> HttpReview[FW_Audit_HttpReview&lt;br/&gt;runAuditHttpReview]
+    HttpReview --> InitHttp[Initialize FW_Http object]
+    InitHttp --> CallExecutor[Call FW_HttpExecutor]
+    CallExecutor --> HttpExec[FW_HttpExecutor.execute]
+    HttpExec --> OpenConn[Open HTTP Connection]
+    OpenConn --> SendReq[Send HTTP Request]
+    SendReq --> CaptureTiming[Capture DNS/Connection/TLS time]
+    CaptureTiming --> ReceiveResp[Receive Response]
+    ReceiveResp --> ExtractHeaders[Extract Headers &amp; Cookies]
+    ExtractHeaders --> ExtractCert[Extract Certificate]
+    ExtractCert --> StoreHttp[Store in FW_Http]
+    StoreHttp --> ReturnHttp[Return FW_Http]
+    ReturnHttp --> StartAnalysis[Begin 7-Phase Analysis]
+    StartAnalysis --> Phase1[Phase 1: Network &amp; Geolocation]
+    Phase1 --> Phase2[Phase 2: TLS &amp; Certificate]
+    Phase2 --> Phase3[Phase 3: Security Headers]
+    Phase3 --> Phase4[Phase 4: Cookie Security]
+    Phase4 --> Phase5[Phase 5: Redirect Chain]
+    Phase5 --> Phase6[Phase 6: Performance]
+    Phase6 --> Phase7[Phase 7: Compliance]
+    Phase7 --> CollectFindings[Collect All Findings]
+    CollectFindings --> CalcScores[Calculate Scores]
+    CalcScores --> PopulateHttp[Populate FW_Http with Results]
+    PopulateHttp --> TriggerAdvisor{Findings exist?}
+    TriggerAdvisor -->|Yes| CallAdvisor[Call mAi Advisor™]
+    TriggerAdvisor -->|No| SkipAdvisor[Skip Advisor]
+    CallAdvisor --> GenRecs[Generate Recommendations]
+    GenRecs --> AddRecsToHttp[Add to FW_Http]
+    AddRecsToHttp --> MergeAdvisor[Merge Data]
+    SkipAdvisor --> MergeAdvisor
+    MergeAdvisor --> ReturnComplete[Return Complete FW_Http]
+    ReturnComplete --> GenReports{Generate Reports?}
+    GenReports -->|Yes| CreateDiag[FW_HttpDiagnosticReporter]
+    CreateDiag --> BuildHTML[Build HTML Report]
+    BuildHTML --> Section1[Section 1: DNS &amp; Network]
+    BuildHTML --> Section2[Section 2: TLS &amp; Certificates]
+    BuildHTML --> Section3[Section 3: Security Headers]
+    BuildHTML --> Section4[Section 4: Performance]
+    BuildHTML --> Section5[Section 5: Network Diagnostics]
+    BuildHTML --> Section6[Section 6: Error Diagnostics]
+    BuildHTML --> Section7[Section 7: Remediation]
+    Section7 --> WriteHTML[Write HTML File]
+    WriteHTML --> WriteMD[Write MD File]
+    WriteMD --> CreateSum[Create Summary]
+    CreateSum --> WriteSummary[Write Summary File]
+    WriteSummary --> SaveReports[Save to target/http-reports/]
+    GenReports -->|No| SkipReports[Skip Report Gen]
+    SaveReports --> TestComplete[Test Complete]
+    SkipReports --> TestComplete
+    TestComplete --> End([Test Execution Complete])
+    style Start fill:#e1f5ff
+    style End fill:#e1ffe1
+    style CallAdvisor fill:#fff3e1
+    style Section7 fill:#e1ffe1
+</pre>
+</section>
+
+<section class="content-section">
+<h2>Data Transformation Pipeline</h2>
+<pre class="mermaid">
+flowchart LR
+    subgraph "Stage 1: Input"
+        I1[Test Input:&lt;br/&gt;URL String]
+    end
+    subgraph "Stage 2: HTTP Transaction"
+        T1[Raw HTTP Data:&lt;br/&gt;Request/Response&lt;br/&gt;Headers/Timing]
+    end
+    subgraph "Stage 3: Analysis"
+        A1[Processed Data:&lt;br/&gt;Security Scores&lt;br/&gt;Findings List]
+    end
+    subgraph "Stage 4: Enrichment"
+        E1[Enriched Data:&lt;br/&gt;GeoIP/Cert Details&lt;br/&gt;Framework Detection]
+    end
+    subgraph "Stage 5: Advisor"
+        AD1[Advisor Data:&lt;br/&gt;Recommendations&lt;br/&gt;per Audience]
+    end
+    subgraph "Stage 6: FW_Http Object"
+        H1[Complete FW_Http:&lt;br/&gt;100+ Fields]
+    end
+    subgraph "Stage 7: Reports"
+        R1[HTML Report]
+        R2[Markdown Report]
+        R3[Summary Report]
+    end
+    I1 -->|FW_HttpExecutor| T1
+    T1 -->|7-Phase Analysis| A1
+    A1 -->|Enrichment| E1
+    E1 -->|mAi Advisor™| AD1
+    AD1 -->|Merge| H1
+    H1 -->|Reporter| R1
+    H1 -->|Reporter| R2
+    H1 -->|Reporter| R3
+    style I1 fill:#e1f5ff
+    style T1 fill:#fff3e1
+    style A1 fill:#ffe1e1
+    style E1 fill:#ffe1ff
+    style AD1 fill:#fff3e1
+    style H1 fill:#e1ffe1
+    style R1 fill:#e1ffe1
+    style R2 fill:#e1ffe1
+    style R3 fill:#e1ffe1
+</pre>
+</section>
+
+<section class="content-section">
+<h2>Security Header Analysis Flow</h2>
+<pre class="mermaid">
+flowchart TD
+    Headers[Response Headers Map] --> ExtractHeaders[Extract All Headers]
+    ExtractHeaders --> H1[Check: Strict-Transport-Security]
+    ExtractHeaders --> H2[Check: Content-Security-Policy]
+    ExtractHeaders --> H3[Check: X-Frame-Options]
+    ExtractHeaders --> H4[Check: X-Content-Type-Options]
+    ExtractHeaders --> H5[Check: X-XSS-Protection]
+    ExtractHeaders --> H6[Check: Referrer-Policy]
+    ExtractHeaders --> H7[Check: Permissions-Policy]
+    ExtractHeaders --> H8[Check: 8 more headers...]
+    H1 --> HSTS{Present?}
+    HSTS -->|Yes| HSTSValue{max-age &gt;= 1 year?}
+    HSTS -->|No| FindingHSTS[FINDING: HSTS Missing&lt;br/&gt;HIGH Severity]
+    HSTSValue -->|Yes| PassHSTS[✓ HSTS OK]
+    HSTSValue -->|No| FindingHSTSShort[FINDING: HSTS too short&lt;br/&gt;MEDIUM]
+    H2 --> CSP{Present?}
+    CSP -->|Yes| CSPValue{Valid policy?}
+    CSP -->|No| FindingCSP[FINDING: CSP Missing&lt;br/&gt;HIGH Severity]
+    CSPValue -->|Yes| PassCSP[✓ CSP OK]
+    CSPValue -->|No| FindingCSPWeak[FINDING: CSP Weak&lt;br/&gt;MEDIUM]
+    H3 --> XFrame{Present?}
+    XFrame -->|Yes| PassXFrame[✓ X-Frame OK]
+    XFrame -->|No| FindingXFrame[FINDING: Clickjacking&lt;br/&gt;MEDIUM]
+    H4 --> XContent{Present?}
+    XContent -->|Yes| PassXContent[✓ X-Content OK]
+    XContent -->|No| FindingXContent[FINDING: MIME Sniff&lt;br/&gt;LOW]
+    FindingHSTS --> CollectAll[Collect All Findings]
+    FindingHSTSShort --> CollectAll
+    FindingCSP --> CollectAll
+    FindingCSPWeak --> CollectAll
+    FindingXFrame --> CollectAll
+    FindingXContent --> CollectAll
+    PassHSTS --> CalcScore[Calculate Security Score]
+    PassCSP --> CalcScore
+    PassXFrame --> CalcScore
+    PassXContent --> CalcScore
+    CollectAll --> CountSeverity[Count by Severity]
+    CountSeverity --> UpdateCounts[Update FW_Http]
+    CalcScore --> FinalScore[Security Score: 0-100]
+    UpdateCounts --> CombineResults[Combine Results]
+    FinalScore --> CombineResults
+</pre>
+</section>
+
+<section class="content-section">
+<h2>Integration Points</h2>
+<pre class="mermaid">
+flowchart TB
+    subgraph "Extension Point 1: Pre-Audit"
+        EP1[Before HTTP Request&lt;br/&gt;Custom Headers&lt;br/&gt;Authentication]
+    end
+    subgraph "Extension Point 2: Post-Capture"
+        EP2[After HTTP Response&lt;br/&gt;Custom Parsing&lt;br/&gt;Additional Metrics]
+    end
+    subgraph "Extension Point 3: Analysis Phase"
+        EP3[During Analysis&lt;br/&gt;Custom Checks&lt;br/&gt;Domain Logic]
+    end
+    subgraph "Extension Point 4: Finding Processing"
+        EP4[After Findings&lt;br/&gt;Custom Scoring&lt;br/&gt;Priority Rules]
+    end
+    subgraph "Extension Point 5: Advisor Integration"
+        EP5[Recommendation Gen&lt;br/&gt;Custom Templates&lt;br/&gt;Framework Detection]
+    end
+    subgraph "Extension Point 6: Report Generation"
+        EP6[Report Assembly&lt;br/&gt;Custom Sections&lt;br/&gt;Additional Formats]
+    end
+    Pipeline[HTTP Audit Pipeline] --> EP1
+    EP1 --> HttpExec[FW_HttpExecutor]
+    HttpExec --> EP2
+    EP2 --> Analysis[7-Phase Analysis]
+    Analysis --> EP3
+    EP3 --> Findings[Finding Collection]
+    Findings --> EP4
+    EP4 --> Advisor[mAi Advisor™]
+    Advisor --> EP5
+    EP5 --> Reports[Report Generation]
+    Reports --> EP6
+    EP6 --> Output[Final Output]
+    style EP1 fill:#ffe1ff
+    style EP2 fill:#ffe1ff
+    style EP3 fill:#ffe1ff
+    style EP4 fill:#ffe1ff
+    style EP5 fill:#fff3e1
+    style EP6 fill:#ffe1ff
+    style Output fill:#e1ffe1
+</pre>
+</section>
+
+<section class="content-section">
+<h2>Error Handling Flow</h2>
+<pre class="mermaid">
+flowchart TD
+    Start([Pipeline Start]) --> Step1[HTTP Request]
+    Step1 --> E1{Connection Error?}
+    E1 -->|Yes| Log1[Log Error]
+    E1 -->|No| Step2[Capture Response]
+    Log1 --> Retry1{Retry?}
+    Retry1 -->|Yes| RetryLogic1[Retry with Backoff]
+    Retry1 -->|No| MarkFail1[Mark as Failed]
+    RetryLogic1 --> Step1
+    Step2 --> E2{Parse Error?}
+    E2 -->|Yes| Log2[Log Error]
+    E2 -->|No| Step3[Analysis Phase]
+    Log2 --> HandleGraceful1[Handle Gracefully]
+    HandleGraceful1 --> Step3
+    Step3 --> E3{Analysis Error?}
+    E3 -->|Yes| Log3[Log Error]
+    E3 -->|No| Step4[Finding Collection]
+    Log3 --> HandleGraceful2[Skip Failed Analysis]
+    HandleGraceful2 --> Step4
+    Step4 --> E4{Advisor Error?}
+    E4 -->|Yes| Log4[Log Error]
+    E4 -->|No| Step5[Report Generation]
+    Log4 --> HandleGraceful3[Skip Advisor]
+    HandleGraceful3 --> Step5
+    Step5 --> E5{Report Error?}
+    E5 -->|Yes| Log5[Log Error]
+    E5 -->|No| Complete[Pipeline Complete]
+    Log5 --> HandleGraceful4[Generate Basic Output]
+    HandleGraceful4 --> PartialComplete[Partial Complete]
+    MarkFail1 --> ErrorReport[Generate Error Report]
+    ErrorReport --> ReturnError[Return Error]
+    Complete --> Success[Return Success]
+    PartialComplete --> PartialSuccess[Return Partial Success]
+    style Start fill:#e1f5ff
+    style Complete fill:#e1ffe1
+    style Success fill:#e1ffe1
+    style ErrorReport fill:#ffe1e1
+    style ReturnError fill:#ffe1e1
+</pre>
+</section>
+
+<section class="content-section">
+<h2>Performance Optimization Points</h2>
+<pre class="mermaid">
+flowchart LR
+    subgraph "Optimization 1"
+        O1[Connection Pooling&lt;br/&gt;Saves 200-500ms]
+    end
+    subgraph "Optimization 2"
+        O2[Template Caching&lt;br/&gt;Saves 10-50ms]
+    end
+    subgraph "Optimization 3"
+        O3[Parallel Analysis&lt;br/&gt;Saves 100-300ms]
+    end
+    subgraph "Optimization 4"
+        O4[Lazy GeoIP&lt;br/&gt;Saves 50-150ms]
+    end
+    subgraph "Optimization 5"
+        O5[Report Streaming&lt;br/&gt;Saves 20-100ms]
+    end
+    Pipeline[HTTP Audit Pipeline&lt;br/&gt;Average: 2-5 seconds] --> O1
+    Pipeline --> O2
+    Pipeline --> O3
+    Pipeline --> O4
+    Pipeline --> O5
+    O1 --> Optimized[Optimized Pipeline&lt;br/&gt;Average: 1-3 seconds&lt;br/&gt;40-50% faster]
+    O2 --> Optimized
+    O3 --> Optimized
+    O4 --> Optimized
+    O5 --> Optimized
+    style Pipeline fill:#ffe1e1
+    style Optimized fill:#e1ffe1
+    style O1 fill:#fff3e1
+    style O2 fill:#fff3e1
+    style O3 fill:#fff3e1
+    style O4 fill:#fff3e1
+    style O5 fill:#fff3e1
+</pre>
+</section>
+
+<section class="content-section">
+<h2>Summary</h2>
+<p>The HTTP Audit Pipeline transforms a simple URL string into comprehensive security reports through a sophisticated 7-stage process:</p>
+<ol>
+<li><strong>Capture:</strong> HTTP request/response with complete timing data</li>
+<li><strong>Analyze:</strong> 7-phase security, performance, and compliance analysis</li>
+<li><strong>Enrich:</strong> GeoIP, certificate details, network path</li>
+<li><strong>Detect:</strong> Framework and technology stack identification</li>
+<li><strong>Advise:</strong> mAi Advisor™ generates role-specific recommendations</li>
+<li><strong>Assemble:</strong> Reports compiled with diagnostic details and guidance</li>
+<li><strong>Deliver:</strong> HTML, Markdown, and summary files saved to filesystem</li>
+</ol>
+<p>The pipeline is designed for speed (2-5 seconds), extensibility (6 integration points), reliability (graceful error handling), and completeness (100+ metrics).</p>
+</section>
+
+<section class="content-section">
+<h2>Related Documentation</h2>
+<table class="data-table">
+<thead><tr><th>Document</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td><a href="Doc-HTTP-Assessment.html">HTTP Security Assessment</a></td><td>Comprehensive audit guide</td></tr>
+<tr><td><a href="Diagram-Advisor-Flow.html">mAi Advisor™ Flow</a></td><td>Recommendation generation</td></tr>
+<tr><td><a href="Diagram-Architecture.html">Architecture Overview</a></td><td>Framework layers</td></tr>
+<tr><td><a href="Diagrams.html">Diagrams Hub</a></td><td>All framework diagrams</td></tr>
+</tbody>
+</table>
+</section>
+
+<footer class="doc-footer" id="doc-footer" data-pagefind-ignore></footer>
+</main>
+</div>
+<script src="docs-config.js"></script>
+<script src="docs-nav.js"></script>
+<script>DocsConfig.renderFooter('doc-footer');</script>
+</body>
+</html>

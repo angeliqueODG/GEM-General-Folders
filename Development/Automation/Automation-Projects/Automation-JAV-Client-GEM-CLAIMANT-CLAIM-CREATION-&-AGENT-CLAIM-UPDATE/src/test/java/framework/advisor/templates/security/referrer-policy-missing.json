@@ -1,0 +1,255 @@
+{
+  "metadata": {
+    "filename": "referrer-policy-missing.json",
+    "filepath": "src/test/resources/framework/advisor/templates/security/referrer-policy-missing.json",
+    "version": "1.0.0",
+    "created": "2025-10-09",
+    "lastUpdated": "2025-10-09",
+    "author": "Greg Paskal",
+    "company": "MissionWares",
+    "methodology": "mAi™ (MissionWares® + AI)",
+    "description": "Referrer-Policy header missing finding template with comprehensive guidance for all audiences including framework-specific implementation code, server configurations, and testing strategies to prevent sensitive information leakage through HTTP Referer headers when users navigate from one site to another or from HTTPS to HTTP pages.",
+    "aiGenerated": true,
+    "humanReviewed": false,
+    "reviewedBy": "Pending",
+    "approvedBy": "Pending",
+    "tags": ["referrer-policy", "privacy", "information-disclosure", "security", "headers", "data-leakage", "referer"],
+    "relatedFindings": ["INFORMATION_DISCLOSURE", "PRIVACY_LEAK", "URL_PARAMETER_EXPOSURE", "SESSION_TOKEN_IN_URL"],
+    "estimatedRemediationTime": "30 minutes - 1 hour",
+    "businessImpact": "LOW",
+    "complianceRequirements": ["GDPR Article 25", "OWASP Privacy Guidelines", "CWE-200", "ISO 27001"]
+  },
+  "findingId": "SEC-RP-001",
+  "findingType": "REFERRER_POLICY_MISSING",
+  "category": "SECURITY",
+  "severity": "LOW",
+  "cveReferences": [
+    "CWE-200",
+    "CWE-359"
+  ],
+  "understanding": {
+    "EXECUTIVE": {
+      "summary": "Your application lacks Referrer-Policy protection, potentially leaking sensitive information in URLs (session tokens, user IDs, search queries) to external third-party sites when users click outbound links.",
+      "businessRisk": "Low to medium risk of privacy violations and sensitive data exposure through URL referrer leakage. When users click links to external sites, the full URL (including query parameters) may be sent in the HTTP Referer header, potentially exposing: session tokens, authentication parameters, user IDs, search queries, internal file paths, API keys in URLs. Privacy-focused industries (healthcare, finance, legal) face elevated compliance risk. GDPR Article 25 requires data protection by design. Minimal direct financial impact but can damage user trust and brand reputation if sensitive data leaks.",
+      "complianceImpact": "GDPR Article 25 (Data Protection by Design) recommends minimizing data exposure. ISO 27001 information security controls. OWASP Privacy Best Practices. Some regional privacy laws (CCPA, PIPEDA) may require referrer control. Generally low compliance priority but considered best practice for privacy-conscious organizations.",
+      "priority": "LOW"
+    },
+    "PROJECT_MANAGER": {
+      "summary": "Missing Referrer-Policy header allows full URL information (including sensitive parameters) to leak to external sites when users click outbound links. Simple one-line fix with minimal risk.",
+      "timeline": "Can be addressed in current or next sprint. Implementation takes 30 minutes to 1 hour including testing. Very low complexity change. Low priority unless application handles sensitive data in URLs or operates in privacy-sensitive industry (healthcare, finance).",
+      "effort": "30 minutes to 1 hour for implementation and testing. Zero-risk change with no functional impact on core features.",
+      "dependencies": [
+        "Access to web server or application configuration",
+        "Staging environment for testing",
+        "Understanding of application's URL structure and external links"
+      ],
+      "blocking": [
+        "Privacy compliance audit completion (minor item)",
+        "GDPR data protection assessment",
+        "Security certification for privacy-sensitive industries"
+      ]
+    },
+    "DEVELOPER": {
+      "summary": "Referrer-Policy HTTP response header is not present, allowing browsers to send full URL information (including sensitive query parameters) in the Referer header when users navigate to external sites.",
+      "technical": "Referrer-Policy is an HTTP response header that controls how much referrer information browsers include when navigating away from a page. Without this header, browsers use default behavior (often 'no-referrer-when-downgrade') which sends full URL to same-protocol destinations. Sensitive data in URLs can leak: session tokens (?token=abc123), user IDs (?user_id=12345), search queries (?q=sensitive+search), API keys, internal paths. Policy values: 'no-referrer' (never send), 'no-referrer-when-downgrade' (default, no HTTPS→HTTP), 'origin' (send origin only), 'origin-when-cross-origin' (full URL same-origin, origin only cross-origin), 'same-origin' (full URL same-origin only), 'strict-origin' (origin only, no HTTPS→HTTP), 'strict-origin-when-cross-origin' (recommended), 'unsafe-url' (always full URL). Supported by all modern browsers (Chrome 61+, Firefox 50+, Safari 11.1+, Edge 79+).",
+      "vulnerability": "CWE-200 (Exposure of Sensitive Information to Unauthorized Actor), CWE-359 (Exposure of Private Personal Information). Information disclosure through Referer header. Attack scenario: (1) User visits https://yourapp.com/search?q=medical+condition, (2) User clicks external link, (3) External site receives Referer: https://yourapp.com/search?q=medical+condition in HTTP header, (4) External site logs and stores sensitive search query. Also exploitable: session tokens in URLs, authentication parameters, internal file paths, user IDs, transaction details. Risk elevated when: sensitive data in URLs, external analytics/advertising, HTTPS→HTTP navigation, user-generated content with external links.",
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Referrer-Policy",
+        "https://w3c.github.io/webappsec-referrer-policy/",
+        "https://owasp.org/www-community/Security_Headers",
+        "https://cwe.mitre.org/data/definitions/200.html"
+      ]
+    },
+    "SECURITY_ENGINEER": {
+      "summary": "Missing Referrer-Policy enables information disclosure where sensitive URL parameters leak to third-party sites via HTTP Referer header, creating privacy violations and potential data exposure.",
+      "vulnerability": "CWE-200 (Information Exposure), CWE-359 (Privacy Violation). Referer header leakage exposes URL structure and parameters to external parties. Without Referrer-Policy, browsers send full URL in Referer header when: navigating to external sites (same protocol), clicking outbound links, loading external resources (images, scripts from other domains). Information at risk: session tokens, authentication tokens, CSRF tokens, user identifiers, search queries, internal paths, API keys, transaction IDs, personal data in parameters. Particularly dangerous when combined with: insecure session management (tokens in URLs), poor URL design (sensitive data in query strings), mixed content (HTTPS→HTTP navigation).",
+      "attackVector": "Passive information gathering attack. Attacker operates external site and monitors incoming Referer headers. Scenario: (1) Victim uses application with sensitive data in URLs, (2) Application has outbound links to attacker-controlled or compromised external site, (3) Victim clicks link, (4) Browser sends full URL in Referer header, (5) Attacker logs and extracts sensitive information from referrer. Also exploitable via: embedded third-party content (ads, analytics), compromised CDNs, malicious browser extensions monitoring network traffic. No user interaction beyond normal browsing required. Completely passive - leaves no traces in victim application logs.",
+      "threatLevel": "LOW to MEDIUM - Severity depends on data sensitivity and URL design. Critical if: session tokens in URLs, authentication parameters in URLs, sensitive search queries, healthcare/financial data in parameters. Modern best practice: never put sensitive data in URLs, but Referrer-Policy provides defense-in-depth. Privacy-focused industries (healthcare, legal, finance) should prioritize. Simple fix with no performance impact. Recommended: 'strict-origin-when-cross-origin' for balance of privacy and functionality.",
+      "mitigationUrgency": "Implement within 2-4 weeks as part of security header hardening. Can be bundled with other security headers. Higher priority (1-2 weeks) if: sensitive data in URLs, privacy-sensitive industry, GDPR compliance required, external analytics/advertising integrated. Very low implementation complexity with minimal functional risk. Priority increases to MEDIUM if session tokens or authentication parameters found in URLs (which should be fixed separately as HIGH severity issue)."
+    },
+    "OPS_INFRASTRUCTURE": {
+      "summary": "Web servers not configured to send Referrer-Policy header, requiring simple HTTP response header configuration to control referrer information leakage.",
+      "technical": "Referrer-Policy header must be added to HTTP responses at web server, reverse proxy, or application layer. Header syntax: Referrer-Policy: <policy-value>. Recommended value: 'strict-origin-when-cross-origin' (balanced privacy and functionality) or 'same-origin' (stricter, may break external integrations). Typically configured in Nginx, Apache, load balancers, CDN, or application middleware. Simple one-line configuration. Should be applied globally. Consider impact on: analytics platforms (may reduce referrer data), affiliate tracking, external integrations expecting referrer data.",
+      "scope": "All web servers serving application traffic: production web servers, load balancers, CDN origin shields, API gateways, reverse proxies. Must be consistent across all environments (dev, staging, production). Applies to all HTTP responses. Consider different policies for: public pages (more permissive), authenticated pages (more restrictive), pages with sensitive data (most restrictive).",
+      "monitoring": "Monitor analytics platforms for referrer data changes after implementation. Verify Referrer-Policy present using security scanners. Use browser DevTools to verify header in responses. Check external integrations still function (affiliate links, analytics). Monitor for broken functionality related to referrer requirements. Include in regular security header audits."
+    },
+    "QA_TESTER": {
+      "summary": "Missing Referrer-Policy header prevents validation that sensitive URL information is properly protected from leaking to external sites via HTTP Referer headers.",
+      "testImplication": "Cannot validate referrer privacy controls. Security testing tools (Burp Suite, OWASP ZAP) flag missing Referrer-Policy as low-severity finding. After implementation, must test: (1) Header present on all responses, (2) External links don't leak full URLs inappropriately, (3) Analytics and external integrations still function, (4) Affiliate tracking works if required, (5) No broken functionality from restricted referrer data.",
+      "riskIfNotFixed": "Security audit finding (informational/low severity). Privacy compliance gap. Information disclosure vulnerability. Potential GDPR Article 25 violation (data protection by design). Sensitive URL parameters may leak to third parties. User privacy not adequately protected. Analytics may receive more data than necessary."
+    }
+  },
+  "actions": {
+    "DEVELOPER": {
+      "frameworks": {
+        "spring-boot": {
+          "code": "// Spring Boot - Add Referrer-Policy via Security Configuration\n// SecurityConfig.java\n\nimport org.springframework.context.annotation.Bean;\nimport org.springframework.context.annotation.Configuration;\nimport org.springframework.security.config.annotation.web.builders.HttpSecurity;\nimport org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;\nimport org.springframework.security.web.SecurityFilterChain;\nimport org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter;\n\n@Configuration\n@EnableWebSecurity\npublic class SecurityConfig {\n\n    @Bean\n    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {\n        http\n            .headers(headers -> headers\n                // Recommended: strict-origin-when-cross-origin\n                .referrerPolicy(referrer -> referrer\n                    .policy(ReferrerPolicyHeaderWriter.ReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN)\n                )\n                \n                // Alternative policies:\n                // .policy(ReferrerPolicyHeaderWriter.ReferrerPolicy.NO_REFERRER)\n                // .policy(ReferrerPolicyHeaderWriter.ReferrerPolicy.SAME_ORIGIN)\n                // .policy(ReferrerPolicyHeaderWriter.ReferrerPolicy.ORIGIN)\n            )\n            .authorizeHttpRequests(auth -> auth\n                .anyRequest().permitAll()\n            );\n        \n        return http.build();\n    }\n}\n\n// Alternative: Manual Filter approach\nimport javax.servlet.*;\nimport javax.servlet.http.HttpServletResponse;\nimport java.io.IOException;\nimport org.springframework.stereotype.Component;\n\n@Component\npublic class SecurityHeadersFilter implements Filter {\n    \n    @Override\n    public void doFilter(ServletRequest request, ServletResponse response, \n                        FilterChain chain) throws IOException, ServletException {\n        HttpServletResponse httpResponse = (HttpServletResponse) response;\n        \n        // Set Referrer-Policy header\n        httpResponse.setHeader(\"Referrer-Policy\", \"strict-origin-when-cross-origin\");\n        \n        // Other common values:\n        // httpResponse.setHeader(\"Referrer-Policy\", \"no-referrer\");\n        // httpResponse.setHeader(\"Referrer-Policy\", \"same-origin\");\n        // httpResponse.setHeader(\"Referrer-Policy\", \"origin\");\n        \n        chain.doFilter(request, response);\n    }\n}",
+          "testCode": "// JUnit test to verify Referrer-Policy header\nimport org.junit.jupiter.api.Test;\nimport org.springframework.beans.factory.annotation.Autowired;\nimport org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;\nimport org.springframework.boot.test.context.SpringBootTest;\nimport org.springframework.test.web.servlet.MockMvc;\n\nimport static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;\nimport static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;\n\n@SpringBootTest\n@AutoConfigureMockMvc\npublic class ReferrerPolicyTest {\n\n    @Autowired\n    private MockMvc mockMvc;\n\n    @Test\n    public void shouldHaveReferrerPolicyHeader() throws Exception {\n        mockMvc.perform(get(\"/\"))\n            .andExpect(status().isOk())\n            .andExpect(header().exists(\"Referrer-Policy\"))\n            .andExpect(header().string(\"Referrer-Policy\", \n                \"strict-origin-when-cross-origin\"));\n    }\n    \n    @Test\n    public void allEndpointsShouldHaveHeader() throws Exception {\n        String[] endpoints = {\"/\", \"/api/data\", \"/login\", \"/search\"};\n        \n        for (String endpoint : endpoints) {\n            mockMvc.perform(get(endpoint))\n                .andExpect(header().exists(\"Referrer-Policy\"));\n        }\n    }\n    \n    @Test\n    public void shouldNotUseUnsafePolicy() throws Exception {\n        // Verify not using 'unsafe-url' which leaks full URL always\n        String policy = mockMvc.perform(get(\"/\"))\n            .andReturn()\n            .getResponse()\n            .getHeader(\"Referrer-Policy\");\n        \n        assertNotNull(policy);\n        assertNotEquals(\"unsafe-url\", policy);\n    }\n}",
+          "dependencies": "<!-- Maven dependencies -->\n<dependency>\n    <groupId>org.springframework.boot</groupId>\n    <artifactId>spring-boot-starter-security</artifactId>\n</dependency>\n<dependency>\n    <groupId>org.springframework.boot</groupId>\n    <artifactId>spring-boot-starter-web</artifactId>\n</dependency>",
+          "packageInstall": "mvn clean install"
+        },
+        "express-nodejs": {
+          "code": "// Express.js - Add Referrer-Policy via helmet middleware\nconst express = require('express');\nconst helmet = require('helmet');\n\nconst app = express();\n\n// Method 1: Use helmet with recommended policy (included by default)\napp.use(helmet());\n// Default: no-referrer\n\n// Method 2: Customize referrer policy\napp.use(\n  helmet.referrerPolicy({\n    policy: 'strict-origin-when-cross-origin'  // Recommended\n    // Other options:\n    // policy: 'no-referrer'\n    // policy: 'same-origin'\n    // policy: 'origin'\n    // policy: 'origin-when-cross-origin'\n  })\n);\n\n// Method 3: Manual middleware (if not using helmet)\napp.use((req, res, next) => {\n  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');\n  next();\n});\n\n// Method 4: Multiple policies (fallback support)\napp.use((req, res, next) => {\n  // Browser uses first supported policy\n  res.setHeader(\n    'Referrer-Policy', \n    'no-referrer, strict-origin-when-cross-origin'\n  );\n  next();\n});\n\n// Method 5: Different policies for different routes\napp.get('/public', (req, res, next) => {\n  res.setHeader('Referrer-Policy', 'origin-when-cross-origin');\n  next();\n});\n\napp.get('/sensitive', (req, res, next) => {\n  res.setHeader('Referrer-Policy', 'no-referrer');\n  next();\n});\n\napp.get('/', (req, res) => {\n  res.send('<h1>Protected with Referrer-Policy</h1>');\n});\n\napp.listen(3000, () => {\n  console.log('Server running with Referrer-Policy protection');\n});",
+          "testCode": "// Mocha/Chai test for Referrer-Policy header\nconst request = require('supertest');\nconst { expect } = require('chai');\nconst app = require('../app');\n\ndescribe('Referrer-Policy Header Tests', () => {\n  it('should have Referrer-Policy header', (done) => {\n    request(app)\n      .get('/')\n      .expect(200)\n      .end((err, res) => {\n        if (err) return done(err);\n        expect(res.headers['referrer-policy']).to.exist;\n        done();\n      });\n  });\n  \n  it('should use recommended policy', (done) => {\n    request(app)\n      .get('/')\n      .end((err, res) => {\n        if (err) return done(err);\n        \n        const policy = res.headers['referrer-policy'];\n        const recommendedPolicies = [\n          'strict-origin-when-cross-origin',\n          'no-referrer',\n          'same-origin'\n        ];\n        \n        expect(recommendedPolicies).to.include(policy);\n        done();\n      });\n  });\n  \n  it('should not use unsafe-url policy', (done) => {\n    request(app)\n      .get('/')\n      .end((err, res) => {\n        if (err) return done(err);\n        \n        const policy = res.headers['referrer-policy'];\n        expect(policy).to.not.equal('unsafe-url');\n        \n        done();\n      });\n  });\n  \n  it('should protect all routes', (done) => {\n    const routes = ['/', '/api/data', '/search'];\n    let completed = 0;\n    \n    routes.forEach(route => {\n      request(app)\n        .get(route)\n        .end((err, res) => {\n          if (!err) {\n            expect(res.headers['referrer-policy']).to.exist;\n          }\n          completed++;\n          if (completed === routes.length) done();\n        });\n    });\n  });\n});",
+          "dependencies": "npm install express helmet",
+          "packageInstall": "npm install"
+        },
+        "asp-net-core": {
+          "code": "// ASP.NET Core - Add Referrer-Policy header\n// Program.cs\n\nusing Microsoft.AspNetCore.Builder;\nusing Microsoft.Extensions.DependencyInjection;\n\nvar builder = WebApplication.CreateBuilder(args);\n\nbuilder.Services.AddControllersWithViews();\n\nvar app = builder.Build();\n\n// Method 1: Simple middleware\napp.Use(async (context, next) =>\n{\n    // Recommended policy\n    context.Response.Headers.Add(\n        \"Referrer-Policy\", \n        \"strict-origin-when-cross-origin\"\n    );\n    \n    // Alternative policies:\n    // context.Response.Headers.Add(\"Referrer-Policy\", \"no-referrer\");\n    // context.Response.Headers.Add(\"Referrer-Policy\", \"same-origin\");\n    // context.Response.Headers.Add(\"Referrer-Policy\", \"origin\");\n    \n    await next();\n});\n\napp.UseRouting();\napp.UseAuthorization();\n\napp.MapControllerRoute(\n    name: \"default\",\n    pattern: \"{controller=Home}/{action=Index}/{id?}\");\n\napp.Run();\n\n// Alternative: Reusable middleware class\npublic class ReferrerPolicyMiddleware\n{\n    private readonly RequestDelegate _next;\n    private readonly string _policy;\n    \n    public ReferrerPolicyMiddleware(\n        RequestDelegate next, \n        string policy = \"strict-origin-when-cross-origin\")\n    {\n        _next = next;\n        _policy = policy;\n    }\n    \n    public async Task InvokeAsync(HttpContext context)\n    {\n        context.Response.Headers.Add(\"Referrer-Policy\", _policy);\n        await _next(context);\n    }\n}\n\n// Extension method\npublic static class ReferrerPolicyExtensions\n{\n    public static IApplicationBuilder UseReferrerPolicy(\n        this IApplicationBuilder builder, \n        string policy = \"strict-origin-when-cross-origin\")\n    {\n        return builder.UseMiddleware<ReferrerPolicyMiddleware>(policy);\n    }\n}\n\n// Usage with custom policy:\n// app.UseReferrerPolicy(\"no-referrer\");\n\n// Method 2: Using NWebsec package (optional)\n// Install-Package NWebsec.AspNetCore.Middleware\n// app.UseReferrerPolicy(opts => opts.StrictOriginWhenCrossOrigin());\n\n// Method 3: Route-specific policies\napp.MapGet(\"/public\", async context =>\n{\n    context.Response.Headers[\"Referrer-Policy\"] = \"origin-when-cross-origin\";\n    await context.Response.WriteAsync(\"Public content\");\n});\n\napp.MapGet(\"/sensitive\", async context =>\n{\n    context.Response.Headers[\"Referrer-Policy\"] = \"no-referrer\";\n    await context.Response.WriteAsync(\"Sensitive content\");\n});",
+          "testCode": "// xUnit test for Referrer-Policy header\nusing Xunit;\nusing Microsoft.AspNetCore.Mvc.Testing;\nusing System.Net.Http;\nusing System.Threading.Tasks;\nusing System.Linq;\n\npublic class ReferrerPolicyTests : IClassFixture<WebApplicationFactory<Program>>\n{\n    private readonly HttpClient _client;\n    \n    public ReferrerPolicyTests(WebApplicationFactory<Program> factory)\n    {\n        _client = factory.CreateClient();\n    }\n    \n    [Fact]\n    public async Task Should_Have_ReferrerPolicy_Header()\n    {\n        var response = await _client.GetAsync(\"/\");\n        \n        Assert.True(response.Headers.Contains(\"Referrer-Policy\"),\n            \"Response should contain Referrer-Policy header\");\n    }\n    \n    [Fact]\n    public async Task ReferrerPolicy_Should_Be_Secure()\n    {\n        var response = await _client.GetAsync(\"/\");\n        var header = response.Headers.GetValues(\"Referrer-Policy\").First();\n        \n        var securePolicies = new[] {\n            \"strict-origin-when-cross-origin\",\n            \"no-referrer\",\n            \"same-origin\",\n            \"strict-origin\",\n            \"origin\"\n        };\n        \n        Assert.Contains(header, securePolicies);\n    }\n    \n    [Fact]\n    public async Task Should_Not_Use_Unsafe_Policy()\n    {\n        var response = await _client.GetAsync(\"/\");\n        var header = response.Headers.GetValues(\"Referrer-Policy\").First();\n        \n        Assert.NotEqual(\"unsafe-url\", header);\n    }\n    \n    [Theory]\n    [InlineData(\"/\")]\n    [InlineData(\"/Home/Index\")]\n    [InlineData(\"/api/data\")]\n    public async Task All_Endpoints_Should_Have_Header(string path)\n    {\n        var response = await _client.GetAsync(path);\n        \n        Assert.True(response.Headers.Contains(\"Referrer-Policy\"),\n            $\"Endpoint {path} should have Referrer-Policy header\");\n    }\n}",
+          "dependencies": "<PackageReference Include=\"Microsoft.AspNetCore.App\" />\n<PackageReference Include=\"xunit\" Version=\"2.5.0\" />\n<PackageReference Include=\"Microsoft.AspNetCore.Mvc.Testing\" Version=\"8.0.0\" />\n\n<!-- Optional: NWebsec for security header middleware -->\n<!-- <PackageReference Include=\"NWebsec.AspNetCore.Middleware\" Version=\"3.0.0\" /> -->",
+          "packageInstall": "dotnet restore"
+        },
+        "django-python": {
+          "code": "# Django - Add Referrer-Policy via settings\n# settings.py\n\n# Method 1: Use Django's built-in SecurityMiddleware\nMIDDLEWARE = [\n    'django.middleware.security.SecurityMiddleware',\n    # ... other middleware\n]\n\n# Set Referrer-Policy (Django 3.0+)\nSECURE_REFERRER_POLICY = 'strict-origin-when-cross-origin'\n\n# Alternative policies:\n# SECURE_REFERRER_POLICY = 'no-referrer'\n# SECURE_REFERRER_POLICY = 'same-origin'\n# SECURE_REFERRER_POLICY = 'origin'\n# SECURE_REFERRER_POLICY = 'origin-when-cross-origin'\n\n# Method 2: Custom middleware for more control\n# middleware.py\nclass ReferrerPolicyMiddleware:\n    def __init__(self, get_response):\n        self.get_response = get_response\n    \n    def __call__(self, request):\n        response = self.get_response(request)\n        \n        # Set Referrer-Policy header\n        response['Referrer-Policy'] = 'strict-origin-when-cross-origin'\n        \n        return response\n\n# Add to MIDDLEWARE in settings.py:\n# MIDDLEWARE = [\n#     'your_app.middleware.ReferrerPolicyMiddleware',\n#     # ...\n# ]\n\n# Method 3: Route-specific policies using decorators\nfrom django.utils.decorators import decorator_from_middleware\n\ndef referrer_policy(policy):\n    \"\"\"Decorator to set custom Referrer-Policy for specific views\"\"\"\n    def decorator(view_func):\n        def wrapper(request, *args, **kwargs):\n            response = view_func(request, *args, **kwargs)\n            response['Referrer-Policy'] = policy\n            return response\n        return wrapper\n    return decorator\n\n# Usage:\n@referrer_policy('no-referrer')\ndef sensitive_view(request):\n    return HttpResponse('Sensitive content with no referrer')\n\n@referrer_policy('origin-when-cross-origin')\ndef public_view(request):\n    return HttpResponse('Public content with origin referrer')\n\n# Method 4: Using django-csp package (optional)\n# Install: pip install django-csp\n# MIDDLEWARE = [\n#     'csp.middleware.CSPMiddleware',\n#     # ...\n# ]\n# Note: django-csp focuses on CSP, use SecurityMiddleware for Referrer-Policy",
+          "testCode": "# pytest test for Referrer-Policy header\nimport pytest\nfrom django.test import Client\nfrom django.urls import reverse\n\n@pytest.fixture\ndef client():\n    return Client()\n\n@pytest.mark.django_db\ndef test_referrer_policy_header_present(client):\n    \"\"\"Test that Referrer-Policy header is present\"\"\"\n    response = client.get('/')\n    \n    assert 'Referrer-Policy' in response.headers, \\\n        \"Response should contain Referrer-Policy header\"\n\n@pytest.mark.django_db\ndef test_referrer_policy_secure_value(client):\n    \"\"\"Test that Referrer-Policy uses secure value\"\"\"\n    response = client.get('/')\n    policy = response.headers.get('Referrer-Policy', '')\n    \n    secure_policies = [\n        'strict-origin-when-cross-origin',\n        'no-referrer',\n        'same-origin',\n        'strict-origin',\n        'origin'\n    ]\n    \n    assert policy in secure_policies, \\\n        f\"Referrer-Policy should use secure value, got: {policy}\"\n\n@pytest.mark.django_db\ndef test_not_using_unsafe_policy(client):\n    \"\"\"Test that unsafe-url policy is not used\"\"\"\n    response = client.get('/')\n    policy = response.headers.get('Referrer-Policy', '')\n    \n    assert policy != 'unsafe-url', \\\n        \"Should not use unsafe-url policy\"\n\n@pytest.mark.django_db\ndef test_all_pages_protected(client):\n    \"\"\"Test that all pages have Referrer-Policy header\"\"\"\n    test_urls = ['/', '/login/', '/api/data/', '/search/']\n    \n    for url in test_urls:\n        response = client.get(url)\n        assert 'Referrer-Policy' in response.headers, \\\n            f\"Page {url} should have Referrer-Policy header\"\n\n@pytest.mark.django_db\ndef test_secure_referrer_policy_setting(client, settings):\n    \"\"\"Test that Django setting is configured\"\"\"\n    assert hasattr(settings, 'SECURE_REFERRER_POLICY'), \\\n        \"SECURE_REFERRER_POLICY should be set in settings\"\n    \n    assert settings.SECURE_REFERRER_POLICY is not None, \\\n        \"SECURE_REFERRER_POLICY should not be None\"",
+          "dependencies": "pip install django pytest pytest-django",
+          "packageInstall": "pip install -r requirements.txt"
+        },
+        "generic": {
+          "code": "# Generic Referrer-Policy Implementation Guidelines\n\n## Header Syntax\n\nReferrer-Policy: <policy-directive>\n\n## Policy Directives (Most to Least Restrictive)\n\n### 1. no-referrer\n- Never send Referer header\n- Maximum privacy, may break some functionality\n- Use for: Highly sensitive applications\n\nReferrer-Policy: no-referrer\n\n### 2. same-origin\n- Send full URL for same-origin requests only\n- No referrer for cross-origin requests\n- Use for: Applications requiring strong privacy\n\nReferrer-Policy: same-origin\n\n### 3. strict-origin\n- Send origin only, never on HTTPS→HTTP\n- No path or query parameters sent\n- Use for: Good privacy with some functionality\n\nReferrer-Policy: strict-origin\n\n### 4. strict-origin-when-cross-origin (RECOMMENDED)\n- Full URL for same-origin\n- Origin only for cross-origin\n- No referrer on HTTPS→HTTP\n- Use for: Balanced privacy and functionality (RECOMMENDED)\n\nReferrer-Policy: strict-origin-when-cross-origin\n\n### 5. origin-when-cross-origin\n- Full URL for same-origin\n- Origin only for cross-origin\n- Use for: Moderate privacy, good functionality\n\nReferrer-Policy: origin-when-cross-origin\n\n### 6. origin\n- Always send origin only\n- Never send path or query parameters\n- Use for: Basic privacy protection\n\nReferrer-Policy: origin\n\n### 7. no-referrer-when-downgrade (Browser Default)\n- Full URL for same-protocol\n- No referrer on HTTPS→HTTP\n- Default browser behavior (don't use explicitly)\n\nReferrer-Policy: no-referrer-when-downgrade\n\n### 8. unsafe-url (NOT RECOMMENDED)\n- Always send full URL\n- Even on HTTPS→HTTP\n- Never use - completely defeats privacy\n\nReferrer-Policy: unsafe-url  # ❌ NEVER USE\n\n## Policy Selection Guide\n\n### Choose 'no-referrer' if:\n- ✅ Maximum privacy required\n- ✅ Sensitive data in URLs\n- ✅ Healthcare, legal, or financial application\n- ❌ May break: Analytics, affiliate links, external integrations\n\n### Choose 'same-origin' if:\n- ✅ Strong privacy needed\n- ✅ Only internal analytics matter\n- ❌ May break: External analytics, affiliate tracking\n\n### Choose 'strict-origin-when-cross-origin' if: (RECOMMENDED)\n- ✅ Balanced privacy and functionality\n- ✅ Works with most analytics\n- ✅ Protects sensitive URL parameters\n- ✅ Best practice for most applications\n\n### Choose 'origin-when-cross-origin' if:\n- ✅ Need maximum compatibility\n- ✅ External integrations require origin\n- ⚠️ Less privacy than strict-origin\n\n## Multiple Policies (Fallback)\n\n# Browsers use first supported policy\nReferrer-Policy: no-referrer, strict-origin-when-cross-origin\n\n## Implementation Checklist\n\n✅ Choose appropriate policy for application sensitivity\n✅ Apply globally to all responses\n✅ Test external integrations still work\n✅ Verify analytics platforms receive necessary data\n✅ Check affiliate links function correctly\n✅ Never put sensitive data in URLs (separate issue)\n✅ Combine with other security headers\n✅ Document policy choice for team",
+          "testCode": "# Generic Referrer-Policy Testing\n\n## Browser DevTools Testing\n\n1. Open browser DevTools (F12)\n2. Go to Network tab\n3. Navigate to your site\n4. Click on any request\n5. Go to Headers section\n6. Look for Referrer-Policy in Response Headers\n7. Verify policy value is appropriate\n\n## Command-Line Testing\n\n# Check if Referrer-Policy header is present\ncurl -I https://your-domain.com | grep -i referrer-policy\n\n# Expected output examples:\nReferrer-Policy: strict-origin-when-cross-origin\nReferrer-Policy: no-referrer\nReferrer-Policy: same-origin\n\n# Test multiple pages\nfor path in / /search /api/data; do\n  echo \"Testing $path:\"\n  curl -I https://your-domain.com$path | grep -i referrer-policy\ndone\n\n## Referrer Leakage Test\n\n1. Create test page with external link:\n\n<!DOCTYPE html>\n<html>\n<head>\n  <title>Referrer Test</title>\n</head>\n<body>\n  <h1>Test Page</h1>\n  <p>URL: https://your-domain.com/search?q=sensitive+data</p>\n  <a href=\"https://httpbin.org/headers\" target=\"_blank\">Click to test referrer</a>\n</body>\n</html>\n\n2. Navigate to test page\n3. Click external link\n4. Check what Referer header was sent\n5. With 'no-referrer': No Referer header\n6. With 'strict-origin-when-cross-origin': Referer: https://your-domain.com\n7. With 'unsafe-url': Referer: https://your-domain.com/search?q=sensitive+data\n\n## Online Testing Tools\n\n1. Security Headers Scanner\n   https://securityheaders.com/\n   - Enter your domain\n   - Verify Referrer-Policy present and appropriate\n\n2. Mozilla Observatory\n   https://observatory.mozilla.org/\n   - Comprehensive security scan\n   - Checks Referrer-Policy\n\n3. Referrer Test Tool\n   https://www.smashingmagazine.com/2018/01/understanding-referrer-policy/\n   - Test actual referrer behavior\n\n## Automated Testing Script\n\n#!/bin/bash\n# test-referrer-policy.sh\n\nURL=\"$1\"\n\nif [ -z \"$URL\" ]; then\n  echo \"Usage: $0 <url>\"\n  exit 1\nfi\n\necho \"Testing Referrer-Policy for: $URL\"\n\nRP=$(curl -s -I \"$URL\" | grep -i \"^referrer-policy:\" | cut -d: -f2 | tr -d '\\r\\n ')\n\nif [ -z \"$RP\" ]; then\n  echo \"❌ Referrer-Policy header is MISSING\"\n  exit 1\nelse\n  echo \"✅ Referrer-Policy: $RP\"\n  \n  case \"$RP\" in\n    \"no-referrer\")\n      echo \"✅ Maximum privacy (may affect analytics)\"\n      ;;\n    \"same-origin\")\n      echo \"✅ Strong privacy\"\n      ;;\n    \"strict-origin-when-cross-origin\")\n      echo \"✅ Recommended balanced policy\"\n      ;;\n    \"strict-origin\")\n      echo \"✅ Good privacy\"\n      ;;\n    \"origin-when-cross-origin\")\n      echo \"âš ï¸ Moderate privacy\"\n      ;;\n    \"origin\")\n      echo \"âš ï¸ Basic privacy\"\n      ;;\n    \"no-referrer-when-downgrade\")\n      echo \"âš ï¸ Browser default (consider stricter)\"\n      ;;\n    \"unsafe-url\")\n      echo \"❌ UNSAFE - leaks full URL always\"\n      ;;\n    *)\n      echo \"âš ï¸ Unknown policy: $RP\"\n      ;;\n  esac\nfi",
+          "dependencies": "curl, browser with DevTools",
+          "packageInstall": "# Usually pre-installed"
+        }
+      },
+      "verificationSteps": [
+        "Deploy to staging environment first",
+        "Verify header present: curl -I https://your-domain.com | grep Referrer-Policy",
+        "Test in browser DevTools: Network tab > Headers > Response Headers",
+        "Verify policy value is appropriate for application sensitivity",
+        "Test external links - verify referrer behavior matches policy",
+        "Check analytics platforms still receive necessary referrer data",
+        "Test affiliate links function correctly (if applicable)",
+        "Verify external integrations work (OAuth, SSO, payment gateways)",
+        "Check social media sharing functionality",
+        "Test search engine referrer tracking (if important)",
+        "Run security scanner (securityheaders.com) to verify configuration",
+        "Monitor analytics for 24-48 hours to ensure data collection unaffected"
+      ],
+      "estimatedEffort": "30 minutes - 1 hour"
+    },
+    "OPS_INFRASTRUCTURE": {
+      "servers": {
+        "nginx": {
+          "config": "# Nginx - Add Referrer-Policy header\n# /etc/nginx/sites-available/your-site or /etc/nginx/nginx.conf\n\nserver {\n    listen 443 ssl http2;\n    listen [::]:443 ssl http2;\n    server_name your-domain.com;\n    \n    # Recommended: strict-origin-when-cross-origin\n    add_header Referrer-Policy \"strict-origin-when-cross-origin\" always;\n    \n    # Alternative policies:\n    # add_header Referrer-Policy \"no-referrer\" always;\n    # add_header Referrer-Policy \"same-origin\" always;\n    # add_header Referrer-Policy \"origin\" always;\n    \n    # Other security headers\n    add_header X-Content-Type-Options \"nosniff\" always;\n    add_header X-Frame-Options \"DENY\" always;\n    add_header X-XSS-Protection \"1; mode=block\" always;\n    \n    location / {\n        proxy_pass http://backend;\n        proxy_set_header Host $host;\n        proxy_set_header X-Real-IP $remote_addr;\n        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;\n        proxy_set_header X-Forwarded-Proto $scheme;\n    }\n    \n    # Optional: Different policy for specific locations\n    location /public/ {\n        add_header Referrer-Policy \"origin-when-cross-origin\" always;\n    }\n    \n    location /sensitive/ {\n        add_header Referrer-Policy \"no-referrer\" always;\n    }\n}",
+          "reload": "# Test Nginx configuration\nsudo nginx -t\n\n# If test passes, reload gracefully\nsudo nginx -s reload\n\n# Or use systemctl\nsudo systemctl reload nginx\n\n# Verify Nginx running\nsudo systemctl status nginx",
+          "verify": "# Verify header is being sent\ncurl -I https://your-domain.com | grep -i referrer-policy\n\n# Expected output:\nReferrer-Policy: strict-origin-when-cross-origin\n\n# View all response headers\ncurl -I https://your-domain.com\n\n# Check Nginx configuration\nsudo nginx -T | grep -A 2 \"Referrer-Policy\""
+        },
+        "apache": {
+          "config": "# Apache - Add Referrer-Policy header\n# /etc/apache2/sites-available/your-site.conf or .htaccess\n\n<VirtualHost *:443>\n    ServerName your-domain.com\n    \n    # Enable mod_headers\n    # a2enmod headers\n    \n    # Recommended: strict-origin-when-cross-origin\n    Header always set Referrer-Policy \"strict-origin-when-cross-origin\"\n    \n    # Alternative policies:\n    # Header always set Referrer-Policy \"no-referrer\"\n    # Header always set Referrer-Policy \"same-origin\"\n    # Header always set Referrer-Policy \"origin\"\n    \n    # Other security headers\n    Header always set X-Content-Type-Options \"nosniff\"\n    Header always set X-Frame-Options \"DENY\"\n    \n    DocumentRoot /var/www/html\n    \n    <Directory /var/www/html>\n        Options -Indexes +FollowSymLinks\n        AllowOverride All\n        Require all granted\n    </Directory>\n    \n    # Optional: Different policy for specific directories\n    <Directory /var/www/html/public>\n        Header always set Referrer-Policy \"origin-when-cross-origin\"\n    </Directory>\n    \n    <Directory /var/www/html/sensitive>\n        Header always set Referrer-Policy \"no-referrer\"\n    </Directory>\n</VirtualHost>\n\n# .htaccess alternative\n<IfModule mod_headers.c>\n  Header always set Referrer-Policy \"strict-origin-when-cross-origin\"\n</IfModule>",
+          "reload": "# Enable headers module\nsudo a2enmod headers\n\n# Test Apache configuration\nsudo apachectl configtest\n\n# If test passes, reload\nsudo systemctl reload apache2\n\n# Verify Apache running\nsudo systemctl status apache2",
+          "verify": "# Verify header present\ncurl -I https://your-domain.com | grep -i referrer-policy\n\n# View all headers\ncurl -I https://your-domain.com\n\n# Verify headers module loaded\napachectl -M | grep headers"
+        },
+        "aws-cloudfront": {
+          "config": "# AWS CloudFront - Add Referrer-Policy via Response Headers Policy\n\n# AWS CLI\naws cloudfront create-response-headers-policy \\\n  --response-headers-policy-config '{\n    \"Name\": \"SecurityHeadersPolicy\",\n    \"SecurityHeadersConfig\": {\n      \"ReferrerPolicy\": {\n        \"ReferrerPolicy\": \"strict-origin-when-cross-origin\",\n        \"Override\": true\n      },\n      \"XContentTypeOptions\": {\n        \"Override\": true\n      },\n      \"XFrameOptions\": {\n        \"FrameOption\": \"DENY\",\n        \"Override\": true\n      }\n    }\n  }'\n\n# CloudFormation\nResources:\n  ResponseHeadersPolicy:\n    Type: AWS::CloudFront::ResponseHeadersPolicy\n    Properties:\n      ResponseHeadersPolicyConfig:\n        Name: SecurityHeadersPolicy\n        SecurityHeadersConfig:\n          ReferrerPolicy:\n            ReferrerPolicy: strict-origin-when-cross-origin\n            Override: true\n\n# Terraform\nresource \"aws_cloudfront_response_headers_policy\" \"security\" {\n  name = \"security-headers\"\n\n  security_headers_config {\n    referrer_policy {\n      referrer_policy = \"strict-origin-when-cross-origin\"\n      override        = true\n    }\n  }\n}",
+          "reload": "# No reload needed - CloudFront propagates automatically\n\n# Check deployment status\naws cloudfront get-distribution --id DISTRIBUTION_ID\n\n# Wait for deployment (5-15 minutes)\naws cloudfront wait distribution-deployed --id DISTRIBUTION_ID",
+          "verify": "# Test header from CloudFront\ncurl -I https://your-domain.com | grep -i referrer-policy\n\n# Expected output:\nReferrer-Policy: strict-origin-when-cross-origin"
+        }
+      },
+      "rollbackPlan": "1. Keep backup of configuration files\n2. Document current header configuration\n3. If Referrer-Policy breaks functionality (analytics, affiliates), temporarily remove or adjust policy\n4. For Nginx: Comment out header line, test with 'nginx -t', reload\n5. For Apache: Comment out header line, test with 'apachectl configtest', reload\n6. For AWS CloudFront: Modify Response Headers Policy to remove or change Referrer-Policy\n7. Identify what broke (analytics, affiliate tracking, external integration)\n8. Choose less restrictive policy: strict-origin-when-cross-origin → origin-when-cross-origin → origin\n9. Re-deploy with adjusted policy\n10. Monitor analytics and integrations for 24-48 hours",
+      "verificationSteps": [
+        "1. Verify header present: curl -I https://your-domain.com | grep -i referrer-policy",
+        "2. Test in browser DevTools: Network tab > Response Headers",
+        "3. Verify policy value appropriate for application",
+        "4. Test external links - check referrer sent matches policy",
+        "5. Verify analytics platforms receive necessary data",
+        "6. Test affiliate links work correctly",
+        "7. Check external integrations (OAuth, SSO, payment gateways)",
+        "8. Test social media sharing functionality",
+        "9. Run securityheaders.com scan",
+        "10. Monitor analytics for 24-48 hours",
+        "11. Check for broken external dependencies",
+        "12. Verify no functionality degradation"
+      ],
+      "estimatedEffort": "30 minutes - 1 hour"
+    },
+    "QA_TESTER": {
+      "manualTests": [
+        {
+          "name": "Verify Referrer-Policy Header Present",
+          "steps": [
+            "1. Open browser (Chrome recommended)",
+            "2. Open DevTools (F12)",
+            "3. Go to Network tab",
+            "4. Navigate to https://your-domain.com",
+            "5. Click on first request",
+            "6. Go to Headers section",
+            "7. Scroll to Response Headers",
+            "8. Look for 'Referrer-Policy' header",
+            "9. Verify policy value is appropriate",
+            "10. Screenshot for evidence"
+          ],
+          "expected": "Referrer-Policy header present with secure value (strict-origin-when-cross-origin, no-referrer, same-origin, or similar). Should NOT be 'unsafe-url'."
+        },
+        {
+          "name": "Test External Link Referrer Behavior",
+          "steps": [
+            "1. Navigate to page with external links",
+            "2. Open DevTools (F12) > Network tab",
+            "3. Click external link to https://httpbin.org/headers",
+            "4. Observe request headers sent",
+            "5. Check 'Referer' header value",
+            "6. With 'no-referrer': No Referer header",
+            "7. With 'strict-origin-when-cross-origin': Only origin sent",
+            "8. With 'same-origin': No Referer for external",
+            "9. Verify matches configured policy",
+            "10. Document actual behavior"
+          ],
+          "expected": "Referrer behavior matches configured policy. Sensitive URL parameters (query strings) not leaked to external sites based on policy."
+        },
+        {
+          "name": "Test Analytics and Tracking",
+          "steps": [
+            "1. Navigate to pages with analytics",
+            "2. Open DevTools > Network tab",
+            "3. Filter for analytics requests (Google Analytics, etc.)",
+            "4. Verify analytics requests successful",
+            "5. Check analytics dashboard for data collection",
+            "6. Verify referrer data collected as expected",
+            "7. Test affiliate link tracking (if applicable)",
+            "8. Verify conversion tracking works",
+            "9. Check marketing campaign tracking",
+            "10. Document any tracking issues"
+          ],
+          "expected": "Analytics and tracking platforms continue to function. May have reduced referrer data with stricter policies (expected). Core tracking metrics still collected."
+        },
+        {
+          "name": "Test External Integrations",
+          "steps": [
+            "1. Test OAuth/SSO login flows",
+            "2. Verify authentication redirects work",
+            "3. Test payment gateway integrations",
+            "4. Check social media sharing functionality",
+            "5. Test embedded content (videos, widgets)",
+            "6. Verify API integrations function",
+            "7. Test affiliate links (if applicable)",
+            "8. Check cross-domain functionality",
+            "9. Monitor browser console for errors",
+            "10. Document any broken integrations"
+          ],
+          "expected": "All external integrations function correctly. OAuth/SSO flows complete successfully. Payment processing works. Social sharing functions. No Referrer-Policy related errors."
+        }
+      ],
+      "automatedTests": {
+        "tool": "Selenium WebDriver / Playwright",
+        "example": "// Selenium test for Referrer-Policy validation\nimport org.openqa.selenium.WebDriver;\nimport org.openqa.selenium.chrome.ChromeDriver;\nimport org.openqa.selenium.chrome.ChromeOptions;\nimport org.testng.annotations.Test;\nimport org.testng.Assert;\nimport java.net.http.HttpClient;\nimport java.net.http.HttpRequest;\nimport java.net.http.HttpResponse;\nimport java.net.URI;\n\npublic class ReferrerPolicyTest {\n    \n    @Test\n    public void verifyReferrerPolicyPresent() throws Exception {\n        HttpClient client = HttpClient.newHttpClient();\n        HttpRequest request = HttpRequest.newBuilder()\n            .uri(new URI(\"https://your-domain.com\"))\n            .GET()\n            .build();\n        \n        HttpResponse<String> response = client.send(\n            request, \n            HttpResponse.BodyHandlers.ofString()\n        );\n        \n        var headers = response.headers();\n        Assert.assertTrue(\n            headers.firstValue(\"Referrer-Policy\").isPresent(),\n            \"Referrer-Policy header should be present\"\n        );\n    }\n    \n    @Test\n    public void verifySecureReferrerPolicy() throws Exception {\n        HttpClient client = HttpClient.newHttpClient();\n        HttpRequest request = HttpRequest.newBuilder()\n            .uri(new URI(\"https://your-domain.com\"))\n            .GET()\n            .build();\n        \n        HttpResponse<String> response = client.send(\n            request, \n            HttpResponse.BodyHandlers.ofString()\n        );\n        \n        String policy = response.headers()\n            .firstValue(\"Referrer-Policy\")\n            .orElse(\"\");\n        \n        String[] securePolicies = {\n            \"strict-origin-when-cross-origin\",\n            \"no-referrer\",\n            \"same-origin\",\n            \"strict-origin\",\n            \"origin\"\n        };\n        \n        boolean isSecure = false;\n        for (String securePolicy : securePolicies) {\n            if (policy.equals(securePolicy)) {\n                isSecure = true;\n                break;\n            }\n        }\n        \n        Assert.assertTrue(isSecure, \n            \"Referrer-Policy should use secure value, got: \" + policy);\n    }\n    \n    @Test\n    public void verifyNotUnsafeUrl() throws Exception {\n        HttpClient client = HttpClient.newHttpClient();\n        HttpRequest request = HttpRequest.newBuilder()\n            .uri(new URI(\"https://your-domain.com\"))\n            .GET()\n            .build();\n        \n        HttpResponse<String> response = client.send(\n            request, \n            HttpResponse.BodyHandlers.ofString()\n        );\n        \n        String policy = response.headers()\n            .firstValue(\"Referrer-Policy\")\n            .orElse(\"\");\n        \n        Assert.assertNotEquals(\"unsafe-url\", policy,\n            \"Should not use unsafe-url policy\");\n    }\n}"
+      },
+      "verificationSteps": [
+        "1. Clear browser cache and cookies",
+        "2. Open DevTools (F12) > Network tab",
+        "3. Navigate to application",
+        "4. Verify Referrer-Policy header present in all responses",
+        "5. Test external links - verify referrer behavior matches policy",
+        "6. Test analytics platforms - verify data collection works",
+        "7. Test affiliate links - verify tracking functions",
+        "8. Test OAuth/SSO flows - verify authentication works",
+        "9. Test payment integrations - verify processing works",
+        "10. Run automated tests - all should pass",
+        "11. Run securityheaders.com scan - Referrer-Policy should pass",
+        "12. Monitor for 24-48 hours - verify no functionality broken"
+      ],
+      "estimatedEffort": "2-3 hours"
+    }
+  }
+}

@@ -1,0 +1,12 @@
+-------------------------------------------------------------------------------
+Test set: TS_Authentication_JUnit
+-------------------------------------------------------------------------------
+Tests run: 4, Failures: 0, Errors: 2, Skipped: 0, Time elapsed: 18.64 s <<< FAILURE! -- in TS_Authentication_JUnit
+TS_Authentication_JUnit.tc_DemoBlaze_Valid_Login -- Time elapsed: 5.821 s <<< ERROR!
+java.lang.NullPointerException: Cannot invoke "org.openqa.selenium.TakesScreenshot.getScreenshotAs(org.openqa.selenium.OutputType)" because "screenshotTaker" is null
+	at TS_Authentication_JUnit.tc_DemoBlaze_Valid_Login(TS_Authentication_JUnit.java:127)
+
+TS_Authentication_JUnit.tc_DemoBlaze_Logout -- Time elapsed: 5.720 s <<< ERROR!
+java.lang.NullPointerException: Cannot invoke "org.openqa.selenium.TakesScreenshot.getScreenshotAs(org.openqa.selenium.OutputType)" because "screenshotTaker" is null
+	at TS_Authentication_JUnit.tc_DemoBlaze_Logout(TS_Authentication_JUnit.java:216)
+

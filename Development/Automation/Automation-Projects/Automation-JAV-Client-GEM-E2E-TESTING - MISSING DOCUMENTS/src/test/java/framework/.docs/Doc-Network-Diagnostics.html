@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Network Diagnostics - mAi™ Framework Documentation</title>
+    <link rel="stylesheet" href="docs-style.css">
+    <link rel="stylesheet" href="pagefind/pagefind-ui.css">
+    <script src="pagefind/pagefind-ui.js" defer></script>
+</head>
+<body>
+    <div class="layout">
+        <nav class="sidebar" id="sidebar" data-pagefind-ignore></nav>
+        <main class="main-content" data-pagefind-body>
+            <h1 data-pagefind-meta="title">Network Diagnostics</h1>
+            <p class="page-subtitle">Network testing, performance measurement, and connectivity analysis</p>
+
+            <h2 id="introduction">Introduction</h2>
+            <p>The Network Diagnostics system provides comprehensive tools for testing, measuring, and analyzing network connectivity, performance, and routing paths. It enables automated validation of network infrastructure, identification of bottlenecks, measurement of bandwidth capabilities, and troubleshooting of connectivity issues.</p>
+
+            <h3>Core Capabilities</h3>
+            <ul class="feature-list">
+                <li><strong>Ping Testing</strong> - ICMP <a href="https://www.perplexity.ai/?q=ICMP+ping+test+network+diagnostics" target="_blank" class="help-link" data-pagefind-ignore>?</a> connectivity validation with RTT, jitter, packet loss</li>
+                <li><strong>Traceroute Analysis</strong> - Hop-by-hop routing path with geographic location</li>
+                <li><strong>Speed Testing</strong> - Bandwidth measurement for download/upload throughput</li>
+                <li><strong>Network Details</strong> - GeoIP enrichment with ISP, location, coordinates</li>
+            </ul>
+
+            <h2 id="architecture">Architecture Components</h2>
+
+            <table>
+                <thead><tr><th>Component</th><th>Purpose</th><th>Metrics</th></tr></thead>
+                <tbody>
+                    <tr><td><code>FW_Audit_Ping</code></td><td>ICMP echo request/reply testing</td><td>RTT, packet loss, jitter, std dev</td></tr>
+                    <tr><td><code>FW_Audit_Traceroute</code></td><td>Network path analysis</td><td>Hops, per-hop RTT, geo location</td></tr>
+                    <tr><td><code>FW_Audit_SpeedTest</code></td><td>Bandwidth measurement</td><td>Download/upload Mbps, quality score</td></tr>
+                    <tr><td><code>FW_NetworkDetails</code></td><td>Network enrichment data</td><td>GeoIP, ISP, ASN, coordinates</td></tr>
+                </tbody>
+            </table>
+
+            <h2 id="ping-testing">Ping Testing</h2>
+            <p>Ping <a href="https://www.perplexity.ai/?q=ping+network+testing+explained" target="_blank" class="help-link" data-pagefind-ignore>?</a> uses ICMP echo requests to verify network connectivity, measure round-trip time, and detect packet loss.</p>
+
+            <h3>Using FW_Audit_Ping</h3>
+            <pre><code>// Direct API Usage
+FW_Audit_Ping ping = FW_AuditManager.INSTANCE.getAuditPing();
+Object result = ping.runAuditPing(
+    "www.example.com",  // target host
+    10,                  // ping count
+    2,                   // timeout (seconds)
+    true                 // verbose output
+);
+
+// Test Suite Usage
+@Test
+@Tag("network")
+@DisplayName("TC - Ping - Google DNS")
+public void tc_ping_google_dns() {
+    FW_CustomAssertJU.autoPass(
+        FW_AuditManager.INSTANCE.getAuditPing()
+            .runAuditPing("8.8.8.8", 5, 2, true)
+    );
+}</code></pre>
+
+            <h3>Ping Thresholds</h3>
+            <table>
+                <thead><tr><th>Metric</th><th>Excellent</th><th>Good</th><th>Fair</th><th>Poor</th></tr></thead>
+                <tbody>
+                    <tr><td><strong>RTT (Round-Trip Time)</strong></td><td>&lt;50ms</td><td>50-100ms</td><td>100-200ms</td><td>&gt;200ms</td></tr>
+                    <tr><td><strong>Packet Loss</strong></td><td>0%</td><td>&lt;1%</td><td>1-5%</td><td>&gt;5%</td></tr>
+                    <tr><td><strong>Jitter</strong></td><td>&lt;5ms</td><td>5-20ms</td><td>20-50ms</td><td>&gt;50ms</td></tr>
+                </tbody>
+            </table>
+
+            <h2 id="traceroute">Traceroute Analysis</h2>
+            <p>Traceroute <a href="https://www.perplexity.ai/?q=traceroute+network+diagnostics+explained" target="_blank" class="help-link" data-pagefind-ignore>?</a> displays the network path packets take from source to destination, showing each "hop" along the way with timing and location data.</p>
+
+            <h3>Using FW_Audit_Traceroute</h3>
+            <pre><code>// Direct API Usage
+FW_Audit_Traceroute traceroute = FW_AuditManager.INSTANCE.getAuditTraceroute();
+Object result = traceroute.runAuditTraceroute(
+    "www.example.com",  // target host
+    120,                 // max duration (seconds)
+    30,                  // max hops
+    true                 // verbose output
+);
+
+// Test Suite Usage
+@Test
+@Tag("network")
+@DisplayName("TC - Traceroute - Production Server")
+public void tc_traceroute_production() {
+    FW_CustomAssertJU.autoPass(
+        FW_AuditManager.INSTANCE.getAuditTraceroute()
+            .runAuditTraceroute("www.saucedemo.com", 120, 30, true)
+    );
+}</code></pre>
+
+            <h2 id="speed-testing">Speed Testing</h2>
+            <p>Bandwidth measurement for download/upload throughput with quality scoring.</p>
+
+            <h3>Using FW_Audit_SpeedTest</h3>
+            <pre><code>// Direct API Usage
+FW_Audit_SpeedTest speedTest = FW_AuditManager.INSTANCE.getAuditSpeedTest();
+Object result = speedTest.runAuditSpeedTest(true); // verbose
+
+// Test Suite Usage
+@Test
+@Tag("network")
+@DisplayName("TC - Speed Test - Network Bandwidth")
+public void tc_speedtest_bandwidth() {
+    FW_CustomAssertJU.autoPass(
+        FW_AuditManager.INSTANCE.getAuditSpeedTest()
+            .runAuditSpeedTest(true)
+    );
+}</code></pre>
+
+            <h3>Speed Thresholds</h3>
+            <table>
+                <thead><tr><th>Metric</th><th>Very Poor</th><th>Fair</th><th>Good</th><th>Excellent</th></tr></thead>
+                <tbody>
+                    <tr><td><strong>Download Speed</strong></td><td>&lt;1 Mbps</td><td>10-50 Mbps</td><td>50-100 Mbps</td><td>&gt;100 Mbps</td></tr>
+                    <tr><td><strong>Quality Score</strong></td><td>0-19</td><td>40-59</td><td>60-79</td><td>80-100</td></tr>
+                </tbody>
+            </table>
+
+            <h2 id="test-suite">TS_Network_JUnit Test Suite</h2>
+
+            <pre><code>public class TS_Network_JUnit {
+    
+    @Test
+    @Tag("network")
+    @DisplayName("TC - Traceroute - SauceDemo")
+    public void tc_traceroute_saucedemo() {
+        FW_CustomAssertJU.autoPass(
+            FW_AuditManager.INSTANCE.getAuditTraceroute()
+                .runAuditTraceroute("www.saucedemo.com", 120, 30, true)
+        );
+    }
+    
+    @Test
+    @Tag("network")
+    @DisplayName("TC - Ping - Google DNS")
+    public void tc_ping_google() {
+        FW_CustomAssertJU.autoPass(
+            FW_AuditManager.INSTANCE.getAuditPing()
+                .runAuditPing("google.com", 4, 2, true)
+        );
+    }
+    
+    @Test
+    @Tag("network")
+    @DisplayName("TC - Speed Test")
+    public void tc_speedtest() {
+        FW_CustomAssertJU.autoPass(
+            FW_AuditManager.INSTANCE.getAuditSpeedTest()
+                .runAuditSpeedTest(true)
+        );
+    }
+}</code></pre>
+
+            <h3>Running the Test Suite</h3>
+            <pre><code># Run all network tests
+mvn test -Dtest=TS_Network_JUnit
+
+# Run specific test
+mvn test -Dtest=TS_Network_JUnit#tc_ping_google
+
+# Run with tags
+mvn test -Dgroups="network"</code></pre>
+
+            <h2 id="configuration">Configuration Options</h2>
+            <pre><code># testConfig.properties
+
+# Ping Configuration
+network.ping.defaultCount=5
+network.ping.defaultTimeout=2
+network.ping.maxJitter=50
+
+# Traceroute Configuration
+network.traceroute.maxDuration=120
+network.traceroute.maxHops=30
+
+# Speed Test Configuration
+network.speedtest.duration=15
+network.speedtest.uploadDuration=10
+
+# GeoIP Configuration
+network.geoip.enabled=true
+network.geoip.provider=ip-api.com</code></pre>
+
+            <h2 id="troubleshooting">Troubleshooting</h2>
+
+            <div class="callout callout-warning">
+                <div class="callout-title">⚠️ Host unreachable</div>
+                <p><strong>Cause:</strong> Target offline, firewall, DNS failure. <strong>Solution:</strong> Verify host is online, check firewall rules.</p>
+            </div>
+
+            <div class="callout callout-warning">
+                <div class="callout-title">⚠️ High packet loss</div>
+                <p><strong>Cause:</strong> Network congestion, routing issues. <strong>Solution:</strong> Test wired connection, try different times.</p>
+            </div>
+
+            <div class="callout callout-warning">
+                <div class="callout-title">⚠️ Traceroute timeout</div>
+                <p><strong>Cause:</strong> ICMP blocked by router. <strong>Solution:</strong> Expected for some hops - routers may block ICMP.</p>
+            </div>
+
+            <div class="callout callout-warning">
+                <div class="callout-title">⚠️ Speed test fails</div>
+                <p><strong>Cause:</strong> Firewall, insufficient bandwidth. <strong>Solution:</strong> Check firewall rules, retry later.</p>
+            </div>
+
+            <h2 id="best-practices">Best Practices</h2>
+
+            <h3>For Test Writers</h3>
+            <ul class="feature-list">
+                <li><strong>Verify Connectivity First</strong> - Run ping before expensive operations</li>
+                <li><strong>Set Appropriate Timeouts</strong> - Adjust based on target location</li>
+                <li><strong>Handle Transient Failures</strong> - Network tests can be flaky - implement retries</li>
+                <li><strong>Document Baselines</strong> - Record expected performance for comparison</li>
+            </ul>
+
+            <h3>For DevOps</h3>
+            <ul class="feature-list">
+                <li><strong>Monitor Trends</strong> - Track network metrics over time</li>
+                <li><strong>Compare Environments</strong> - Ensure dev/staging/prod consistency</li>
+                <li><strong>Test After Changes</strong> - Validate infrastructure modifications</li>
+            </ul>
+
+            <h2 id="related-documentation">Related Documentation</h2>
+            <table>
+                <thead><tr><th>Document</th><th>Description</th></tr></thead>
+                <tbody>
+                    <tr><td><a href="Doc-HTTP-Assessment.html">HTTP Security Assessment</a></td><td>HTTP audit tools</td></tr>
+                    <tr><td><a href="Doc-Test-Development.html">Test Development Guide</a></td><td>Writing tests</td></tr>
+                    <tr><td><a href="Doc-Test-Execution-VSCode.html">Test Execution Guide</a></td><td>Running tests</td></tr>
+                    <tr><td><a href="Diagram-Architecture.html">Architecture Diagram</a></td><td>Layer 6 details</td></tr>
+                </tbody>
+            </table>
+
+            <hr>
+            <footer class="doc-footer" id="doc-footer" data-pagefind-ignore></footer>
+        </main>
+    </div>
+
+    <script src="docs-config.js"></script>
+    <script src="docs-nav.js"></script>
+    <script src="docs-highlight.js"></script>
+    <script>DocsConfig.renderFooter('doc-footer');</script>
+</body>
+</html>

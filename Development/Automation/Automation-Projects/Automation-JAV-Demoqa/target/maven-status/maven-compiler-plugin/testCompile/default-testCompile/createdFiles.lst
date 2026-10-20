@@ -1,0 +1,12 @@
+pageobjects/PO_Registration.class
+TS_DemoQa_JUnit$1.class
+TS_DemoQa_JUnit.class
+framework/assertions/CustomAssertJU.class
+framework/automation/FW_Page.class
+framework/utilities/ConfigMgr.class
+TS_DemoQa_JUnit$2.class
+framework/automation/FW_Driver.class
+framework/formatter/TestSuiteFormatter.class
+framework/FW_version.class
+framework/utilities/POMReader.class
+framework/utilities/GlobalVariable.class

@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diagrams Hub - mAi™ Framework Documentation</title>
+<link rel="stylesheet" href="docs-style.css">
+<link rel="stylesheet" href="pagefind/pagefind-ui.css">
+<script src="pagefind/pagefind-ui.js"></script>
+</head>
+<body>
+<div class="layout">
+<nav class="sidebar" id="sidebar" data-pagefind-ignore></nav>
+<main class="main-content" data-pagefind-body>
+<h1 data-pagefind-meta="title">Visual Documentation Index</h1>
+<p class="subtitle">Organized access to all framework architecture and flow diagrams</p>
+
+<section class="content-section">
+<p>This page provides organized access to all framework diagrams and flowcharts. Each diagram is designed using <a href="https://www.perplexity.ai/search?q=Mermaid+diagram+syntax" target="_blank" class="help-link" data-pagefind-ignore>Mermaid ↗</a> syntax for clear, interactive visualization of framework architecture, workflows, and data flows.</p>
+</section>
+
+<section class="content-section">
+<h2>Available Diagrams</h2>
+<div class="card-grid">
+<div class="card">
+<h4>🏗️ <a href="Diagram-Architecture.html">Architecture Overview</a></h4>
+<p>Comprehensive view of the framework's 8-layer architecture</p>
+<p class="text-muted">Complete layer breakdown, test execution flow, HTTP audit pipeline, mAi Advisor™ flow</p>
+</div>
+<div class="card">
+<h4>🚀 <a href="Diagram-Maven-to-first-Test-Case.html">Maven to First Test Case</a></h4>
+<p>Complete execution path from Maven command to first test</p>
+<p class="text-muted">Maven phases, Surefire plugin, JUnit lifecycle, WebDriver creation</p>
+</div>
+<div class="card">
+<h4>🔍 <a href="Diagram-TestAssetsScanner.html">Test Assets Scanner</a></h4>
+<p>Test suite discovery and metrics collection process</p>
+<p class="text-muted">Maven Antrun trigger, test discovery, annotation processing</p>
+</div>
+<div class="card">
+<h4>📊 <a href="Diagram-Adding-data-to-datacollector.html">Data Collection Pipeline</a></h4>
+<p>Test step data flow from execution to CSV storage</p>
+<p class="text-muted">Batch processing, queue management, CSV generation</p>
+</div>
+<div class="card card-info">
+<h4>☁️ <a href="Diagram-Automation-completed-to-Google_BigData.html">BigQuery Upload Process</a></h4>
+<span class="badge badge-green">v2.0.0</span>
+<p>Complete post-test data pipeline from CSV to Google BigQuery</p>
+<p class="text-muted">OpenCSV, dataset/table management, archiving, error handling</p>
+</div>
+<div class="card">
+<h4>🔒 <a href="Diagram-HTTP-Audit-Pipeline.html">HTTP Audit Pipeline</a></h4>
+<p>HTTP security assessment flow and analysis phases</p>
+<p class="text-muted">Security headers, SSL/TLS, cookies, compliance checking</p>
+</div>
+<div class="card">
+<h4>💡 <a href="Diagram-Advisor-Flow.html">mAi Advisor™ Flow</a></h4>
+<p>Intelligent recommendation generation workflow</p>
+<p class="text-muted">Two-tier model, audience filtering, template matching</p>
+</div>
+</div>
+</section>
+
+<section class="content-section">
+<h2>Suggested Reading Order</h2>
+<div class="card-grid">
+<div class="card">
+<h4>For New Developers</h4>
+<ol>
+<li><a href="Diagram-Architecture.html">Architecture Overview</a> - Get the big picture</li>
+<li><a href="Diagram-Maven-to-first-Test-Case.html">Maven to First Test Case</a> - See how tests run</li>
+<li><a href="Diagram-Adding-data-to-datacollector.html">Data Collection Pipeline</a> - Understand data flow</li>
+</ol>
+</div>
+<div class="card">
+<h4>For Test Writers</h4>
+<ol>
+<li><a href="Diagram-Maven-to-first-Test-Case.html">Maven to First Test Case</a> - Learn test lifecycle</li>
+<li><a href="Diagram-TestAssetsScanner.html">Test Assets Scanner</a> - Understand test discovery</li>
+<li><a href="Diagram-Architecture.html">Architecture Overview</a> - See available components</li>
+</ol>
+</div>
+<div class="card">
+<h4>For DevOps Engineers</h4>
+<ol>
+<li><a href="Diagram-Architecture.html">Architecture Overview</a> - System design overview</li>
+<li><a href="Diagram-Automation-completed-to-Google_BigData.html">BigQuery Upload Process</a> - Cloud setup</li>
+<li><a href="Diagram-Maven-to-first-Test-Case.html">Maven to First Test Case</a> - CI/CD integration</li>
+</ol>
+</div>
+<div class="card">
+<h4>For Framework Maintainers</h4>
+<ol>
+<li><a href="Diagram-Architecture.html">Architecture Overview</a> - Core design</li>
+<li><a href="Diagram-TestAssetsScanner.html">Test Assets Scanner</a> - Discovery mechanics</li>
+<li><a href="Diagram-Adding-data-to-datacollector.html">Data Collection Pipeline</a> - Data handling</li>
+<li><a href="Diagram-Automation-completed-to-Google_BigData.html">BigQuery Upload Process</a> - Cloud integration</li>
+</ol>
+</div>
+</div>
+</section>
+
+<section class="content-section">
+<h2>Use Case Guide</h2>
+<table class="data-table">
+<thead><tr><th>Question</th><th>Diagram</th></tr></thead>
+<tbody>
+<tr><td>"How does the framework execute tests?"</td><td><a href="Diagram-Maven-to-first-Test-Case.html">Maven to First Test Case</a></td></tr>
+<tr><td>"What is the overall architecture?"</td><td><a href="Diagram-Architecture.html">Architecture Overview</a></td></tr>
+<tr><td>"How does test discovery work?"</td><td><a href="Diagram-TestAssetsScanner.html">Test Assets Scanner</a></td></tr>
+<tr><td>"How is test data collected?"</td><td><a href="Diagram-Adding-data-to-datacollector.html">Data Collection Pipeline</a></td></tr>
+<tr><td>"How does data get to BigQuery?"</td><td><a href="Diagram-Automation-completed-to-Google_BigData.html">BigQuery Upload Process</a></td></tr>
+<tr><td>"What happens in @BeforeAll and @BeforeEach?"</td><td><a href="Diagram-Maven-to-first-Test-Case.html">Maven to First Test Case</a></td></tr>
+<tr><td>"How does HTTP security assessment work?"</td><td><a href="Diagram-HTTP-Audit-Pipeline.html">HTTP Audit Pipeline</a></td></tr>
+<tr><td>"How does mAi Advisor™ generate recommendations?"</td><td><a href="Diagram-Advisor-Flow.html">mAi Advisor™ Flow</a></td></tr>
+</tbody>
+</table>
+</section>
+
+<section class="content-section">
+<h2>Diagram Technologies</h2>
+<p>All diagrams in this framework use <strong>Mermaid</strong> syntax for:</p>
+<ul>
+<li>✅ Version control friendly (text-based)</li>
+<li>✅ Renders in GitHub, GitLab, VS Code</li>
+<li>✅ Easy to update and maintain</li>
+<li>✅ Interactive in supported viewers</li>
+<li>✅ Exports to PNG/SVG/PDF</li>
+</ul>
+
+<h3>Viewing Diagrams</h3>
+<ul>
+<li><strong>GitHub/GitLab:</strong> Diagrams render automatically in Markdown preview</li>
+<li><strong>VS Code:</strong> Install "Markdown Preview Mermaid Support" extension</li>
+<li><strong>IntelliJ/WebStorm:</strong> Built-in Mermaid support in Markdown preview</li>
+<li><strong>CLI:</strong> Use <code>mmdc</code> (mermaid-cli) to export to images</li>
+</ul>
+</section>
+
+<section class="content-section">
+<h2>Related Documentation</h2>
+<table class="data-table">
+<thead><tr><th>Document</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td><a href="Doc-Overview.html">Framework Overview</a></td><td>High-level introduction</td></tr>
+<tr><td><a href="Doc-Test-Development.html">Test Development Guide</a></td><td>Writing tests</td></tr>
+<tr><td><a href="Doc-Setup.html">Setup Instructions</a></td><td>Installation and configuration</td></tr>
+<tr><td><a href="Doc-Test-Execution-VSCode.html">Test Execution Guide</a></td><td>Running tests</td></tr>
+</tbody>
+</table>
+</section>
+
+<footer class="doc-footer" id="doc-footer" data-pagefind-ignore></footer>
+</main>
+</div>
+<script src="docs-config.js"></script>
+<script src="docs-nav.js"></script>
+<script>DocsConfig.renderFooter('doc-footer');</script>
+</body>
+</html>

@@ -1,0 +1,4 @@
+"DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
+"","5857","tc_google_home()","","Mon Dec 30 16:37:57 CAT 2024","passed","Mon Dec 30 16:38:03 CAT 2024","","TS_Google_JUnit","TS_Google_JUnit","tc_google_home"
+"","11157","tc_terms_and_policy()","","Mon Dec 30 16:38:03 CAT 2024","passed","Mon Dec 30 16:38:14 CAT 2024","","TS_Google_JUnit","TS_Google_JUnit","tc_terms_and_policy"
+"","8060","tc_about()","","Mon Dec 30 16:38:14 CAT 2024","passed","Mon Dec 30 16:38:22 CAT 2024","","TS_Google_JUnit","TS_Google_JUnit","tc_about"

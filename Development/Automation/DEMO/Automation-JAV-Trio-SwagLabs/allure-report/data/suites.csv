@@ -1,0 +1,6 @@
+"Status","Start Time","Stop Time","Duration in ms","Parent Suite","Suite","Sub Suite","Test Class","Test Method","Name","Description"
+"passed","Wed Dec 04 11:23:14 CAT 2024","Wed Dec 04 11:23:20 CAT 2024","6476","","TS_Authentication_JUnit","","TS_Authentication_JUnit","tc_swaglabs_basics","TC - 001 - Login",""
+"passed","Wed Dec 04 11:23:10 CAT 2024","Wed Dec 04 11:23:14 CAT 2024","4168","","TS_Products_JUnit","","TS_Products_JUnit","tc_swaglabs_basics","TC - 001 - View Products",""
+"passed","Wed Dec 04 11:23:20 CAT 2024","Wed Dec 04 11:23:26 CAT 2024","6223","","TS_Pricing_JUnit","","TS_Pricing_JUnit","tc_swaglabs_basics","TC - 001 - View Price & Checkout",""
+"passed","Wed Dec 04 11:23:26 CAT 2024","Wed Dec 04 11:23:31 CAT 2024","4266","","TS_Cart_JUnit","","TS_Cart_JUnit","tc_swaglabs_basics","TC - 001 - Add & Remove Products",""
+"passed","Wed Dec 04 11:22:56 CAT 2024","Wed Dec 04 11:23:09 CAT 2024","13957","","TS_About_JUnit","","TS_About_JUnit","tc_swaglabs_about","TC - 001 - About",""

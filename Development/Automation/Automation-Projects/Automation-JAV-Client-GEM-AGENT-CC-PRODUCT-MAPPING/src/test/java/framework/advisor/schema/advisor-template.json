@@ -1,0 +1,526 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://missionwares.com/schemas/advisor-template.json",
+  "title": "mAi Advisor™ Template Schema",
+  "description": "JSON schema for mAi Advisor™ template files that contain audience-specific guidance for security, performance, compliance, and infrastructure findings.",
+  "type": "object",
+  "required": [
+    "findingId",
+    "findingType",
+    "category",
+    "severity",
+    "understanding",
+    "metadata"
+  ],
+  "properties": {
+    "findingId": {
+      "type": "string",
+      "description": "Unique identifier for this finding (e.g., SEC-001, PERF-001)",
+      "pattern": "^[A-Z]{3,4}-\\d{3}$",
+      "examples": ["SEC-001", "PERF-001", "COMP-001"]
+    },
+    "findingType": {
+      "type": "string",
+      "description": "Finding type constant (e.g., HSTS_MISSING, CSP_MISSING)",
+      "pattern": "^[A-Z_]+$",
+      "minLength": 3,
+      "maxLength": 50,
+      "examples": ["HSTS_MISSING", "CSP_MISSING", "NO_HTTPS"]
+    },
+    "category": {
+      "type": "string",
+      "description": "Finding category",
+      "enum": ["SECURITY", "PERFORMANCE", "COMPLIANCE", "INFRASTRUCTURE"]
+    },
+    "severity": {
+      "type": "string",
+      "description": "Severity level",
+      "enum": ["CRITICAL", "HIGH", "MEDIUM", "LOW", "INFO"]
+    },
+    "cveReferences": {
+      "type": "array",
+      "description": "List of related CVE references",
+      "items": {
+        "type": "string",
+        "pattern": "^CVE-\\d{4}-\\d{4,}$",
+        "examples": ["CVE-2009-0164", "CVE-2021-44228"]
+      },
+      "uniqueItems": true
+    },
+    "understanding": {
+      "type": "object",
+      "description": "Understanding tier content for all audiences",
+      "minProperties": 1,
+      "properties": {
+        "EXECUTIVE": {
+          "$ref": "#/definitions/understandingContentExecutive"
+        },
+        "PROJECT_MANAGER": {
+          "$ref": "#/definitions/understandingContentProjectManager"
+        },
+        "DEVELOPER": {
+          "$ref": "#/definitions/understandingContentDeveloper"
+        },
+        "OPS_INFRASTRUCTURE": {
+          "$ref": "#/definitions/understandingContentOps"
+        },
+        "QA_TESTER": {
+          "$ref": "#/definitions/understandingContentQA"
+        },
+        "SECURITY_ENGINEER": {
+          "$ref": "#/definitions/understandingContentSecurity"
+        }
+      },
+      "additionalProperties": false
+    },
+    "actions": {
+      "type": "object",
+      "description": "Action tier content for implementers only",
+      "properties": {
+        "DEVELOPER": {
+          "$ref": "#/definitions/actionContentDeveloper"
+        },
+        "OPS_INFRASTRUCTURE": {
+          "$ref": "#/definitions/actionContentOps"
+        },
+        "QA_TESTER": {
+          "$ref": "#/definitions/actionContentQA"
+        }
+      },
+      "additionalProperties": false
+    },
+    "metadata": {
+      "$ref": "#/definitions/templateMetadata"
+    }
+  },
+  "additionalProperties": false,
+  "definitions": {
+    "understandingContentExecutive": {
+      "type": "object",
+      "description": "Understanding content for Executive audience",
+      "properties": {
+        "summary": {
+          "type": "string",
+          "description": "1-2 sentence summary",
+          "minLength": 10,
+          "maxLength": 300
+        },
+        "businessRisk": {
+          "type": "string",
+          "description": "Business impact and revenue/reputation risk"
+        },
+        "complianceImpact": {
+          "type": "string",
+          "description": "Regulatory and compliance implications"
+        },
+        "priority": {
+          "type": "string",
+          "enum": ["CRITICAL", "HIGH", "MEDIUM", "LOW"],
+          "description": "Priority level for this audience"
+        }
+      },
+      "required": ["summary", "businessRisk", "priority"],
+      "additionalProperties": false
+    },
+    "understandingContentProjectManager": {
+      "type": "object",
+      "description": "Understanding content for Project Manager audience",
+      "properties": {
+        "summary": {
+          "type": "string",
+          "description": "Clear problem statement",
+          "minLength": 10,
+          "maxLength": 300
+        },
+        "timeline": {
+          "type": "string",
+          "description": "Impact on sprint/timeline"
+        },
+        "effort": {
+          "type": "string",
+          "description": "High-level effort estimate"
+        },
+        "dependencies": {
+          "type": "array",
+          "description": "What's blocking this work",
+          "items": {
+            "type": "string"
+          }
+        },
+        "blocking": {
+          "type": "array",
+          "description": "What this issue blocks",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": ["summary", "effort"],
+      "additionalProperties": false
+    },
+    "understandingContentDeveloper": {
+      "type": "object",
+      "description": "Understanding content for Developer audience",
+      "properties": {
+        "summary": {
+          "type": "string",
+          "description": "Technical summary",
+          "minLength": 10,
+          "maxLength": 300
+        },
+        "technical": {
+          "type": "string",
+          "description": "Technical explanation"
+        },
+        "vulnerability": {
+          "type": "string",
+          "description": "Vulnerability details"
+        },
+        "references": {
+          "type": "array",
+          "description": "Links to documentation and resources",
+          "items": {
+            "type": "string",
+            "format": "uri"
+          }
+        }
+      },
+      "required": ["technical"],
+      "additionalProperties": false
+    },
+    "understandingContentOps": {
+      "type": "object",
+      "description": "Understanding content for Operations/Infrastructure audience",
+      "properties": {
+        "summary": {
+          "type": "string",
+          "description": "Infrastructure perspective summary",
+          "minLength": 10,
+          "maxLength": 300
+        },
+        "technical": {
+          "type": "string",
+          "description": "Technical explanation from ops perspective"
+        },
+        "scope": {
+          "type": "string",
+          "description": "Affected systems and scope"
+        },
+        "monitoring": {
+          "type": "string",
+          "description": "What to monitor"
+        }
+      },
+      "required": ["technical"],
+      "additionalProperties": false
+    },
+    "understandingContentQA": {
+      "type": "object",
+      "description": "Understanding content for QA Tester audience",
+      "properties": {
+        "summary": {
+          "type": "string",
+          "description": "Testing perspective summary",
+          "minLength": 10,
+          "maxLength": 300
+        },
+        "testImplication": {
+          "type": "string",
+          "description": "How this affects testing"
+        },
+        "riskIfNotFixed": {
+          "type": "string",
+          "description": "Testing failures expected if not fixed"
+        }
+      },
+      "required": ["testImplication"],
+      "additionalProperties": false
+    },
+    "understandingContentSecurity": {
+      "type": "object",
+      "description": "Understanding content for Security Engineer audience",
+      "properties": {
+        "summary": {
+          "type": "string",
+          "description": "Security perspective summary",
+          "minLength": 10,
+          "maxLength": 300
+        },
+        "vulnerability": {
+          "type": "string",
+          "description": "CVE and vulnerability details"
+        },
+        "attackVector": {
+          "type": "string",
+          "description": "How this can be exploited"
+        },
+        "threatLevel": {
+          "type": "string",
+          "description": "Threat assessment"
+        },
+        "mitigationUrgency": {
+          "type": "string",
+          "description": "Time sensitivity of mitigation"
+        }
+      },
+      "required": ["vulnerability", "attackVector", "threatLevel"],
+      "additionalProperties": false
+    },
+    "actionContentDeveloper": {
+      "type": "object",
+      "description": "Action content for Developer audience",
+      "properties": {
+        "frameworks": {
+          "type": "object",
+          "description": "Framework-specific code examples",
+          "patternProperties": {
+            "^[a-z-]+$": {
+              "$ref": "#/definitions/frameworkCode"
+            }
+          },
+          "additionalProperties": false,
+          "examples": [{
+            "spring-boot": {},
+            "express-nodejs": {},
+            "asp-net-core": {},
+            "django-python": {}
+          }]
+        },
+        "verificationSteps": {
+          "type": "array",
+          "description": "Steps to verify the fix works",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1
+        },
+        "estimatedEffort": {
+          "type": "string",
+          "description": "Effort estimate (e.g., '2-3 hours')",
+          "pattern": "^\\d+-?\\d* (hour|hours|day|days)$",
+          "examples": ["2-3 hours", "1 day", "4 hours"]
+        }
+      },
+      "required": ["frameworks", "verificationSteps", "estimatedEffort"],
+      "additionalProperties": false
+    },
+    "actionContentOps": {
+      "type": "object",
+      "description": "Action content for Operations/Infrastructure audience",
+      "properties": {
+        "servers": {
+          "type": "object",
+          "description": "Server-specific configurations",
+          "patternProperties": {
+            "^[a-z-]+$": {
+              "$ref": "#/definitions/serverConfig"
+            }
+          },
+          "additionalProperties": false,
+          "examples": [{
+            "nginx": {},
+            "apache": {},
+            "iis": {}
+          }]
+        },
+        "verificationSteps": {
+          "type": "array",
+          "description": "Steps to verify the configuration",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1
+        },
+        "rollbackPlan": {
+          "type": "string",
+          "description": "How to undo the changes if needed"
+        },
+        "estimatedEffort": {
+          "type": "string",
+          "description": "Effort estimate (e.g., '1-2 hours')",
+          "pattern": "^\\d+-?\\d* (hour|hours|day|days)$"
+        }
+      },
+      "required": ["servers", "verificationSteps", "estimatedEffort"],
+      "additionalProperties": false
+    },
+    "actionContentQA": {
+      "type": "object",
+      "description": "Action content for QA Tester audience",
+      "properties": {
+        "manualTests": {
+          "type": "array",
+          "description": "Manual test cases",
+          "items": {
+            "$ref": "#/definitions/manualTest"
+          },
+          "minItems": 1
+        },
+        "automatedTests": {
+          "$ref": "#/definitions/automatedTest"
+        },
+        "edgeCases": {
+          "type": "array",
+          "description": "Edge cases to test",
+          "items": {
+            "type": "string"
+          }
+        },
+        "estimatedEffort": {
+          "type": "string",
+          "description": "Effort estimate for testing",
+          "pattern": "^\\d+-?\\d* (hour|hours|day|days)$"
+        }
+      },
+      "required": ["manualTests", "estimatedEffort"],
+      "additionalProperties": false
+    },
+    "frameworkCode": {
+      "type": "object",
+      "description": "Framework-specific code example",
+      "properties": {
+        "code": {
+          "type": "string",
+          "description": "Complete working code example",
+          "minLength": 10
+        },
+        "testCode": {
+          "type": "string",
+          "description": "Test code example (JUnit, Jest, etc.)"
+        },
+        "dependencies": {
+          "type": "string",
+          "description": "Maven/Gradle/npm dependencies to add"
+        },
+        "package": {
+          "type": "string",
+          "description": "Package installation command (npm install, etc.)"
+        }
+      },
+      "required": ["code"],
+      "additionalProperties": false
+    },
+    "serverConfig": {
+      "type": "object",
+      "description": "Server-specific configuration",
+      "properties": {
+        "config": {
+          "type": "string",
+          "description": "Configuration snippet",
+          "minLength": 10
+        },
+        "reload": {
+          "type": "string",
+          "description": "Reload/restart command"
+        },
+        "enable": {
+          "type": "string",
+          "description": "Module enablement command"
+        }
+      },
+      "required": ["config"],
+      "additionalProperties": false
+    },
+    "manualTest": {
+      "type": "object",
+      "description": "Manual test case",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Test case name",
+          "minLength": 5
+        },
+        "steps": {
+          "type": "array",
+          "description": "Step-by-step test procedure",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1
+        },
+        "expected": {
+          "type": "string",
+          "description": "Expected result",
+          "minLength": 10
+        }
+      },
+      "required": ["name", "steps", "expected"],
+      "additionalProperties": false
+    },
+    "automatedTest": {
+      "type": "object",
+      "description": "Automated test information",
+      "properties": {
+        "tool": {
+          "type": "string",
+          "description": "Testing tool (Selenium, Cypress, etc.)",
+          "examples": ["Selenium", "Cypress", "Playwright", "JUnit"]
+        },
+        "example": {
+          "type": "string",
+          "description": "Automated test code example",
+          "minLength": 10
+        }
+      },
+      "required": ["tool", "example"],
+      "additionalProperties": false
+    },
+    "templateMetadata": {
+      "type": "object",
+      "description": "Template metadata",
+      "properties": {
+        "createdDate": {
+          "type": "string",
+          "description": "Date template was created",
+          "format": "date",
+          "examples": ["2025-10-07"]
+        },
+        "lastUpdated": {
+          "type": "string",
+          "description": "Date template was last updated",
+          "format": "date",
+          "examples": ["2025-10-07"]
+        },
+        "aiGenerated": {
+          "type": "boolean",
+          "description": "Whether this template was AI-generated",
+          "default": false
+        },
+        "humanReviewed": {
+          "type": "boolean",
+          "description": "Whether this template has been human-reviewed",
+          "default": false
+        },
+        "version": {
+          "type": "string",
+          "description": "Template version (semantic versioning)",
+          "pattern": "^\\d+\\.\\d+\\.\\d+$",
+          "examples": ["1.0.0", "1.2.3"]
+        },
+        "priority": {
+          "type": "string",
+          "description": "Overall priority of this finding",
+          "enum": ["CRITICAL", "HIGH", "MEDIUM", "LOW"]
+        },
+        "estimatedTotalEffort": {
+          "type": "string",
+          "description": "Total effort across all audiences",
+          "pattern": "^\\d+-?\\d* (hour|hours|day|days)$",
+          "examples": ["6-8 hours", "2 days"]
+        },
+        "tags": {
+          "type": "array",
+          "description": "Tags for categorization",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z0-9-]+$"
+          },
+          "uniqueItems": true,
+          "examples": [["security", "https", "transport", "headers"]]
+        }
+      },
+      "required": ["version"],
+      "additionalProperties": false
+    }
+  }
+}

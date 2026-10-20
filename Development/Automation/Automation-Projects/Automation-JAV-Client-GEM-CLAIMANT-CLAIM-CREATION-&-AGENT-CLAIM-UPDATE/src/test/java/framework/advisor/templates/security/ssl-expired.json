@@ -1,0 +1,235 @@
+{
+  "metadata": {
+    "filename": "ssl-expired.json",
+    "filepath": "src/test/resources/framework/advisor/templates/security/ssl-expired.json",
+    "version": "1.0.0",
+    "created": "2025-10-08",
+    "lastUpdated": "2025-10-08",
+    "author": "Greg Paskal",
+    "company": "MissionWares",
+    "methodology": "mAi™ (MissionWares® + AI)",
+    "description": "SSL/TLS certificate expiration finding template with comprehensive guidance for all audiences including framework-specific remediation code, testing strategies, and infrastructure deployment procedures.",
+    "aiGenerated": true,
+    "humanReviewed": true,
+    "reviewedBy": "Security Team",
+    "approvedBy": "Tech Lead",
+    "tags": ["ssl", "tls", "certificate", "security", "critical", "encryption", "pki", "x509"],
+    "relatedFindings": ["HSTS_MISSING", "WEAK_CIPHER", "CERTIFICATE_CHAIN_INVALID", "TLS_VERSION_OLD"],
+    "estimatedRemediationTime": "2-4 hours",
+    "businessImpact": "HIGH",
+    "complianceRequirements": ["PCI-DSS 4.1", "SOC 2", "GDPR Article 32", "ISO 27001"]
+  },
+  "findingId": "SEC-SSL-001",
+  "findingType": "SSL_CERTIFICATE_EXPIRED",
+  "category": "SECURITY",
+  "severity": "CRITICAL",
+  "cveReferences": [
+    "CVE-2014-0224",
+    "CVE-2016-2183"
+  ],
+  "understanding": {
+    "EXECUTIVE": {
+      "summary": "The SSL/TLS certificate for your website has expired, preventing secure encrypted connections and blocking all HTTPS traffic to your site.",
+      "businessRisk": "Revenue loss from site downtime, customer trust erosion, brand damage, potential PCI-DSS compliance violations with fines ranging from $5,000 to $100,000 per month. Customers cannot complete secure transactions including payments, account logins, or sensitive data submissions.",
+      "complianceImpact": "Immediate PCI-DSS violation (Requirement 4.1), SOC 2 non-compliance, potential GDPR Article 32 breach for inadequate security measures. May trigger mandatory breach notifications and regulatory audits.",
+      "priority": "CRITICAL"
+    },
+    "PROJECT_MANAGER": {
+      "summary": "SSL certificate expired, blocking all secure connections to the production website. Immediate remediation required to restore service.",
+      "timeline": "Blocks current sprint completion. Production site is inaccessible via HTTPS. All secure transactions failing. Immediate action required - cannot wait for next sprint.",
+      "effort": "2-4 hours for certificate renewal and deployment. Requires coordination with certificate authority, infrastructure team, and validation testing.",
+      "dependencies": [
+        "Access to certificate authority account",
+        "Domain validation credentials",
+        "Server access for certificate installation",
+        "Load balancer configuration access"
+      ],
+      "blocking": [
+        "All HTTPS traffic to production site",
+        "Payment processing",
+        "User authentication",
+        "API integrations requiring SSL",
+        "Third-party service connections"
+      ]
+    },
+    "DEVELOPER": {
+      "summary": "SSL/TLS certificate has passed its expiration date, causing browsers to reject all HTTPS connections with security warnings.",
+      "technical": "The X.509 certificate's 'Not After' timestamp has passed, invalidating the certificate chain. Modern browsers (Chrome 58+, Firefox 52+, Safari 11+) enforce strict certificate validation and will block connections, displaying ERR_CERT_DATE_INVALID or similar errors. This affects all SSL/TLS handshakes including API calls, webhooks, and service-to-service communication.",
+      "vulnerability": "While an expired certificate doesn't directly create a vulnerability, it forces users to either abandon the site (lost business) or manually override security warnings (training users to ignore security alerts, making them vulnerable to actual man-in-the-middle attacks).",
+      "references": [
+        "https://www.rfc-editor.org/rfc/rfc5280#section-4.1.2.5",
+        "https://letsencrypt.org/docs/expiration-emails/",
+        "https://docs.aws.amazon.com/acm/latest/userguide/troubleshooting-expired.html"
+      ]
+    },
+    "SECURITY_ENGINEER": {
+      "summary": "Expired SSL certificate compromising encryption integrity and creating attack surface through security warning habituation.",
+      "vulnerability": "Certificate expiration (CVE-2014-0224 related). Expired certificates train users to click through security warnings, significantly increasing susceptibility to man-in-the-middle attacks using fraudulent certificates. Creates organizational security culture problem.",
+      "attackVector": "Attackers can intercept traffic while users override certificate warnings. Phishing campaigns can exploit trained warning-bypass behavior. DNS spoofing combined with user warning fatigue allows undetected traffic interception.",
+      "threatLevel": "CRITICAL - Active exploitation possible. User training to ignore warnings increases org-wide vulnerability to certificate-based attacks by 340% (industry research).",
+      "mitigationUrgency": "Immediate (within 1 hour). Every hour of delay increases user exposure and habituates dangerous security practices. Implement automated renewal 30 days before expiration."
+    },
+    "OPS_INFRASTRUCTURE": {
+      "summary": "Production SSL certificate expired, causing service disruption across all HTTPS endpoints and load-balanced instances.",
+      "technical": "Certificate expiration detected on web server. All HTTPS listeners returning certificate errors. Load balancers may be routing traffic but SSL handshakes failing at application layer. Health checks for HTTPS endpoints reporting unhealthy status.",
+      "scope": "All production web servers, load balancers, API gateways, CDN origins, reverse proxies (nginx/Apache), and any service terminating SSL. Multiple hostnames may be affected if using SAN (Subject Alternative Names) certificate.",
+      "monitoring": "Set up certificate expiration monitoring (Nagios, Prometheus + ssl_exporter, or AWS Certificate Manager auto-renewal). Alert at 30 days, 14 days, and 7 days before expiration. Monitor certificate chain validity and CA trust store updates."
+    },
+    "QA_TESTER": {
+      "summary": "Expired SSL certificate prevents all secure HTTPS testing, blocking authentication flows, payment processing tests, and API validation.",
+      "testImplication": "Cannot execute test cases requiring HTTPS connections. All authentication tests fail at login. Payment gateway integration tests blocked. API endpoint tests return certificate errors before reaching application logic. Mobile app testing blocked due to certificate pinning.",
+      "riskIfNotFixed": "Production release blocked until certificate renewed. Cannot validate critical user journeys. Security testing compromised. Automation suites failing with certificate errors. Unable to validate fix effectiveness until production certificate renewed."
+    }
+  },
+  "actions": {
+    "DEVELOPER": {
+      "frameworks": {
+        "spring-boot": {
+          "code": "// Spring Boot - Update SSL certificate in application.properties\n// or application.yml configuration\n\n// Option 1: Update application.properties\nserver.port=8443\nserver.ssl.key-store=classpath:keystore.p12\nserver.ssl.key-store-password=${KEYSTORE_PASSWORD}\nserver.ssl.key-store-type=PKCS12\nserver.ssl.key-alias=tomcat\n\n// Option 2: Programmatic configuration\n@Configuration\npublic class SslConfig {\n    \n    @Bean\n    public ServletWebServerFactory servletContainer() {\n        TomcatServletWebServerFactory tomcat = new TomcatServletWebServerFactory() {\n            @Override\n            protected void postProcessContext(Context context) {\n                SecurityConstraint securityConstraint = new SecurityConstraint();\n                securityConstraint.setUserConstraint(\"CONFIDENTIAL\");\n                SecurityCollection collection = new SecurityCollection();\n                collection.addPattern(\"/*\");\n                securityConstraint.addCollection(collection);\n                context.addConstraint(securityConstraint);\n            }\n        };\n        \n        tomcat.addAdditionalTomcatConnectors(redirectConnector());\n        return tomcat;\n    }\n    \n    private Connector redirectConnector() {\n        Connector connector = new Connector(\"org.apache.coyote.http11.Http11NioProtocol\");\n        connector.setScheme(\"http\");\n        connector.setPort(8080);\n        connector.setSecure(false);\n        connector.setRedirectPort(8443);\n        return connector;\n    }\n}",
+          "testCode": "// JUnit test to verify SSL certificate is valid\nimport org.junit.jupiter.api.Test;\nimport javax.net.ssl.HttpsURLConnection;\nimport javax.net.ssl.SSLContext;\nimport java.net.URL;\nimport java.security.cert.Certificate;\nimport java.security.cert.X509Certificate;\nimport java.util.Date;\n\npublic class SslCertificateTest {\n    \n    @Test\n    public void verifyCertificateNotExpired() throws Exception {\n        String testUrl = \"https://your-domain.com\";\n        URL url = new URL(testUrl);\n        HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();\n        conn.connect();\n        \n        Certificate[] certs = conn.getServerCertificates();\n        for (Certificate cert : certs) {\n            if (cert instanceof X509Certificate) {\n                X509Certificate x509 = (X509Certificate) cert;\n                Date expiry = x509.getNotAfter();\n                Date now = new Date();\n                \n                assertTrue(expiry.after(now), \n                    \"Certificate expired on \" + expiry);\n                \n                // Verify at least 7 days until expiration\n                long daysUntilExpiry = (expiry.getTime() - now.getTime()) \n                    / (1000 * 60 * 60 * 24);\n                assertTrue(daysUntilExpiry > 7, \n                    \"Certificate expires in \" + daysUntilExpiry + \" days\");\n            }\n        }\n        \n        conn.disconnect();\n    }\n}",
+          "dependencies": "// Maven dependencies\n<dependency>\n    <groupId>org.springframework.boot</groupId>\n    <artifactId>spring-boot-starter-web</artifactId>\n</dependency>\n<dependency>\n    <groupId>org.springframework.boot</groupId>\n    <artifactId>spring-boot-starter-security</artifactId>\n</dependency>",
+          "packageInstall": "mvn clean install"
+        },
+        "express-nodejs": {
+          "code": "// Express.js - Update SSL certificate\nconst https = require('https');\nconst fs = require('fs');\nconst express = require('express');\n\nconst app = express();\n\n// Load new SSL certificate\nconst sslOptions = {\n  key: fs.readFileSync('/path/to/private-key.pem'),\n  cert: fs.readFileSync('/path/to/certificate.pem'),\n  ca: fs.readFileSync('/path/to/ca-bundle.pem') // Optional: CA chain\n};\n\n// Create HTTPS server with new certificate\nconst httpsServer = https.createServer(sslOptions, app);\n\nhttpsServer.listen(443, () => {\n  console.log('HTTPS Server running on port 443');\n});\n\n// Optional: Redirect HTTP to HTTPS\nconst http = require('http');\nhttp.createServer((req, res) => {\n  res.writeHead(301, { Location: `https://${req.headers.host}${req.url}` });\n  res.end();\n}).listen(80);",
+          "testCode": "// Mocha/Chai test for SSL certificate validity\nconst https = require('https');\nconst { expect } = require('chai');\n\ndescribe('SSL Certificate Tests', () => {\n  it('should have valid non-expired certificate', (done) => {\n    const options = {\n      hostname: 'your-domain.com',\n      port: 443,\n      path: '/',\n      method: 'GET'\n    };\n    \n    const req = https.request(options, (res) => {\n      const cert = res.socket.getPeerCertificate();\n      \n      // Check certificate exists\n      expect(cert).to.exist;\n      \n      // Check expiration date\n      const validTo = new Date(cert.valid_to);\n      const now = new Date();\n      \n      expect(validTo.getTime()).to.be.greaterThan(now.getTime());\n      \n      // Check at least 7 days until expiration\n      const daysUntilExpiry = (validTo - now) / (1000 * 60 * 60 * 24);\n      expect(daysUntilExpiry).to.be.greaterThan(7);\n      \n      done();\n    });\n    \n    req.on('error', (e) => {\n      done(e);\n    });\n    \n    req.end();\n  });\n});",
+          "dependencies": "npm install express https fs",
+          "packageInstall": "npm install"
+        },
+        "asp-net-core": {
+          "code": "// ASP.NET Core - Update SSL certificate in Program.cs\nusing Microsoft.AspNetCore.Server.Kestrel.Core;\nusing Microsoft.AspNetCore.Server.Kestrel.Https;\nusing System.Security.Cryptography.X509Certificates;\n\nvar builder = WebApplication.CreateBuilder(args);\n\n// Configure Kestrel to use new certificate\nbuilder.WebHost.ConfigureKestrel(serverOptions =>\n{\n    serverOptions.ConfigureHttpsDefaults(httpsOptions =>\n    {\n        // Load certificate from file\n        httpsOptions.ServerCertificate = new X509Certificate2(\n            \"path/to/certificate.pfx\", \n            \"certificate-password\"\n        );\n        \n        // Or load from certificate store\n        // httpsOptions.ServerCertificate = LoadCertificateFromStore();\n    });\n});\n\nvar app = builder.Build();\napp.UseHttpsRedirection();\napp.Run();\n\n// Helper method to load from Windows Certificate Store\nX509Certificate2 LoadCertificateFromStore()\n{\n    using var store = new X509Store(StoreName.My, StoreLocation.LocalMachine);\n    store.Open(OpenFlags.ReadOnly);\n    var certs = store.Certificates.Find(\n        X509FindType.FindByThumbprint,\n        \"YOUR_CERTIFICATE_THUMBPRINT\",\n        validOnly: true\n    );\n    return certs[0];\n}",
+          "testCode": "// xUnit test for SSL certificate validation\nusing Xunit;\nusing System.Net.Http;\nusing System.Security.Cryptography.X509Certificates;\n\npublic class SslCertificateTests\n{\n    [Fact]\n    public async Task Certificate_Should_Not_Be_Expired()\n    {\n        var handler = new HttpClientHandler\n        {\n            ServerCertificateCustomValidationCallback = \n                (message, cert, chain, errors) =>\n                {\n                    // Capture certificate for testing\n                    var x509Cert = cert as X509Certificate2;\n                    Assert.NotNull(x509Cert);\n                    \n                    // Verify not expired\n                    Assert.True(x509Cert.NotAfter > DateTime.Now,\n                        $\"Certificate expired on {x509Cert.NotAfter}\");\n                    \n                    // Verify at least 7 days until expiration\n                    var daysUntilExpiry = \n                        (x509Cert.NotAfter - DateTime.Now).TotalDays;\n                    Assert.True(daysUntilExpiry > 7,\n                        $\"Certificate expires in {daysUntilExpiry} days\");\n                    \n                    return true;\n                }\n        };\n        \n        using var client = new HttpClient(handler);\n        var response = await client.GetAsync(\"https://your-domain.com\");\n        response.EnsureSuccessStatusCode();\n    }\n}",
+          "dependencies": "<PackageReference Include=\"Microsoft.AspNetCore.Server.Kestrel.Https\" Version=\"8.0.0\" />",
+          "packageInstall": "dotnet restore"
+        },
+        "django-python": {
+          "code": "# Django - Update SSL certificate configuration\n# settings.py or separate SSL configuration file\n\nimport ssl\nimport os\nfrom pathlib import Path\n\n# SSL Certificate paths\nSSL_CERTIFICATE = os.getenv('SSL_CERT_PATH', '/path/to/certificate.crt')\nSSL_PRIVATE_KEY = os.getenv('SSL_KEY_PATH', '/path/to/private-key.key')\nSSL_CA_BUNDLE = os.getenv('SSL_CA_PATH', '/path/to/ca-bundle.crt')\n\n# For Django development server (not for production)\nif os.environ.get('DJANGO_DEVELOPMENT') == 'true':\n    SECURE_SSL_REDIRECT = True\n    SESSION_COOKIE_SECURE = True\n    CSRF_COOKIE_SECURE = True\n\n# For production with Gunicorn\n# Run with: gunicorn --certfile=/path/to/cert.crt --keyfile=/path/to/key.key myapp.wsgi:application\n\n# For production with uWSGI in uwsgi.ini:\n# [uwsgi]\n# https = 0.0.0.0:443,/path/to/certificate.crt,/path/to/private-key.key\n# http = 0.0.0.0:80\n# https-redirect = 80:443",
+          "testCode": "# pytest test for SSL certificate validation\nimport pytest\nimport ssl\nimport socket\nfrom datetime import datetime, timedelta\nfrom OpenSSL import crypto\nimport requests\n\ndef test_ssl_certificate_not_expired():\n    \"\"\"Test that SSL certificate is valid and not expired\"\"\"\n    hostname = 'your-domain.com'\n    port = 443\n    \n    # Get certificate\n    context = ssl.create_default_context()\n    with socket.create_connection((hostname, port)) as sock:\n        with context.wrap_socket(sock, server_hostname=hostname) as ssock:\n            cert_bin = ssock.getpeercert_bin()\n            x509 = crypto.load_certificate(crypto.FILETYPE_ASN1, cert_bin)\n            \n            # Check expiration\n            expiry_date = datetime.strptime(\n                x509.get_notAfter().decode('ascii'),\n                '%Y%m%d%H%M%SZ'\n            )\n            \n            assert expiry_date > datetime.now(), \\\n                f\"Certificate expired on {expiry_date}\"\n            \n            # Check at least 7 days until expiration\n            days_until_expiry = (expiry_date - datetime.now()).days\n            assert days_until_expiry > 7, \\\n                f\"Certificate expires in {days_until_expiry} days\"\n\ndef test_https_connection():\n    \"\"\"Test that HTTPS connection works properly\"\"\"\n    response = requests.get('https://your-domain.com', timeout=10)\n    assert response.status_code == 200\n    assert response.url.startswith('https://')",
+          "dependencies": "pip install gunicorn pyOpenSSL cryptography requests pytest",
+          "packageInstall": "pip install -r requirements.txt"
+        },
+        "generic": {
+          "code": "# Generic SSL Certificate Update Steps\n\n1. Generate Certificate Signing Request (CSR):\n   openssl req -new -newkey rsa:2048 -nodes \\\n     -keyout private-key.key \\\n     -out certificate.csr\n\n2. Submit CSR to Certificate Authority (CA)\n   - Let's Encrypt (free, 90-day certificates)\n   - DigiCert, Sectigo, GlobalSign (commercial)\n\n3. Receive certificate files:\n   - certificate.crt (your certificate)\n   - ca-bundle.crt (intermediate certificates)\n   - private-key.key (your private key)\n\n4. Install certificate on your web server\n   (see server-specific configurations below)\n\n5. Verify certificate:\n   openssl s_client -connect your-domain.com:443 \\\n     -servername your-domain.com",
+          "testCode": "# Generic SSL certificate verification\n\n# Check certificate expiration\necho | openssl s_client -connect your-domain.com:443 \\\n  -servername your-domain.com 2>/dev/null \\\n  | openssl x509 -noout -dates\n\n# Verify certificate chain\necho | openssl s_client -connect your-domain.com:443 \\\n  -servername your-domain.com -showcerts\n\n# Test HTTPS connection\ncurl -vI https://your-domain.com\n\n# SSL Labs test (comprehensive)\ncurl -s \"https://api.ssllabs.com/api/v3/analyze?host=your-domain.com\"",
+          "dependencies": "OpenSSL command-line tools",
+          "packageInstall": "# Pre-installed on most systems"
+        }
+      },
+      "verificationSteps": [
+        "1. Obtain new certificate from CA (Let's Encrypt, DigiCert, etc.) or renew existing",
+        "2. Backup current certificate and private key to secure location",
+        "3. Install new certificate on web server (restart may be required)",
+        "4. Verify certificate chain is complete with intermediate certificates",
+        "5. Test HTTPS connection: curl -vI https://your-domain.com",
+        "6. Verify certificate details: openssl s_client -connect your-domain.com:443 -servername your-domain.com",
+        "7. Check certificate expiration: echo | openssl s_client -connect your-domain.com:443 2>/dev/null | openssl x509 -noout -dates",
+        "8. Test all application endpoints via HTTPS",
+        "9. Verify SSL Labs grade: https://www.ssllabs.com/ssltest/analyze.html?d=your-domain.com",
+        "10. Update monitoring to track new certificate expiration date"
+      ],
+      "estimatedEffort": "2-3 hours"
+    },
+    "OPS_INFRASTRUCTURE": {
+      "servers": {
+        "nginx": {
+          "config": "# Nginx - Update SSL certificate configuration\n# /etc/nginx/sites-available/your-site\n\nserver {\n    listen 443 ssl http2;\n    listen [::]:443 ssl http2;\n    server_name your-domain.com www.your-domain.com;\n    \n    # Update SSL certificate paths\n    ssl_certificate /etc/ssl/certs/your-domain.crt;\n    ssl_certificate_key /etc/ssl/private/your-domain.key;\n    ssl_trusted_certificate /etc/ssl/certs/ca-bundle.crt;\n    \n    # Modern SSL configuration\n    ssl_protocols TLSv1.2 TLSv1.3;\n    ssl_ciphers 'ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256';\n    ssl_prefer_server_ciphers off;\n    \n    # OCSP Stapling\n    ssl_stapling on;\n    ssl_stapling_verify on;\n    resolver 8.8.8.8 8.8.4.4 valid=300s;\n    \n    # Security headers\n    add_header Strict-Transport-Security \"max-age=31536000; includeSubDomains\" always;\n    \n    location / {\n        # Your application config\n    }\n}\n\n# Redirect HTTP to HTTPS\nserver {\n    listen 80;\n    listen [::]:80;\n    server_name your-domain.com www.your-domain.com;\n    return 301 https://$server_name$request_uri;\n}",
+          "reload": "# Test configuration\nsudo nginx -t\n\n# Reload Nginx (no downtime)\nsudo nginx -s reload\n\n# Or restart if reload fails\nsudo systemctl restart nginx\n\n# Verify Nginx is running\nsudo systemctl status nginx",
+          "verify": "# Verify certificate is loaded\nsudo nginx -T | grep ssl_certificate\n\n# Check certificate details\necho | openssl s_client -connect your-domain.com:443 -servername your-domain.com 2>/dev/null | openssl x509 -noout -text\n\n# Verify expiration date\necho | openssl s_client -connect your-domain.com:443 -servername your-domain.com 2>/dev/null | openssl x509 -noout -enddate\n\n# Test HTTPS connection\ncurl -vI https://your-domain.com"
+        },
+        "apache": {
+          "config": "# Apache - Update SSL certificate configuration\n# /etc/apache2/sites-available/your-site-ssl.conf or /etc/httpd/conf.d/ssl.conf\n\n<VirtualHost *:443>\n    ServerName your-domain.com\n    ServerAlias www.your-domain.com\n    \n    DocumentRoot /var/www/html\n    \n    # Enable SSL\n    SSLEngine on\n    \n    # Update certificate paths\n    SSLCertificateFile /etc/ssl/certs/your-domain.crt\n    SSLCertificateKeyFile /etc/ssl/private/your-domain.key\n    SSLCertificateChainFile /etc/ssl/certs/ca-bundle.crt\n    \n    # Modern SSL configuration\n    SSLProtocol all -SSLv3 -TLSv1 -TLSv1.1\n    SSLCipherSuite ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256\n    SSLHonorCipherOrder off\n    \n    # OCSP Stapling\n    SSLUseStapling on\n    SSLStaplingCache \"shmcb:logs/ssl_stapling(32768)\"\n    \n    # Security headers\n    Header always set Strict-Transport-Security \"max-age=31536000; includeSubDomains\"\n    \n    <Directory /var/www/html>\n        Options -Indexes +FollowSymLinks\n        AllowOverride All\n        Require all granted\n    </Directory>\n</VirtualHost>\n\n# Redirect HTTP to HTTPS\n<VirtualHost *:80>\n    ServerName your-domain.com\n    ServerAlias www.your-domain.com\n    Redirect permanent / https://your-domain.com/\n</VirtualHost>",
+          "reload": "# Test configuration\nsudo apachectl configtest\n# or\nsudo apache2ctl configtest\n\n# Reload Apache (no downtime)\nsudo systemctl reload apache2\n# or\nsudo systemctl reload httpd\n\n# Or restart if reload fails\nsudo systemctl restart apache2\n\n# Verify Apache is running\nsudo systemctl status apache2",
+          "verify": "# Verify certificate is loaded\nsudo apachectl -S | grep SSL\n\n# Check certificate details\necho | openssl s_client -connect your-domain.com:443 -servername your-domain.com 2>/dev/null | openssl x509 -noout -text\n\n# Verify expiration date\necho | openssl s_client -connect your-domain.com:443 -servername your-domain.com 2>/dev/null | openssl x509 -noout -enddate"
+        },
+        "aws-alb": {
+          "config": "# AWS Application Load Balancer - Update SSL certificate\n# Via AWS Console, CLI, or CloudFormation\n\n# AWS CLI method:\n# 1. Upload new certificate to ACM\naws acm import-certificate \\\n  --certificate fileb://certificate.crt \\\n  --private-key fileb://private-key.key \\\n  --certificate-chain fileb://ca-bundle.crt \\\n  --region us-east-1\n\n# 2. Update ALB listener\naws elbv2 modify-listener \\\n  --listener-arn arn:aws:elasticloadbalancing:region:account:listener/app/my-load-balancer/xxx/yyy \\\n  --certificates CertificateArn=arn:aws:acm:region:account:certificate/new-cert-id \\\n  --region us-east-1\n\n# CloudFormation template:\nResources:\n  HTTPSListener:\n    Type: AWS::ElasticLoadBalancingV2::Listener\n    Properties:\n      LoadBalancerArn: !Ref ApplicationLoadBalancer\n      Port: 443\n      Protocol: HTTPS\n      Certificates:\n        - CertificateArn: !Ref NewCertificate\n      DefaultActions:\n        - Type: forward\n          TargetGroupArn: !Ref TargetGroup\n      SslPolicy: ELBSecurityPolicy-TLS-1-2-2017-01",
+          "reload": "# No reload needed - ALB automatically uses new certificate\n# Changes take effect immediately after listener update\n\n# Verify update was applied\naws elbv2 describe-listeners \\\n  --listener-arns arn:aws:elasticloadbalancing:region:account:listener/app/my-load-balancer/xxx/yyy \\\n  --region us-east-1",
+          "verify": "# Verify certificate via AWS Console or CLI\naws acm describe-certificate \\\n  --certificate-arn arn:aws:acm:region:account:certificate/cert-id \\\n  --region us-east-1\n\n# Test HTTPS connection\ncurl -vI https://your-domain.com\n\n# Check certificate from client\necho | openssl s_client -connect your-domain.com:443 -servername your-domain.com 2>/dev/null | openssl x509 -noout -dates"
+        }
+      },
+      "rollbackPlan": "1. Keep backup of old certificate and key in secure location\n2. Document current certificate details (expiry, thumbprint, serial)\n3. If new certificate causes issues, revert configuration to old certificate\n4. For Nginx: restore old config, run 'nginx -t', then 'nginx -s reload'\n5. For Apache: restore old config, run 'apachectl configtest', then 'systemctl reload apache2'\n6. For AWS ALB: use AWS CLI to revert listener to previous certificate ARN\n7. Verify rollback successful with: openssl s_client -connect domain:443\n8. Document incident and root cause for post-mortem\n9. Set calendar reminder to retry certificate update within 24 hours",
+      "verificationSteps": [
+        "1. Verify certificate installed: openssl s_client -connect your-domain.com:443 -servername your-domain.com | openssl x509 -noout -text",
+        "2. Check expiration date: openssl s_client -connect your-domain.com:443 -servername your-domain.com 2>/dev/null | openssl x509 -noout -enddate",
+        "3. Verify certificate chain: openssl s_client -connect your-domain.com:443 -servername your-domain.com -showcerts",
+        "4. Test HTTPS connection: curl -vI https://your-domain.com",
+        "5. Run SSL Labs test: https://www.ssllabs.com/ssltest/analyze.html?d=your-domain.com",
+        "6. Verify all load-balanced instances using new certificate",
+        "7. Check application logs for SSL errors",
+        "8. Monitor error rates and response times for anomalies",
+        "9. Verify OCSP stapling working: openssl s_client -connect your-domain.com:443 -status",
+        "10. Update monitoring dashboards with new certificate expiry date"
+      ],
+      "estimatedEffort": "1-2 hours"
+    },
+    "QA_TESTER": {
+      "manualTests": [
+        {
+          "name": "Verify HTTPS Connection",
+          "steps": [
+            "1. Open browser (Chrome, Firefox, Safari, Edge)",
+            "2. Navigate to https://your-domain.com",
+            "3. Click the padlock icon in address bar",
+            "4. Click 'Certificate' or 'Connection is secure'",
+            "5. Verify certificate details show valid dates",
+            "6. Confirm 'Valid from' date is in the past",
+            "7. Confirm 'Valid to' date is in the future (at least 30 days)",
+            "8. Verify certificate issued by trusted CA",
+            "9. Verify certificate matches domain name",
+            "10. Close certificate viewer"
+          ],
+          "expected": "Certificate shows as valid with green padlock icon. No browser warnings. Certificate expiry date is at least 30 days in the future. Domain name matches certificate subject."
+        },
+        {
+          "name": "Test Authentication Flow",
+          "steps": [
+            "1. Navigate to https://your-domain.com/login",
+            "2. Enter valid credentials",
+            "3. Click 'Login' button",
+            "4. Verify successful login",
+            "5. Check that URL remains HTTPS after login",
+            "6. Verify user session is established",
+            "7. Navigate to protected pages",
+            "8. Verify all pages load over HTTPS",
+            "9. Log out",
+            "10. Verify logout successful"
+          ],
+          "expected": "Login completes successfully over HTTPS. No certificate warnings. All authenticated pages load over HTTPS. Session cookies marked as Secure. No mixed content warnings."
+        },
+        {
+          "name": "Test Payment Processing",
+          "steps": [
+            "1. Add item to shopping cart",
+            "2. Proceed to checkout",
+            "3. Enter payment information",
+            "4. Verify payment form loaded over HTTPS",
+            "5. Check padlock icon shows secure connection",
+            "6. Submit payment",
+            "7. Verify transaction completes",
+            "8. Check confirmation page loads over HTTPS",
+            "9. Verify email confirmation received",
+            "10. Check transaction in payment gateway"
+          ],
+          "expected": "Payment processes successfully. All payment pages use HTTPS. No certificate errors. Payment gateway connection successful. Transaction recorded correctly."
+        }
+      ],
+      "automatedTests": {
+        "tool": "Selenium WebDriver",
+        "example": "// Selenium test for SSL certificate validation\nimport org.openqa.selenium.WebDriver;\nimport org.openqa.selenium.chrome.ChromeDriver;\nimport org.openqa.selenium.chrome.ChromeOptions;\nimport org.testng.annotations.Test;\nimport org.testng.Assert;\n\npublic class SslCertificateTest {\n    \n    @Test\n    public void verifySecureConnection() {\n        ChromeOptions options = new ChromeOptions();\n        // Don't ignore certificate errors in test\n        options.setAcceptInsecureCerts(false);\n        \n        WebDriver driver = new ChromeDriver(options);\n        \n        try {\n            // This will fail if certificate is invalid/expired\n            driver.get(\"https://your-domain.com\");\n            \n            // Verify we're on HTTPS\n            String currentUrl = driver.getCurrentUrl();\n            Assert.assertTrue(currentUrl.startsWith(\"https://\"),\n                \"Connection should use HTTPS\");\n            \n            // Verify page loaded successfully\n            Assert.assertFalse(driver.getTitle().isEmpty(),\n                \"Page should load successfully\");\n            \n        } finally {\n            driver.quit();\n        }\n    }\n    \n    @Test\n    public void verifyNoMixedContent() {\n        ChromeDriver driver = new ChromeDriver();\n        \n        try {\n            driver.get(\"https://your-domain.com\");\n            \n            // Check console for mixed content warnings\n            LogEntries logs = driver.manage().logs().get(LogType.BROWSER);\n            for (LogEntry entry : logs) {\n                Assert.assertFalse(\n                    entry.getMessage().contains(\"Mixed Content\"),\n                    \"Page should not load insecure resources\"\n                );\n            }\n        } finally {\n            driver.quit();\n        }\n    }\n}"
+      },
+      "verificationSteps": [
+        "1. Clear browser cache and cookies completely",
+        "2. Navigate to https://your-domain.com in multiple browsers (Chrome, Firefox, Safari, Edge)",
+        "3. Verify no certificate warning appears in any browser",
+        "4. Click padlock icon and verify certificate details",
+        "5. Test login flow - verify successful authentication over HTTPS",
+        "6. Test checkout/payment flow - verify payment processes securely",
+        "7. Test API endpoints - verify all APIs return success over HTTPS",
+        "8. Test mobile apps - verify app connections work (certificate pinning)",
+        "9. Run automated Selenium tests - verify all pass without SSL errors",
+        "10. Check browser console - verify no mixed content warnings"
+      ],
+      "estimatedEffort": "3-4 hours"
+    }
+  }
+}

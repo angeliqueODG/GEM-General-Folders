@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DevOps Engineer's Guide - mAi™ Framework Documentation</title>
+<link rel="stylesheet" href="docs-style.css">
+<link rel="stylesheet" href="pagefind/pagefind-ui.css">
+<script src="pagefind/pagefind-ui.js"></script>
+</head>
+<body>
+<div class="layout">
+<nav class="sidebar" id="sidebar" data-pagefind-ignore></nav>
+<main class="main-content" data-pagefind-body>
+<h1 data-pagefind-meta="title">DevOps Engineer's Guide</h1>
+<p class="subtitle">CI/CD integration, cloud setup, and operational deployment</p>
+
+<section class="content-section">
+<h2>Welcome DevOps Engineers!</h2>
+<p><strong>Target Audience:</strong> DevOps Engineers, SRE, Infrastructure Engineers</p>
+<p><strong>Reading Time:</strong> 75 minutes | <strong>Goal:</strong> Deploy and integrate framework in CI/CD pipeline</p>
+
+<p>This guide gets you integrating the framework into your CI/CD pipeline <strong>FAST</strong>:</p>
+<ul>
+<li>✅ Maven lifecycle and phases</li>
+<li>✅ CI/CD integration patterns</li>
+<li>✅ Google Cloud setup</li>
+<li>✅ Configuration management</li>
+<li>✅ Monitoring and reporting</li>
+</ul>
+</section>
+
+<section class="content-section">
+<h2>Quick CI/CD Setup</h2>
+
+<h3>GitHub Actions Example</h3>
+<div class="code-block"><pre><code># .github/workflows/test.yml
+name: Automated Tests
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    - cron: '0 9 * * *'  # Daily at 9 AM
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Set up JDK 23
+        uses: actions/setup-java@v4
+        with:
+          java-version: '23'
+          distribution: 'temurin'
+      
+      - name: Cache Maven packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+      
+      - name: Run tests
+        run: mvn clean verify -Dheadless=true
+      
+      - name: Upload Allure Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results
+          path: target/allure-results</code></pre></div>
+
+<h3>Jenkins Pipeline Example</h3>
+<div class="code-block"><pre><code>pipeline {
+    agent any
+    
+    tools {
+        maven 'Maven 3.9'
+        jdk 'JDK 23'
+    }
+    
+    stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'main', url: 'https://github.com/your-org/automation-framework.git'
+            }
+        }
+        
+        stage('Build') {
+            steps {
+                sh 'mvn clean compile'
+            }
+        }
+        
+        stage('Test') {
+            steps {
+                sh 'mvn verify -Dheadless=true'
+            }
+        }
+        
+        stage('Report') {
+            steps {
+                allure includeProperties: false, 
+                       results: [[path: 'target/allure-results']]
+            }
+        }
+    }
+    
+    post {
+        always {
+            junit 'target/surefire-reports/*.xml'
+            archiveArtifacts artifacts: 'target/screenshots/**/*.png', 
+                             allowEmptyArchive: true
+        }
+    }
+}</code></pre></div>
+
+<h3>GitLab CI Example</h3>
+<div class="code-block"><pre><code>image: maven:3.9-eclipse-temurin-23
+
+stages:
+  - test
+  - report
+
+variables:
+  MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
+
+cache:
+  paths:
+    - .m2/repository
+
+test:
+  stage: test
+  script:
+    - mvn clean verify -Dheadless=true
+  artifacts:
+    when: always
+    reports:
+      junit: target/surefire-reports/TEST-*.xml
+    paths:
+      - target/allure-results
+      - target/screenshots
+    expire_in: 1 week
+
+report:
+  stage: report
+  image: allure/allure-cli:latest
+  script:
+    - allure generate target/allure-results -o allure-report
+  artifacts:
+    paths:
+      - allure-report
+  only:
+    - main</code></pre></div>
+</section>
+
+<section class="content-section">
+<h2>Maven Lifecycle</h2>
+<p>Key <a href="https://www.perplexity.ai/search?q=Maven+build+lifecycle+phases" target="_blank" class="help-link">Maven phases ↗</a> for test execution:</p>
+
+<table class="data-table">
+<thead><tr><th>Phase</th><th>Purpose</th><th>Command</th></tr></thead>
+<tbody>
+<tr><td><code>validate</code></td><td>Validate project structure</td><td><code>mvn validate</code></td></tr>
+<tr><td><code>compile</code></td><td>Compile source code</td><td><code>mvn compile</code></td></tr>
+<tr><td><code>test</code></td><td>Unit tests (Surefire)</td><td><code>mvn test</code></td></tr>
+<tr><td><code>integration-test</code></td><td>Integration tests</td><td><code>mvn integration-test</code></td></tr>
+<tr><td><code>post-integration-test</code></td><td>BigQuery upload, Screenshots</td><td>(automatic)</td></tr>
+<tr><td><code>verify</code></td><td>Full test + validation</td><td><code>mvn verify</code></td></tr>
+</tbody>
+</table>
+
+<h3>Complete Lifecycle Flow</h3>
+<div class="code-block"><pre><code>mvn verify
+  ↓
+1. validate      - Validate project structure
+  ↓
+2. compile       - Compile source code
+  ↓
+3. test-compile  - Compile test code
+  ↓
+4. test          - Run unit tests (Surefire plugin)
+  ↓
+5. integration-test - Run integration tests
+  ↓
+6. post-integration-test - CLOUD UPLOADS HERE ✅
+  ↓  ├─ BigQuery data export
+  ↓  ├─ Cloud Storage screenshot upload
+  ↓  └─ Allure report generation
+  ↓
+7. verify        - Verify results</code></pre></div>
+
+<h3>Common Commands</h3>
+<div class="code-block"><pre><code># Clean and run all tests
+mvn clean verify
+
+# Skip tests (build only)
+mvn clean install -DskipTests
+
+# Run specific suite
+mvn test -Dtest=TS_Smoke_JUnit
+
+# Run by tag
+mvn test -Dgroups="smoke"
+
+# Run headless
+mvn verify -Dbrowser.headless=true
+
+# Run with parallel execution
+mvn verify -DparallelExecution=true -DparallelExecutionThreads=4</code></pre></div>
+</section>
+
+<section class="content-section">
+<h2>Configuration Management</h2>
+
+<h3>Environment-Specific Configs</h3>
+<div class="code-block"><pre><code># testConfig.properties (base)
+browser.type=chrome
+browser.headless=false
+base.url=https://www.saucedemo.com
+
+# Override via command line
+mvn test -Dbrowser.headless=true -Dbase.url=https://staging.example.com
+
+# Or via environment variables
+export BROWSER_HEADLESS=true
+export BASE_URL=https://staging.example.com</code></pre></div>
+
+<h3>Key Configuration Properties</h3>
+<table class="data-table">
+<thead><tr><th>Property</th><th>Description</th><th>Default</th></tr></thead>
+<tbody>
+<tr><td><code>browser.type</code></td><td>Browser type</td><td>chrome</td></tr>
+<tr><td><code>browser.headless</code></td><td>Headless mode</td><td>false</td></tr>
+<tr><td><code>base.url</code></td><td>Application URL</td><td>-</td></tr>
+<tr><td><code>implicit.wait</code></td><td>Wait timeout (sec)</td><td>10</td></tr>
+<tr><td><code>screenshot.on.fail</code></td><td>Auto screenshot</td><td>true</td></tr>
+<tr><td><code>parallelExecution</code></td><td>Enable parallel</td><td>false</td></tr>
+<tr><td><code>parallelExecutionThreads</code></td><td>Thread count</td><td>1</td></tr>
+</tbody>
+</table>
+</section>
+
+<section class="content-section">
+<h2>Google Cloud Setup</h2>
+
+<h3>Prerequisites</h3>
+<ol>
+<li>Google Cloud project with billing enabled</li>
+<li>BigQuery API enabled</li>
+<li>Cloud Storage API enabled (for screenshots)</li>
+<li>Service account with appropriate permissions</li>
+<li>Service account JSON key file</li>
+</ol>
+
+<h3>Service Account Permissions</h3>
+<div class="code-block"><pre><code># BigQuery Permissions
+bigquery.datasets.create
+bigquery.tables.create
+bigquery.tables.updateData
+bigquery.jobs.create
+
+# Cloud Storage Permissions
+storage.objects.create
+storage.objects.get
+storage.buckets.get</code></pre></div>
+
+<h3>Configuration</h3>
+<div class="code-block"><pre><code># testConfig.properties
+############### Google Cloud Configuration ###############
+googleCloudProjectId=your-project-id
+googleCloudServiceAccountJsonFile=src/test/resources/.private/credentials.json
+
+# BigQuery
+googleCloudBigQueryExport=true
+googleCloudBigQueryTimeout=10
+googleCloudBigQueryMaxAttempts=10
+googleCloudProjectDataset=dataset_automation_01
+googleCloudProjectDatasetTableTestSteps=table_teststeps_02
+googleCloudProjectDatasetTableTestStepsSchema=src/test/java/framework/data/FW_GoogleCloudBigQueryTableTestStepsSchema.json
+
+# Cloud Storage
+googleCloudStorageExport=true
+googleCloudStorageBaseURL=https://storage.googleapis.com/
+googleCloudStorageBucket=your-bucket-name</code></pre></div>
+
+<h3>Creating Service Account</h3>
+<div class="code-block"><pre><code># Create service account
+gcloud iam service-accounts create automation-framework \
+    --display-name="Automation Framework"
+
+# Grant BigQuery permissions
+gcloud projects add-iam-policy-binding PROJECT_ID \
+    --member="serviceAccount:automation-framework@PROJECT_ID.iam.gserviceaccount.com" \
+    --role="roles/bigquery.admin"
+
+# Grant Storage permissions
+gcloud projects add-iam-policy-binding PROJECT_ID \
+    --member="serviceAccount:automation-framework@PROJECT_ID.iam.gserviceaccount.com" \
+    --role="roles/storage.objectCreator"
+
+# Create and download key
+gcloud iam service-accounts keys create credentials.json \
+    --iam-account=automation-framework@PROJECT_ID.iam.gserviceaccount.com</code></pre></div>
+</section>
+
+<section class="content-section">
+<h2>CI/CD Integration Examples</h2>
+
+<h3>GitHub Actions with Matrix</h3>
+<div class="code-block"><pre><code>name: Cross-Browser Tests
+
+on:
+  push:
+    branches: [ main ]
+  schedule:
+    - cron: '0 2 * * *'  # Nightly at 2 AM
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        browser: [chrome, firefox]
+        environment: [staging, production]
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up JDK 23
+        uses: actions/setup-java@v4
+        with:
+          java-version: '23'
+          distribution: 'temurin'
+      
+      - name: Setup Google Cloud
+        env:
+          GCP_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }}
+        run: |
+          mkdir -p src/test/resources/.private
+          echo "$GCP_CREDENTIALS" > src/test/resources/.private/credentials.json
+      
+      - name: Run Tests
+        run: |
+          mvn verify \
+            -Dheadless=true \
+            -Dbrowser=${{ matrix.browser }} \
+            -Denvironment=${{ matrix.environment }}
+      
+      - name: Upload Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: results-${{ matrix.browser }}-${{ matrix.environment }}
+          path: |
+            target/allure-results
+            target/surefire-reports</code></pre></div>
+
+<h3>Jenkins with Parallel Stages</h3>
+<div class="code-block"><pre><code>pipeline {
+    agent any
+    
+    environment {
+        GOOGLE_APPLICATION_CREDENTIALS = credentials('gcp-service-account')
+    }
+    
+    stages {
+        stage('Parallel Tests') {
+            parallel {
+                stage('Chrome') {
+                    steps {
+                        sh 'mvn verify -Dbrowser=chrome -Dheadless=true'
+                    }
+                }
+                stage('Firefox') {
+                    steps {
+                        sh 'mvn verify -Dbrowser=firefox -Dheadless=true'
+                    }
+                }
+            }
+        }
+    }
+    
+    post {
+        always {
+            junit 'target/surefire-reports/*.xml'
+            archiveArtifacts artifacts: 'target/screenshots/**/*.png', allowEmptyArchive: true
+            cleanWs()
+        }
+        failure {
+            emailext (
+                subject: "Failed: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
+                body: "Check console output at ${env.BUILD_URL}",
+                to: 'team@example.com'
+            )
+        }
+    }
+}</code></pre></div>
+</section>
+
+<section class="content-section">
+<h2>Report Generation</h2>
+
+<div class="code-block"><pre><code># Generate and serve Allure report
+allure serve target/allure-results
+
+# Generate static report
+allure generate target/allure-results -o target/allure-report --clean
+
+# HTTP audit reports location
+target/http-reports/
+├── diagnostic/
+│   └── *.html, *.md
+└── summary/
+    └── *.md</code></pre></div>
+
+<h3>Report Locations</h3>
+<table class="data-table">
+<thead><tr><th>Report Type</th><th>Location</th></tr></thead>
+<tbody>
+<tr><td>Allure Results</td><td><code>target/allure-results/</code></td></tr>
+<tr><td>Allure Report</td><td><code>target/allure-report/</code></td></tr>
+<tr><td>JUnit Reports</td><td><code>target/surefire-reports/</code></td></tr>
+<tr><td>Screenshots</td><td><code>target/screenshots/</code></td></tr>
+<tr><td>Test Data CSV</td><td><code>target/data/TestStepsData.csv</code></td></tr>
+<tr><td>HTTP Reports</td><td><code>target/http-reports/</code></td></tr>
+</tbody>
+</table>
+</section>
+
+<section class="content-section">
+<h2>Troubleshooting</h2>
+
+<div class="card-grid">
+<div class="card">
+<h4>ChromeDriver version mismatch</h4>
+<p><strong>Fix:</strong> WebDriverManager auto-downloads correct version. Ensure network access to download.</p>
+</div>
+<div class="card">
+<h4>Headless mode fails</h4>
+<p><strong>Fix:</strong> Install Chrome/Chromium on CI server. Add <code>--no-sandbox</code> for Docker.</p>
+</div>
+<div class="card">
+<h4>BigQuery upload fails</h4>
+<p><strong>Fix:</strong> Verify service account permissions and credentials path.</p>
+</div>
+<div class="card">
+<h4>Out of memory</h4>
+<p><strong>Fix:</strong> Increase Maven heap: <code>MAVEN_OPTS="-Xmx2g"</code></p>
+</div>
+<div class="card">
+<h4>Tests timeout in CI</h4>
+<p><strong>Fix:</strong> Increase timeouts in testConfig.properties, use headless mode, check CI resources.</p>
+</div>
+<div class="card">
+<h4>CSV file does not exist</h4>
+<p><strong>Fix:</strong> Verify <code>dataOutputPath</code> in testConfig.properties.</p>
+</div>
+</div>
+</section>
+
+<section class="content-section">
+<h2>Configuration Reference</h2>
+
+<h3>Complete testConfig.properties Template</h3>
+<div class="code-block"><pre><code>############### Browser Configuration ###############
+browser=chrome
+headless=false
+chromeDriverPath=
+firefoxDriverPath=
+edgeDriverPath=
+
+############### Test Execution ###############
+parallelExecution=false
+parallelExecutionThreads=1
+implicitWait=10
+pageLoadTimeout=30
+scriptTimeout=30
+
+############### Screenshot Configuration ###############
+takeScreenshots=true
+screenCaptureFormat=png
+screenCaptureQuality=85
+screenCapturePath=target/screenshots/
+screenCaptureArchivePath=target/screenshots/archive/
+
+############### Data Collection ###############
+dataOutputPath=target/data/
+dataTestStepsFilename=TestStepsData.csv
+dataArchivePath=target/data/archive/
+
+############### Google Cloud Configuration ###############
+googleCloudProjectId=your-project-id
+googleCloudServiceAccountJsonFile=src/test/resources/.private/credentials.json
+
+# BigQuery
+googleCloudBigQueryExport=true
+googleCloudBigQueryTimeout=10
+googleCloudBigQueryMaxAttempts=10
+googleCloudProjectDataset=dataset_automation_01
+googleCloudProjectDatasetTableTestSteps=table_teststeps_02
+
+# Cloud Storage
+googleCloudStorageExport=true
+googleCloudStorageBaseURL=https://storage.googleapis.com/
+googleCloudStorageBucket=your-bucket-name
+
+############### mAi Advisor ###############
+maiAdvisorEnabled=true
+maiAdvisorAudiences=Developer,QA,DevOps,Security,PM,Executive
+
+############### Network Configuration ###############
+httpTimeout=30000
+httpFollowRedirects=true
+httpUserAgent=mAi-Automation-Framework/2.0</code></pre></div>
+</section>
+
+<section class="content-section">
+<h2>Security Best Practices</h2>
+
+<h3>Credentials Management</h3>
+<ul>
+<li>✅ Store credentials in CI/CD secrets, not in code</li>
+<li>✅ Use service accounts with minimal permissions</li>
+<li>✅ Rotate credentials regularly</li>
+<li>✅ Never commit credentials to version control</li>
+<li>✅ Use environment variables for sensitive config</li>
+</ul>
+
+<h3>.gitignore Configuration</h3>
+<div class="code-block"><pre><code># Add to .gitignore
+src/test/resources/.private/
+*.json
+testConfig.prod.properties
+credentials.json</code></pre></div>
+
+<h3>Key Rotation</h3>
+<div class="code-block"><pre><code># Rotate service account key
+gcloud iam service-accounts keys create new-key.json \
+    --iam-account=automation-framework@PROJECT.iam.gserviceaccount.com
+
+# Delete old key
+gcloud iam service-accounts keys delete OLD_KEY_ID \
+    --iam-account=automation-framework@PROJECT.iam.gserviceaccount.com</code></pre></div>
+
+<h3>IAM Best Practices</h3>
+<ol>
+<li><strong>Least Privilege:</strong> Grant minimum required permissions</li>
+<li><strong>Service Accounts:</strong> Use service accounts (not user accounts)</li>
+<li><strong>Separate Environments:</strong> Different service accounts per environment</li>
+<li><strong>Audit:</strong> Enable Cloud Audit Logs</li>
+<li><strong>Monitoring:</strong> Set up alerts for unusual activity</li>
+</ol>
+</section>
+
+<section class="content-section">
+<h2>Docker Support</h2>
+<div class="code-block"><pre><code># Dockerfile
+FROM maven:3.9-eclipse-temurin-23
+
+# Install Chrome
+RUN apt-get update && apt-get install -y \
+    chromium chromium-driver \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+COPY . .
+
+CMD ["mvn", "verify", "-Dbrowser.headless=true"]</code></pre></div>
+
+<h3>Docker Compose</h3>
+<div class="code-block"><pre><code>version: '3.8'
+services:
+  tests:
+    build: .
+    environment:
+      - BROWSER=chrome
+      - HEADLESS=true
+    volumes:
+      - ./target:/app/target
+      - ./src/test/resources/.private:/app/src/test/resources/.private:ro</code></pre></div>
+</section>
+
+<section class="content-section">
+<h2>Quick Reference Card</h2>
+<p><em>Print this section!</em></p>
+
+<h3>CI/CD Commands</h3>
+<div class="code-block"><pre><code>mvn clean verify -Dheadless=true          # Run all tests
+mvn verify -P&lt;profile&gt;                     # Use profile
+mvn verify -Dtest=TS_Smoke_JUnit          # Run smoke tests
+allure generate target/allure-results      # Generate report</code></pre></div>
+
+<h3>Cloud Operations</h3>
+<div class="code-block"><pre><code># BigQuery
+bq query "SELECT * FROM dataset.table LIMIT 10"
+bq ls dataset_automation_01
+
+# Cloud Storage
+gsutil ls gs://bucket-name/
+gsutil cp file.png gs://bucket-name/</code></pre></div>
+
+<h3>Environment Variables</h3>
+<div class="code-block"><pre><code>export BASE_URL="https://staging.example.com"
+export BROWSER="chrome"
+export GCP_PROJECT_ID="project-id"
+export HEADLESS="true"</code></pre></div>
+</section>
+
+<section class="content-section">
+<h2>Related Documentation</h2>
+<table class="data-table">
+<thead><tr><th>Document</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td><a href="Diagram-Automation-completed-to-Google_BigData.html">BigQuery Upload Process</a></td><td>Cloud upload pipeline</td></tr>
+<tr><td><a href="Diagram-Maven-to-first-Test-Case.html">Maven Lifecycle Flow</a></td><td>Test execution flow</td></tr>
+<tr><td><a href="Diagram-Architecture.html">Architecture Overview</a></td><td>Framework layers</td></tr>
+<tr><td><a href="Guide-Reading-Order.html">Complete Reading Guide</a></td><td>Full documentation path</td></tr>
+<tr><td><a href="Guide-For-Test-Writers.html">Test Writer's Guide</a></td><td>Writing tests</td></tr>
+<tr><td><a href="Guide-For-Framework-Maintainers.html">Framework Maintainer Guide</a></td><td>Extending framework</td></tr>
+</tbody>
+</table>
+</section>
+
+<footer class="doc-footer" id="doc-footer" data-pagefind-ignore></footer>
+</main>
+</div>
+<script src="docs-config.js"></script>
+<script src="docs-nav.js"></script>
+<script>DocsConfig.renderFooter('doc-footer');</script>
+</body>
+</html>

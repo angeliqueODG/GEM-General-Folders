@@ -1,0 +1,1058 @@
+package pageobjects;
+
+// Import class packages for this Page Object (PO)
+import org.openqa.selenium.WebDriver;
+
+import customizations.automation.CU_Appian; // Customization for Appian and where FW_Page is extended
+
+import framework.junit.FW_TestStep;
+import framework.utilities.FW_ConfigMgr;
+import framework.utilities.FW_TestStepUtils;
+
+public class PO_View_Claim_Status extends CU_Appian {
+
+    private static final String LO_TXT_VIEW_CLAIM_STATUS_PAGE_VERIFY = "//h2[contains(text(), 'VIEW CLAIM STATUS')]";
+    private static final String LO_BUT_BACK = "//span/span[contains(text(), 'Back')]";
+    private static final String LO_EDT_CLAIM_NUMBER_INPUT_FIELD = "//div[label[contains(text(), 'Claim Number')]]/following-sibling::div//input";
+    private static final String LO_EDT_CLAIM_NUMBER_FIELD = "//div[label[contains(text(), 'Claim Number')]]/following-sibling::div//input";
+    private static final String LO_TXT_CLAIM_NUMBER_LABEL = "//label[contains(text(), 'Claim Number')]";
+    private static final String LO_TXT_ERROR_VALID_GLOBAL_EXCEL_NUMBER = "//div[label='Claim Number']/following-sibling::div//span[div]";
+    private static final String LO_BUT_VIEW_STATUS = "//span/span[contains(text(), 'View Status')]";
+    private static final String LO_TXT_ERROR_CLAIM_NOT_FOUND = "//a/following-sibling::span/strong";
+    private static final String LO_IMG_GEM_TOP_LOGO = "//a//img[@src='https://geihpvqvwebgencacn1.blob.core.windows.net/appian-portal/logo_header_en_GEM.png' or @src='https://geihpvtvwebgencacn1.blob.core.windows.net/appian-portal/logo_header_en_GEM.png']";
+    private static final String LO_IMG_GEM_TOP_LOGO_BCAA = "//a//img[@src='https://geihpvqvwebgencacn1.blob.core.windows.net/appian-portal/logo_header_en_BCAA.png' or @src='https://geihpvtvwebgencacn1.blob.core.windows.net/appian-portal/logo_header_en_BCAA.png']";
+    private static final String LO_IMG_GEM_TOP_LOGO_AMEX = "https://geihpvtvwebgencacn1.blob.core.windows.net/appian-portal/logo_header_en_GEM.png";
+    private static final String LO_LNK_HELP_CENTRE_TOP = "//p[span[a[(span/span[@class='IconWidget---inLightBackground'][not(following-sibling::span)]) or (span[@class='IconWidget---inLightBackground'] and text()='HELP CENTRE')]]]";
+    private static final String LO_LNK_FRENCH_TOGGLE_FR = "//p[span[a[(span[span[@class='IconWidget---inLightBackground'] and span[contains(text(), 'FR')]]) or (span[@class='IconWidget---inLightBackground'] and span[contains(text(), 'FRANÇAIS')])]]]";
+    private static final String LO_TXT_AMEX_HOME_PAGE_VERIFY = "//span[contains(text(), 'Welcome to your Travel Claim Centre for your ') and strong[contains(text(), 'AMEX Card')]]";
+    private static final String LO_TXT_MAIN_HEADING_PARAGRAPH = "//p//span[contains(text(), 'We understand that facing unexpected situations in an unfamiliar environment can be stressful. In order to help, we offer assistance services with experts ready to support you in case of an emergency.')]";
+    private static final String LO_TXT_VIEW_CLAIM_STATUS_PARAGRAPH = "//p[contains(text(), 'To view status of the claim you will need to provide the following information:')]";
+    private static final String LO_IMG_GEM_BOTTOM_LOGO_DARK = "//div//img[@src='https://geihpvqvwebgencacn1.blob.core.windows.net/appian-portal/logo_footer_GEM_claim_center_en_dark.png' or @src='https://geihpvtvwebgencacn1.blob.core.windows.net/appian-portal/logo_footer_GEM_claim_center_en_dark.png']";
+    private static final String LO_LNK_START_NEW_CLAIM_FOOTER = "//p[span[@class='IconWidget---medium IconWidget---inDarkBackground']/following-sibling::span/a[contains(text(), 'START A NEW CLAIM')]]";
+    private static final String LO_LNK_CONTINUE_DRAFT_CLAIM_FOOTER = "//p[span[@class='IconWidget---medium IconWidget---inDarkBackground']/following-sibling::span/a[contains(text(), 'CONTINUE DRAFT CLAIM')]]";
+    private static final String LO_LNK_SUBMIT_DOCUMENTS_FOOTER = "//p[span[@class='IconWidget---medium IconWidget---inDarkBackground']/following-sibling::span/a[contains(text(), 'SUBMIT DOCUMENTS')]]";
+    private static final String LO_LNK_HELP_CENTRE_BOTTOM = "//p[span[@class='IconWidget---medium IconWidget---inDarkBackground']/following-sibling::span[a[contains(text(), 'HELP CENTRE')]]]";
+    private static final String LO_TXT_MEDICAL_EMERGENCY_HELPLINE_HEADING = "//h3[span[//span[@class='IconWidget---inDarkBackground IconWidget---inSectionLayout2Label'] and text()='MEDICAL EMERGENCY HELPLINE']]";
+    private static final String LO_TXT_FOLLOW_UP_ON_YOUR_CLAIM_HEADING = "//h3/span[contains(text(), 'FOLLOW UP ON YOUR CLAIM')]";
+    private static final String LO_TXT_FOLLOW_UP_ON_YOUR_CLAIM_PARAGRAPH = "//p[contains(text(), 'You have an active claim? Follow up on your claim today in our Claim Centre!')]";
+    private static final String LO_BUT_SIGN_IN = "//strong[contains(text(), 'View Status')]";
+    private static final String LO_BUT_SIGN_IN_TD = "//strong[contains(text(), 'SIGN IN')]";
+    private static final String LO_TXT_GEM_FOOTER_DISCLAIMER = "//p[text()=\"Coverage under this policy is underwritten by Belair Insurance Company Inc. Belair Insurance Company Inc. has appointed Global Excel Management Inc. operating as “Global Excel” as the provider of all assistance and claims services under this coverage.\"]";
+    private static final String LO_TXT_TRADE_MARK_NOTICE = "//p[text()='All trademarks and logos are the property of their respective owners.']";
+    private static final String LO_TXT_COPY_RIGHT_NOTICE_2025 = "//span[span and text()=\"2025\" and text()=\"Global Excel Management Inc.\" and text()=\"All rights reserved.\"]";
+    private static final String LO_TXT_COPY_RIGHT_NOTICE = "//span[contains(text(), '2024') and text()='Global Excel Management Inc.' and text()='All rights reserved.']";
+    private static final String LO_LNK_PRIVACY_STATEMENT = "//a[span[contains(text(), 'Privacy Statement ') and span[@class='IconWidget---inDarkBackground']]]";
+    private static final String LO_LNK_CONDITIONS_OF_USE = "//a[span[contains(text(), 'Conditions of Use ') and span[@class='IconWidget---inDarkBackground']]]";
+    private static final String LO_TXT_GEM_FOOTER_DISCLAIMER_BCAA = "//p[text()=\"BCAA (British Columbia Automobile Association) has appointed Global Excel Management Inc., as the provider of all assistance and claims services.\"]";
+    private static final String LO_IMG_GEM_BOTTOM_LOGO_BCAA = "//div//img[@src='https://geihpvqvwebgencacn1.blob.core.windows.net/appian-portal/logo_footer_en_BCAA.png' or @src='https://geihpvtvwebgencacn1.blob.core.windows.net/appian-portal/logo_footer_en_BCAA.png']";
+    private static final String LO_IMG_GEM_TOP_LOGO_CIBC = "//a//img[@src='https://geihpvqvwebgencacn1.blob.core.windows.net/appian-portal/logo_header_en_CIBC.png' or @src='https://geihpvtvwebgencacn1.blob.core.windows.net/appian-portal/logo_header_en_CIBC.png']";
+    private static final String LO_IMG_GEM_BOTTOM_LOGO_DARK_GEM = "//div//img[@src='https://geihpvqvwebgencacn1.blob.core.windows.net/appian-portal/logo_footer_GEM_dark.png' or @src='https://geihpvtvwebgencacn1.blob.core.windows.net/appian-portal/logo_footer_GEM_dark.png']";
+    private static final String LO_HOME_PAGE_VERIFY_CIBC = "//span[span and text()='Welcome to your Claim Centre for your ' and strong='CIBC Credit Card']";
+    private static final String LO_IMG_GEM_BOTTOM_LOGO_PLAIN = "//div//img[@src='https://geihpvqvwebgencacn1.blob.core.windows.net/appian-portal/logo_footer_en_GEM.png' or @src='https://geihpvtvwebgencacn1.blob.core.windows.net/appian-portal/logo_footer_en_GEM.png']";
+    private static final String LO_LNK_START_NEW_CLAIM_FOOTER_LIGHT = "//p[span[@class='IconWidget---medium IconWidget---inLightBackground']/following-sibling::span/a[contains(text(), 'START A NEW CLAIM')]]";
+    private static final String LO_LNK_CONTINUE_DRAFT_CLAIM_FOOTER_LIGHT = "//p[span[@class='IconWidget---medium IconWidget---inLightBackground']/following-sibling::span/a[contains(text(), 'CONTINUE DRAFT CLAIM')]]";
+    private static final String LO_LNK_SUBMIT_DOCUMENTS_FOOTER_LIGHT = "//p[span[@class='IconWidget---medium IconWidget---inLightBackground']/following-sibling::span/a[contains(text(), 'SUBMIT DOCUMENTS')]]";
+    private static final String LO_LNK_HELP_CENTRE_BOTTOM_LIGHT = "//p[span[@class='IconWidget---medium IconWidget---inLightBackground']/following-sibling::span[a[contains(text(), 'HELP CENTRE')]]]";
+    private static final String LO_TXT_GEM_FOOTER_DISCLAIMER_CL = "//p[text()='The Canada Life Assurance Company has appointed Global Excel Management Inc. as the provider of Travel Assistance and Out of Country claims services.']";
+    private static final String LO_LNK_PRIVACY_STATEMENT_LIGHT = "//a[span[contains(text(), 'Privacy Statement ') and span[@class='IconWidget---inLightBackground']]]";
+    private static final String LO_LNK_CONDITIONS_OF_USE_LIGHT = "//a[span[contains(text(), 'Conditions of Use ') and span[@class='IconWidget---inLightBackground']]]";
+    private static final String LO_TXT_MEDICAL_EMERGENCY_HELPLINE_HEADING_LIGHT = "//h3[span[//span[@class='IconWidget---inLightBackground IconWidget---inSectionLayout2Label'] and text()='MEDICAL EMERGENCY HELPLINE']]";
+    private static final String LO_IMG_GEM_BOTTOM_LOGO_CL = "//div//img[@src='https://geihpvqvwebgencacn1.blob.core.windows.net/appian-portal/logo_footer_en_CanadaLife.png' or @src='https://geihpvtvwebgencacn1.blob.core.windows.net/appian-portal/logo_footer_en_CanadaLife.png']";
+    private static final String LO_TXT_GEM_FOOTER_DISCLAIMER_2 = "//p[text()='Assistance and Claims Services are administered by Global Excel Management Inc.']";
+    private static final String LO_IMG_GEM_TOP_LOGO_INTACT = "//a//img[@src='https://geihpvqvwebgencacn1.blob.core.windows.net/appian-portal/logo_header_en_Intact.png' or @src='https://geihpvtvwebgencacn1.blob.core.windows.net/appian-portal/logo_header_en_Intact.png']";
+    private static final String LO_IMG_GEM_BOTTOM_LOGO_INTACT = "//div//img[@src='https://geihpvqvwebgencacn1.blob.core.windows.net/appian-portal/logo_footer_en_Intact.png' or @src='https://geihpvtvwebgencacn1.blob.core.windows.net/appian-portal/logo_footer_en_Intact.png']";
+    private static final String LO_LNK_HELP_CENTRE_TOP_DARK = "//p[span[a[(span/span[@class='IconWidget---inDarkBackground'][not(following-sibling::span)]) or (span[@class='IconWidget---inDarkBackground'] and text()='HELP CENTRE')]]]";
+    private static final String LO_LNK_FRENCH_TOGGLE_FR_DARK = "//p[span[a[(span[span[@class='IconWidget---inDarkBackground'] and span[contains(text(), 'FR')]]) or (span[@class='IconWidget---inDarkBackground'] and span[contains(text(), 'FRANÇAIS')])]]]";
+    private static final String LO_IMG_GEM_TOP_LOGO_MANULIFE = "//a//img[@src='https://geihpvqvwebgencacn1.blob.core.windows.net/appian-portal/logo_header_en_Manulife.png'or @src='https://geihpvtvwebgencacn1.blob.core.windows.net/appian-portal/logo_header_en_Manulife.png']";
+    private static final String LO_IMG_GEM_BOTTOM_LOGO_MANULIFE = "//div//img[@src='https://geihpvqvwebgencacn1.blob.core.windows.net/appian-portal/logo_footer_en_Manulife.png' or @src='https://geihpvtvwebgencacn1.blob.core.windows.net/appian-portal/logo_footer_en_Manulife.png']";
+    private static final String LO_TXT_GEM_FOOTER_DISCLAIMER_MANULIFE = "//p[text()='Global Excel Management provides Claims and Assistance Services for The Manufacturers Life Insurance Company (Manulife).']";
+    private static final String LO_IMG_GEM_TOP_LOGO_MGB = "//a//img[@src='https://geihpvqvwebgencacn1.blob.core.windows.net/appian-portal/logo_header_en_ManulifeGroupBenefits.png' or @src='https://geihpvtvwebgencacn1.blob.core.windows.net/appian-portal/logo_header_en_ManulifeGroupBenefits.png']";
+    private static final String LO_TXT_GEM_FOOTER_DISCLAIMER_MGB = "//p[text()='Global Excel Management provides Claims and Assistance Services for The Manufacturers Life Insurance Company (Manulife).']";
+    private static final String LO_IMG_GEM_BOTTOM_LOGO_GEM_MGB = "//div//img[@src='https://geihpvqvwebgencacn1.blob.core.windows.net/appian-portal/logo_footer_en_ManulifeGroupBenefits_GEM.png' or @src='https://geihpvtvwebgencacn1.blob.core.windows.net/appian-portal/logo_footer_en_ManulifeGroupBenefits_GEM.png']";
+    private static final String LO_IMG_GEM_BOTTOM_LOGO_MANULIFE_MGB = "//div//img[@src='https://geihpvqvwebgencacn1.blob.core.windows.net/appian-portal/logo_footer_en_ManulifeGroupBenefits.png' or @src='https://geihpvtvwebgencacn1.blob.core.windows.net/appian-portal/logo_footer_en_ManulifeGroupBenefits.png']";
+    private static final String LO_IMG_GEM_TOP_LOGO_ORION = "//a//img[@src='https://geihpvqvwebgencacn1.blob.core.windows.net/appian-portal/logo_header_en_Orion.png' or @src='https://geihpvtvwebgencacn1.blob.core.windows.net/appian-portal/logo_header_en_Orion.png']";
+    private static final String LO_IMG_GEM_BOTTOM_LOGO_ORION = "//img[@src='https://geihpvqvwebgencacn1.blob.core.windows.net/appian-portal/logo_footer_en_Orion.png' or @src='https://geihpvtvwebgencacn1.blob.core.windows.net/appian-portal/logo_footer_en_Orion.png']";
+    private static final String LO_TXT_GEM_FOOTER_DISCLAIMER_ORION = "//p[text()='Global Excel Management provides claims and assistance services for Orion Travel Insurance Company.']";
+    private static final String LO_IMG_GEM_TOP_LOGO_SCOTIA = "//a//img[@src='https://geihpvqvwebgencacn1.blob.core.windows.net/appian-portal/logo_header_en_Scotiabank.png' or @src='https://geihpvtvwebgencacn1.blob.core.windows.net/appian-portal/logo_header_en_Scotiabank.png']";
+    private static final String LO_IMG_GEM_BOTTOM_LOGO_LIGHT_GEM = "//div//img[@src='https://geihpvqvwebgencacn1.blob.core.windows.net/appian-portal/logo_footer_GEM_light.png' or @src='https://geihpvtvwebgencacn1.blob.core.windows.net/appian-portal/logo_footer_GEM_light.png']";
+    private static final String LO_IMG_GEM_BOTTOM_LOGO_SCOTIA = "//div//img[@src='https://geihpvqvwebgencacn1.blob.core.windows.net/appian-portal/logo_footer_en_Scotiabank.png' or @src='https://geihpvtvwebgencacn1.blob.core.windows.net/appian-portal/logo_footer_en_Scotiabank.png']";
+    private static final String LO_TXT_MEDICAL_EMERGENCY_HELPLINE_HEADING_NO_CALL_ICON = "//h3/span[text()='MEDICAL EMERGENCY HELPLINE']";
+    private static final String LO_TXT_MEDICAL_EMERGENCY_HELPLINE_PARAGRAPH_LIGHT_CSBC = "//p[span[@class='IconWidget---medium IconWidget---inLightBackground'] and text()=' Consumer or Small Business Cards']";
+    private static final String LO_TXT_MEDICAL_EMERGENCY_HELPLINE_PARAGRAPH_LIGHT_CSVBC = "//p[span[@class='IconWidget---medium IconWidget---inLightBackground'] and text()='Commercial or Scotia Visa Business Cards']";
+    private static final String LO_IMG_GEM_TOP_LOGO_SUNLIFE = "//a//img[@src='https://geihpvqvwebgencacn1.blob.core.windows.net/appian-portal/logo_header_en_SunLife.png' or @src='https://geihpvtvwebgencacn1.blob.core.windows.net/appian-portal/logo_header_en_SunLife.png']";
+    private static final String LO_IMG_GEM_BOTTOM_LOGO_SUNLIFE = "//img[@src='https://geihpvqvwebgencacn1.blob.core.windows.net/appian-portal/logo_footer_en_SunLife.png' or @src='https://geihpvtvwebgencacn1.blob.core.windows.net/appian-portal/logo_footer_en_SunLife.png']";
+    private static final String LO_TXT_GEM_FOOTER_DISCLAIMER_SUNLIFE = "//p[text()='The Sun Life Assurance Company of Canada (“Sun Life”) has appointed Global Excel Management Inc., as the provider of all assistance and claims services.']";
+    private static final String LO_IMG_GEM_TOP_LOGO_TD = "//a//img[@src='https://geihpvqvwebgencacn1.blob.core.windows.net/appian-portal/logo_header_en_TD.png' or @src='https://geihpvtvwebgencacn1.blob.core.windows.net/appian-portal/logo_header_en_TD.png']";
+    private static final String LO_IMG_GEM_BOTTOM_LOGO_TD = "//div//img[@src='https://geihpvqvwebgencacn1.blob.core.windows.net/appian-portal/logo_footer_en_TD.png' or @src='https://geihpvtvwebgencacn1.blob.core.windows.net/appian-portal/logo_footer_en_TD.png']";
+    private static final String LO_TXT_GEM_FOOTER_DISCLAIMER_TD = "//p[text()='Global Excel Management provides Claims and Assistance Services for TD Life Insurance Company and TD Home and Auto Insurance Company.']";
+    private static final String LO_TXT_TRADE_MARK_NOTICE_NO_LOGO = "//p[text()='All trademarks are the property of their respective owners.']";
+    String LO_TXT_MEDICAL_EMERGENCY_HELPLINE_NON_TOLL_FREE = "//span/a[text()=";
+    String LO_TXT_MEDICAL_EMERGENCY_HELPLINE_TOLL_FREE = "//p[text()=\"(Toll free)\"]//span/a[text()=";
+    String LO_TXT_MEDICAL_EMERGENCY_HELPLINE_NON_TOLL_FREE2 = "//span/a[text()=";
+    String LO_TXT_MEDICAL_EMERGENCY_HELPLINE_TOLL_FREE2 = "//p[text()=\"(Toll free)\"]//span/a[text()=";
+    private static final String LO_TXT_NEED_HELP = "//div//h2[contains(text(),'Need Help?')]";
+    private static final String LO_TXT_NEED_HELP_PARAGRAPH = "//span[text()='Visit our Help Centre to learn more about the tools and services available to you.']";
+
+
+    /**
+     * Define the Page Object (PO) constructor.
+     * @param driver The WebDriver object passed from the test method.
+     */
+    public PO_View_Claim_Status(WebDriver driver) {
+        super(driver);
+    }
+
+    /**
+     * Validates if current webpage is loaded and correct.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result details.
+     */
+    public Object validateOnPage() {
+        String result = validateLocatorExists(LO_TXT_VIEW_CLAIM_STATUS_PAGE_VERIFY, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval());
+        FW_TestStep resultObj = FW_TestStepUtils.createTestStep(result, Thread.currentThread());
+        return resultObj;
+    }
+
+    public Object validateFooterTradeMarkNoticeNoLogo() {
+        String result = validateLocatorExists(LO_TXT_TRADE_MARK_NOTICE_NO_LOGO, FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval());
+        FW_TestStep resultObj = FW_TestStepUtils.createTestStep(result, Thread.currentThread());
+        return resultObj;
+    }
+
+    /**
+     * Validates if Gem top logo is present and it's a link.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result details.
+     */
+    public Object validateGem_Top_Left_Logo_CIBC() {
+        String result = validateLocatorExists(LO_IMG_GEM_TOP_LOGO_CIBC, FW_ConfigMgr.getDefaultTimeout(),FW_ConfigMgr.getDefaultInterval());
+        FW_TestStep resultObj = FW_TestStepUtils.createTestStep(result, Thread.currentThread());
+        return resultObj;
+    }
+
+    /**
+     * Validates if the claim number input field exists.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result details.
+     */
+    public Object validateclaimNumberInputFieldExists() {
+        String result = validateLocatorExists(LO_EDT_CLAIM_NUMBER_INPUT_FIELD, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval());
+        FW_TestStep resultObj = FW_TestStepUtils.createTestStep(result, Thread.currentThread());
+        return resultObj;
+    }
+
+    /**
+     * Validates if the BACK button exists.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result details.
+     */
+    public Object validateBackButtonExists() {
+        String result = validateLocatorExists(LO_BUT_BACK, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval());
+        FW_TestStep resultObj = FW_TestStepUtils.createTestStep(result, Thread.currentThread());
+        return resultObj;
+    }
+
+    /**
+     * Validates if the Help Centre at top right is present.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result details.
+     */
+    public Object validateHelpCentreHeader_Dark() {
+        String result = validateLocatorExists(LO_LNK_HELP_CENTRE_TOP_DARK, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval());
+        FW_TestStep resultObj = FW_TestStepUtils.createTestStep(result, Thread.currentThread());
+        return resultObj;
+    }
+
+    /**
+     * Validates if Frech link with its globe icon exists.
+     * 
+     * @return A string including [PASS] or [FAIL] along with specific result details.
+     */
+    public Object validateFrenchToggle_Dark() {
+        String result = validateLocatorExists(LO_LNK_FRENCH_TOGGLE_FR_DARK, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval());
+        FW_TestStep resultObj = FW_TestStepUtils.createTestStep(result, Thread.currentThread());
+        return resultObj; 
+    }
+
+    /**
+     * Enter invalid Claim Number with 4 digits.
+     * 
+     * @param claimNumber The six digits to be entered for the credit card.
+     * 
+     * @return A string including [PASS] or [FAIL] along with specific result details.
+     */
+    public Object enterClaimNumber(String claimNumber) {
+        String result = setText(LO_EDT_CLAIM_NUMBER_FIELD, claimNumber, FW_ConfigMgr.getDefaultTimeout(), false);
+        clickLocator(LO_TXT_CLAIM_NUMBER_LABEL , FW_ConfigMgr.getDefaultTimeout());
+        waitForDuration(12, "s", true); // Wait to perform next check
+        FW_TestStep resultObj = FW_TestStepUtils.createTestStep(result, Thread.currentThread());
+        return resultObj;
+    }
+
+    /**
+     * Validates if the error message "Please enter a valid global excel claim number (i.e. 7 digits)" is present.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result details.
+     */
+    public Object validateValidGlobalExcelNumberErrorPresent(String errorMessage) {
+        String result = validateWithinLocatorText(LO_TXT_ERROR_VALID_GLOBAL_EXCEL_NUMBER,errorMessage,FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval(),true);
+        FW_TestStep resultObj = FW_TestStepUtils.createTestStep(result, Thread.currentThread());
+        return resultObj;
+    }
+
+    /**
+     * Validates if the error message "Claim not found. Please ensure that you have entered the claim number correctly and try again." is present.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result details.
+     */
+    public Object validateClaimNotFoundErrorPresent(String errorMessage) {
+        String result = validateWithinLocatorText(LO_TXT_ERROR_CLAIM_NOT_FOUND,errorMessage,FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval(),true);
+        FW_TestStep resultObj = FW_TestStepUtils.createTestStep(result, Thread.currentThread());
+        return resultObj;
+    }
+
+    /**
+     * Validates if the error message "Claim not found. Please ensure that you have entered the claim number correctly and try again." is not present.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result details.
+     */
+    public Object validateClaimNotFoundErrorNotPresent(String errorMessage) {
+        String result = validateNotWithinLocatorText(LO_TXT_ERROR_CLAIM_NOT_FOUND,errorMessage,FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval(),true);
+        FW_TestStep resultObj = FW_TestStepUtils.createTestStep(result, Thread.currentThread());
+        return resultObj;
+    }
+
+    /**
+     * Validates if the error message "Please enter a valid global excel claim number (i.e. 7 digits)" is not present.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result details.
+     */
+    public Object validateValidGlobalExcelNumberErrorNotPresent(String errorMessage) {
+        String result = validateNotWithinLocatorText(LO_TXT_ERROR_VALID_GLOBAL_EXCEL_NUMBER,errorMessage,FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval(),true);
+        FW_TestStep resultObj = FW_TestStepUtils.createTestStep(result, Thread.currentThread());
+        return resultObj;
+    }
+
+    /**
+     * Clear the existing value in the claim number input field by setting it to an empty string before entering a new value.
+     * 
+     * @return A string including [PASS] or [FAIL] along with specific result details.
+     */
+    public Object clearOutTheClaimNumberInputField(){
+        String result = setText(LO_EDT_CLAIM_NUMBER_FIELD, "", FW_ConfigMgr.getDefaultTimeout() , true);
+        FW_TestStep resultObj = FW_TestStepUtils.createTestStep(result, Thread.currentThread());
+        return resultObj;
+    };
+
+    /**
+     * Clicks the 'Back' button.
+     * 
+     * @return A string including [PASS] or [FAIL] along with specific result details.
+     */
+    public Object clickBackButton() {
+        String result = clickLocator(LO_BUT_BACK, FW_ConfigMgr.getDefaultTimeout());
+        FW_TestStep resultObj = FW_TestStepUtils.createTestStep(result, Thread.currentThread());
+        return resultObj;
+    }
+
+    /**
+     * Clicks the 'VIEW STATUS' button.
+     * 
+     * @return A string including [PASS] or [FAIL] along with specific result details.
+     */
+    public Object clickViewStatusButton() {
+        String result = clickLocator(LO_BUT_VIEW_STATUS, FW_ConfigMgr.getDefaultTimeout());
+        FW_TestStep resultObj = FW_TestStepUtils.createTestStep(result, Thread.currentThread());
+        return resultObj;
+    }
+
+    /**
+     * Validates if Gem top logo is present and it's a link.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result details.
+     */
+    public Object validateGem_Top_Left_Logo() {
+        String result = validateLocatorExists(LO_IMG_GEM_TOP_LOGO, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval());
+        FW_TestStep resultObj = FW_TestStepUtils.createTestStep(result, Thread.currentThread());
+        return resultObj;
+    }
+
+    /**
+     * Validates if Gem top logo is present and it's a link.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result details.
+     */
+    public Object validateGem_Top_Left_Logo_BCAA() {
+        String result = validateLocatorExists(LO_IMG_GEM_TOP_LOGO_BCAA, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval());
+        FW_TestStep resultObj = FW_TestStepUtils.createTestStep(result, Thread.currentThread());
+        return resultObj;
+    }
+
+    /**
+     * Validates if the Help Centre at top right is present.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result details.
+     */
+    public Object validateHelpCentreHeader() {
+        String result = validateLocatorExists(LO_LNK_HELP_CENTRE_TOP, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval());
+        FW_TestStep resultObj = FW_TestStepUtils.createTestStep(result, Thread.currentThread());
+        return resultObj;
+    }
+
+    /**
+     * Validates if Gem top logo is present and it's a link.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result details.
+     */
+    public Object validateGem_Top_Left_Logo_TD() {
+        String result = validateLocatorExists(LO_IMG_GEM_TOP_LOGO_TD, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval());
+        FW_TestStep resultObj = FW_TestStepUtils.createTestStep(result, Thread.currentThread());
+        return resultObj;
+    }
+
+    /**
+     * Validates if Gem top logo is present and it's a link.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result details.
+     */
+    public Object validateGem_Top_Left_Logo_SunLife() {
+        String result = validateLocatorExists(LO_IMG_GEM_TOP_LOGO_SUNLIFE, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval());
+        FW_TestStep resultObj = FW_TestStepUtils.createTestStep(result, Thread.currentThread());
+        return resultObj;
+    }
+
+    /**
+     * Validates if Gem top logo is present and it's a link.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result details.
+     */
+    public Object validateGem_Top_Left_Logo_SCOTIA() {
+        String result = validateLocatorExists(LO_IMG_GEM_TOP_LOGO_SCOTIA, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval());
+        FW_TestStep resultObj = FW_TestStepUtils.createTestStep(result, Thread.currentThread());
+        return resultObj;
+    }
+
+    /**
+     * Validates if Gem top logo is present and it's a link.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result details.
+     */
+    public Object validateGem_Top_Left_Logo_ORION() {
+        String result = validateLocatorExists(LO_IMG_GEM_TOP_LOGO_ORION, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval());
+        FW_TestStep resultObj = FW_TestStepUtils.createTestStep(result, Thread.currentThread());
+        return resultObj;
+    }
+
+    /**
+     * Validates if Gem top logo is present and it's a link.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result details.
+     */
+    public Object validateGem_Top_Left_Logo_MGB() {
+        String result = validateLocatorExists(LO_IMG_GEM_TOP_LOGO_MGB, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval());
+        FW_TestStep resultObj = FW_TestStepUtils.createTestStep(result, Thread.currentThread());
+        return resultObj;
+    }
+
+    /**
+     * Validates if Gem top logo is present and it's a link.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result details.
+     */
+    public Object validateGem_Top_Left_Logo_Manulife() {
+        String result = validateLocatorExists(LO_IMG_GEM_TOP_LOGO_MANULIFE, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval());
+        FW_TestStep resultObj = FW_TestStepUtils.createTestStep(result, Thread.currentThread());
+        return resultObj;
+    }
+
+    /**
+     * Validates if Gem bottom logo is present and it's not a link.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result details.
+     */
+    public Object validateGemBottom_Left_Logo_GEM_MGB() {
+        String result = validateLocatorExists(LO_IMG_GEM_BOTTOM_LOGO_GEM_MGB, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval());
+        FW_TestStep resultObj = FW_TestStepUtils.createTestStep(result, Thread.currentThread());
+        return resultObj;
+    }
+
+    /**
+     * Validates if Gem bottom logo is present and it's not a link.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result details.
+     */
+    public Object validateGemBottom_Left_Logo_MANULIFE_MGB() {
+        String result = validateLocatorExists(LO_IMG_GEM_BOTTOM_LOGO_MANULIFE_MGB, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval());
+        FW_TestStep resultObj = FW_TestStepUtils.createTestStep(result, Thread.currentThread());
+        return resultObj;
+    }
+
+    /**
+     * Validates if Frech link with its globe icon exists.
+     * 
+     * @return A string including [PASS] or [FAIL] along with specific result details.
+     */
+    public Object validateFrenchToggle() {
+        String result = validateLocatorExists(LO_LNK_FRENCH_TOGGLE_FR, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval());
+        FW_TestStep resultObj = FW_TestStepUtils.createTestStep(result, Thread.currentThread());
+        return resultObj; 
+    }
+
+    /**
+     * Validates if current webpage is loaded and correct.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result details.
+     */
+    public Object validateOnPageCIBC() {
+        String result = validateLocatorExists(LO_HOME_PAGE_VERIFY_CIBC, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval());
+        FW_TestStep resultObj = FW_TestStepUtils.createTestStep(result, Thread.currentThread());
+        return resultObj;
+    }
+
+    /**
+     * Validates if current webpage is loaded and correct.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result details.
+     */
+    public Object validateOnPageAMEX() {
+        String result = validateLocatorExists(LO_TXT_AMEX_HOME_PAGE_VERIFY, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval());
+        FW_TestStep resultObj = FW_TestStepUtils.createTestStep(result, Thread.currentThread());
+        return resultObj;
+    }
+
+    /**
+     * Validates if the page main heading paragraph is present.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result details.
+     */
+    public Object validateMainHeadingParagraph() {
+        String result = validateLocatorExists(LO_TXT_MAIN_HEADING_PARAGRAPH, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval());
+        FW_TestStep resultObj = FW_TestStepUtils.createTestStep(result, Thread.currentThread());
+        return resultObj;
+    }
+    /**
+     * Validates if the paragraph for the veiw claim status heading is present.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result details.
+     */
+    public Object validateViewClaimParagraph() {
+        String result = validateLocatorExists(LO_TXT_VIEW_CLAIM_STATUS_PARAGRAPH, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval());
+        FW_TestStep resultObj = FW_TestStepUtils.createTestStep(result, Thread.currentThread());
+        return resultObj;
+    }
+
+     /**
+     * Validates if the Claim Number filed is present.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result details.
+     */
+    public Object validateClaimNumberField() {
+        String result = validateLocatorExists(LO_EDT_CLAIM_NUMBER_INPUT_FIELD, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval());
+        FW_TestStep resultObj = FW_TestStepUtils.createTestStep(result, Thread.currentThread());
+        return resultObj;
+    }
+
+    /**
+     * Validates if the VIEW STATUS button is present.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result details.
+     */
+    public Object validateViewStatusButton() {
+        String claimNumber="1234567";
+        setText(LO_EDT_CLAIM_NUMBER_FIELD, claimNumber, FW_ConfigMgr.getDefaultTimeout(), false);
+        clickLocator("//label[contains(text(), 'Claim Number')]", FW_ConfigMgr.getDefaultTimeout());
+        String result = validateLocatorExists(LO_BUT_VIEW_STATUS, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval());
+        FW_TestStep resultObj = FW_TestStepUtils.createTestStep(result, Thread.currentThread());
+        return resultObj;
+    }
+
+    /**
+     * Validates if Gem bottom logo is present and it's not a link.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result details.
+     */
+    public Object validateGemBottom_Left_Logo_Light_Gem() {
+        String result = validateLocatorExists(LO_IMG_GEM_BOTTOM_LOGO_LIGHT_GEM, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval());
+        FW_TestStep resultObj = FW_TestStepUtils.createTestStep(result, Thread.currentThread());
+        return resultObj;
+    }
+
+    /**
+     * Validates if Gem bottom logo is present and it's not a link.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result details.
+     */
+    public Object validateGemBottom_Left_Logo_Plain() {
+        String result = validateLocatorExists(LO_IMG_GEM_BOTTOM_LOGO_PLAIN, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval());
+        FW_TestStep resultObj = FW_TestStepUtils.createTestStep(result, Thread.currentThread());
+        return resultObj;
+    }
+
+    /**
+     * Validates if Gem top logo is present and it's a link.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result details.
+     */
+    public Object validateGem_Top_Left_Logo_Intact() {
+        String result = validateLocatorExists(LO_IMG_GEM_TOP_LOGO_INTACT, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval());
+        FW_TestStep resultObj = FW_TestStepUtils.createTestStep(result, Thread.currentThread());
+        return resultObj;
+    }
+
+    /**
+     * Validates if Gem bottom logo is present and it's not a link.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result details.
+     */
+    public Object validateGemBottom_Left_Logo_CL() {
+        String result = validateLocatorExists(LO_IMG_GEM_BOTTOM_LOGO_CL, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval());
+        FW_TestStep resultObj = FW_TestStepUtils.createTestStep(result, Thread.currentThread());
+        return resultObj;
+    }
+
+    /**
+     * Validates if Gem bottom logo is present and it's not a link.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result details.
+     */
+    public Object validateGemBottom_Left_Logo_Scotia() {
+        String result = validateLocatorExists(LO_IMG_GEM_BOTTOM_LOGO_SCOTIA, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval());
+        FW_TestStep resultObj = FW_TestStepUtils.createTestStep(result, Thread.currentThread());
+        return resultObj;
+    }
+
+     /**
+     * Validates if Gem bottom logo is present and it's not a link.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result details.
+     */
+    public Object validateGemBottom_Left_Logo_Dark_Gem() {
+        String result = validateLocatorExists(LO_IMG_GEM_BOTTOM_LOGO_DARK_GEM, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval());
+        FW_TestStep resultObj = FW_TestStepUtils.createTestStep(result, Thread.currentThread());
+        return resultObj;
+    }
+
+    /**
+     * Validates if Gem bottom logo is present and it's not a link.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result details.
+     */
+    public Object validateGemBottom_Left_Logo_SunLife() {
+        String result = validateLocatorExists(LO_IMG_GEM_BOTTOM_LOGO_SUNLIFE, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval());
+        FW_TestStep resultObj = FW_TestStepUtils.createTestStep(result, Thread.currentThread());
+        return resultObj;
+    }
+
+    /**
+     * Validates if The "START A NEW CLAIM" link in the footer of the page is present.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result details.
+     */
+    public Object validateStartNewClaimFooterLink_LightBackground() {
+        String result = validateLocatorExists(LO_LNK_START_NEW_CLAIM_FOOTER_LIGHT, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval());
+        FW_TestStep resultObj = FW_TestStepUtils.createTestStep(result, Thread.currentThread());
+        return resultObj;
+    }
+
+    /**
+     * Validates if Gem bottom logo is present and it's not a link.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result details.
+     */
+    public Object validateGemBottom_Left_Logo_TD() {
+        String result = validateLocatorExists(LO_IMG_GEM_BOTTOM_LOGO_TD, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval());
+        FW_TestStep resultObj = FW_TestStepUtils.createTestStep(result, Thread.currentThread());
+        return resultObj;
+    }
+
+    /**
+     * Validates if Gem bottom logo is present and it's not a link.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result details.
+     */
+    public Object validateGemBottom_Left_Logo_ORION() {
+        String result = validateLocatorExists(LO_IMG_GEM_BOTTOM_LOGO_ORION, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval());
+        FW_TestStep resultObj = FW_TestStepUtils.createTestStep(result, Thread.currentThread());
+        return resultObj;
+    }
+
+    /**
+     * Validates if the 'View Status' exists.
+     * 
+     * @return A string including [PASS] or [FAIL] along with specific result details.
+     */
+    public Object validateViewStatus() {
+        String result = validateLocatorExists(LO_BUT_VIEW_STATUS, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval());
+        FW_TestStep resultObj = FW_TestStepUtils.createTestStep(result, Thread.currentThread());
+        return resultObj;
+    }
+
+    /**
+     * Validates if Gem bottom logo is present and it's not a link.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result details.
+     */
+    public Object validateGemBottom_Left_Logo() {
+        String result = validateLocatorExists(LO_IMG_GEM_BOTTOM_LOGO_DARK, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval());
+        FW_TestStep resultObj = FW_TestStepUtils.createTestStep(result, Thread.currentThread());
+        return resultObj;
+    }
+
+    /**
+     * Validates if Gem bottom logo is present and it's not a link.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result details.
+     */
+    public Object validateGemBottom_Left_Logo_BCAA() {
+        String result = validateLocatorExists(LO_IMG_GEM_BOTTOM_LOGO_BCAA, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval());
+        FW_TestStep resultObj = FW_TestStepUtils.createTestStep(result, Thread.currentThread());
+        return resultObj;
+    }
+
+    /**
+     * Validates if The "START A NEW CLAIM" link in the footer of the page is present.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result details.
+     */
+    public Object validateStartNewClaimFooterLink() {
+        String result = validateLocatorExists(LO_LNK_START_NEW_CLAIM_FOOTER, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval());
+        FW_TestStep resultObj = FW_TestStepUtils.createTestStep(result, Thread.currentThread());
+        return resultObj;
+    }
+
+    /**
+     * Validates if Gem bottom logo is present and it's not a link.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result details.
+     */
+    public Object validateGemBottom_Left_Logo_Manulife() {
+        String result = validateLocatorExists(LO_IMG_GEM_BOTTOM_LOGO_MANULIFE, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval());
+        FW_TestStep resultObj = FW_TestStepUtils.createTestStep(result, Thread.currentThread());
+        return resultObj;
+    }
+
+    /**
+     * Validates if Gem bottom logo is present and it's not a link.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result details.
+     */
+    public Object validateGemBottom_Left_Logo_Intact() {
+        String result = validateLocatorExists(LO_IMG_GEM_BOTTOM_LOGO_INTACT, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval());
+        FW_TestStep resultObj = FW_TestStepUtils.createTestStep(result, Thread.currentThread());
+        return resultObj;
+    }
+
+    /**
+     * Validates if The "CONTINUE DRAFT CLAIM" link in the footer of the page is present.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result details.
+     */
+    public Object validateContinueDraftClaimFooterLink() {
+        String result = validateLocatorExists(LO_LNK_CONTINUE_DRAFT_CLAIM_FOOTER, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval());
+        FW_TestStep resultObj = FW_TestStepUtils.createTestStep(result, Thread.currentThread());
+        return resultObj;
+    }
+
+    /**
+     * Validates if The "SUBMIT DOCUMENTS" link in the footer of the page is present.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result details.
+     */
+    public Object validateSubmitDocumentsFooterLink() {
+        String result = validateLocatorExists(LO_LNK_SUBMIT_DOCUMENTS_FOOTER, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval());
+        FW_TestStep resultObj = FW_TestStepUtils.createTestStep(result, Thread.currentThread());
+        return resultObj;
+    }
+
+    /**
+     * Validates if The "SUBMIT DOCUMENTS" link in the footer of the page is present.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result details.
+     */
+    public Object validateSubmitDocumentsFooterLink_LightBackground() {
+        String result = validateLocatorExists(LO_LNK_SUBMIT_DOCUMENTS_FOOTER_LIGHT, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval());
+        FW_TestStep resultObj = FW_TestStepUtils.createTestStep(result, Thread.currentThread());
+        return resultObj;
+    }
+
+    /**
+     * Validates if the Help Centre at bottom right is present.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result details.
+     */
+    public Object validateHelpCentreFooterLink_Light() {
+        String result = validateLocatorExists(LO_LNK_HELP_CENTRE_BOTTOM_LIGHT, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval());
+        FW_TestStep resultObj = FW_TestStepUtils.createTestStep(result, Thread.currentThread());
+        return resultObj;
+    }
+
+    /**
+     * Validates if The "CONTINUE DRAFT CLAIM" link in the footer of the page is present.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result details.
+     */
+    public Object validateContinueDraftClaimFooterLink_LightBackground() {
+        String result = validateLocatorExists(LO_LNK_CONTINUE_DRAFT_CLAIM_FOOTER_LIGHT, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval());
+        FW_TestStep resultObj = FW_TestStepUtils.createTestStep(result, Thread.currentThread());
+        return resultObj;
+    }
+
+    /**
+     * Validates if the Help Centre at bottom right is present.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result details.
+     */
+    public Object validateHelpCentreFooterLink() {
+        String result = validateLocatorExists(LO_LNK_HELP_CENTRE_BOTTOM, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval());
+        FW_TestStep resultObj = FW_TestStepUtils.createTestStep(result, Thread.currentThread());
+        return resultObj;
+    }
+
+    /**
+     * Validates if the "MEDICAL EMERGENCY HELPLINE" Heading is present.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result details.
+     */
+    public Object validateMedicalEmergencyHelpLineHeading() {
+        String result = validateLocatorExists(LO_TXT_MEDICAL_EMERGENCY_HELPLINE_HEADING, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval());
+        FW_TestStep resultObj = FW_TestStepUtils.createTestStep(result, Thread.currentThread());
+        return resultObj;
+    }
+
+    /**
+     * Validates if the "MEDICAL EMERGENCY HELPLINE" Non Toll Free Number is present.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result details.
+     */
+    public Object validateMedicalEmergencyHelpLineNonTollFree(String number) {
+        LO_TXT_MEDICAL_EMERGENCY_HELPLINE_NON_TOLL_FREE = LO_TXT_MEDICAL_EMERGENCY_HELPLINE_NON_TOLL_FREE + "'" + number + "']";
+        String result = validateLocatorExists(LO_TXT_MEDICAL_EMERGENCY_HELPLINE_NON_TOLL_FREE, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval());
+        FW_TestStep resultObj = FW_TestStepUtils.createTestStep(result, Thread.currentThread());
+        return resultObj;
+    }
+
+    /**
+     * Validates if the "MEDICAL EMERGENCY HELPLINE" Toll free Number is present.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result details.
+     */
+    public Object validateMedicalEmergencyHelpLineTollFree(String tollFreeNumber) {
+        LO_TXT_MEDICAL_EMERGENCY_HELPLINE_TOLL_FREE = LO_TXT_MEDICAL_EMERGENCY_HELPLINE_TOLL_FREE + "'" + tollFreeNumber + "']";
+        String result = validateLocatorExists(LO_TXT_MEDICAL_EMERGENCY_HELPLINE_TOLL_FREE, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval());
+        FW_TestStep resultObj = FW_TestStepUtils.createTestStep(result, Thread.currentThread());
+        return resultObj;
+    }
+
+    /**
+     * Validates if the "FOLLOW UP ON YOUR CLAIM" Heading is present.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result details.
+     */
+    public Object validateFollowUpOnYourClaimFooterHeading() {
+        String result = validateLocatorExists(LO_TXT_FOLLOW_UP_ON_YOUR_CLAIM_HEADING, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval());
+        FW_TestStep resultObj = FW_TestStepUtils.createTestStep(result, Thread.currentThread());
+        return resultObj;
+    }
+
+    /**
+     * Validates if the "FOLLOW UP ON YOUR CLAIM" paragraph is present.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result details.
+     */
+    public Object validateFollowUpOnYourClaimFooterParagraph() {
+        String result = validateLocatorExists(LO_TXT_FOLLOW_UP_ON_YOUR_CLAIM_PARAGRAPH, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval());
+        FW_TestStep resultObj = FW_TestStepUtils.createTestStep(result, Thread.currentThread());
+        return resultObj;
+    }
+
+    /**
+     * Validates if the 'Sign In' exists.
+     * 
+     * @return A string including [PASS] or [FAIL] along with specific result details.
+     */
+    public Object validateSignIn() {
+        String result = validateLocatorExists(LO_BUT_SIGN_IN, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval());
+        FW_TestStep resultObj = FW_TestStepUtils.createTestStep(result, Thread.currentThread());
+        return resultObj;
+    }
+
+    public Object validateSignInTD() {
+        String result = validateLocatorExists(LO_BUT_SIGN_IN_TD, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval());
+        FW_TestStep resultObj = FW_TestStepUtils.createTestStep(result, Thread.currentThread());
+        return resultObj;
+    }
+
+    /**
+     * Validates if the GEM FOOTER DISCLAIMER is present.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result details.
+     */
+    public Object validateFooterDisclaimer2() {
+        String result = validateLocatorExists(LO_TXT_GEM_FOOTER_DISCLAIMER_2, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval());
+        FW_TestStep resultObj = FW_TestStepUtils.createTestStep(result, Thread.currentThread());
+        return resultObj;
+    }
+
+    /**
+     * Validates if the GEM FOOTER DISCLAIMER is present.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result details.
+     */
+    public Object validateFooterDisclaimer_CL() {
+        String result = validateLocatorExists(LO_TXT_GEM_FOOTER_DISCLAIMER_CL, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval());
+        FW_TestStep resultObj = FW_TestStepUtils.createTestStep(result, Thread.currentThread());
+        return resultObj;
+    }
+
+    /**
+     * Validates if the GEM FOOTER DISCLAIMER is present.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result details.
+     */
+    public Object validateFooterDisclaimer() {
+        String result = validateLocatorExists(LO_TXT_GEM_FOOTER_DISCLAIMER, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval());
+        FW_TestStep resultObj = FW_TestStepUtils.createTestStep(result, Thread.currentThread());
+        return resultObj;
+    }
+
+    /**
+     * Validates if the Trade Mark Notice is present.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result details.
+     */
+    public Object validateFooterTradeMarkNotice() {
+        String result = validateLocatorExists(LO_TXT_TRADE_MARK_NOTICE, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval());
+        FW_TestStep resultObj = FW_TestStepUtils.createTestStep(result, Thread.currentThread());
+        return resultObj;
+    }
+
+    /**
+     * Validates if the GEM FOOTER DISCLAIMER is present.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result details.
+     */
+    public Object validateFooterDisclaimer_SunLife() {
+        String result = validateLocatorExists(LO_TXT_GEM_FOOTER_DISCLAIMER_SUNLIFE, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval());
+        FW_TestStep resultObj = FW_TestStepUtils.createTestStep(result, Thread.currentThread());
+        return resultObj;
+    }
+
+    /**
+     * Validates if the GEM FOOTER DISCLAIMER is present.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result details.
+     */
+    public Object validateFooterDisclaimerTD() {
+        String result = validateLocatorExists(LO_TXT_GEM_FOOTER_DISCLAIMER_TD, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval());
+        FW_TestStep resultObj = FW_TestStepUtils.createTestStep(result, Thread.currentThread());
+        return resultObj;
+    }
+
+    /**
+     * Validates if the GEM FOOTER DISCLAIMER is present.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result details.
+     */
+    public Object validateFooterDisclaimer_Orion() {
+        String result = validateLocatorExists(LO_TXT_GEM_FOOTER_DISCLAIMER_ORION, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval());
+        FW_TestStep resultObj = FW_TestStepUtils.createTestStep(result, Thread.currentThread());
+        return resultObj;
+    }
+
+    /**
+     * Validates if the GEM FOOTER DISCLAIMER is present.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result details.
+     */
+    public Object validateFooterDisclaimer_MGB() {
+        String result = validateLocatorExists(LO_TXT_GEM_FOOTER_DISCLAIMER_MGB, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval());
+        FW_TestStep resultObj = FW_TestStepUtils.createTestStep(result, Thread.currentThread());
+        return resultObj;
+    }
+
+    /**
+     * Validates if the GEM FOOTER DISCLAIMER is present.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result details.
+     */
+    public Object validateFooterDisclaimerManulife() {
+        String result = validateLocatorExists(LO_TXT_GEM_FOOTER_DISCLAIMER_MANULIFE, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval());
+        FW_TestStep resultObj = FW_TestStepUtils.createTestStep(result, Thread.currentThread());
+        return resultObj;
+    }
+
+    /**
+     * Validates if the Copy Right Notice is present.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result details.
+     */
+    public Object validateFooterCopyRightNotice() {
+        String result = validateLocatorExists(LO_TXT_COPY_RIGHT_NOTICE, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval());
+        FW_TestStep resultObj = FW_TestStepUtils.createTestStep(result, Thread.currentThread());
+        return resultObj;
+    }
+    /**
+     * Validates if the GEM FOOTER DISCLAIMER is present.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result details.
+     */
+    public Object validateFooterDisclaimerBCAA() {
+        String result = validateLocatorExists(LO_TXT_GEM_FOOTER_DISCLAIMER_BCAA, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval());
+        FW_TestStep resultObj = FW_TestStepUtils.createTestStep(result, Thread.currentThread());
+        return resultObj;
+    }
+
+    /**
+     * Validates if the Copy Right Notice is present.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result details.
+     */
+    public Object validateFooterCopyRightNotice_2025() {
+        String result = validateLocatorExists(LO_TXT_COPY_RIGHT_NOTICE_2025, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval());
+        FW_TestStep resultObj = FW_TestStepUtils.createTestStep(result, Thread.currentThread());
+        return resultObj;
+    }
+    /**
+     * Validates if the Privacy Statement link is present with a go to icon.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result details.
+     */
+    public Object validateFooterPrivacyStatement() {
+        String result = validateLocatorExists(LO_LNK_PRIVACY_STATEMENT, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval());
+        FW_TestStep resultObj = FW_TestStepUtils.createTestStep(result, Thread.currentThread());
+        return resultObj;
+    }
+
+    /**
+     * Validates if the Conditions of Use link is present with a go to icon.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result details.
+     */
+    public Object validateFooterConditionsOfUse_LightBackground() {
+        String result = validateLocatorExists(LO_LNK_CONDITIONS_OF_USE_LIGHT, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval());
+        FW_TestStep resultObj = FW_TestStepUtils.createTestStep(result, Thread.currentThread());
+        return resultObj;
+    }
+
+    /**
+     * Validates if the "MEDICAL EMERGENCY HELPLINE" Heading is present.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result details.
+     */
+    public Object validateMedicalEmergencyHelpLineHeading_LightBackgroundNoCallIcon() {
+        String result = validateLocatorExists(LO_TXT_MEDICAL_EMERGENCY_HELPLINE_HEADING_NO_CALL_ICON, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval());
+        FW_TestStep resultObj = FW_TestStepUtils.createTestStep(result, Thread.currentThread());
+        return resultObj;
+    }
+
+    /**
+     * Validates if the "MEDICAL EMERGENCY HELPLINE" Heading is present.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result details.
+     */
+    public Object validateMedicalEmergencyHelpLineParagraph_LightBackground_CommercialSVBC() {
+        String result = validateLocatorExists(LO_TXT_MEDICAL_EMERGENCY_HELPLINE_PARAGRAPH_LIGHT_CSVBC, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval());
+        FW_TestStep resultObj = FW_TestStepUtils.createTestStep(result, Thread.currentThread());
+        return resultObj;
+    }
+    /**
+     * Validates if the "MEDICAL EMERGENCY HELPLINE" Heading is present.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result details.
+     */
+    public Object validateMedicalEmergencyHelpLineParagraph_LightBackground_ConsumerSBC() {
+        String result = validateLocatorExists(LO_TXT_MEDICAL_EMERGENCY_HELPLINE_PARAGRAPH_LIGHT_CSBC, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval());
+        FW_TestStep resultObj = FW_TestStepUtils.createTestStep(result, Thread.currentThread());
+        return resultObj;
+    }
+
+    /**
+     * Validates if the "MEDICAL EMERGENCY HELPLINE" Non Toll Free Number is present.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result details.
+     */
+    public Object validateMedicalEmergencyHelpLineNonTollFree2(String number) {
+        LO_TXT_MEDICAL_EMERGENCY_HELPLINE_NON_TOLL_FREE2 = LO_TXT_MEDICAL_EMERGENCY_HELPLINE_NON_TOLL_FREE2 + "'" + number + "']";
+        String result = validateLocatorExists(LO_TXT_MEDICAL_EMERGENCY_HELPLINE_NON_TOLL_FREE2, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval());
+        FW_TestStep resultObj = FW_TestStepUtils.createTestStep(result, Thread.currentThread());
+        return resultObj;
+    }
+
+    /**
+     * Validates if the "MEDICAL EMERGENCY HELPLINE" Toll free Number is present.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result details.
+     */
+    public Object validateMedicalEmergencyHelpLineTollFree2(String tollFreeNumber) {
+        LO_TXT_MEDICAL_EMERGENCY_HELPLINE_TOLL_FREE2 = LO_TXT_MEDICAL_EMERGENCY_HELPLINE_TOLL_FREE2 + "'" + tollFreeNumber + "']";
+        String result = validateLocatorExists(LO_TXT_MEDICAL_EMERGENCY_HELPLINE_TOLL_FREE2, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval());
+        FW_TestStep resultObj = FW_TestStepUtils.createTestStep(result, Thread.currentThread());
+        return resultObj;
+    }
+
+    /**
+     * Validates if the "MEDICAL EMERGENCY HELPLINE" Heading is present.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result details.
+     */
+    public Object validateMedicalEmergencyHelpLineHeading_LightBackground() {
+        String result = validateLocatorExists(LO_TXT_MEDICAL_EMERGENCY_HELPLINE_HEADING_LIGHT, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval());
+        FW_TestStep resultObj = FW_TestStepUtils.createTestStep(result, Thread.currentThread());
+        return resultObj;
+    }
+
+    /**
+     * Validates if the Privacy Statement link is present with a go to icon.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result details.
+     */
+    public Object validateFooterPrivacyStatement_LightBackground() {
+        String result = validateLocatorExists(LO_LNK_PRIVACY_STATEMENT_LIGHT, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval());
+        FW_TestStep resultObj = FW_TestStepUtils.createTestStep(result, Thread.currentThread());
+        return resultObj;
+    }
+
+    /**
+     * Validates if the Conditions of Use link is present with a go to icon.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result details.
+     */
+    public Object validateFooterConditionsOfUse() {
+        String result = validateLocatorExists(LO_LNK_CONDITIONS_OF_USE, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval());
+        FW_TestStep resultObj = FW_TestStepUtils.createTestStep(result, Thread.currentThread());
+        return resultObj;
+    }
+
+    /**
+     * Validates if Gem top logo is present and it's a link.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result details.
+     */
+    public Object validateGem_Top_Left_Logo_Amex() {
+        String result = validateLocatorExists(LO_IMG_GEM_TOP_LOGO_AMEX, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval());
+        FW_TestStep resultObj = FW_TestStepUtils.createTestStep(result, Thread.currentThread());
+        return resultObj;
+    }
+
+    /**
+     * Validates if "Need Help?" text exists.
+     * 
+     * @return A string including [PASS] or [FAIL] along with specific result details.
+     */
+    public Object validateNeedHelpText() {
+        String result = validateLocatorExists(LO_TXT_NEED_HELP, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval());
+        FW_TestStep resultObj = FW_TestStepUtils.createTestStep(result, Thread.currentThread());
+        return resultObj;
+    }
+
+    /**
+     * Validates if the paragraph below the "Need help? We're here to assist you!" heading is present.
+     *
+     * @return A string including [PASS] or [FAIL] along with specific result details.
+     */
+    public Object validateNeedHelpParagraph() {
+        String result = validateLocatorExists(LO_TXT_NEED_HELP_PARAGRAPH, FW_ConfigMgr.getDefaultTimeout(), FW_ConfigMgr.getDefaultInterval());
+        FW_TestStep resultObj = FW_TestStepUtils.createTestStep(result, Thread.currentThread());
+        return resultObj;
+    }
+}

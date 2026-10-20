@@ -1,0 +1,11 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "bashdb",
+            "request": "launch",
+            "name": "Bash-Debug",
+            "program": "${workspaceFolder}/java_config_check_v01.sh"
+        }
+    ]
+}

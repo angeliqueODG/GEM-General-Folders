@@ -1,0 +1,8 @@
+-------------------------------------------------------------------------------
+Test set: TS_Products_JUnit
+-------------------------------------------------------------------------------
+Tests run: 1, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 14.05 s <<< FAILURE! -- in TS_Products_JUnit
+TS_Products_JUnit.tc_swaglabs_basics -- Time elapsed: 14.03 s <<< FAILURE!
+org.opentest4j.AssertionFailedError: [Fail] - PO_Product - Locator: '//div[@class='productgdff_label']' does not exist.
+	at TS_Products_JUnit.tc_swaglabs_basics(TS_Products_JUnit.java:143)
+

@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" version="3.0.1" name="TS_Manulife_Claim_Portal_Trip_Cancellation_JUnit" time="112.525" tests="4" errors="0" skipped="0" failures="0">
+  <properties>
+    <property name="java.specification.version" value="21"/>
+    <property name="webdriver.chrome.driver" value="/Users/angelique/.cache/selenium/chromedriver/mac-arm64/127.0.6533.99/chromedriver"/>
+    <property name="sun.jnu.encoding" value="UTF-8"/>
+    <property name="java.class.path" value="/Users/angelique/Documents/Development/Automation/Automation-Projects/Automation-JAV-GEM_TRIP_CANCELLATION/target/test-classes:/Users/angelique/Documents/Development/Automation/Automation-Projects/Automation-JAV-GEM_TRIP_CANCELLATION/target/classes:/Users/angelique/.m2/repository/org/seleniumhq/selenium/selenium-java/4.22.0/selenium-java-4.22.0.jar:/Users/angelique/.m2/repository/org/seleniumhq/selenium/selenium-api/4.22.0/selenium-api-4.22.0.jar:/Users/angelique/.m2/repository/org/seleniumhq/selenium/selenium-chrome-driver/4.22.0/selenium-chrome-driver-4.22.0.jar:/Users/angelique/.m2/repository/com/google/auto/service/auto-service-annotations/1.1.1/auto-service-annotations-1.1.1.jar:/Users/angelique/.m2/repository/org/seleniumhq/selenium/selenium-chromium-driver/4.22.0/selenium-chromium-driver-4.22.0.jar:/Users/angelique/.m2/repository/org/seleniumhq/selenium/selenium-json/4.22.0/selenium-json-4.22.0.jar:/Users/angelique/.m2/repository/org/seleniumhq/selenium/selenium-manager/4.22.0/selenium-manager-4.22.0.jar:/Users/angelique/.m2/repository/org/seleniumhq/selenium/selenium-devtools-v124/4.22.0/selenium-devtools-v124-4.22.0.jar:/Users/angelique/.m2/repository/org/seleniumhq/selenium/selenium-devtools-v125/4.22.0/selenium-devtools-v125-4.22.0.jar:/Users/angelique/.m2/repository/org/seleniumhq/selenium/selenium-devtools-v126/4.22.0/selenium-devtools-v126-4.22.0.jar:/Users/angelique/.m2/repository/org/seleniumhq/selenium/selenium-devtools-v85/4.22.0/selenium-devtools-v85-4.22.0.jar:/Users/angelique/.m2/repository/org/seleniumhq/selenium/selenium-edge-driver/4.22.0/selenium-edge-driver-4.22.0.jar:/Users/angelique/.m2/repository/org/seleniumhq/selenium/selenium-firefox-driver/4.22.0/selenium-firefox-driver-4.22.0.jar:/Users/angelique/.m2/repository/org/seleniumhq/selenium/selenium-http/4.22.0/selenium-http-4.22.0.jar:/Users/angelique/.m2/repository/dev/failsafe/failsafe/3.3.2/failsafe-3.3.2.jar:/Users/angelique/.m2/repository/org/seleniumhq/selenium/selenium-ie-driver/4.22.0/selenium-ie-driver-4.22.0.jar:/Users/angelique/.m2/repository/org/seleniumhq/selenium/selenium-remote-driver/4.22.0/selenium-remote-driver-4.22.0.jar:/Users/angelique/.m2/repository/com/google/guava/guava/33.2.1-jre/guava-33.2.1-jre.jar:/Users/angelique/.m2/repository/com/google/guava/failureaccess/1.0.2/failureaccess-1.0.2.jar:/Users/angelique/.m2/repository/com/google/guava/listenablefuture/9999.0-empty-to-avoid-conflict-with-guava/listenablefuture-9999.0-empty-to-avoid-conflict-with-guava.jar:/Users/angelique/.m2/repository/com/google/code/findbugs/jsr305/3.0.2/jsr305-3.0.2.jar:/Users/angelique/.m2/repository/org/checkerframework/checker-qual/3.42.0/checker-qual-3.42.0.jar:/Users/angelique/.m2/repository/com/google/j2objc/j2objc-annotations/3.0.0/j2objc-annotations-3.0.0.jar:/Users/angelique/.m2/repository/io/opentelemetry/semconv/opentelemetry-semconv/1.25.0-alpha/opentelemetry-semconv-1.25.0-alpha.jar:/Users/angelique/.m2/repository/io/opentelemetry/opentelemetry-api/1.39.0/opentelemetry-api-1.39.0.jar:/Users/angelique/.m2/repository/io/opentelemetry/opentelemetry-context/1.39.0/opentelemetry-context-1.39.0.jar:/Users/angelique/.m2/repository/io/opentelemetry/opentelemetry-exporter-logging/1.39.0/opentelemetry-exporter-logging-1.39.0.jar:/Users/angelique/.m2/repository/io/opentelemetry/opentelemetry-sdk-common/1.39.0/opentelemetry-sdk-common-1.39.0.jar:/Users/angelique/.m2/repository/io/opentelemetry/opentelemetry-sdk-extension-autoconfigure-spi/1.39.0/opentelemetry-sdk-extension-autoconfigure-spi-1.39.0.jar:/Users/angelique/.m2/repository/io/opentelemetry/opentelemetry-sdk-extension-autoconfigure/1.39.0/opentelemetry-sdk-extension-autoconfigure-1.39.0.jar:/Users/angelique/.m2/repository/io/opentelemetry/opentelemetry-api-incubator/1.39.0-alpha/opentelemetry-api-incubator-1.39.0-alpha.jar:/Users/angelique/.m2/repository/io/opentelemetry/opentelemetry-sdk-trace/1.39.0/opentelemetry-sdk-trace-1.39.0.jar:/Users/angelique/.m2/repository/io/opentelemetry/opentelemetry-sdk/1.39.0/opentelemetry-sdk-1.39.0.jar:/Users/angelique/.m2/repository/io/opentelemetry/opentelemetry-sdk-metrics/1.39.0/opentelemetry-sdk-metrics-1.39.0.jar:/Users/angelique/.m2/repository/io/opentelemetry/opentelemetry-sdk-logs/1.39.0/opentelemetry-sdk-logs-1.39.0.jar:/Users/angelique/.m2/repository/org/seleniumhq/selenium/selenium-os/4.22.0/selenium-os-4.22.0.jar:/Users/angelique/.m2/repository/org/apache/commons/commons-exec/1.4.0/commons-exec-1.4.0.jar:/Users/angelique/.m2/repository/org/seleniumhq/selenium/selenium-safari-driver/4.22.0/selenium-safari-driver-4.22.0.jar:/Users/angelique/.m2/repository/org/seleniumhq/selenium/selenium-support/4.22.0/selenium-support-4.22.0.jar:/Users/angelique/.m2/repository/org/junit/jupiter/junit-jupiter-engine/5.10.2/junit-jupiter-engine-5.10.2.jar:/Users/angelique/.m2/repository/org/junit/platform/junit-platform-engine/1.10.2/junit-platform-engine-1.10.2.jar:/Users/angelique/.m2/repository/org/apiguardian/apiguardian-api/1.1.2/apiguardian-api-1.1.2.jar:/Users/angelique/.m2/repository/org/junit/jupiter/junit-jupiter-api/5.10.2/junit-jupiter-api-5.10.2.jar:/Users/angelique/.m2/repository/org/opentest4j/opentest4j/1.3.0/opentest4j-1.3.0.jar:/Users/angelique/.m2/repository/org/junit/platform/junit-platform-commons/1.10.2/junit-platform-commons-1.10.2.jar:/Users/angelique/.m2/repository/org/junit/jupiter/junit-jupiter-params/5.10.2/junit-jupiter-params-5.10.2.jar:/Users/angelique/.m2/repository/org/apache/maven/maven-model/3.9.8/maven-model-3.9.8.jar:/Users/angelique/.m2/repository/org/codehaus/plexus/plexus-utils/3.5.1/plexus-utils-3.5.1.jar:/Users/angelique/.m2/repository/io/qameta/allure/allure-junit5/2.27.0/allure-junit5-2.27.0.jar:/Users/angelique/.m2/repository/io/qameta/allure/allure-junit-platform/2.27.0/allure-junit-platform-2.27.0.jar:/Users/angelique/.m2/repository/io/qameta/allure/allure-java-commons/2.27.0/allure-java-commons-2.27.0.jar:/Users/angelique/.m2/repository/io/qameta/allure/allure-model/2.27.0/allure-model-2.27.0.jar:/Users/angelique/.m2/repository/io/qameta/allure/allure-test-filter/2.27.0/allure-test-filter-2.27.0.jar:/Users/angelique/.m2/repository/org/junit/platform/junit-platform-launcher/1.9.2/junit-platform-launcher-1.9.2.jar:/Users/angelique/.m2/repository/ch/qos/logback/logback-classic/1.5.6/logback-classic-1.5.6.jar:/Users/angelique/.m2/repository/ch/qos/logback/logback-core/1.5.6/logback-core-1.5.6.jar:/Users/angelique/.m2/repository/org/slf4j/slf4j-api/2.0.13/slf4j-api-2.0.13.jar:/Users/angelique/.m2/repository/io/github/bonigarcia/webdrivermanager/5.9.1/webdrivermanager-5.9.1.jar:/Users/angelique/.m2/repository/com/google/code/gson/gson/2.11.0/gson-2.11.0.jar:/Users/angelique/.m2/repository/com/google/errorprone/error_prone_annotations/2.27.0/error_prone_annotations-2.27.0.jar:/Users/angelique/.m2/repository/com/github/docker-java/docker-java/3.3.6/docker-java-3.3.6.jar:/Users/angelique/.m2/repository/com/github/docker-java/docker-java-core/3.3.6/docker-java-core-3.3.6.jar:/Users/angelique/.m2/repository/com/github/docker-java/docker-java-api/3.3.6/docker-java-api-3.3.6.jar:/Users/angelique/.m2/repository/com/fasterxml/jackson/core/jackson-annotations/2.10.3/jackson-annotations-2.10.3.jar:/Users/angelique/.m2/repository/com/fasterxml/jackson/core/jackson-databind/2.10.3/jackson-databind-2.10.3.jar:/Users/angelique/.m2/repository/com/fasterxml/jackson/core/jackson-core/2.10.3/jackson-core-2.10.3.jar:/Users/angelique/.m2/repository/org/slf4j/jcl-over-slf4j/1.7.30/jcl-over-slf4j-1.7.30.jar:/Users/angelique/.m2/repository/com/github/docker-java/docker-java-transport-httpclient5/3.3.6/docker-java-transport-httpclient5-3.3.6.jar:/Users/angelique/.m2/repository/com/github/docker-java/docker-java-transport/3.3.6/docker-java-transport-3.3.6.jar:/Users/angelique/.m2/repository/net/java/dev/jna/jna/5.13.0/jna-5.13.0.jar:/Users/angelique/.m2/repository/org/brotli/dec/0.1.2/dec-0.1.2.jar:/Users/angelique/.m2/repository/org/apache/commons/commons-lang3/3.14.0/commons-lang3-3.14.0.jar:/Users/angelique/.m2/repository/org/apache/commons/commons-compress/1.26.2/commons-compress-1.26.2.jar:/Users/angelique/.m2/repository/commons-codec/commons-codec/1.17.0/commons-codec-1.17.0.jar:/Users/angelique/.m2/repository/commons-io/commons-io/2.16.1/commons-io-2.16.1.jar:/Users/angelique/.m2/repository/org/apache/httpcomponents/client5/httpclient5/5.2.1/httpclient5-5.2.1.jar:/Users/angelique/.m2/repository/org/apache/httpcomponents/core5/httpcore5/5.2/httpcore5-5.2.jar:/Users/angelique/.m2/repository/org/apache/httpcomponents/core5/httpcore5-h2/5.2/httpcore5-h2-5.2.jar:/Users/angelique/.m2/repository/org/mockito/mockito-core/5.12.0/mockito-core-5.12.0.jar:/Users/angelique/.m2/repository/net/bytebuddy/byte-buddy/1.14.15/byte-buddy-1.14.15.jar:/Users/angelique/.m2/repository/net/bytebuddy/byte-buddy-agent/1.14.15/byte-buddy-agent-1.14.15.jar:/Users/angelique/.m2/repository/org/objenesis/objenesis/3.3/objenesis-3.3.jar:/Users/angelique/.m2/repository/org/mockito/mockito-junit-jupiter/5.12.0/mockito-junit-jupiter-5.12.0.jar:"/>
+    <property name="java.vm.vendor" value="Homebrew"/>
+    <property name="sun.arch.data.model" value="64"/>
+    <property name="java.vendor.url" value="https://github.com/Homebrew/homebrew-core/issues"/>
+    <property name="user.timezone" value="Africa/Kigali"/>
+    <property name="os.name" value="Mac OS X"/>
+    <property name="java.vm.specification.version" value="21"/>
+    <property name="sun.java.launcher" value="SUN_STANDARD"/>
+    <property name="user.country" value="RW"/>
+    <property name="sun.boot.library.path" value="/opt/homebrew/Cellar/openjdk/21.0.1/libexec/openjdk.jdk/Contents/Home/lib"/>
+    <property name="sun.java.command" value="/Users/angelique/Documents/Development/Automation/Automation-Projects/Automation-JAV-GEM_TRIP_CANCELLATION/target/surefire/surefirebooter-20240808154149202_3.jar /Users/angelique/Documents/Development/Automation/Automation-Projects/Automation-JAV-GEM_TRIP_CANCELLATION/target/surefire 2024-08-08T15-41-49_159-jvmRun1 surefire-20240808154149202_1tmp surefire_0-20240808154149202_2tmp"/>
+    <property name="http.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
+    <property name="jdk.debug" value="release"/>
+    <property name="surefire.test.class.path" value="/Users/angelique/Documents/Development/Automation/Automation-Projects/Automation-JAV-GEM_TRIP_CANCELLATION/target/test-classes:/Users/angelique/Documents/Development/Automation/Automation-Projects/Automation-JAV-GEM_TRIP_CANCELLATION/target/classes:/Users/angelique/.m2/repository/org/seleniumhq/selenium/selenium-java/4.22.0/selenium-java-4.22.0.jar:/Users/angelique/.m2/repository/org/seleniumhq/selenium/selenium-api/4.22.0/selenium-api-4.22.0.jar:/Users/angelique/.m2/repository/org/seleniumhq/selenium/selenium-chrome-driver/4.22.0/selenium-chrome-driver-4.22.0.jar:/Users/angelique/.m2/repository/com/google/auto/service/auto-service-annotations/1.1.1/auto-service-annotations-1.1.1.jar:/Users/angelique/.m2/repository/org/seleniumhq/selenium/selenium-chromium-driver/4.22.0/selenium-chromium-driver-4.22.0.jar:/Users/angelique/.m2/repository/org/seleniumhq/selenium/selenium-json/4.22.0/selenium-json-4.22.0.jar:/Users/angelique/.m2/repository/org/seleniumhq/selenium/selenium-manager/4.22.0/selenium-manager-4.22.0.jar:/Users/angelique/.m2/repository/org/seleniumhq/selenium/selenium-devtools-v124/4.22.0/selenium-devtools-v124-4.22.0.jar:/Users/angelique/.m2/repository/org/seleniumhq/selenium/selenium-devtools-v125/4.22.0/selenium-devtools-v125-4.22.0.jar:/Users/angelique/.m2/repository/org/seleniumhq/selenium/selenium-devtools-v126/4.22.0/selenium-devtools-v126-4.22.0.jar:/Users/angelique/.m2/repository/org/seleniumhq/selenium/selenium-devtools-v85/4.22.0/selenium-devtools-v85-4.22.0.jar:/Users/angelique/.m2/repository/org/seleniumhq/selenium/selenium-edge-driver/4.22.0/selenium-edge-driver-4.22.0.jar:/Users/angelique/.m2/repository/org/seleniumhq/selenium/selenium-firefox-driver/4.22.0/selenium-firefox-driver-4.22.0.jar:/Users/angelique/.m2/repository/org/seleniumhq/selenium/selenium-http/4.22.0/selenium-http-4.22.0.jar:/Users/angelique/.m2/repository/dev/failsafe/failsafe/3.3.2/failsafe-3.3.2.jar:/Users/angelique/.m2/repository/org/seleniumhq/selenium/selenium-ie-driver/4.22.0/selenium-ie-driver-4.22.0.jar:/Users/angelique/.m2/repository/org/seleniumhq/selenium/selenium-remote-driver/4.22.0/selenium-remote-driver-4.22.0.jar:/Users/angelique/.m2/repository/com/google/guava/guava/33.2.1-jre/guava-33.2.1-jre.jar:/Users/angelique/.m2/repository/com/google/guava/failureaccess/1.0.2/failureaccess-1.0.2.jar:/Users/angelique/.m2/repository/com/google/guava/listenablefuture/9999.0-empty-to-avoid-conflict-with-guava/listenablefuture-9999.0-empty-to-avoid-conflict-with-guava.jar:/Users/angelique/.m2/repository/com/google/code/findbugs/jsr305/3.0.2/jsr305-3.0.2.jar:/Users/angelique/.m2/repository/org/checkerframework/checker-qual/3.42.0/checker-qual-3.42.0.jar:/Users/angelique/.m2/repository/com/google/j2objc/j2objc-annotations/3.0.0/j2objc-annotations-3.0.0.jar:/Users/angelique/.m2/repository/io/opentelemetry/semconv/opentelemetry-semconv/1.25.0-alpha/opentelemetry-semconv-1.25.0-alpha.jar:/Users/angelique/.m2/repository/io/opentelemetry/opentelemetry-api/1.39.0/opentelemetry-api-1.39.0.jar:/Users/angelique/.m2/repository/io/opentelemetry/opentelemetry-context/1.39.0/opentelemetry-context-1.39.0.jar:/Users/angelique/.m2/repository/io/opentelemetry/opentelemetry-exporter-logging/1.39.0/opentelemetry-exporter-logging-1.39.0.jar:/Users/angelique/.m2/repository/io/opentelemetry/opentelemetry-sdk-common/1.39.0/opentelemetry-sdk-common-1.39.0.jar:/Users/angelique/.m2/repository/io/opentelemetry/opentelemetry-sdk-extension-autoconfigure-spi/1.39.0/opentelemetry-sdk-extension-autoconfigure-spi-1.39.0.jar:/Users/angelique/.m2/repository/io/opentelemetry/opentelemetry-sdk-extension-autoconfigure/1.39.0/opentelemetry-sdk-extension-autoconfigure-1.39.0.jar:/Users/angelique/.m2/repository/io/opentelemetry/opentelemetry-api-incubator/1.39.0-alpha/opentelemetry-api-incubator-1.39.0-alpha.jar:/Users/angelique/.m2/repository/io/opentelemetry/opentelemetry-sdk-trace/1.39.0/opentelemetry-sdk-trace-1.39.0.jar:/Users/angelique/.m2/repository/io/opentelemetry/opentelemetry-sdk/1.39.0/opentelemetry-sdk-1.39.0.jar:/Users/angelique/.m2/repository/io/opentelemetry/opentelemetry-sdk-metrics/1.39.0/opentelemetry-sdk-metrics-1.39.0.jar:/Users/angelique/.m2/repository/io/opentelemetry/opentelemetry-sdk-logs/1.39.0/opentelemetry-sdk-logs-1.39.0.jar:/Users/angelique/.m2/repository/org/seleniumhq/selenium/selenium-os/4.22.0/selenium-os-4.22.0.jar:/Users/angelique/.m2/repository/org/apache/commons/commons-exec/1.4.0/commons-exec-1.4.0.jar:/Users/angelique/.m2/repository/org/seleniumhq/selenium/selenium-safari-driver/4.22.0/selenium-safari-driver-4.22.0.jar:/Users/angelique/.m2/repository/org/seleniumhq/selenium/selenium-support/4.22.0/selenium-support-4.22.0.jar:/Users/angelique/.m2/repository/org/junit/jupiter/junit-jupiter-engine/5.10.2/junit-jupiter-engine-5.10.2.jar:/Users/angelique/.m2/repository/org/junit/platform/junit-platform-engine/1.10.2/junit-platform-engine-1.10.2.jar:/Users/angelique/.m2/repository/org/apiguardian/apiguardian-api/1.1.2/apiguardian-api-1.1.2.jar:/Users/angelique/.m2/repository/org/junit/jupiter/junit-jupiter-api/5.10.2/junit-jupiter-api-5.10.2.jar:/Users/angelique/.m2/repository/org/opentest4j/opentest4j/1.3.0/opentest4j-1.3.0.jar:/Users/angelique/.m2/repository/org/junit/platform/junit-platform-commons/1.10.2/junit-platform-commons-1.10.2.jar:/Users/angelique/.m2/repository/org/junit/jupiter/junit-jupiter-params/5.10.2/junit-jupiter-params-5.10.2.jar:/Users/angelique/.m2/repository/org/apache/maven/maven-model/3.9.8/maven-model-3.9.8.jar:/Users/angelique/.m2/repository/org/codehaus/plexus/plexus-utils/3.5.1/plexus-utils-3.5.1.jar:/Users/angelique/.m2/repository/io/qameta/allure/allure-junit5/2.27.0/allure-junit5-2.27.0.jar:/Users/angelique/.m2/repository/io/qameta/allure/allure-junit-platform/2.27.0/allure-junit-platform-2.27.0.jar:/Users/angelique/.m2/repository/io/qameta/allure/allure-java-commons/2.27.0/allure-java-commons-2.27.0.jar:/Users/angelique/.m2/repository/io/qameta/allure/allure-model/2.27.0/allure-model-2.27.0.jar:/Users/angelique/.m2/repository/io/qameta/allure/allure-test-filter/2.27.0/allure-test-filter-2.27.0.jar:/Users/angelique/.m2/repository/org/junit/platform/junit-platform-launcher/1.9.2/junit-platform-launcher-1.9.2.jar:/Users/angelique/.m2/repository/ch/qos/logback/logback-classic/1.5.6/logback-classic-1.5.6.jar:/Users/angelique/.m2/repository/ch/qos/logback/logback-core/1.5.6/logback-core-1.5.6.jar:/Users/angelique/.m2/repository/org/slf4j/slf4j-api/2.0.13/slf4j-api-2.0.13.jar:/Users/angelique/.m2/repository/io/github/bonigarcia/webdrivermanager/5.9.1/webdrivermanager-5.9.1.jar:/Users/angelique/.m2/repository/com/google/code/gson/gson/2.11.0/gson-2.11.0.jar:/Users/angelique/.m2/repository/com/google/errorprone/error_prone_annotations/2.27.0/error_prone_annotations-2.27.0.jar:/Users/angelique/.m2/repository/com/github/docker-java/docker-java/3.3.6/docker-java-3.3.6.jar:/Users/angelique/.m2/repository/com/github/docker-java/docker-java-core/3.3.6/docker-java-core-3.3.6.jar:/Users/angelique/.m2/repository/com/github/docker-java/docker-java-api/3.3.6/docker-java-api-3.3.6.jar:/Users/angelique/.m2/repository/com/fasterxml/jackson/core/jackson-annotations/2.10.3/jackson-annotations-2.10.3.jar:/Users/angelique/.m2/repository/com/fasterxml/jackson/core/jackson-databind/2.10.3/jackson-databind-2.10.3.jar:/Users/angelique/.m2/repository/com/fasterxml/jackson/core/jackson-core/2.10.3/jackson-core-2.10.3.jar:/Users/angelique/.m2/repository/org/slf4j/jcl-over-slf4j/1.7.30/jcl-over-slf4j-1.7.30.jar:/Users/angelique/.m2/repository/com/github/docker-java/docker-java-transport-httpclient5/3.3.6/docker-java-transport-httpclient5-3.3.6.jar:/Users/angelique/.m2/repository/com/github/docker-java/docker-java-transport/3.3.6/docker-java-transport-3.3.6.jar:/Users/angelique/.m2/repository/net/java/dev/jna/jna/5.13.0/jna-5.13.0.jar:/Users/angelique/.m2/repository/org/brotli/dec/0.1.2/dec-0.1.2.jar:/Users/angelique/.m2/repository/org/apache/commons/commons-lang3/3.14.0/commons-lang3-3.14.0.jar:/Users/angelique/.m2/repository/org/apache/commons/commons-compress/1.26.2/commons-compress-1.26.2.jar:/Users/angelique/.m2/repository/commons-codec/commons-codec/1.17.0/commons-codec-1.17.0.jar:/Users/angelique/.m2/repository/commons-io/commons-io/2.16.1/commons-io-2.16.1.jar:/Users/angelique/.m2/repository/org/apache/httpcomponents/client5/httpclient5/5.2.1/httpclient5-5.2.1.jar:/Users/angelique/.m2/repository/org/apache/httpcomponents/core5/httpcore5/5.2/httpcore5-5.2.jar:/Users/angelique/.m2/repository/org/apache/httpcomponents/core5/httpcore5-h2/5.2/httpcore5-h2-5.2.jar:/Users/angelique/.m2/repository/org/mockito/mockito-core/5.12.0/mockito-core-5.12.0.jar:/Users/angelique/.m2/repository/net/bytebuddy/byte-buddy/1.14.15/byte-buddy-1.14.15.jar:/Users/angelique/.m2/repository/net/bytebuddy/byte-buddy-agent/1.14.15/byte-buddy-agent-1.14.15.jar:/Users/angelique/.m2/repository/org/objenesis/objenesis/3.3/objenesis-3.3.jar:/Users/angelique/.m2/repository/org/mockito/mockito-junit-jupiter/5.12.0/mockito-junit-jupiter-5.12.0.jar:"/>
+    <property name="sun.cpu.endian" value="little"/>
+    <property name="user.home" value="/Users/angelique"/>
+    <property name="user.language" value="en"/>
+    <property name="java.specification.vendor" value="Oracle Corporation"/>
+    <property name="java.version.date" value="2023-10-17"/>
+    <property name="java.home" value="/opt/homebrew/Cellar/openjdk/21.0.1/libexec/openjdk.jdk/Contents/Home"/>
+    <property name="file.separator" value="/"/>
+    <property name="basedir" value="/Users/angelique/Documents/Development/Automation/Automation-Projects/Automation-JAV-GEM_TRIP_CANCELLATION"/>
+    <property name="java.vm.compressedOopsMode" value="Zero based"/>
+    <property name="line.separator" value="&#10;"/>
+    <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
+    <property name="java.specification.name" value="Java Platform API Specification"/>
+    <property name="apple.awt.application.name" value="ForkedBooter"/>
+    <property name="surefire.real.class.path" value="/Users/angelique/Documents/Development/Automation/Automation-Projects/Automation-JAV-GEM_TRIP_CANCELLATION/target/surefire/surefirebooter-20240808154149202_3.jar"/>
+    <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
+    <property name="ftp.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
+    <property name="java.runtime.version" value="21.0.1"/>
+    <property name="user.name" value="angelique"/>
+    <property name="stdout.encoding" value="UTF-8"/>
+    <property name="path.separator" value=":"/>
+    <property name="os.version" value="14.4.1"/>
+    <property name="java.runtime.name" value="OpenJDK Runtime Environment"/>
+    <property name="file.encoding" value="UTF-8"/>
+    <property name="java.vm.name" value="OpenJDK 64-Bit Server VM"/>
+    <property name="java.vendor.version" value="Homebrew"/>
+    <property name="localRepository" value="/Users/angelique/.m2/repository"/>
+    <property name="java.vendor.url.bug" value="https://github.com/Homebrew/homebrew-core/issues"/>
+    <property name="java.io.tmpdir" value="/var/folders/3x/8c1n1zxs1d55n_22bz5fc2n80000gn/T/"/>
+    <property name="java.version" value="21.0.1"/>
+    <property name="user.dir" value="/Users/angelique/Documents/Development/Automation/Automation-Projects/Automation-JAV-GEM_TRIP_CANCELLATION"/>
+    <property name="os.arch" value="aarch64"/>
+    <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
+    <property name="native.encoding" value="UTF-8"/>
+    <property name="java.library.path" value="/Users/angelique/Library/Java/Extensions:/Library/Java/Extensions:/Network/Library/Java/Extensions:/System/Library/Java/Extensions:/usr/lib/java:."/>
+    <property name="java.vm.info" value="mixed mode, sharing"/>
+    <property name="stderr.encoding" value="UTF-8"/>
+    <property name="java.vendor" value="Homebrew"/>
+    <property name="java.vm.version" value="21.0.1"/>
+    <property name="sun.io.unicode.encoding" value="UnicodeBig"/>
+    <property name="socksNonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
+    <property name="java.class.version" value="65.0"/>
+  </properties>
+  <testcase name="tc01_New_Claim_By_Group_Insurance" classname="TS_Manulife_Claim_Portal_Trip_Cancellation_JUnit" time="9.453">
+    <system-out><![CDATA[
+&amp#27;[38;2;255;165;0m================================================================================&amp#27;[0m
+&amp#27;[38;2;255;165;0mTest Suite: TS_Manulife_Claim_Portal_Trip_Cancellation_JUnit - 08/08/2024 03:41:50 pm - Begin&amp#27;[0m
+&amp#27;[38;2;255;165;0mConfig Version: 1.6 - POM Version: 1.16 - Framework Version: 3.0.1&amp#27;[0m
+&amp#27;[38;2;255;165;0m--------------------------------------------------------------------------------&amp#27;[0m
+
+&amp#27;[0;90m- - - - - Synchronizing Browser and WebDriver - - - - - Begin
+15:41:50.291 [main] DEBUG io.github.bonigarcia.wdm.WebDriverManager -- Using WebDriverManager 5.9.1
+15:41:50.522 [main] DEBUG io.github.bonigarcia.wdm.cache.ResolutionCache -- Resolution chrome=127 in cache (valid until 15:50:13 08/08/2024 CAT)
+15:41:50.523 [main] DEBUG io.github.bonigarcia.wdm.cache.ResolutionCache -- Resolution chrome127=127.0.6533.99 in cache (valid until 11:33:14 09/08/2024 CAT)
+15:41:50.524 [main] INFO io.github.bonigarcia.wdm.WebDriverManager -- Using chromedriver 127.0.6533.99 (resolved driver for Chrome 127)
+15:41:50.541 [main] DEBUG io.github.bonigarcia.wdm.WebDriverManager -- Driver chromedriver 127.0.6533.99 found in cache
+15:41:50.541 [main] INFO io.github.bonigarcia.wdm.WebDriverManager -- Exporting webdriver.chrome.driver as /Users/angelique/.cache/selenium/chromedriver/mac-arm64/127.0.6533.99/chromedriver
+&amp#27;[0;90m- - - - - Synchronizing Browser and WebDriver - - - - - End&amp#27;[0m
+
+&amp#27;[0;34m - - - - Test Case: TC - New Claim - by Group Insurance - 08/08/2024 03:41:50 pm - Begin - - -&amp#27;[0m
+&amp#27;[38;2;0;128;1m[Pass] - Navigated to URL: 'https://portal-qa.globalexcel.com/claims-portal?clientName=Manulife'.&amp#27;[0m
+&amp#27;[38;2;173;255;47m[Pass Warn - Low] - PO_Claims_PortalWelcome to your Claim Centre' found within text at locator: '(//span[@class='SizedText---large SizedText---predefined'])[1]' in 2.105 seconds.&amp#27;[0m
+&amp#27;[38;5;94m[Screenshot] - Pass-Warn-Low_1723124515347.png&amp#27;[0m
+&amp#27;[38;2;0;128;1m[Pass] - PO_Claims_Portal - Clicked locator: '//strong[contains(text(),'START A NEW CLAIM')]'.&amp#27;[0m
+&amp#27;[38;2;173;255;47m[Pass Warn - Low] - PO_Claims_PortalWhich insurance type are you claiming under?' found within text at locator: '//h4[contains(text(),'Which insurance type are you claiming under?')]' in 2.103 seconds.&amp#27;[0m
+&amp#27;[38;5;94m[Screenshot] - Pass-Warn-Low_1723124517565.png&amp#27;[0m
+&amp#27;[38;2;0;128;1m[Pass] - PO_Claims_Portal - Clicked locator: '(//div[@class='ContentLayout---content_layout'])[1]'.&amp#27;[0m
+&amp#27;[38;2;173;255;47m[Pass Warn - Low] - PO_Claims_PortalWhat are you claiming for?' found within text at locator: '//h4[contains(text(),'What are you claiming for?')]' in 2.101 seconds.&amp#27;[0m
+&amp#27;[38;5;94m[Screenshot] - Pass-Warn-Low_1723124519775.png&amp#27;[0m
+&amp#27;[38;2;0;128;1m[Pass] - PO_Claims_Portal - Clicked locator: '//button[@class='Button---btn Button---default_direction Button---link_v1 Button---large Button---minimize_width appian-context-first-in-list appian-context-last-in-list Button---inDarkBackground Button---icon_only Button---no_label Button---icon_start undefined']'.&amp#27;[0m
+&amp#27;[0;34m - - - - Test Case: TC - New Claim - by Group Insurance - 08/08/2024 03:41:59 pm - End - - - -&amp#27;[0m
+]]></system-out>
+    <system-err><![CDATA[Aug 08, 2024 3:41:51 PM org.openqa.selenium.devtools.CdpVersionFinder findNearestMatch
+WARNING: Unable to find an exact match for CDP version 127, returning the closest version; found: 126; Please update to a Selenium version that supports CDP version 127
+]]></system-err>
+  </testcase>
+  <testcase name="tc04_Trip_Cancellation" classname="TS_Manulife_Claim_Portal_Trip_Cancellation_JUnit" time="79.137">
+    <system-out><![CDATA[
+&amp#27;[0;34m - - - - Test Case: TC04 - Trip Cancellation - 08/08/2024 03:42:00 pm - Begin - - -&amp#27;[0m
+&amp#27;[38;2;0;128;1m[Pass] - Navigated to URL: 'https://portal-qa.globalexcel.com/claims-portal?clientName=Manulife'.&amp#27;[0m
+&amp#27;[38;2;173;255;47m[Pass Warn - Low] - PO_Claims_PortalWelcome to your Claim Centre' found within text at locator: '(//span[@class='SizedText---large SizedText---predefined'])[1]' in 2.097 seconds.&amp#27;[0m
+&amp#27;[38;5;94m[Screenshot] - Pass-Warn-Low_1723124524722.png&amp#27;[0m
+&amp#27;[38;2;0;128;1m[Pass] - PO_Claims_Portal - Clicked locator: '//strong[contains(text(),'START A NEW CLAIM')]'.&amp#27;[0m
+&amp#27;[38;2;255;255;0m[Pass Warn - Medium] - PO_Claims_PortalWhich insurance type are you claiming under?' found within text at locator: '//h4[contains(text(),'Which insurance type are you claiming under?')]' in 3.118 seconds.&amp#27;[0m
+&amp#27;[38;5;94m[Screenshot] - Pass-Warn-Medium_1723124527926.png&amp#27;[0m
+&amp#27;[38;2;0;128;1m[Pass] - PO_Claims_Portal - Clicked locator: '(//div[@class='ContentLayout---content_layout'])[1]'.&amp#27;[0m
+&amp#27;[38;2;173;255;47m[Pass Warn - Low] - PO_Claims_PortalWhat are you claiming for?' found within text at locator: '//h4[contains(text(),'What are you claiming for?')]' in 2.072 seconds.&amp#27;[0m
+&amp#27;[38;5;94m[Screenshot] - Pass-Warn-Low_1723124530084.png&amp#27;[0m
+&amp#27;[38;2;0;128;1m[Pass] - PO_Claims_Portal - Clicked locator: '(//div[@class='ContentLayout---content_layout'])[1]'.&amp#27;[0m
+&amp#27;[38;2;173;255;47m[Pass Warn - Low] - PO_Claims_PortalTrip Cancellation Claim' found within text at locator: '(//h4[@class='HeaderText---richtext_header HeaderText---align_start'])[1]' in 2.121 seconds.&amp#27;[0m
+&amp#27;[38;5;94m[Screenshot] - Pass-Warn-Low_1723124532280.png&amp#27;[0m
+&amp#27;[38;2;0;128;1m[Pass] - PO_Claims_Portal - Clicked locator: '//label[@class='RadioSelect---choice_label'][contains(text(),'No')]'.&amp#27;[0m
+&amp#27;[38;2;0;128;1m[Pass] - PO_Claims_Portal - Clicked locator: '//span[contains(text(),'--Select Reason--')]'.&amp#27;[0m
+&amp#27;[38;2;0;128;1m[PASS]- Pressed the ARROW_DOWN Key&amp#27;[0m
+&amp#27;[38;2;0;128;1m[PASS]- Pressed the ARROW_DOWN Key&amp#27;[0m
+&amp#27;[38;2;0;128;1m[PASS]- Pressed the ENTER Key&amp#27;[0m
+&amp#27;[38;2;0;128;1m[Pass] - PO_Claims_Portal - Clicked locator: '//span[contains(text(),'Select a value')]'.&amp#27;[0m
+&amp#27;[38;2;0;128;1m[PASS]- Pressed the ARROW_DOWN Key&amp#27;[0m
+&amp#27;[38;2;0;128;1m[PASS]- Pressed the ENTER Key&amp#27;[0m
+&amp#27;[38;2;0;128;1m[Pass] - PO_Claims_Portal - Clicked locator: '(//label[@class='RadioSelect---choice_label'])[6]'.&amp#27;[0m
+&amp#27;[38;2;0;128;1m[Pass] - PO_Claims_Portal - Clicked locator: '(//label[contains(text(),'No')])[2]'.&amp#27;[0m
+&amp#27;[38;2;173;255;47m[Pass Warn - Low] - PO_Claims_PortalRequired Documents' found within text at locator: '//h4[@class='HeaderText---richtext_header HeaderText---align_start'][contains(text(),'Required Documents')]' in 2.098 seconds.&amp#27;[0m
+&amp#27;[38;5;94m[Screenshot] - Pass-Warn-Low_1723124554116.png&amp#27;[0m
+&amp#27;[38;2;0;128;1m[Pass] - PO_Claims_Portal - Clicked locator: '//button[@class='Button---btn Button---default_direction Button---solid appian-context-first-in-list appian-context-last-in-list Button---inSideBySide Button---icon_start undefined']'.&amp#27;[0m
+&amp#27;[38;2;255;165;0m[Pass Warn - High] - PO_Insured_Info - Validated locator: '//h4[contains(text(),'Insured Info')]' exists.&amp#27;[0m
+&amp#27;[38;5;94m[Screenshot] - Pass-Warn-High_1723124559334.png&amp#27;[0m
+&amp#27;[38;2;0;128;1m[Pass] - PO_Insured_Info - Successfully entered 'Mutual Life' into locator: '//div[label='Group name']/following-sibling::div//input'.&amp#27;[0m
+&amp#27;[38;2;0;128;1m[Pass] - PO_Insured_Info - Successfully entered '123456789' into locator: '//div[label='Policy Number/Certificate ID']/following-sibling::div//input'.&amp#27;[0m
+&amp#27;[38;2;0;128;1m[Pass] - PO_Insured_Info - Successfully entered 'George' into locator: '//div[label='First Name']/following-sibling::div//div//input'.&amp#27;[0m
+&amp#27;[38;2;0;128;1m[Pass] - PO_Insured_Info - Successfully entered 'Smith' into locator: '//div[label='Last Name']/following-sibling::div//div//input'.&amp#27;[0m
+&amp#27;[38;2;0;128;1m[Pass] - PO_Insured_Info - Successfully entered '08/15/1980' into locator: '//div[label='Date of Birth']/following-sibling::div//div//input'.&amp#27;[0m
+&amp#27;[38;2;0;128;1m[Pass] - PO_Insured_Info - Successfully entered 'angelique@muraho.tech' into locator: '//div[label='Email']/following-sibling::div//div//input'.&amp#27;[0m
+&amp#27;[38;2;0;128;1m[Pass] - PO_Insured_Info - Successfully entered 'angelique@muraho.tech' into locator: '//div[label='Confirm Email']/following-sibling::div//div//input'.&amp#27;[0m
+&amp#27;[38;2;0;128;1m[Pass] - PO_Insured_Info - Successfully entered '+1 258 876 086' into locator: '//div[label='Phone']/following-sibling::div//div//input'.&amp#27;[0m
+&amp#27;[38;2;0;128;1m[Pass] - PO_Insured_Info - Clicked locator: '//div[span='Primary place of residence is:']/following-sibling::div//div[@role='radiogroup']'.&amp#27;[0m
+waitForDuration called - &amp#27;[0;35mThread:main(1) - TS_Manulife_Claim_Portal_Trip_Cancellation_JUnit.tc04_Trip_Cancellation:226 ⇄ PO_Insured_Info.enterHomeAddressCanadian:197 ⇄ FW_Driver.waitForDuration:246&amp#27;[0m
+&amp#27;[38;2;0;128;1m[Pass] - PO_Insured_Info - Successfully entered 'Ottawa' into locator: '//div[span='Home Address (in Canada)']/following-sibling::div//input'.&amp#27;[0m
+&amp#27;[38;2;0;128;1m[Pass] - PO_Insured_Info - Clicked locator: '//div[span='Preferred Method of Communication']/following-sibling::div//label[text()='Email']'.&amp#27;[0m
+&amp#27;[38;2;0;128;1m[Pass] - PO_Insured_Info - Clicked locator: '//div[span='Are you the policy holder?']//label[contains(text(),'Yes')]'.&amp#27;[0m
+&amp#27;[38;2;0;128;1m[Pass] - PO_Insured_Info - Clicked locator: '//span[contains(text(),'claiming for any other insured person(s)?')]/../following-sibling::div//label[text()='No']'.&amp#27;[0m
+&amp#27;[38;2;0;128;1m[Pass] - PO_Insured_Info - Clicked locator: '//div[span='Do you have any other insurance related to this claim?']/following-sibling::div//label[contains(text(),'No')]'.&amp#27;[0m
+&amp#27;[38;2;0;128;1m[Pass] - PO_Insured_Info - Clicked locator: '(//span/span[contains(text(), 'Continue')])'.&amp#27;[0m
+&amp#27;[38;2;255;165;0m[Pass Warn - High] - PO_About_Event - Validated locator: '//h4[contains(text(),'About the Event')]/..' exists.&amp#27;[0m
+&amp#27;[38;5;94m[Screenshot] - Pass-Warn-High_1723124581337.png&amp#27;[0m
+&amp#27;[38;2;0;128;1m[Pass] - PO_About_Event - Clicked locator: '//div[span='Country']/following-sibling::div//div[@role='combobox']'.&amp#27;[0m
+&amp#27;[38;2;0;128;1m[Pass] - PO_About_Event - Selected dropdown 'Canada' from locator '//div[span='Country']/following-sibling::div//div[@role='combobox']'.&amp#27;[0m
+&amp#27;[38;2;0;128;1m[Pass] - PO_About_Event - Successfully entered 'Ottawa' into locator: '//div[label='City']/following-sibling::div//div//input'.&amp#27;[0m
+&amp#27;[38;2;0;128;1m[Pass] - PO_About_Event - Successfully entered '07/1/2024' into locator: '//div[label='From']/following-sibling::div//input'.&amp#27;[0m
+&amp#27;[38;2;0;128;1m[Pass] - PO_About_Event - Successfully entered '07/26/2024' into locator: '//div[label='To']/following-sibling::div//input'.&amp#27;[0m
+&amp#27;[38;2;0;128;1m[Pass] - PO_About_Event - Successfully entered '06/30/2024' into locator: '//div[label='Trip Purchase Date']/following-sibling::div//input'.&amp#27;[0m
+&amp#27;[38;2;0;128;1m[Pass] - PO_About_Event - Successfully entered '06/30/2024' into locator: '//div[label='Incident Date']/following-sibling::div//input'.&amp#27;[0m
+&amp#27;[38;2;0;128;1m[Pass] - PO_About_Event - Successfully entered '07/1/2024' into locator: '//div[label='Cancellation Date']/following-sibling::div//input'.&amp#27;[0m
+&amp#27;[38;2;0;128;1m[Pass] - PO_About_Event - Clicked locator: '//label[contains(text(),'Yes')]'.&amp#27;[0m
+&amp#27;[38;2;0;128;1m[Pass] - PO_About_Event - Successfully entered 'My sickness came suddenly and I had no choice than visiting the doctor. And then they hospitalized me. I couldn't travel.' into locator: '//div[@class='FieldLayout---input_below']//textarea'.&amp#27;[0m
+&amp#27;[38;2;0;128;1m[Pass] - PO_About_Event - Clicked locator: '//button[@class='Button---btn Button---default_direction Button---solid appian-context-last-in-list Button---inSideBySide Button---icon_start undefined']'.&amp#27;[0m
+&amp#27;[38;2;255;165;0m[Pass Warn - High] - PO_Expenses_And_ReimbursementExpenses & Reimbursement' found within text at locator: '//h4[contains(text(), 'Expenses & Reimbursement')]' in 5.143 seconds.&amp#27;[0m
+&amp#27;[38;5;94m[Screenshot] - Pass-Warn-High_1723124587110.png&amp#27;[0m
+&amp#27;[38;2;0;128;1m[Pass] - PO_Expenses_And_Reimbursement - Clicked locator: '//span[contains(text(),'--Select Expense Type--')]'.&amp#27;[0m
+&amp#27;[38;2;0;128;1m[PASS]- Pressed the ARROW_DOWN Key&amp#27;[0m
+&amp#27;[38;2;0;128;1m[PASS]- Pressed the ARROW_DOWN Key&amp#27;[0m
+&amp#27;[38;2;0;128;1m[PASS]- Pressed the ARROW_DOWN Key&amp#27;[0m
+&amp#27;[38;2;0;128;1m[PASS]- Pressed the ARROW_DOWN Key&amp#27;[0m
+&amp#27;[38;2;0;128;1m[PASS]- Pressed the ARROW_DOWN Key&amp#27;[0m
+&amp#27;[38;2;0;128;1m[PASS]- Pressed the ARROW_DOWN Key&amp#27;[0m
+&amp#27;[38;2;0;128;1m[PASS]- Pressed the ARROW_DOWN Key&amp#27;[0m
+&amp#27;[38;2;0;128;1m[PASS]- Pressed the ARROW_DOWN Key&amp#27;[0m
+&amp#27;[38;2;0;128;1m[PASS]- Pressed the ARROW_DOWN Key&amp#27;[0m
+&amp#27;[38;2;0;128;1m[PASS]- Pressed the ENTER Key&amp#27;[0m
+&amp#27;[38;2;0;128;1m[Pass] - PO_Expenses_And_Reimbursement - Successfully entered '07/22/2024' into locator: '//input[@class='DatePickerWidget---text DatePickerWidget---align_start DatePickerWidget---input_width DatePickerWidget---inSideBySideItem']'.&amp#27;[0m
+&amp#27;[38;2;0;128;1m[Pass] - PO_Expenses_And_Reimbursement - Successfully entered 'Hospital Bill' into locator: '//div[label='Invoice Description']/following-sibling::div//input'.&amp#27;[0m
+&amp#27;[38;2;0;128;1m[Pass] - PO_Expenses_And_Reimbursement - Clicked locator: '(//span[contains(text(),'--Select Currency--')]	)[1]'.&amp#27;[0m
+&amp#27;[38;2;0;128;1m[PASS]- Pressed the ARROW_DOWN Key&amp#27;[0m
+&amp#27;[38;2;0;128;1m[PASS]- Pressed the ENTER Key&amp#27;[0m
+&amp#27;[38;2;0;128;1m[Pass] - PO_Expenses_And_Reimbursement - Successfully entered '1000' into locator: '(//div[label='Amount']/following-sibling::div//input)[1]'.&amp#27;[0m
+&amp#27;[38;2;0;128;1m[Pass] - PO_Expenses_And_Reimbursement - Clicked locator: '//span[contains(text(),'--Select Currency--')]	'.&amp#27;[0m
+&amp#27;[38;2;0;128;1m[PASS]- Pressed the ARROW_DOWN Key&amp#27;[0m
+&amp#27;[38;2;0;128;1m[PASS]- Pressed the ENTER Key&amp#27;[0m
+&amp#27;[38;2;0;128;1m[Pass] - PO_Expenses_And_Reimbursement - Successfully entered '200' into locator: '(//div[label='Amount']/following-sibling::div//input)[2]'.&amp#27;[0m
+&amp#27;[38;2;0;128;1m[Pass] - PO_Expenses_And_Reimbursement - Clicked locator: '(//label[@class='RadioSelect---choice_label'])[2]'.&amp#27;[0m
+&amp#27;[38;2;0;128;1m[Pass] - PO_Expenses_And_Reimbursement - Clicked locator: '(//label[@class='RadioSelect---choice_label'])[5]'.&amp#27;[0m
+&amp#27;[38;2;0;128;1m[Pass] - PO_Expenses_And_Reimbursement - Clicked locator: '(//label[@class='RadioSelect---choice_label'])[6]'.&amp#27;[0m
+&amp#27;[38;2;0;128;1m[Pass] - PO_Expenses_And_Reimbursement - Clicked locator: '//span[contains(text(),'Continue')]'.&amp#27;[0m
+&amp#27;[38;2;255;165;0m[Pass Warn - High] - PO_Required_DocumentsRequired Documents' found within text at locator: '//h4[contains(text(),'Required Documents')]' in 5.165 seconds.&amp#27;[0m
+&amp#27;[38;5;94m[Screenshot] - Pass-Warn-High_1723124599004.png&amp#27;[0m
+&amp#27;[0;34m - - - - Test Case: TC04 - Trip Cancellation - 08/08/2024 03:43:19 pm - End - - - -&amp#27;[0m
+]]></system-out>
+    <system-err><![CDATA[Aug 08, 2024 3:42:00 PM org.openqa.selenium.devtools.CdpVersionFinder findNearestMatch
+WARNING: Unable to find an exact match for CDP version 127, returning the closest version; found: 126; Please update to a Selenium version that supports CDP version 127
+]]></system-err>
+  </testcase>
+  <testcase name="tc02_New_Claim_by_Individual_Insurance" classname="TS_Manulife_Claim_Portal_Trip_Cancellation_JUnit" time="8.934">
+    <system-out><![CDATA[
+&amp#27;[0;34m - - - - Test Case: TC - New Claim - by Individual Insurance - 08/08/2024 03:43:19 pm - Begin - - -&amp#27;[0m
+&amp#27;[38;2;0;128;1m[Pass] - Navigated to URL: 'https://portal-qa.globalexcel.com/claims-portal?clientName=Manulife'.&amp#27;[0m
+&amp#27;[38;2;0;128;1m[Pass] - PO_Claims_PortalWelcome to your Claim Centre' found within text at locator: '(//span[@class='SizedText---large SizedText---predefined'])[1]' in 1.069 seconds.&amp#27;[0m
+&amp#27;[38;2;0;128;1m[Pass] - PO_Claims_Portal - Clicked locator: '//strong[contains(text(),'START A NEW CLAIM')]'.&amp#27;[0m
+&amp#27;[38;2;173;255;47m[Pass Warn - Low] - PO_Claims_PortalWhich insurance type are you claiming under?' found within text at locator: '//h4[contains(text(),'Which insurance type are you claiming under?')]' in 2.089 seconds.&amp#27;[0m
+&amp#27;[38;5;94m[Screenshot] - Pass-Warn-Low_1723124605686.png&amp#27;[0m
+&amp#27;[38;2;0;128;1m[Pass] - PO_Claims_Portal - Clicked locator: '(//div[@class='ContentLayout---content_layout'])[2]'.&amp#27;[0m
+&amp#27;[38;2;173;255;47m[Pass Warn - Low] - PO_Claims_PortalWhat are you claiming for?' found within text at locator: '//h4[contains(text(),'What are you claiming for?')]' in 2.097 seconds.&amp#27;[0m
+&amp#27;[38;5;94m[Screenshot] - Pass-Warn-Low_1723124607875.png&amp#27;[0m
+&amp#27;[38;2;0;128;1m[Pass] - PO_Claims_Portal - Clicked locator: '//button[@class='Button---btn Button---default_direction Button---link_v1 Button---large Button---minimize_width appian-context-first-in-list appian-context-last-in-list Button---inDarkBackground Button---icon_only Button---no_label Button---icon_start undefined']'.&amp#27;[0m
+&amp#27;[0;34m - - - - Test Case: TC - New Claim - by Individual Insurance - 08/08/2024 03:43:27 pm - End - - - -&amp#27;[0m
+]]></system-out>
+    <system-err><![CDATA[Aug 08, 2024 3:43:19 PM org.openqa.selenium.devtools.CdpVersionFinder findNearestMatch
+WARNING: Unable to find an exact match for CDP version 127, returning the closest version; found: 126; Please update to a Selenium version that supports CDP version 127
+]]></system-err>
+  </testcase>
+  <testcase name="tc03_Invalid_Trip_Cancellation" classname="TS_Manulife_Claim_Portal_Trip_Cancellation_JUnit" time="14.643">
+    <system-out><![CDATA[
+&amp#27;[0;34m - - - - Test Case: TC03 - Invalid Trip Cancellation - 08/08/2024 03:43:28 pm - Begin - - -&amp#27;[0m
+&amp#27;[38;2;0;128;1m[Pass] - Navigated to URL: 'https://portal-qa.globalexcel.com/claims-portal?clientName=Manulife'.&amp#27;[0m
+&amp#27;[38;2;173;255;47m[Pass Warn - Low] - PO_Claims_PortalWelcome to your Claim Centre' found within text at locator: '(//span[@class='SizedText---large SizedText---predefined'])[1]' in 2.096 seconds.&amp#27;[0m
+&amp#27;[38;5;94m[Screenshot] - Pass-Warn-Low_1723124613914.png&amp#27;[0m
+&amp#27;[38;2;0;128;1m[Pass] - PO_Claims_Portal - Clicked locator: '//strong[contains(text(),'START A NEW CLAIM')]'.&amp#27;[0m
+&amp#27;[38;2;173;255;47m[Pass Warn - Low] - PO_Claims_PortalWhich insurance type are you claiming under?' found within text at locator: '//h4[contains(text(),'Which insurance type are you claiming under?')]' in 2.094 seconds.&amp#27;[0m
+&amp#27;[38;5;94m[Screenshot] - Pass-Warn-Low_1723124616106.png&amp#27;[0m
+&amp#27;[38;2;0;128;1m[Pass] - PO_Claims_Portal - Clicked locator: '(//div[@class='ContentLayout---content_layout'])[1]'.&amp#27;[0m
+&amp#27;[38;2;173;255;47m[Pass Warn - Low] - PO_Claims_PortalWhat are you claiming for?' found within text at locator: '//h4[contains(text(),'What are you claiming for?')]' in 2.097 seconds.&amp#27;[0m
+&amp#27;[38;5;94m[Screenshot] - Pass-Warn-Low_1723124618288.png&amp#27;[0m
+&amp#27;[38;2;0;128;1m[Pass] - PO_Claims_Portal - Clicked locator: '(//div[@class='ContentLayout---content_layout'])[1]'.&amp#27;[0m
+&amp#27;[38;2;173;255;47m[Pass Warn - Low] - PO_Claims_PortalTrip Cancellation Claim' found within text at locator: '(//h4[@class='HeaderText---richtext_header HeaderText---align_start'])[1]' in 2.102 seconds.&amp#27;[0m
+&amp#27;[38;5;94m[Screenshot] - Pass-Warn-Low_1723124620467.png&amp#27;[0m
+&amp#27;[38;2;0;128;1m[Pass] - PO_Claims_Portal - Clicked locator: '//label[@class='RadioSelect---choice_label'][contains(text(),'Yes')]'.&amp#27;[0m
+&amp#27;[38;2;0;128;1m[Pass] - PO_Claims_Portal - Clicked locator: '//strong[contains(text(),'SWITCH TO TRIP INTERRUPTION')]'.&amp#27;[0m
+&amp#27;[0;34m - - - - Test Case: TC03 - Invalid Trip Cancellation - 08/08/2024 03:43:42 pm - End - - - -&amp#27;[0m
+]]></system-out>
+    <system-err><![CDATA[Aug 08, 2024 3:43:28 PM org.openqa.selenium.devtools.CdpVersionFinder findNearestMatch
+WARNING: Unable to find an exact match for CDP version 127, returning the closest version; found: 126; Please update to a Selenium version that supports CDP version 127
+]]></system-err>
+  </testcase>
+</testsuite>

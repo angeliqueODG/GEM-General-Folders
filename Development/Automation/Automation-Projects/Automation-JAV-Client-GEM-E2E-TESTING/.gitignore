@@ -1,0 +1,49 @@
+# ===============================================================
+# @file: .gitignore
+# @filepath: .gitignore
+# @version: 2.0
+# @updated: 2025-01-10 03:48:00 PM CST
+# @author: Greg Paskal
+# @company: MissionWares
+#
+# @description:
+# Files and directories to ignore in Git repositories.
+# This configuration file specifies intentionally untracked files that Git
+# should ignore. Includes system files, build artifacts, test reports, and
+# private/sensitive files that should not be committed to version control.
+#
+# @sections:
+# - Mac system files
+# - Allure report artifacts
+# - Maven build output
+# - Private/sensitive files
+#
+# @dependencies:
+# - Git version control system
+# - Maven build system
+# - Allure reporting framework
+#
+# @tags: git, version-control, ignore-patterns, mAi™
+#
+# @changeLog:
+# Date        Author          Version  Description
+# ----------  --------------  -------  --------------------------
+# 2024-07-22  G. Paskal       1.0      Initial version
+# 2025-05-19  G. Paskal       2.0      Added Private Files
+# 2025-01-10  G. Paskal       2.0      Added mAi™ header standard
+# ===============================================================
+
+# Ignore Mac system files
+.DS_Store
+
+# Allure report files
+.allure
+allure-report
+allure-results
+
+# Ignore Maven target folder
+target
+
+# Private files
+.private
+.private/*.json

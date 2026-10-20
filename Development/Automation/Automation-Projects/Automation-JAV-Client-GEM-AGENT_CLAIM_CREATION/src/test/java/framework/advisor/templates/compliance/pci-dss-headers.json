@@ -1,0 +1,225 @@
+{
+  "metadata": {
+    "filename": "pci-dss-headers.json",
+    "filepath": "src/test/java/framework/advisor/templates/compliance/pci-dss-headers.json",
+    "version": "1.0.0",
+    "created": "2025-10-09",
+    "lastUpdated": "2025-10-09 07:30:00 PM CDT",
+    "author": "Greg Paskal",
+    "company": "MissionWares",
+    "methodology": "mAi™ (MissionWares® + AI)",
+    "description": "PCI DSS security headers compliance finding template with comprehensive guidance for all audiences including HTTP security header implementation, HTTPS enforcement, secure cookie configuration, and infrastructure hardening to meet Payment Card Industry Data Security Standard requirements for protecting cardholder data.",
+    "aiGenerated": true,
+    "humanReviewed": false,
+    "reviewedBy": "Pending",
+    "approvedBy": "Pending",
+    "tags": ["pci-dss", "compliance", "payment", "security-headers", "https", "cardholder-data"],
+    "relatedFindings": ["HSTS_MISSING", "CSP_MISSING", "INSECURE_COOKIES", "NO_HTTPS", "WEAK_TLS", "X_FRAME_OPTIONS_MISSING"],
+    "estimatedRemediationTime": "4-8 hours",
+    "businessImpact": "CRITICAL",
+    "complianceRequirements": ["PCI DSS 4.0", "PCI DSS Requirement 4", "PCI DSS Requirement 6"]
+  },
+  "findingId": "COMP-PCI-001",
+  "findingType": "PCI_DSS_HEADERS_MISSING",
+  "category": "COMPLIANCE",
+  "severity": "CRITICAL",
+  "cveReferences": [
+    "CWE-319",
+    "CWE-614"
+  ],
+  "understanding": {
+    "EXECUTIVE": {
+      "summary": "Your payment application lacks required PCI DSS security headers, exposing the company to payment processor termination, failed audits, fines up to $500K per incident, and liability for payment card fraud resulting from non-compliance.",
+      "businessRisk": "Critical risk of losing payment processing ability and massive financial liability. PCI DSS non-compliance consequences: payment processor termination (cannot process cards), fines $5,000-$500,000 per incident, liability for fraud losses (millions), forensic audit costs ($50K-$500K), card brand fines (Visa/Mastercard $50K-$500K monthly), reputation damage, customer trust loss, inability to accept online payments. Data breach costs: average $4.24M per breach (IBM 2023), PLUS card replacement costs ($3-5 per card), fraud losses, regulatory fines. Criminal prosecution possible for gross negligence. Business cannot legally process payments without PCI compliance. E-commerce loses 100% payment capability. Affects: merchants accepting cards, payment service providers, e-commerce platforms, SaaS with payments. Even single breach ends business for many companies.",
+      "complianceImpact": "PCI DSS 4.0 Requirement 4.2: Strong cryptography during transmission over open networks. Requirement 6.5.10: Protect against common coding vulnerabilities (missing security headers). Requirement 11.3: Penetration testing identifies missing headers. Quarterly ASV scans flag non-compliance. Annual PCI audits (SAQ, ROC) will fail. Payment processors require compliance attestation. Cannot pass PCI certification without security headers. Loss of compliance = cannot process payments.",
+      "priority": "CRITICAL"
+    },
+    "PROJECT_MANAGER": {
+      "summary": "Missing PCI DSS required security headers will cause failed PCI audits and payment processor termination. Must implement HTTPS enforcement, HSTS, secure cookies, and protective headers immediately for any payment processing application.",
+      "timeline": "IMMEDIATE if processing payments. CANNOT delay - payment processors will terminate service. Implementation takes 4-8 hours for basic compliance, 2-3 days for comprehensive hardening including infrastructure. Block all payment processing until compliant if currently non-compliant.",
+      "effort": "4-8 hours: Configure security headers (2 hours), enforce HTTPS (1 hour), secure cookies (1 hour), test payment flow (2 hours), documentation (2 hours). Additional if needed: TLS 1.2+ upgrade (4-8 hours), infrastructure hardening (1-2 days), penetration testing (1 week), PCI audit preparation (2-4 weeks). Ongoing: quarterly vulnerability scans, annual audits, continuous monitoring.",
+      "dependencies": [
+        "Valid SSL/TLS certificate (TLS 1.2+)",
+        "Access to web server configuration",
+        "Payment gateway integration review",
+        "QSA (Qualified Security Assessor) consultation",
+        "PCI DSS Self-Assessment Questionnaire (SAQ)",
+        "Vulnerability scanning vendor (ASV)",
+        "Payment processor compliance requirements",
+        "Legal review of compliance scope",
+        "Security policy documentation"
+      ],
+      "blocking": [
+        "Payment processing ability",
+        "PCI DSS audit completion",
+        "Payment processor agreement renewal",
+        "E-commerce operations",
+        "New payment gateway integration",
+        "Enterprise merchant accounts",
+        "Card brand authorization",
+        "Cyber insurance coverage"
+      ]
+    },
+    "DEVELOPER": {
+      "summary": "Application lacks HTTP security headers required by PCI DSS for protecting cardholder data during transmission. Must implement HTTPS with HSTS, secure cookie attributes, CSP, X-Frame-Options, and other protective headers.",
+      "technical": "PCI DSS 4.0 security header requirements: 1) HTTPS/TLS 1.2+ for ALL pages handling cardholder data (CHD). 2) Strict-Transport-Security (HSTS) to prevent protocol downgrade. 3) Secure cookie attributes (Secure, HttpOnly, SameSite) for session cookies. 4) Content-Security-Policy to prevent XSS attacks. 5) X-Frame-Options to prevent clickjacking. 6) X-Content-Type-Options to prevent MIME sniffing. 7) Referrer-Policy to prevent data leakage. Required headers for PCI compliance: Strict-Transport-Security: max-age=31536000; includeSubDomains; preload (REQUIRED). Content-Security-Policy: default-src 'self'; frame-ancestors 'none' (RECOMMENDED). X-Frame-Options: DENY or SAMEORIGIN (REQUIRED). X-Content-Type-Options: nosniff (REQUIRED). Referrer-Policy: strict-origin-when-cross-origin (RECOMMENDED). Session cookies MUST have: Secure flag (HTTPS only), HttpOnly flag (no JavaScript access), SameSite=Strict or Lax (CSRF protection). HTTPS enforcement: redirect ALL HTTP to HTTPS, no mixed content, TLS 1.2+ only, strong cipher suites. PCI scope: any page displaying/processing/storing CHD, payment forms, checkout pages, account pages with saved cards, APIs handling payment data. Implementation: web server headers (Nginx, Apache), application headers (Spring Security, Express), CDN headers (CloudFront). Testing: SSL Labs scan (A+ rating required), Security Headers scan, PCI ASV scan, penetration testing.",
+      "vulnerability": "CWE-319 (Cleartext Transmission of Sensitive Information) - transmitting CHD without encryption violates PCI DSS. CWE-614 (Sensitive Cookie in HTTPS Session Without 'Secure' Attribute) - session hijacking risk. Missing headers create: session hijacking vulnerability, XSS attack vectors, clickjacking risks, protocol downgrade attacks, MITM attack vectors. PCI DSS Requirement 6.5.10: Applications must protect against common vulnerabilities including those preventable by security headers.",
+      "references": [
+        "https://www.pcisecuritystandards.org/document_library/",
+        "https://listings.pcisecuritystandards.org/documents/PCI-DSS-v4_0.pdf",
+        "https://www.pcisecuritystandards.org/document_library?category=saqs",
+        "https://owasp.org/www-project-secure-headers/"
+      ]
+    },
+    "SECURITY_ENGINEER": {
+      "summary": "Missing PCI DSS required security headers violate payment card security standards, creating vulnerability to session hijacking, XSS, clickjacking, and protocol downgrade attacks targeting cardholder data.",
+      "vulnerability": "CWE-319, CWE-614 - Missing protective headers required by PCI DSS. Specific vulnerabilities: 1) No HSTS = protocol downgrade to HTTP (CHD transmitted cleartext). 2) Insecure cookies = session hijacking (attacker steals authenticated session). 3) No CSP = XSS attacks on payment forms (inject malicious scripts). 4) No X-Frame-Options = clickjacking (trick user into clicking hidden payment button). 5) No secure cookies = cookie theft over HTTP. Each vulnerability can expose cardholder data, violating PCI DSS fundamental requirement to protect CHD during transmission.",
+      "attackVector": "1) Protocol downgrade attack: attacker strips HTTPS, forces HTTP, intercepts CHD in cleartext. 2) Session hijacking: steal session cookie over HTTP, impersonate user, access saved cards. 3) XSS injection: inject script on payment page, steal card details as user types. 4) Clickjacking: overlay invisible payment form, trick user into submitting payment. 5) MITM attack: intercept traffic without HSTS/TLS, capture CHD. These attacks are documented, well-known, and actively exploited. PCI DSS mandates protection against these vectors.",
+      "threatLevel": "CRITICAL (COMPLIANCE) - Not theoretical - these attacks happen daily against payment systems. Missing headers = guaranteed PCI audit failure. Financial impact: $100K-$5M per breach (card replacement, fraud, fines, forensics). Operational impact: payment processing termination, forensic audit, potential business closure. Legal impact: liability for fraud, regulatory fines, criminal prosecution for gross negligence. Reputation impact: customer loss, media coverage, trust damage.",
+      "mitigationUrgency": "IMMEDIATE - cannot process payments without compliance. Stop all payment processing if currently non-compliant. Implementation timeline: 1-2 days for emergency fix, 1 week for full compliance, 4 weeks for audit readiness. Zero tolerance for delay - payment processors will terminate non-compliant merchants. Prioritize: 1) HTTPS enforcement (day 1). 2) HSTS implementation (day 1). 3) Secure cookies (day 1). 4) Protective headers (day 2). 5) Penetration testing (week 1). 6) ASV scan (week 2)."
+    },
+    "OPS_INFRASTRUCTURE": {
+      "summary": "Infrastructure must enforce HTTPS, implement security headers, configure TLS 1.2+, secure cookies, and enable logging/monitoring to meet PCI DSS requirements for payment processing environments.",
+      "technical": "PCI DSS infrastructure requirements: 1) TLS 1.2 or 1.3 ONLY (disable SSL, TLS 1.0, TLS 1.1). 2) Strong cipher suites (disable weak ciphers). 3) Valid certificates (no self-signed, no expired). 4) HTTPS enforcement (HTTP redirects, HSTS). 5) Security headers on ALL responses. 6) Secure session management (encrypted, httpOnly, secure cookies). 7) Network segmentation (separate payment processing). 8) Firewall rules (restrict access). 9) Logging/monitoring (all access to CHD). 10) Intrusion detection/prevention. Required headers: Strict-Transport-Security: max-age=31536000; includeSubDomains; preload. Content-Security-Policy: default-src 'self'; frame-ancestors 'none'; upgrade-insecure-requests. X-Frame-Options: DENY. X-Content-Type-Options: nosniff. Referrer-Policy: strict-origin-when-cross-origin. Cookie configuration: Set-Cookie: session_id=xxx; Secure; HttpOnly; SameSite=Strict; Path=/; Max-Age=1800. Implementation points: Load balancer/ALB (TLS termination, header injection), Web server (Nginx/Apache headers), Application (framework security settings), CDN (CloudFront security headers). Testing: SSL Labs (A+ required), Security Headers scan, PCI ASV scan (quarterly), penetration test (annually).",
+      "scope": "ALL infrastructure in payment processing scope (cardholder data environment - CDE): web servers handling payment pages, application servers processing payments, databases storing CHD (if applicable), load balancers, firewalls, network infrastructure, payment gateway connections, third-party integrations. Segmentation: isolate CDE from non-CDE systems, restrict network access, implement DMZ, separate databases. Must apply to: production (critical), staging (important for testing), development (if using real CHD - should never happen).",
+      "monitoring": "PCI DSS monitoring requirements: 1) Log ALL access to cardholder data. 2) Monitor security header presence (continuous). 3) Alert on TLS/cipher issues. 4) Track failed authentication attempts. 5) Monitor for protocol downgrade. 6) File integrity monitoring (FIM). 7) Intrusion detection (IDS/IPS). 8) Vulnerability scanning (quarterly ASV). Specific monitoring: SSL/TLS certificate expiration (alert 30 days prior), security header presence (every response), HTTPS redirect functioning, cookie security attributes, CSP violations, clickjacking attempts. Logging retention: 3+ months online, 1+ year archived. Use SIEM for centralized logging. Implement real-time alerting for security anomalies."
+    },
+    "QA_TESTER": {
+      "summary": "PCI DSS compliance testing requires validation of HTTPS enforcement, security headers, secure cookies, payment flow security, and vulnerability scanning to verify protection of cardholder data.",
+      "testImplication": "Cannot validate PCI compliance without comprehensive security testing. Must test: HTTPS enforcement (all pages redirect), HSTS header present (verify with Security Headers tool), secure cookie attributes (Secure, HttpOnly, SameSite), all protective headers present (CSP, X-Frame-Options, etc.), TLS 1.2+ only (verify with SSL Labs), no mixed content (all resources over HTTPS), payment form security (no JavaScript access to card fields), session management (timeout, secure transmission). Specialized testing: ASV scan (quarterly by approved vendor), penetration testing (annually by QSA), code review (secure coding practices), vulnerability assessment. Testing tools: SSL Labs, Security Headers, OWASP ZAP, Burp Suite, PCI ASV scanners.",
+      "riskIfNotFixed": "Failed PCI audit - cannot process payments. Payment processor termination - lose payment capability. Fines $5K-$500K per incident. Data breach liability - millions in fraud losses. Card brand fines - $50K-$500K monthly. Forensic audit costs - $50K-$500K. Reputation damage - customer loss. Legal liability - lawsuits. Criminal prosecution - gross negligence. Business closure - cannot survive without payments. Insurance non-coverage - breach not covered. Enterprise customer loss - require PCI compliance."
+    }
+  },
+  "actions": {
+    "DEVELOPER": {
+      "frameworks": {
+        "spring-boot": {
+          "code": "// Spring Boot - PCI DSS Security Headers Configuration\n// SecurityConfig.java\n\nimport org.springframework.context.annotation.Bean;\nimport org.springframework.context.annotation.Configuration;\nimport org.springframework.security.config.annotation.web.builders.HttpSecurity;\nimport org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;\nimport org.springframework.security.web.SecurityFilterChain;\nimport org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter;\n\n@Configuration\n@EnableWebSecurity\npublic class SecurityConfig {\n\n    @Bean\n    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {\n        http\n            // Enforce HTTPS\n            .requiresChannel(channel -> channel\n                .anyRequest().requiresSecure()\n            )\n            \n            // Security Headers\n            .headers(headers -> headers\n                // HSTS - Required for PCI DSS\n                .httpStrictTransportSecurity(hsts -> hsts\n                    .maxAgeInSeconds(31536000)  // 1 year\n                    .includeSubDomains(true)\n                    .preload(true)\n                )\n                \n                // Content Security Policy - Recommended for PCI DSS\n                .contentSecurityPolicy(csp -> csp\n                    .policyDirectives(\n                        \"default-src 'self'; \" +\n                        \"script-src 'self'; \" +\n                        \"style-src 'self' 'unsafe-inline'; \" +\n                        \"img-src 'self' data: https:; \" +\n                        \"font-src 'self'; \" +\n                        \"connect-src 'self'; \" +\n                        \"frame-ancestors 'none'; \" +\n                        \"base-uri 'self'; \" +\n                        \"form-action 'self'; \" +\n                        \"upgrade-insecure-requests\"\n                    )\n                )\n                \n                // X-Frame-Options - Required for PCI DSS\n                .frameOptions(frame -> frame\n                    .deny()\n                )\n                \n                // X-Content-Type-Options - Required for PCI DSS\n                .contentTypeOptions()\n                \n                // Referrer Policy - Recommended for PCI DSS\n                .referrerPolicy(referrer -> referrer\n                    .policy(ReferrerPolicyHeaderWriter.ReferrerPolicy\n                        .STRICT_ORIGIN_WHEN_CROSS_ORIGIN)\n                )\n            )\n            \n            // Session Management - PCI DSS compliant\n            .sessionManagement(session -> session\n                .maximumSessions(1)  // Prevent concurrent sessions\n                .maxSessionsPreventsLogin(true)\n            )\n            \n            .authorizeHttpRequests(auth -> auth\n                .requestMatchers(\"/payment/**\").authenticated()\n                .anyRequest().permitAll()\n            );\n        \n        return http.build();\n    }\n}\n\n// application.properties - Secure Cookie Configuration\n// Required for PCI DSS\nserver.servlet.session.cookie.secure=true\nserver.servlet.session.cookie.http-only=true\nserver.servlet.session.cookie.same-site=strict\nserver.servlet.session.timeout=30m\n\n// Force HTTPS\nserver.ssl.enabled=true\nserver.ssl.key-store=classpath:keystore.p12\nserver.ssl.key-store-password=${SSL_KEYSTORE_PASSWORD}\nserver.ssl.key-store-type=PKCS12\nserver.ssl.key-alias=tomcat\n\n// TLS Configuration - PCI DSS compliant\nserver.ssl.protocol=TLS\nserver.ssl.enabled-protocols=TLSv1.2,TLSv1.3\nserver.ssl.ciphers=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256",
+          "testCode": "// JUnit test for PCI DSS headers\nimport org.junit.jupiter.api.Test;\nimport org.springframework.beans.factory.annotation.Autowired;\nimport org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;\nimport org.springframework.boot.test.context.SpringBootTest;\nimport org.springframework.test.web.servlet.MockMvc;\n\nimport static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;\nimport static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;\n\n@SpringBootTest\n@AutoConfigureMockMvc\npublic class PciComplianceTest {\n\n    @Autowired\n    private MockMvc mockMvc;\n\n    @Test\n    public void shouldHaveHstsHeader() throws Exception {\n        mockMvc.perform(get(\"/\"))\n            .andExpect(status().isOk())\n            .andExpect(header().exists(\"Strict-Transport-Security\"))\n            .andExpect(header().string(\"Strict-Transport-Security\",\n                containsString(\"max-age=31536000\")))\n            .andExpect(header().string(\"Strict-Transport-Security\",\n                containsString(\"includeSubDomains\")));\n    }\n    \n    @Test\n    public void shouldHaveXFrameOptions() throws Exception {\n        mockMvc.perform(get(\"/\"))\n            .andExpect(header().string(\"X-Frame-Options\", \"DENY\"));\n    }\n    \n    @Test\n    public void shouldHaveContentSecurityPolicy() throws Exception {\n        mockMvc.perform(get(\"/\"))\n            .andExpect(header().exists(\"Content-Security-Policy\"))\n            .andExpect(header().string(\"Content-Security-Policy\",\n                containsString(\"default-src 'self'\")));\n    }\n    \n    @Test\n    public void shouldHaveXContentTypeOptions() throws Exception {\n        mockMvc.perform(get(\"/\"))\n            .andExpect(header().string(\"X-Content-Type-Options\", \"nosniff\"));\n    }\n    \n    @Test\n    public void cookiesShouldBeSecure() throws Exception {\n        mockMvc.perform(get(\"/payment\"))\n            .andExpect(cookie().secure(\"JSESSIONID\", true))\n            .andExpect(cookie().httpOnly(\"JSESSIONID\", true));\n    }\n}",
+          "dependencies": "<!-- Spring Security for PCI DSS -->\n<dependency>\n    <groupId>org.springframework.boot</groupId>\n    <artifactId>spring-boot-starter-security</artifactId>\n</dependency>\n<dependency>\n    <groupId>org.springframework.boot</groupId>\n    <artifactId>spring-boot-starter-web</artifactId>\n</dependency>",
+          "packageInstall": "mvn clean install"
+        },
+        "express-nodejs": {
+          "code": "// Express.js - PCI DSS Security Headers\n\nconst express = require('express');\nconst helmet = require('helmet');\nconst https = require('https');\nconst fs = require('fs');\n\nconst app = express();\n\n// 1. Use Helmet for security headers\napp.use(helmet({\n  // HSTS - Required for PCI DSS\n  strictTransportSecurity: {\n    maxAge: 31536000,  // 1 year in seconds\n    includeSubDomains: true,\n    preload: true\n  },\n  \n  // Content Security Policy - Recommended\n  contentSecurityPolicy: {\n    directives: {\n      defaultSrc: [\"'self'\"],\n      scriptSrc: [\"'self'\"],\n      styleSrc: [\"'self'\", \"'unsafe-inline'\"],\n      imgSrc: [\"'self'\", \"data:\", \"https:\"],\n      connectSrc: [\"'self'\"],\n      fontSrc: [\"'self'\"],\n      objectSrc: [\"'none'\"],\n      mediaSrc: [\"'self'\"],\n      frameSrc: [\"'none'\"],\n      frameAncestors: [\"'none'\"],\n      baseUri: [\"'self'\"],\n      formAction: [\"'self'\"],\n      upgradeInsecureRequests: []\n    }\n  },\n  \n  // X-Frame-Options - Required\n  frameguard: {\n    action: 'deny'\n  },\n  \n  // X-Content-Type-Options - Required\n  noSniff: true,\n  \n  // Referrer Policy - Recommended\n  referrerPolicy: {\n    policy: 'strict-origin-when-cross-origin'\n  }\n}));\n\n// 2. Enforce HTTPS\napp.use((req, res, next) => {\n  if (req.secure || req.headers['x-forwarded-proto'] === 'https') {\n    next();\n  } else {\n    // Redirect HTTP to HTTPS\n    res.redirect(301, `https://${req.headers.host}${req.url}`);\n  }\n});\n\n// 3. Secure Session Configuration\nconst session = require('express-session');\napp.use(session({\n  secret: process.env.SESSION_SECRET,\n  resave: false,\n  saveUninitialized: false,\n  cookie: {\n    secure: true,      // HTTPS only\n    httpOnly: true,    // No JavaScript access\n    sameSite: 'strict', // CSRF protection\n    maxAge: 1800000    // 30 minutes\n  }\n}));\n\n// 4. HTTPS Server Configuration\nconst httpsOptions = {\n  key: fs.readFileSync('./ssl/private-key.pem'),\n  cert: fs.readFileSync('./ssl/certificate.pem'),\n  \n  // TLS 1.2+ only for PCI DSS\n  minVersion: 'TLSv1.2',\n  maxVersion: 'TLSv1.3',\n  \n  // Strong cipher suites\n  ciphers: [\n    'ECDHE-RSA-AES256-GCM-SHA384',\n    'ECDHE-RSA-AES128-GCM-SHA256',\n    'ECDHE-RSA-AES256-SHA384',\n    'ECDHE-RSA-AES128-SHA256'\n  ].join(':'),\n  \n  honorCipherOrder: true\n};\n\n// 5. Payment Routes (require authentication)\napp.post('/api/payment', requireAuth, (req, res) => {\n  // Process payment\n  // Never log or store full card numbers\n  res.json({ status: 'success' });\n});\n\n// Start HTTPS server\nhttps.createServer(httpsOptions, app).listen(443, () => {\n  console.log('PCI DSS compliant HTTPS server running on port 443');\n});\n\n// Optional: HTTP server that redirects to HTTPS\nconst http = require('http');\nhttp.createServer((req, res) => {\n  res.writeHead(301, { Location: `https://${req.headers.host}${req.url}` });\n  res.end();\n}).listen(80);",
+          "testCode": "// Mocha/Chai tests for PCI DSS compliance\nconst request = require('supertest');\nconst { expect } = require('chai');\n\ndescribe('PCI DSS Security Headers', () => {\n  \n  it('should have HSTS header', (done) => {\n    request(app)\n      .get('/')\n      .expect('Strict-Transport-Security', /max-age=31536000/)\n      .expect('Strict-Transport-Security', /includeSubDomains/)\n      .end(done);\n  });\n  \n  it('should have X-Frame-Options', (done) => {\n    request(app)\n      .get('/')\n      .expect('X-Frame-Options', 'DENY')\n      .end(done);\n  });\n  \n  it('should have CSP header', (done) => {\n    request(app)\n      .get('/')\n      .expect('Content-Security-Policy', /default-src 'self'/)\n      .end(done);\n  });\n  \n  it('should have X-Content-Type-Options', (done) => {\n    request(app)\n      .get('/')\n      .expect('X-Content-Type-Options', 'nosniff')\n      .end(done);\n  });\n  \n  it('should set secure cookies', (done) => {\n    request(app)\n      .get('/login')\n      .end((err, res) => {\n        const cookies = res.headers['set-cookie'];\n        expect(cookies[0]).to.include('Secure');\n        expect(cookies[0]).to.include('HttpOnly');\n        expect(cookies[0]).to.include('SameSite=Strict');\n        done();\n      });\n  });\n});",
+          "dependencies": "npm install express helmet express-session",
+          "packageInstall": "npm install"
+        },
+        "nginx": {
+          "code": "# Nginx - PCI DSS Security Headers Configuration\n# /etc/nginx/sites-available/payment-app\n\nserver {\n    listen 80;\n    server_name payment.example.com;\n    \n    # Redirect all HTTP to HTTPS (required for PCI DSS)\n    return 301 https://$server_name$request_uri;\n}\n\nserver {\n    listen 443 ssl http2;\n    server_name payment.example.com;\n    \n    # SSL/TLS Configuration - PCI DSS compliant\n    ssl_certificate /etc/ssl/certs/payment.crt;\n    ssl_certificate_key /etc/ssl/private/payment.key;\n    \n    # TLS 1.2 and 1.3 only (PCI DSS requirement)\n    ssl_protocols TLSv1.2 TLSv1.3;\n    \n    # Strong cipher suites (PCI DSS approved)\n    ssl_ciphers 'ECDHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-SHA384:ECDHE-RSA-AES128-SHA256';\n    ssl_prefer_server_ciphers on;\n    \n    # SSL session cache\n    ssl_session_cache shared:SSL:10m;\n    ssl_session_timeout 10m;\n    \n    # Security Headers - PCI DSS Required\n    \n    # HSTS - REQUIRED for PCI DSS\n    add_header Strict-Transport-Security \"max-age=31536000; includeSubDomains; preload\" always;\n    \n    # X-Frame-Options - REQUIRED\n    add_header X-Frame-Options \"DENY\" always;\n    \n    # X-Content-Type-Options - REQUIRED\n    add_header X-Content-Type-Options \"nosniff\" always;\n    \n    # Content Security Policy - RECOMMENDED\n    add_header Content-Security-Policy \"default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests\" always;\n    \n    # Referrer Policy - RECOMMENDED\n    add_header Referrer-Policy \"strict-origin-when-cross-origin\" always;\n    \n    # Disable server version disclosure\n    server_tokens off;\n    \n    # Secure cookie configuration\n    # Note: Application must also set Secure, HttpOnly, SameSite\n    proxy_cookie_path / \"/; Secure; HttpOnly; SameSite=Strict\";\n    \n    location / {\n        proxy_pass http://backend_app;\n        proxy_set_header Host $host;\n        proxy_set_header X-Real-IP $remote_addr;\n        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;\n        proxy_set_header X-Forwarded-Proto $scheme;\n        \n        # Timeouts\n        proxy_connect_timeout 60s;\n        proxy_send_timeout 60s;\n        proxy_read_timeout 60s;\n    }\n    \n    # Payment processing endpoints (extra security)\n    location /payment/ {\n        # Rate limiting\n        limit_req zone=payment burst=5 nodelay;\n        \n        proxy_pass http://backend_app;\n        proxy_set_header Host $host;\n        \n        # Logging (PCI DSS requirement)\n        access_log /var/log/nginx/payment-access.log combined;\n        error_log /var/log/nginx/payment-error.log warn;\n    }\n    \n    # Health check endpoint (no security headers needed)\n    location /health {\n        access_log off;\n        return 200 \"healthy\\n\";\n    }\n}\n\n# Rate limiting zone for payment endpoints\nhttp {\n    limit_req_zone $binary_remote_addr zone=payment:10m rate=10r/s;\n}",
+          "testCode": "# Test PCI DSS headers\n\n# Test HSTS\ncurl -I https://payment.example.com | grep -i strict-transport-security\n\n# Test X-Frame-Options\ncurl -I https://payment.example.com | grep -i x-frame-options\n\n# Test all headers\ncurl -I https://payment.example.com\n\n# Test HTTPS redirect\ncurl -I http://payment.example.com\n\n# Test TLS version (should only allow TLS 1.2+)\nopenssl s_client -connect payment.example.com:443 -tls1_1\n# Should fail\n\nopenssl s_client -connect payment.example.com:443 -tls1_2\n# Should succeed",
+          "dependencies": "# Nginx with SSL module\nsudo apt-get install nginx-full",
+          "packageInstall": "sudo apt-get install nginx-full"
+        }
+      },
+      "verificationSteps": [
+        "1. Verify HTTPS enforced (all HTTP redirects to HTTPS)",
+        "2. Test HSTS header: curl -I https://domain.com | grep Strict-Transport-Security",
+        "3. Verify TLS 1.2+ only: openssl s_client -connect domain.com:443 -tls1_1 (should fail)",
+        "4. Test all security headers with Security Headers scanner",
+        "5. Verify secure cookie attributes (Secure, HttpOnly, SameSite)",
+        "6. Run SSL Labs scan (must achieve A+ rating)",
+        "7. Test payment flow over HTTPS",
+        "8. Verify no mixed content warnings",
+        "9. Run PCI ASV scan",
+        "10. Document configuration for PCI audit"
+      ],
+      "estimatedEffort": "6-8 hours"
+    },
+    "OPS_INFRASTRUCTURE": {
+      "servers": {
+        "tls-config": {
+          "config": "# TLS Configuration for PCI DSS Compliance\n\n# OpenSSL cipher suite string (PCI DSS approved)\nECDHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-SHA384:ECDHE-RSA-AES128-SHA256\n\n# Protocols: TLS 1.2 and TLS 1.3 ONLY\n# Disable: SSL, TLS 1.0, TLS 1.1\n\n# Certificate requirements:\n# - Valid (not self-signed)\n# - Not expired\n# - 2048-bit RSA or 256-bit ECC minimum\n# - SHA-256 signature\n# - Subject Alternative Name (SAN) for all domains",
+          "reload": "# Reload web server after TLS changes\nsudo systemctl reload nginx",
+          "verify": "# Test with SSL Labs\ncurl https://www.ssllabs.com/ssltest/analyze.html?d=your-domain.com\n\n# Must achieve A+ rating for PCI DSS"
+        },
+        "monitoring": {
+          "config": "# PCI DSS Monitoring Configuration\n\n# 1. Log all access to cardholder data\naccess_log /var/log/nginx/payment-access.log combined;\n\n# 2. Alert on security header removal\n# Monitor: Strict-Transport-Security, X-Frame-Options, CSP\n\n# 3. Certificate expiration monitoring\n# Alert 30 days before expiration\n\n# 4. TLS version monitoring\n# Alert if TLS 1.0/1.1 detected\n\n# 5. Failed authentication monitoring\n# Alert on suspicious patterns\n\n# 6. File integrity monitoring (FIM)\n# Monitor web server config files\n\n# 7. Intrusion detection\n# Monitor for attack patterns",
+          "reload": "# Configure monitoring tools\n# Examples: Splunk, DataDog, New Relic, OSSEC",
+          "verify": "# Test alerting\n# Simulate header removal and verify alert"
+        }
+      },
+      "rollbackPlan": "1. Backup all configuration files before changes\n2. Test in staging with payment gateway test mode\n3. If HTTPS breaks application:\n   - Check certificate validity\n   - Verify TLS configuration\n   - Check mixed content issues\n4. If headers break functionality:\n   - CSP: adjust directives gradually\n   - X-Frame-Options: verify no legitimate iframe usage\n5. Keep HTTP->HTTPS redirect functional\n6. Cannot rollback to non-compliance - fix issues forward\n7. Payment processor will terminate if non-compliant",
+      "verificationSteps": [
+        "1. SSL Labs scan (A+ rating required)",
+        "2. Security Headers scan (all PCI headers present)",
+        "3. PCI ASV scan (quarterly by approved vendor)",
+        "4. Penetration test (annually)",
+        "5. Verify HTTPS enforcement",
+        "6. Test secure cookie attributes",
+        "7. Verify TLS 1.2+ only",
+        "8. Test payment flow end-to-end",
+        "9. Review logs for security events",
+        "10. Document for PCI audit"
+      ],
+      "estimatedEffort": "4-6 hours"
+    },
+    "QA_TESTER": {
+      "manualTests": [
+        {
+          "name": "HTTPS Enforcement Test",
+          "steps": [
+            "1. Navigate to http://payment.example.com",
+            "2. Verify automatic redirect to https://",
+            "3. Check URL bar shows padlock icon",
+            "4. Click padlock - verify valid certificate",
+            "5. Test all pages redirect HTTP to HTTPS",
+            "6. Check for mixed content warnings (should be none)",
+            "7. Test payment form over HTTPS",
+            "8. Verify no HTTP requests in Network tab"
+          ],
+          "expected": "All HTTP traffic redirects to HTTPS. Valid certificate. No mixed content. Payment form works over HTTPS."
+        },
+        {
+          "name": "Security Headers Validation",
+          "steps": [
+            "1. Open DevTools Network tab",
+            "2. Navigate to payment page",
+            "3. Check Response Headers for HSTS",
+            "4. Verify max-age=31536000 and includeSubDomains",
+            "5. Check X-Frame-Options: DENY",
+            "6. Check X-Content-Type-Options: nosniff",
+            "7. Check Content-Security-Policy present",
+            "8. Check Referrer-Policy present",
+            "9. Run Security Headers scanner",
+            "10. Document all headers"
+          ],
+          "expected": "All PCI DSS required headers present with correct values. Security Headers scan passes."
+        },
+        {
+          "name": "SSL Labs A+ Rating",
+          "steps": [
+            "1. Go to https://www.ssllabs.com/ssltest/",
+            "2. Enter payment domain",
+            "3. Run scan (takes 2-3 minutes)",
+            "4. Verify overall rating is A+",
+            "5. Check TLS 1.2 and 1.3 enabled",
+            "6. Verify TLS 1.0 and 1.1 disabled",
+            "7. Check cipher suites (strong only)",
+            "8. Verify HSTS preloading enabled",
+            "9. Screenshot results",
+            "10. Document for PCI audit"
+          ],
+          "expected": "SSL Labs rating A+. TLS 1.2+ only. Strong ciphers. HSTS enabled."
+        }
+      ],
+      "automatedTests": {
+        "tool": "Selenium + Security Testing",
+        "example": "// Selenium test for PCI DSS compliance\nimport org.openqa.selenium.WebDriver;\nimport org.openqa.selenium.chrome.ChromeDriver;\nimport org.testng.annotations.Test;\nimport static org.testng.Assert.*;\n\npublic class PciComplianceTest {\n    \n    @Test\n    public void testHttpsEnforcement() {\n        WebDriver driver = new ChromeDriver();\n        \n        // Try HTTP\n        driver.get(\"http://payment.example.com\");\n        \n        // Should redirect to HTTPS\n        String currentUrl = driver.getCurrentUrl();\n        assertTrue(currentUrl.startsWith(\"https://\"),\n            \"Should redirect to HTTPS\");\n        \n        driver.quit();\n    }\n    \n    @Test\n    public void testSecurityHeaders() throws Exception {\n        // Use HttpClient to check headers\n        HttpClient client = HttpClient.newHttpClient();\n        HttpRequest request = HttpRequest.newBuilder()\n            .uri(new URI(\"https://payment.example.com\"))\n            .build();\n        \n        HttpResponse<String> response = client.send(\n            request,\n            HttpResponse.BodyHandlers.ofString()\n        );\n        \n        // Verify HSTS\n        String hsts = response.headers()\n            .firstValue(\"Strict-Transport-Security\")\n            .orElse(\"\");\n        assertTrue(hsts.contains(\"max-age=31536000\"));\n        \n        // Verify X-Frame-Options\n        String xfo = response.headers()\n            .firstValue(\"X-Frame-Options\")\n            .orElse(\"\");\n        assertEquals(\"DENY\", xfo);\n    }\n}"
+      },
+      "verificationSteps": [
+        "1. Test HTTPS enforcement (HTTP redirects)",
+        "2. Verify all security headers present",
+        "3. Run SSL Labs scan (A+ required)",
+        "4. Run Security Headers scan",
+        "5. Test secure cookie attributes",
+        "6. Verify TLS 1.2+ only",
+        "7. Test payment flow end-to-end",
+        "8. Check for mixed content",
+        "9. Run PCI ASV scan (if available)",
+        "10. Document results for audit"
+      ],
+      "estimatedEffort": "4-6 hours"
+    }
+  }
+}

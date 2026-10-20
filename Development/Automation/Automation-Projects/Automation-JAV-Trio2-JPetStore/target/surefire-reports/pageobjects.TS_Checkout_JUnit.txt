@@ -1,0 +1,8 @@
+-------------------------------------------------------------------------------
+Test set: pageobjects.TS_Checkout_JUnit
+-------------------------------------------------------------------------------
+Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 13.21 s <<< FAILURE! -- in pageobjects.TS_Checkout_JUnit
+pageobjects.TS_Checkout_JUnit.tc_JPetStore_Checkout -- Time elapsed: 13.19 s <<< ERROR!
+java.lang.NullPointerException: Cannot invoke "org.openqa.selenium.TakesScreenshot.getScreenshotAs(org.openqa.selenium.OutputType)" because "screenshotTaker" is null
+	at pageobjects.TS_Checkout_JUnit.tc_JPetStore_Checkout(TS_Checkout_JUnit.java:128)
+

@@ -1,0 +1,2 @@
+"Status","Start Time","Stop Time","Duration in ms","Parent Suite","Suite","Sub Suite","Test Class","Test Method","Name","Description"
+"passed","Tue Feb 20 14:42:28 CAT 2024","Tue Feb 20 14:43:05 CAT 2024","37312","","TS_DemoQa_JUnit","","TS_DemoQa_JUnit","tc_Registration","tc_Registration()",""

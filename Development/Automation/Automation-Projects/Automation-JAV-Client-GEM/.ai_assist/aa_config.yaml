@@ -1,0 +1,44 @@
+# Configuration for aa.sh
+menu_items:
+  - key: "1"
+    value: "Capture Context"
+  - key: "2"
+    value: "Exit"
+
+# Common output directory
+common_output_directory: ".ai_assist/output"
+auto_clear_output_on_capture: true
+
+# Configuration for generate_tree.sh
+generate_tree:
+  output_file: "tree.txt"
+  ignore_patterns: "target|extensions|.git|.gitignore|.vscode|.allure|allure-report|allure-results|.sftpignore|.DS_Store|samples|framework"
+  output_locations:
+    - path: "${common_output_directory}/tree"
+      save_timestamped_version: false
+
+# Configuration for generate_paths.sh
+generate_paths:
+  output_file: "paths.txt"
+  ignore_patterns: "target|extensions|.git|.gitignore|.vscode|.allure|allure-report|allure-results|.sftpignore|.DS_Store|samples|framework|.png|.jpg|.afdesign|GeoLite2-ASN.mmdb|GeoLite2-City.mmdb"
+  exclude_directories: true
+  output_locations:
+    - path: "${common_output_directory}/paths"
+      save_timestamped_version: false
+
+# Configuration for generate_context.sh
+generate_context:
+  output_file: "context.txt"
+  maximum_line_length: 7000
+  output_locations:
+    - path: "${common_output_directory}/context"
+      save_timestamped_version: false
+
+# Configuration for generate_diagram_data.sh
+generate_diagram_data:
+  output_file: "diagram.mmd" # .mmd is a common extension for Mermaid files
+  diagram_type: "flowchart" # Default diagram type (e.g., flowchart, graph, classDiagram, sequenceDiagram)
+  ignore_patterns: "target|extensions|.git|.gitignore|.vscode|.allure|allure-report|allure-results|.sftpignore|.DS_Store|samples|framework|.png|.jpg|.afdesign|GeoLite2-ASN.mmdb|GeoLite2-City.mmdb"
+  output_locations:
+    - path: "${common_output_directory}/diagrams"
+      save_timestamped_version: false

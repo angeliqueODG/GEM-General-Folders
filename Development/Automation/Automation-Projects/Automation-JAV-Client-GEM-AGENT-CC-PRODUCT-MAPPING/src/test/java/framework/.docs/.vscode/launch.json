@@ -1,0 +1,25 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Launch Chrome against localhost",
+            "type": "pwa-chrome",
+            "request": "launch",
+            "url": "http://127.0.0.1:5500", // URL used by Live Server
+            "webRoot": "${workspaceFolder}",
+            "sourceMaps": true,
+            "trace": false, // Disable verbose logging
+            "smartStep": true
+        },
+        {
+            "name": "Attach to Chrome",
+            "type": "pwa-chrome",
+            "request": "attach",
+            "port": 9222,
+            "webRoot": "${workspaceFolder}",
+            "sourceMaps": true,
+            "trace": false, // Disable verbose logging
+            "smartStep": true
+        }
+    ]
+}

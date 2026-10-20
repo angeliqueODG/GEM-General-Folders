@@ -1,0 +1,54 @@
+# PATH Modifiers --- Begin ---
+# Conside keep the most used paths at the beginning of the PATH
+
+# Added to the beginning of the PATH
+export PATH="/bin:$PATH"                            # System Essentials
+export PATH="/usr/bin:$PATH"                        # System Essentials
+export PATH="/usr/local/bin:$PATH"                  # System Essentials
+export PATH="/usr/local/libexec:$PATH"              # System Essentials
+export PATH="/usr/local/sbin:$PATH"                 # System Essentials
+export PATH="/sbin:$PATH"                           # System Essentials
+export PATH="/usr/sbin:$PATH"                       # System Essentials
+export PATH="/Library/Apple/usr/bin:$PATH"          # System Essentials
+
+# Appended to the end of the PATH
+export PATH=$PATH:"/usr/local/opt/bash"             # Bash
+export PATH=$PATH:"/usr/local/opt/zsh"              # ZShell
+export PATH=$PATH:"/Applications/Visual Studio Code.app/Contents/Resources/app/bin" # Visual Studio Code
+export PATH=$PATH:"/Applications/VMware Fusion.app/Contents/Public"                 # VMware Fusion
+export PATH=$PATH:"/usr/local/opt/maven"            # Maven
+export PATH=$PATH:"/usr/local/opt/allure"           # Allure
+export PATH=$PATH:"/usr/local/opt/node"             # NodeJS
+export PATH=$PATH:"/usr/local/opt/speedtest-cli"    # Speedtest-cli
+export PATH=$PATH:"$HOME/.local/bin"                # PlatformIO
+
+# PATH Modifiers --- End ---
+
+# Environment Variables
+export PATH_AUTOMATION_PROJECTS="$HOME/GoogleDrive/Documents/Development/Automation/Automation-Projects" # Path to Automation Projects
+
+# ZShell Configuration
+PROMPT='%{$fg_bold[green]%}%p %{$fg[cyan]%}%m %c %{$fg_bold[blue]%}$(git_prompt_info)%{$fg_bold[blue]%} % %{$reset_color%}' # Prompt Configuration
+COMPLETION_WAITING_DOTS="%F{yellow}...%f"   # Dots while waiting for completion
+
+# Oh-My-Zsh Configuration
+export ZSH="$HOME/.oh-my-zsh"               # Path to Oh-My-Zsh
+ZSH_THEME="robbyrussell"                    # Theme for Oh-My-Zsh
+plugins=(git zsh-syntax-highlighting)       # Plugins for Oh-My-Zsh
+source $ZSH/oh-my-zsh.sh                    # Load Oh-My-Zsh
+zstyle ':omz:update' mode reminder          # Reminder when updates are available
+zstyle ':omz:update' frequency 30           # check for updates every 30 days
+
+# Homebrew Configuration
+eval "$(/usr/local/Homebrew/bin/brew shellenv)"
+
+# Java Configuration
+export JAVA_HOME=$(brew --prefix)/opt/openjdk
+export PATH_TO_FX="/Library/Java/JavaVirtualMachines/javafx-sdk-21.0.2/lib"
+
+# Alias Configuration
+alias ap='cd $PATH_AUTOMATION_PROJECTS' # Go to Automation-Projects
+alias autoproj='cd $PATH_AUTOMATION_PROJECTS' # Go to Automation-Projects
+alias at='bash $PATH_AUTOMATION_PROJECTS/Automation-BSH-AutoTools/autotools.sh' # Launch AutoTools
+alias autotools='bash $PATH_AUTOMATION_PROJECTS/Automation-BSH-AutoTools/autotools.sh' # Launch AutoTools
+alias get_idf='. $HOME/esp/esp-idf/export.sh' # Used for ESP-IDF and Microcontroller development

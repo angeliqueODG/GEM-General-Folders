@@ -1,0 +1,259 @@
+{
+  "metadata": {
+    "filename": "csp-missing.json",
+    "filepath": "src/test/resources/framework/advisor/templates/security/csp-missing.json",
+    "version": "1.0.0",
+    "created": "2025-10-08",
+    "lastUpdated": "2025-10-08",
+    "author": "Greg Paskal",
+    "company": "MissionWares",
+    "methodology": "mAi™ (MissionWares® + AI)",
+    "description": "Content Security Policy (CSP) header missing finding template with comprehensive guidance for all audiences including framework-specific implementation code, testing strategies, and infrastructure deployment procedures for XSS prevention.",
+    "aiGenerated": true,
+    "humanReviewed": false,
+    "reviewedBy": "Pending",
+    "approvedBy": "Pending",
+    "tags": ["csp", "content-security-policy", "xss", "security", "headers", "injection", "web-security"],
+    "relatedFindings": ["XSS_VULNERABILITY", "UNSAFE_INLINE", "UNSAFE_EVAL", "MISSING_X_FRAME_OPTIONS", "CORS_MISCONFIGURATION"],
+    "estimatedRemediationTime": "2-4 hours",
+    "businessImpact": "HIGH",
+    "complianceRequirements": ["OWASP Top 10 A03:2021", "PCI-DSS 6.5.7", "NIST 800-53", "ISO 27001"]
+  },
+  "findingId": "SEC-CSP-001",
+  "findingType": "CSP_HEADER_MISSING",
+  "category": "SECURITY",
+  "severity": "HIGH",
+  "cveReferences": [
+    "CWE-79",
+    "CWE-1021"
+  ],
+  "understanding": {
+    "EXECUTIVE": {
+      "summary": "Your website lacks Content Security Policy (CSP) headers, leaving it vulnerable to cross-site scripting (XSS) attacks that can steal customer data, inject malicious content, and damage brand reputation.",
+      "businessRisk": "High risk of data breach through XSS attacks. Attackers can steal customer credentials, payment information, and session tokens. Average XSS breach costs $4.24M (IBM 2023). Brand damage from defaced pages or injected malicious content. Customer trust erosion. Potential liability for compromised customer data.",
+      "complianceImpact": "OWASP Top 10 A03:2021 (Injection) non-compliance. PCI-DSS Requirement 6.5.7 violation (Cross-site scripting prevention). May trigger security audit findings and require immediate remediation for compliance certification.",
+      "priority": "HIGH"
+    },
+    "PROJECT_MANAGER": {
+      "summary": "Missing Content Security Policy (CSP) headers expose application to XSS attacks. Need to implement CSP headers to meet security baseline requirements.",
+      "timeline": "Should be addressed in current sprint. Implementation takes 2-4 hours plus testing. Critical for security certification and compliance audits. Medium priority unless active XSS vulnerabilities detected (then escalate to critical).",
+      "effort": "2-4 hours for initial CSP implementation. Additional 2-3 hours for testing and refinement based on content violations. Ongoing maintenance as application evolves.",
+      "dependencies": [
+        "Development team availability",
+        "Access to application server configuration",
+        "QA testing resources",
+        "Staging environment for testing",
+        "Browser compatibility testing tools"
+      ],
+      "blocking": [
+        "Security compliance certification",
+        "SOC 2 audit completion",
+        "PCI-DSS compliance validation",
+        "Penetration testing sign-off",
+        "Production deployment approval"
+      ]
+    },
+    "DEVELOPER": {
+      "summary": "Content-Security-Policy HTTP response header is not present, allowing unrestricted JavaScript execution and inline scripts from any source.",
+      "technical": "CSP is a W3C security standard that restricts resource loading and JavaScript execution to prevent XSS attacks. Without CSP, browsers will execute any JavaScript found on the page, including attacker-injected scripts via XSS vulnerabilities. CSP works as defense-in-depth - even if an XSS vulnerability exists, CSP can prevent the injected script from executing. Modern browsers (Chrome 25+, Firefox 23+, Safari 7+) fully support CSP Level 2. The policy is defined via the Content-Security-Policy header with directives like default-src, script-src, style-src, img-src, etc. Start with a restrictive policy and use report-only mode to identify violations before enforcement.",
+      "vulnerability": "CWE-79 (Cross-site Scripting) - Without CSP, XSS attacks can: execute arbitrary JavaScript, steal authentication cookies/tokens, deface pages, redirect users to phishing sites, install keyloggers, exfiltrate sensitive data, perform actions as the authenticated user. CSP mitigates these risks by whitelisting allowed sources and blocking inline scripts.",
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP",
+        "https://content-security-policy.com/",
+        "https://csp-evaluator.withgoogle.com/",
+        "https://www.w3.org/TR/CSP3/"
+      ]
+    },
+    "SECURITY_ENGINEER": {
+      "summary": "Missing Content Security Policy enables unrestricted JavaScript execution, creating high-severity XSS attack surface across entire application.",
+      "vulnerability": "CWE-79 (Improper Neutralization of Input) and CWE-1021 (Improper Restriction of Rendered UI Layers). Absence of CSP eliminates critical defense-in-depth layer against XSS. Even with input sanitization, CSP provides additional protection against XSS exploitation. OWASP Top 10 A03:2021 Injection category.",
+      "attackVector": "Attacker exploits any XSS vulnerability (reflected, stored, DOM-based) to inject malicious JavaScript. Without CSP, browser executes injected code with full application privileges. Attack scenarios: session hijacking via document.cookie, credential theft through keylogging, Bitcoin mining scripts, cryptojacking, phishing overlays, ransomware deployment, botnet recruitment. XSS can bypass CORS, same-origin policy via exploited context.",
+      "threatLevel": "HIGH - XSS remains prevalent (detected in 40% of web applications, HackerOne 2023). CSP reduces XSS impact by 95% when properly implemented. Missing CSP increases dwell time for attackers post-XSS exploitation. Combined with other missing headers (X-Frame-Options, X-Content-Type-Options), creates compounding vulnerability.",
+      "mitigationUrgency": "Implement within current sprint (1-2 weeks). Start with report-only mode to identify violations, then enforce. Critical if active XSS vulnerabilities exist - escalate to immediate remediation. Deploy alongside input validation, output encoding, and secure coding practices."
+    },
+    "OPS_INFRASTRUCTURE": {
+      "summary": "Web servers not configured to send Content-Security-Policy headers, requiring server-side configuration updates across all environments.",
+      "technical": "CSP headers must be added to HTTP responses at web server or application layer. Typically configured in Nginx, Apache, load balancers, or application middleware. Header syntax: Content-Security-Policy: policy-directives. Common starting policy: default-src 'self'; script-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'. Use Content-Security-Policy-Report-Only for testing without enforcement.",
+      "scope": "All web servers serving application traffic: production web servers, load balancers, CDN origin shields, API gateways, reverse proxies. Must be consistent across all environments (dev, staging, production). Affects all HTTP responses. Consider multiple domains/subdomains if using shared policy.",
+      "monitoring": "Set up CSP violation reporting endpoint. Monitor report-uri or report-to directive for policy violations. Track violation patterns to refine policy. Alert on unexpected violation spikes (may indicate XSS attempts). Use browser DevTools and CSP Evaluator for testing. Monitor for application breakage after CSP deployment."
+    },
+    "QA_TESTER": {
+      "summary": "Missing CSP headers prevent security testing validation and block verification that application properly restricts resource loading and script execution.",
+      "testImplication": "Cannot validate XSS prevention controls. Security testing tools (Burp Suite, OWASP ZAP) flag missing CSP as high-severity finding. Cannot verify defense-in-depth security posture. After CSP implementation, must test extensively for functionality breakage (blocked resources, inline scripts, eval() usage, third-party widgets).",
+      "riskIfNotFixed": "Security audit failure. Penetration test findings. SOC 2 / PCI-DSS compliance gaps. Actual XSS exploitation in production. Customer data compromise. Regulatory penalties. Increased testing burden to manually verify XSS protection across all features."
+    }
+  },
+  "actions": {
+    "DEVELOPER": {
+      "frameworks": {
+        "spring-boot": {
+          "code": "// Spring Boot - Add CSP headers via Security Configuration\n// SecurityConfig.java\n\nimport org.springframework.context.annotation.Bean;\nimport org.springframework.context.annotation.Configuration;\nimport org.springframework.security.config.annotation.web.builders.HttpSecurity;\nimport org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;\nimport org.springframework.security.web.SecurityFilterChain;\nimport org.springframework.security.web.header.writers.ContentSecurityPolicyHeaderWriter;\n\n@Configuration\n@EnableWebSecurity\npublic class SecurityConfig {\n\n    @Bean\n    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {\n        http\n            .headers(headers -> headers\n                .contentSecurityPolicy(csp -> csp\n                    .policyDirectives(\n                        \"default-src 'self'; \" +\n                        \"script-src 'self' 'nonce-{random}'; \" +\n                        \"style-src 'self' 'unsafe-inline'; \" +\n                        \"img-src 'self' data: https:; \" +\n                        \"font-src 'self' data:; \" +\n                        \"connect-src 'self'; \" +\n                        \"frame-ancestors 'none'; \" +\n                        \"base-uri 'self'; \" +\n                        \"form-action 'self'; \" +\n                        \"object-src 'none'\"\n                    )\n                )\n                // Report-Only mode for testing\n                // .contentSecurityPolicy(csp -> csp\n                //     .reportOnly()\n                //     .policyDirectives(\"...\")\n                // )\n            )\n            .authorizeHttpRequests(auth -> auth\n                .anyRequest().permitAll()\n            );\n        \n        return http.build();\n    }\n}\n\n// Alternative: Add CSP via Filter for more control\nimport javax.servlet.*;\nimport javax.servlet.http.HttpServletResponse;\nimport java.io.IOException;\n\n@Component\npublic class CspHeaderFilter implements Filter {\n    \n    @Override\n    public void doFilter(ServletRequest request, ServletResponse response, \n                        FilterChain chain) throws IOException, ServletException {\n        HttpServletResponse httpResponse = (HttpServletResponse) response;\n        \n        // Generate nonce for script-src\n        String nonce = generateNonce();\n        request.setAttribute(\"cspNonce\", nonce);\n        \n        String cspPolicy = String.format(\n            \"default-src 'self'; script-src 'self' 'nonce-%s'; \" +\n            \"style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; \" +\n            \"font-src 'self' data:; connect-src 'self'; \" +\n            \"frame-ancestors 'none'; base-uri 'self'; \" +\n            \"form-action 'self'; object-src 'none'\",\n            nonce\n        );\n        \n        httpResponse.setHeader(\"Content-Security-Policy\", cspPolicy);\n        \n        chain.doFilter(request, response);\n    }\n    \n    private String generateNonce() {\n        byte[] nonceBytes = new byte[16];\n        new SecureRandom().nextBytes(nonceBytes);\n        return Base64.getEncoder().encodeToString(nonceBytes);\n    }\n}",
+          "testCode": "// JUnit test to verify CSP header is present\nimport org.junit.jupiter.api.Test;\nimport org.springframework.beans.factory.annotation.Autowired;\nimport org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;\nimport org.springframework.boot.test.context.SpringBootTest;\nimport org.springframework.test.web.servlet.MockMvc;\n\nimport static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;\nimport static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;\n\n@SpringBootTest\n@AutoConfigureMockMvc\npublic class CspHeaderTest {\n\n    @Autowired\n    private MockMvc mockMvc;\n\n    @Test\n    public void shouldHaveCspHeader() throws Exception {\n        mockMvc.perform(get(\"/\"))\n            .andExpect(status().isOk())\n            .andExpect(header().exists(\"Content-Security-Policy\"))\n            .andExpect(header().string(\"Content-Security-Policy\", \n                containsString(\"default-src 'self'\")));\n    }\n    \n    @Test\n    public void cspShouldBlockInlineScripts() throws Exception {\n        String cspHeader = mockMvc.perform(get(\"/\"))\n            .andReturn()\n            .getResponse()\n            .getHeader(\"Content-Security-Policy\");\n        \n        assertNotNull(cspHeader);\n        assertFalse(cspHeader.contains(\"'unsafe-inline'\"), \n            \"CSP should not allow unsafe-inline for scripts\");\n    }\n    \n    @Test\n    public void cspShouldBlockEval() throws Exception {\n        String cspHeader = mockMvc.perform(get(\"/\"))\n            .andReturn()\n            .getResponse()\n            .getHeader(\"Content-Security-Policy\");\n        \n        assertNotNull(cspHeader);\n        assertFalse(cspHeader.contains(\"'unsafe-eval'\"), \n            \"CSP should not allow unsafe-eval\");\n    }\n}",
+          "dependencies": "<!-- Maven dependencies -->\n<dependency>\n    <groupId>org.springframework.boot</groupId>\n    <artifactId>spring-boot-starter-security</artifactId>\n</dependency>\n<dependency>\n    <groupId>org.springframework.boot</groupId>\n    <artifactId>spring-boot-starter-web</artifactId>\n</dependency>",
+          "packageInstall": "mvn clean install"
+        },
+        "express-nodejs": {
+          "code": "// Express.js - Add CSP headers via helmet middleware\nconst express = require('express');\nconst helmet = require('helmet');\nconst crypto = require('crypto');\n\nconst app = express();\n\n// Method 1: Use helmet for CSP (recommended)\napp.use(\n  helmet.contentSecurityPolicy({\n    directives: {\n      defaultSrc: [\"'self'\"],\n      scriptSrc: [\"'self'\", (req, res) => `'nonce-${res.locals.cspNonce}'`],\n      styleSrc: [\"'self'\", \"'unsafe-inline'\"],\n      imgSrc: [\"'self'\", \"data:\", \"https:\"],\n      fontSrc: [\"'self'\", \"data:\"],\n      connectSrc: [\"'self'\"],\n      frameAncestors: [\"'none'\"],\n      baseUri: [\"'self'\"],\n      formAction: [\"'self'\"],\n      objectSrc: [\"'none'\"],\n    },\n    // Use report-only mode for testing\n    // reportOnly: true,\n  })\n);\n\n// Generate nonce for each request\napp.use((req, res, next) => {\n  res.locals.cspNonce = crypto.randomBytes(16).toString('base64');\n  next();\n});\n\n// Method 2: Manual CSP header (if not using helmet)\napp.use((req, res, next) => {\n  const nonce = crypto.randomBytes(16).toString('base64');\n  res.locals.cspNonce = nonce;\n  \n  const cspPolicy = [\n    \"default-src 'self'\",\n    `script-src 'self' 'nonce-${nonce}'`,\n    \"style-src 'self' 'unsafe-inline'\",\n    \"img-src 'self' data: https:\",\n    \"font-src 'self' data:\",\n    \"connect-src 'self'\",\n    \"frame-ancestors 'none'\",\n    \"base-uri 'self'\",\n    \"form-action 'self'\",\n    \"object-src 'none'\",\n  ].join('; ');\n  \n  res.setHeader('Content-Security-Policy', cspPolicy);\n  next();\n});\n\n// In your views (EJS example):\n// <script nonce=\"<%= cspNonce %>\">...</script>\n\napp.get('/', (req, res) => {\n  res.send(`\n    <!DOCTYPE html>\n    <html>\n      <head>\n        <title>CSP Protected</title>\n      </head>\n      <body>\n        <h1>Content Security Policy Enabled</h1>\n        <script nonce=\"${res.locals.cspNonce}\">\n          console.log('This script is allowed by CSP nonce');\n        </script>\n      </body>\n    </html>\n  `);\n});\n\napp.listen(3000);",
+          "testCode": "// Mocha/Chai test for CSP header\nconst request = require('supertest');\nconst { expect } = require('chai');\nconst app = require('../app');\n\ndescribe('CSP Header Tests', () => {\n  it('should have Content-Security-Policy header', (done) => {\n    request(app)\n      .get('/')\n      .expect(200)\n      .expect('Content-Security-Policy', /default-src 'self'/)\n      .end(done);\n  });\n  \n  it('should not allow unsafe-inline for scripts', (done) => {\n    request(app)\n      .get('/')\n      .end((err, res) => {\n        if (err) return done(err);\n        \n        const csp = res.headers['content-security-policy'];\n        expect(csp).to.exist;\n        \n        // Parse script-src directive\n        const scriptSrcMatch = csp.match(/script-src ([^;]+)/);\n        expect(scriptSrcMatch).to.exist;\n        \n        const scriptSrc = scriptSrcMatch[1];\n        expect(scriptSrc).to.not.include(\"'unsafe-inline'\");\n        \n        done();\n      });\n  });\n  \n  it('should include nonce for script-src', (done) => {\n    request(app)\n      .get('/')\n      .end((err, res) => {\n        if (err) return done(err);\n        \n        const csp = res.headers['content-security-policy'];\n        expect(csp).to.match(/'nonce-[A-Za-z0-9+/=]+'/); \n        \n        done();\n      });\n  });\n  \n  it('should block object-src', (done) => {\n    request(app)\n      .get('/')\n      .end((err, res) => {\n        if (err) return done(err);\n        \n        const csp = res.headers['content-security-policy'];\n        expect(csp).to.include(\"object-src 'none'\");\n        \n        done();\n      });\n  });\n});",
+          "dependencies": "npm install express helmet",
+          "packageInstall": "npm install"
+        },
+        "asp-net-core": {
+          "code": "// ASP.NET Core - Add CSP headers via middleware\n// Program.cs or Startup.cs\n\nusing Microsoft.AspNetCore.Builder;\nusing Microsoft.Extensions.DependencyInjection;\nusing System.Security.Cryptography;\n\nvar builder = WebApplication.CreateBuilder(args);\n\n// Add services\nbuilder.Services.AddControllersWithViews();\nbuilder.Services.AddHttpContextAccessor();\n\nvar app = builder.Build();\n\n// CSP Middleware\napp.Use(async (context, next) =>\n{\n    // Generate nonce\n    var nonceBytes = new byte[16];\n    using (var rng = RandomNumberGenerator.Create())\n    {\n        rng.GetBytes(nonceBytes);\n    }\n    var nonce = Convert.ToBase64String(nonceBytes);\n    \n    // Store nonce in HttpContext for use in views\n    context.Items[\"csp-nonce\"] = nonce;\n    \n    // Build CSP policy\n    var cspPolicy = string.Join(\"; \", new[]\n    {\n        \"default-src 'self'\",\n        $\"script-src 'self' 'nonce-{nonce}'\",\n        \"style-src 'self' 'unsafe-inline'\",\n        \"img-src 'self' data: https:\",\n        \"font-src 'self' data:\",\n        \"connect-src 'self'\",\n        \"frame-ancestors 'none'\",\n        \"base-uri 'self'\",\n        \"form-action 'self'\",\n        \"object-src 'none'\"\n    });\n    \n    context.Response.Headers.Add(\"Content-Security-Policy\", cspPolicy);\n    \n    await next();\n});\n\napp.UseRouting();\napp.UseAuthorization();\n\napp.MapControllerRoute(\n    name: \"default\",\n    pattern: \"{controller=Home}/{action=Index}/{id?}\");\n\napp.Run();\n\n// Alternative: Create reusable middleware class\npublic class CspMiddleware\n{\n    private readonly RequestDelegate _next;\n    \n    public CspMiddleware(RequestDelegate next)\n    {\n        _next = next;\n    }\n    \n    public async Task InvokeAsync(HttpContext context)\n    {\n        var nonce = GenerateNonce();\n        context.Items[\"csp-nonce\"] = nonce;\n        \n        var cspPolicy = BuildCspPolicy(nonce);\n        context.Response.Headers.Add(\"Content-Security-Policy\", cspPolicy);\n        \n        await _next(context);\n    }\n    \n    private string GenerateNonce()\n    {\n        var bytes = new byte[16];\n        using var rng = RandomNumberGenerator.Create();\n        rng.GetBytes(bytes);\n        return Convert.ToBase64String(bytes);\n    }\n    \n    private string BuildCspPolicy(string nonce)\n    {\n        return string.Join(\"; \", new[]\n        {\n            \"default-src 'self'\",\n            $\"script-src 'self' 'nonce-{nonce}'\",\n            \"style-src 'self' 'unsafe-inline'\",\n            \"img-src 'self' data: https:\",\n            \"font-src 'self' data:\",\n            \"connect-src 'self'\",\n            \"frame-ancestors 'none'\",\n            \"base-uri 'self'\",\n            \"form-action 'self'\",\n            \"object-src 'none'\"\n        });\n    }\n}\n\n// In Razor views:\n// @{\n//     var nonce = Context.Items[\"csp-nonce\"] as string;\n// }\n// <script nonce=\"@nonce\">...</script>",
+          "testCode": "// xUnit test for CSP header\nusing Xunit;\nusing Microsoft.AspNetCore.Mvc.Testing;\nusing System.Net.Http;\nusing System.Threading.Tasks;\nusing System.Linq;\n\npublic class CspHeaderTests : IClassFixture<WebApplicationFactory<Program>>\n{\n    private readonly HttpClient _client;\n    \n    public CspHeaderTests(WebApplicationFactory<Program> factory)\n    {\n        _client = factory.CreateClient();\n    }\n    \n    [Fact]\n    public async Task Should_Have_Csp_Header()\n    {\n        var response = await _client.GetAsync(\"/\");\n        \n        Assert.True(response.Headers.Contains(\"Content-Security-Policy\"),\n            \"Response should contain Content-Security-Policy header\");\n    }\n    \n    [Fact]\n    public async Task Csp_Should_Include_Default_Src_Self()\n    {\n        var response = await _client.GetAsync(\"/\");\n        var cspHeader = response.Headers.GetValues(\"Content-Security-Policy\").First();\n        \n        Assert.Contains(\"default-src 'self'\", cspHeader);\n    }\n    \n    [Fact]\n    public async Task Csp_Should_Not_Allow_Unsafe_Inline_Scripts()\n    {\n        var response = await _client.GetAsync(\"/\");\n        var cspHeader = response.Headers.GetValues(\"Content-Security-Policy\").First();\n        \n        // Extract script-src directive\n        var scriptSrc = ExtractDirective(cspHeader, \"script-src\");\n        \n        Assert.DoesNotContain(\"'unsafe-inline'\", scriptSrc);\n    }\n    \n    [Fact]\n    public async Task Csp_Should_Include_Nonce_For_Scripts()\n    {\n        var response = await _client.GetAsync(\"/\");\n        var cspHeader = response.Headers.GetValues(\"Content-Security-Policy\").First();\n        \n        Assert.Matches(@\"'nonce-[A-Za-z0-9+/=]+'\", cspHeader);\n    }\n    \n    private string ExtractDirective(string csp, string directive)\n    {\n        var directives = csp.Split(';');\n        var target = directives.FirstOrDefault(d => d.Trim().StartsWith(directive));\n        return target?.Trim() ?? string.Empty;\n    }\n}",
+          "dependencies": "<PackageReference Include=\"Microsoft.AspNetCore.App\" />\n<PackageReference Include=\"xunit\" Version=\"2.5.0\" />\n<PackageReference Include=\"Microsoft.AspNetCore.Mvc.Testing\" Version=\"8.0.0\" />",
+          "packageInstall": "dotnet restore"
+        },
+        "django-python": {
+          "code": "# Django - Add CSP headers via django-csp middleware\n# settings.py\n\n# Install django-csp: pip install django-csp\n\nINSTALLED_APPS = [\n    # ... other apps\n    'csp',\n]\n\nMIDDLEWARE = [\n    # ... other middleware\n    'csp.middleware.CSPMiddleware',\n]\n\n# CSP Configuration\nCSP_DEFAULT_SRC = (\"'self'\",)\nCSP_SCRIPT_SRC = (\"'self'\", \"'nonce-{nonce}'\")  # Nonce will be auto-generated\nCSP_STYLE_SRC = (\"'self'\", \"'unsafe-inline'\")  # Consider using nonce for styles too\nCSP_IMG_SRC = (\"'self'\", \"data:\", \"https:\")\nCSP_FONT_SRC = (\"'self'\", \"data:\")\nCSP_CONNECT_SRC = (\"'self'\",)\nCSP_FRAME_ANCESTORS = (\"'none'\",)\nCSP_BASE_URI = (\"'self'\",)\nCSP_FORM_ACTION = (\"'self'\",)\nCSP_OBJECT_SRC = (\"'none'\",)\n\n# Use report-only mode for testing\n# CSP_REPORT_ONLY = True\n\n# CSP violation reporting endpoint\n# CSP_REPORT_URI = '/csp-violation-report/'\n\n# Alternative: Manual middleware if not using django-csp\n# middleware.py\nimport secrets\nimport base64\n\nclass CspMiddleware:\n    def __init__(self, get_response):\n        self.get_response = get_response\n    \n    def __call__(self, request):\n        # Generate nonce\n        nonce = base64.b64encode(secrets.token_bytes(16)).decode('utf-8')\n        request.csp_nonce = nonce\n        \n        response = self.get_response(request)\n        \n        # Build CSP policy\n        csp_policy = '; '.join([\n            \"default-src 'self'\",\n            f\"script-src 'self' 'nonce-{nonce}'\",\n            \"style-src 'self' 'unsafe-inline'\",\n            \"img-src 'self' data: https:\",\n            \"font-src 'self' data:\",\n            \"connect-src 'self'\",\n            \"frame-ancestors 'none'\",\n            \"base-uri 'self'\",\n            \"form-action 'self'\",\n            \"object-src 'none'\",\n        ])\n        \n        response['Content-Security-Policy'] = csp_policy\n        \n        return response\n\n# In templates:\n# {% load csp %}\n# <script {% csp_nonce %}>\n#   console.log('This script is allowed');\n# </script>\n\n# Or manually:\n# <script nonce=\"{{ request.csp_nonce }}\">\n#   console.log('This script is allowed');\n# </script>",
+          "testCode": "# pytest test for CSP header\nimport pytest\nfrom django.test import Client\nfrom django.urls import reverse\n\n@pytest.fixture\ndef client():\n    return Client()\n\n@pytest.mark.django_db\ndef test_csp_header_present(client):\n    \"\"\"Test that CSP header is present in response\"\"\"\n    response = client.get('/')\n    \n    assert 'Content-Security-Policy' in response.headers, \\\n        \"Response should contain CSP header\"\n\n@pytest.mark.django_db\ndef test_csp_default_src_self(client):\n    \"\"\"Test that CSP includes default-src 'self'\"\"\"\n    response = client.get('/')\n    csp = response.headers.get('Content-Security-Policy', '')\n    \n    assert \"default-src 'self'\" in csp, \\\n        \"CSP should include default-src 'self'\"\n\n@pytest.mark.django_db\ndef test_csp_no_unsafe_inline_scripts(client):\n    \"\"\"Test that CSP doesn't allow unsafe-inline for scripts\"\"\"\n    response = client.get('/')\n    csp = response.headers.get('Content-Security-Policy', '')\n    \n    # Extract script-src directive\n    directives = csp.split(';')\n    script_src = next((d for d in directives if 'script-src' in d), '')\n    \n    assert \"'unsafe-inline'\" not in script_src, \\\n        \"CSP should not allow unsafe-inline for scripts\"\n\n@pytest.mark.django_db\ndef test_csp_includes_nonce(client):\n    \"\"\"Test that CSP includes nonce for scripts\"\"\"\n    response = client.get('/')\n    csp = response.headers.get('Content-Security-Policy', '')\n    \n    import re\n    nonce_pattern = r\"'nonce-[A-Za-z0-9+/=]+'\"\n    \n    assert re.search(nonce_pattern, csp), \\\n        \"CSP should include nonce for script-src\"\n\n@pytest.mark.django_db\ndef test_csp_blocks_object_src(client):\n    \"\"\"Test that CSP blocks object-src\"\"\"\n    response = client.get('/')\n    csp = response.headers.get('Content-Security-Policy', '')\n    \n    assert \"object-src 'none'\" in csp, \\\n        \"CSP should block object-src\"",
+          "dependencies": "pip install django django-csp pytest pytest-django",
+          "packageInstall": "pip install -r requirements.txt"
+        },
+        "generic": {
+          "code": "# Generic CSP Implementation Guidelines\n\n## Step 1: Choose Implementation Level\n\n### Application Level (Recommended)\n- Implemented in application code\n- Allows dynamic nonce generation\n- Framework-specific (see above)\n\n### Web Server Level\n- Nginx, Apache, IIS configuration\n- Static policy (no nonces)\n- Good for simple policies\n\n## Step 2: Start with Report-Only Mode\n\nContent-Security-Policy-Report-Only: default-src 'self'; \n  script-src 'self'; \n  report-uri /csp-violation-report\n\n## Step 3: Build Your Policy\n\n### Minimal Restrictive Policy:\nContent-Security-Policy: \n  default-src 'self';\n  script-src 'self';\n  style-src 'self';\n  img-src 'self' data:;\n  font-src 'self';\n  connect-src 'self';\n  frame-ancestors 'none';\n  base-uri 'self';\n  form-action 'self';\n  object-src 'none'\n\n### With Nonces (Dynamic):\nContent-Security-Policy: \n  default-src 'self';\n  script-src 'self' 'nonce-{RANDOM_NONCE}';\n  style-src 'self' 'nonce-{RANDOM_NONCE}';\n  ...\n\n### With Hashes (Static Inline Scripts):\nContent-Security-Policy:\n  script-src 'self' 'sha256-{HASH_OF_SCRIPT}'\n\n## Step 4: Common Directives\n\n- default-src: Fallback for unspecified directives\n- script-src: JavaScript sources\n- style-src: CSS sources\n- img-src: Image sources\n- font-src: Font sources\n- connect-src: XMLHttpRequest, WebSocket, EventSource\n- frame-ancestors: Who can embed this page\n- base-uri: Restricts <base> tag\n- form-action: Where forms can submit\n- object-src: <object>, <embed>, <applet> sources\n\n## Step 5: Test and Refine\n\n1. Deploy in report-only mode\n2. Monitor violation reports\n3. Identify legitimate violations\n4. Adjust policy\n5. Switch to enforcement mode\n6. Continue monitoring",
+          "testCode": "# Generic CSP Testing\n\n## Browser DevTools Testing\n\n1. Open browser DevTools (F12)\n2. Go to Console tab\n3. Navigate to your site\n4. Look for CSP violation messages\n5. Example: \"Refused to execute inline script because it violates CSP\"\n\n## Command-Line Testing\n\n# Check if CSP header is present\ncurl -I https://your-domain.com | grep -i content-security-policy\n\n# View full CSP policy\ncurl -s -I https://your-domain.com | grep -i \"^content-security-policy:\"\n\n# Test with verbose output\ncurl -v https://your-domain.com 2>&1 | grep -i content-security-policy\n\n## Online Testing Tools\n\n1. CSP Evaluator: https://csp-evaluator.withgoogle.com/\n   - Paste your CSP policy\n   - Get security analysis\n\n2. Mozilla Observatory: https://observatory.mozilla.org/\n   - Enter your domain\n   - Get comprehensive security report\n\n3. Security Headers: https://securityheaders.com/\n   - Scan your site\n   - View all security headers\n\n## Automated Testing\n\n# Using curl and grep\nif curl -sI https://your-domain.com | grep -q \"Content-Security-Policy\"; then\n  echo \"✅ CSP header present\"\nelse\n  echo \"❌ CSP header missing\"\nfi\n\n# Using Python\nimport requests\n\nresponse = requests.get('https://your-domain.com')\nif 'Content-Security-Policy' in response.headers:\n    print(f\"✅ CSP: {response.headers['Content-Security-Policy']}\")\nelse:\n    print(\"❌ CSP header missing\")",
+          "dependencies": "curl, browser with DevTools, optional: Python requests library",
+          "packageInstall": "# Usually pre-installed"
+        }
+      },
+      "verificationSteps": [
+        "Deploy CSP in report-only mode first: Content-Security-Policy-Report-Only",
+        "Set up violation reporting endpoint to collect CSP violations",
+        "Monitor violations for 24-48 hours in production-like environment",
+        "Analyze violation reports to identify legitimate resource loading",
+        "Refine CSP policy to allow legitimate sources while blocking unsafe practices",
+        "Test all application features: login, forms, AJAX, third-party widgets",
+        "Switch to enforcement mode: Content-Security-Policy (remove -Report-Only)",
+        "Monitor browser console for CSP violation errors",
+        "Test with CSP Evaluator (https://csp-evaluator.withgoogle.com/)",
+        "Verify no inline scripts without nonces, no 'unsafe-inline', no 'unsafe-eval'",
+        "Test across multiple browsers (Chrome, Firefox, Safari, Edge)",
+        "Run security scan (Observatory, SecurityHeaders.com) and verify CSP grade"
+      ],
+      "estimatedEffort": "3-4 hours"
+    },
+    "OPS_INFRASTRUCTURE": {
+      "servers": {
+        "nginx": {
+          "config": "# Nginx - Add CSP header configuration\n# /etc/nginx/sites-available/your-site or /etc/nginx/nginx.conf\n\nserver {\n    listen 443 ssl http2;\n    listen [::]:443 ssl http2;\n    server_name your-domain.com;\n    \n    # Basic CSP policy (static, no nonces)\n    add_header Content-Security-Policy \n        \"default-src 'self'; \n        script-src 'self'; \n        style-src 'self' 'unsafe-inline'; \n        img-src 'self' data: https:; \n        font-src 'self' data:; \n        connect-src 'self'; \n        frame-ancestors 'none'; \n        base-uri 'self'; \n        form-action 'self'; \n        object-src 'none'\" always;\n    \n    # Report-Only mode for testing\n    # add_header Content-Security-Policy-Report-Only \n    #     \"default-src 'self'; ...\" always;\n    \n    # Other security headers (recommended)\n    add_header X-Frame-Options \"DENY\" always;\n    add_header X-Content-Type-Options \"nosniff\" always;\n    add_header X-XSS-Protection \"1; mode=block\" always;\n    add_header Referrer-Policy \"strict-origin-when-cross-origin\" always;\n    \n    location / {\n        # Your application config\n        proxy_pass http://backend;\n        \n        # Preserve headers\n        proxy_set_header Host $host;\n        proxy_set_header X-Real-IP $remote_addr;\n    }\n}\n\n# Note: For dynamic nonces, implement CSP at application level",
+          "reload": "# Test Nginx configuration\nsudo nginx -t\n\n# If test passes, reload Nginx (graceful, no downtime)\nsudo nginx -s reload\n\n# Or restart if needed\nsudo systemctl restart nginx\n\n# Verify Nginx is running\nsudo systemctl status nginx\n\n# Check Nginx error logs if issues\nsudo tail -f /var/log/nginx/error.log",
+          "verify": "# Verify CSP header is being sent\ncurl -I https://your-domain.com | grep -i content-security-policy\n\n# View full response headers\ncurl -I https://your-domain.com\n\n# Test from different domain (CORS)\ncurl -H \"Origin: https://other-domain.com\" -I https://your-domain.com\n\n# Verify in Nginx config\nsudo nginx -T | grep -A 10 \"add_header Content-Security-Policy\"\n\n# Check specific page\ncurl -I https://your-domain.com/specific-page"
+        },
+        "apache": {
+          "config": "# Apache - Add CSP header configuration\n# /etc/apache2/sites-available/your-site.conf or .htaccess\n\n<VirtualHost *:443>\n    ServerName your-domain.com\n    \n    # Enable mod_headers if not already enabled\n    # a2enmod headers\n    \n    # Basic CSP policy\n    Header always set Content-Security-Policy \"\\\n        default-src 'self'; \\\n        script-src 'self'; \\\n        style-src 'self' 'unsafe-inline'; \\\n        img-src 'self' data: https:; \\\n        font-src 'self' data:; \\\n        connect-src 'self'; \\\n        frame-ancestors 'none'; \\\n        base-uri 'self'; \\\n        form-action 'self'; \\\n        object-src 'none'\"\n    \n    # Report-Only mode for testing\n    # Header always set Content-Security-Policy-Report-Only \"...\"\n    \n    # Other security headers\n    Header always set X-Frame-Options \"DENY\"\n    Header always set X-Content-Type-Options \"nosniff\"\n    Header always set X-XSS-Protection \"1; mode=block\"\n    Header always set Referrer-Policy \"strict-origin-when-cross-origin\"\n    \n    # Rest of your VirtualHost config\n    DocumentRoot /var/www/html\n    \n    <Directory /var/www/html>\n        Options -Indexes +FollowSymLinks\n        AllowOverride All\n        Require all granted\n    </Directory>\n</VirtualHost>\n\n# Alternative: .htaccess file\n# <IfModule mod_headers.c>\n#   Header always set Content-Security-Policy \"default-src 'self'; ...\"\n# </IfModule>",
+          "reload": "# Enable headers module if needed\nsudo a2enmod headers\n\n# Test Apache configuration\nsudo apachectl configtest\n# or\nsudo apache2ctl configtest\n\n# If test passes, reload Apache (graceful)\nsudo systemctl reload apache2\n# or\nsudo systemctl reload httpd\n\n# Or restart if needed\nsudo systemctl restart apache2\n\n# Verify Apache is running\nsudo systemctl status apache2\n\n# Check Apache error logs\nsudo tail -f /var/log/apache2/error.log",
+          "verify": "# Verify CSP header\ncurl -I https://your-domain.com | grep -i content-security-policy\n\n# View all response headers\ncurl -I https://your-domain.com\n\n# Check Apache configuration\nsudo apachectl -S | grep -i your-domain\n\n# Verify headers module is loaded\napachectl -M | grep headers\n\n# Test specific virtual host\ncurl -H \"Host: your-domain.com\" -I http://localhost"
+        },
+        "aws-alb": {
+          "config": "# AWS Application Load Balancer - Add CSP via custom response header\n# Note: ALB cannot dynamically generate nonces, so implement CSP at application level for nonces\n\n# AWS CLI - Add custom header to response\naws elbv2 modify-rule \\\n  --rule-arn arn:aws:elasticloadbalancing:region:account:listener-rule/app/my-lb/xxx/yyy/zzz \\\n  --actions Type=forward,TargetGroupArn=arn:aws:elasticloadbalancing:region:account:targetgroup/my-tg/xxx,\\\nForwardConfig={TargetGroups=[{TargetGroupArn=arn:aws:elasticloadbalancing:region:account:targetgroup/my-tg/xxx,Weight=1}]}\n\n# CloudFormation - Add response headers policy\nResources:\n  ResponseHeadersPolicy:\n    Type: AWS::CloudFront::ResponseHeadersPolicy\n    Properties:\n      ResponseHeadersPolicyConfig:\n        Name: SecurityHeadersPolicy\n        SecurityHeadersConfig:\n          ContentSecurityPolicy:\n            ContentSecurityPolicy: \"default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'\"\n            Override: true\n\n# Note: For dynamic CSP with nonces, implement in your application code\n# Lambda@Edge example for CloudFront\nexport const handler = async (event) => {\n  const response = event.Records[0].cf.response;\n  const headers = response.headers;\n  \n  headers['content-security-policy'] = [{\n    key: 'Content-Security-Policy',\n    value: \"default-src 'self'; script-src 'self'; ...\"\n  }];\n  \n  return response;\n};",
+          "reload": "# No reload needed for ALB/CloudFront\n# Changes take effect immediately after API call or CloudFormation stack update\n\n# Verify ALB rule update\naws elbv2 describe-rules \\\n  --listener-arn arn:aws:elasticloadbalancing:region:account:listener/app/my-lb/xxx/yyy \\\n  --region us-east-1\n\n# For CloudFront, wait for distribution deployment\naws cloudfront get-distribution \\\n  --id DISTRIBUTION_ID \\\n  --query 'Distribution.Status'\n\n# Check deployment status\naws cloudfront list-distributions \\\n  --query \"DistributionList.Items[?Id=='DISTRIBUTION_ID'].Status\"",
+          "verify": "# Test CSP header from ALB endpoint\ncurl -I https://your-alb-dns-name.region.elb.amazonaws.com\n\n# Test from your domain (via CloudFront)\ncurl -I https://your-domain.com | grep -i content-security-policy\n\n# Test multiple regions (if multi-region)\nfor region in us-east-1 us-west-2 eu-west-1; do\n  echo \"Testing $region:\"\n  curl -I https://your-domain.com -H \"CF-Ray: $region\" | grep CSP\ndone\n\n# Check CloudFront cache behavior\ncurl -I https://your-domain.com -H \"Cache-Control: no-cache\""
+        }
+      },
+      "rollbackPlan": "1. Keep backup of current server configuration files\n2. Document current header configuration (or lack thereof)\n3. If CSP causes application breakage, temporarily switch to report-only mode\n4. For Nginx: Comment out CSP header, run 'nginx -t', then 'nginx -s reload'\n5. For Apache: Comment out CSP header, run 'apachectl configtest', then 'systemctl reload apache2'\n6. For AWS ALB/CloudFront: Revert to previous configuration version\n7. Analyze CSP violation reports to identify breaking resources\n8. Refine policy to allow legitimate resources\n9. Re-deploy updated policy in report-only mode\n10. Test thoroughly before switching back to enforcement mode",
+      "verificationSteps": [
+        "1. Verify CSP header present: curl -I https://your-domain.com | grep Content-Security-Policy",
+        "2. Test in browser DevTools Console - should see CSP violations if any",
+        "3. Run CSP Evaluator: https://csp-evaluator.withgoogle.com/",
+        "4. Run Mozilla Observatory scan: https://observatory.mozilla.org/",
+        "5. Test with Security Headers: https://securityheaders.com/",
+        "6. Verify all application features work (login, forms, AJAX, etc.)",
+        "7. Check browser console for unexpected CSP violations",
+        "8. Test across multiple browsers (Chrome, Firefox, Safari, Edge)",
+        "9. Verify CSP doesn't break third-party integrations (analytics, chat widgets)",
+        "10. Monitor application logs for increased error rates",
+        "11. Check CDN/load balancer propagation (may take 5-10 minutes)",
+        "12. Verify mobile app functionality if apps use WebView"
+      ],
+      "estimatedEffort": "1-2 hours"
+    },
+    "QA_TESTER": {
+      "manualTests": [
+        {
+          "name": "Verify CSP Header Present",
+          "steps": [
+            "1. Open browser (Chrome recommended for best DevTools)",
+            "2. Open DevTools (F12 or Right-click > Inspect)",
+            "3. Go to Network tab",
+            "4. Navigate to https://your-domain.com",
+            "5. Click on the first request (usually the HTML document)",
+            "6. Click on 'Headers' section",
+            "7. Scroll to 'Response Headers'",
+            "8. Look for 'Content-Security-Policy' header",
+            "9. Verify policy contains key directives (default-src, script-src, etc.)",
+            "10. Screenshot for test evidence"
+          ],
+          "expected": "Content-Security-Policy header present in response headers. Policy includes at least: default-src, script-src, style-src, frame-ancestors directives. No 'unsafe-eval' or 'unsafe-inline' in script-src."
+        },
+        {
+          "name": "Test Application Functionality with CSP",
+          "steps": [
+            "1. Clear browser cache (Ctrl+Shift+Delete)",
+            "2. Open browser Console tab (F12 > Console)",
+            "3. Navigate to https://your-domain.com",
+            "4. Check for CSP violation errors (red text in console)",
+            "5. Test login functionality",
+            "6. Test form submissions",
+            "7. Test AJAX/dynamic content loading",
+            "8. Test third-party widgets (chat, analytics, etc.)",
+            "9. Test file uploads",
+            "10. Document any CSP violations or broken features"
+          ],
+          "expected": "All features work correctly. No CSP violations in console. If violations appear, they should only be for blocked malicious content, not legitimate application functionality."
+        },
+        {
+          "name": "Cross-Browser CSP Testing",
+          "steps": [
+            "1. Test in Chrome (latest version)",
+            "2. Test in Firefox (latest version)",
+            "3. Test in Safari (latest version)",
+            "4. Test in Edge (latest version)",
+            "5. For each browser, verify CSP header present",
+            "6. For each browser, test core functionality",
+            "7. For each browser, check console for CSP violations",
+            "8. Document any browser-specific issues",
+            "9. Test on mobile browsers (iOS Safari, Chrome Mobile)",
+            "10. Create compatibility matrix"
+          ],
+          "expected": "CSP works consistently across all modern browsers. Header present and policy enforced in Chrome 25+, Firefox 23+, Safari 7+, Edge 12+. No browser-specific functionality breakage."
+        },
+        {
+          "name": "CSP Report-Only Mode Validation",
+          "steps": [
+            "1. Verify application deployed in report-only mode first",
+            "2. Open DevTools Network tab",
+            "3. Verify header is 'Content-Security-Policy-Report-Only'",
+            "4. Navigate through all application pages",
+            "5. Check console for violation warnings (should not block)",
+            "6. Submit violation reports to team",
+            "7. Wait for 24-48 hours of monitoring",
+            "8. Review violation report data",
+            "9. Verify policy refinements made based on reports",
+            "10. Confirm switch to enforcement mode after validation"
+          ],
+          "expected": "Report-only mode logs violations without blocking functionality. All violations reviewed and either policy adjusted to allow legitimate resources or code fixed to comply with policy. Clean enforcement mode deployment with no unexpected breakage."
+        }
+      ],
+      "automatedTests": {
+        "tool": "Selenium WebDriver / Playwright",
+        "example": "// Selenium test for CSP header validation\nimport org.openqa.selenium.WebDriver;\nimport org.openqa.selenium.chrome.ChromeDriver;\nimport org.openqa.selenium.chrome.ChromeOptions;\nimport org.openqa.selenium.logging.LogEntries;\nimport org.openqa.selenium.logging.LogEntry;\nimport org.openqa.selenium.logging.LogType;\nimport org.testng.annotations.Test;\nimport org.testng.Assert;\nimport java.util.List;\n\npublic class CspHeaderTest {\n    \n    @Test\n    public void verifyCspHeaderPresent() {\n        ChromeOptions options = new ChromeOptions();\n        options.setCapability(\"goog:loggingPrefs\", \n            Map.of(\"browser\", \"ALL\", \"performance\", \"ALL\"));\n        \n        WebDriver driver = new ChromeDriver(options);\n        \n        try {\n            driver.get(\"https://your-domain.com\");\n            \n            // Get performance logs to check response headers\n            LogEntries logs = driver.manage().logs().get(LogType.PERFORMANCE);\n            \n            boolean cspHeaderFound = false;\n            for (LogEntry entry : logs) {\n                if (entry.getMessage().contains(\"Content-Security-Policy\")) {\n                    cspHeaderFound = true;\n                    break;\n                }\n            }\n            \n            Assert.assertTrue(cspHeaderFound, \n                \"Content-Security-Policy header should be present\");\n            \n        } finally {\n            driver.quit();\n        }\n    }\n    \n    @Test\n    public void verifyNoCspViolations() {\n        ChromeDriver driver = new ChromeDriver();\n        \n        try {\n            driver.get(\"https://your-domain.com\");\n            \n            // Get browser console logs\n            LogEntries logs = driver.manage().logs().get(LogType.BROWSER);\n            \n            List<String> cspViolations = new ArrayList<>();\n            for (LogEntry entry : logs) {\n                String message = entry.getMessage();\n                if (message.contains(\"Content Security Policy\") || \n                    message.contains(\"CSP\")) {\n                    cspViolations.add(message);\n                }\n            }\n            \n            Assert.assertTrue(cspViolations.isEmpty(), \n                \"No CSP violations should occur. Found: \" + cspViolations);\n            \n        } finally {\n            driver.quit();\n        }\n    }\n    \n    @Test\n    public void verifyCriticalFeaturesWorkWithCsp() {\n        WebDriver driver = new ChromeDriver();\n        \n        try {\n            // Test login\n            driver.get(\"https://your-domain.com/login\");\n            // ... perform login ...\n            Assert.assertTrue(driver.getCurrentUrl().contains(\"dashboard\"), \n                \"Login should succeed with CSP enabled\");\n            \n            // Test form submission\n            driver.get(\"https://your-domain.com/contact\");\n            // ... submit form ...\n            Assert.assertTrue(driver.getPageSource().contains(\"Thank you\"), \n                \"Form submission should work with CSP\");\n            \n            // Test AJAX\n            driver.get(\"https://your-domain.com\");\n            // ... trigger AJAX request ...\n            // Verify dynamic content loads\n            \n        } finally {\n            driver.quit();\n        }\n    }\n}"
+      },
+      "verificationSteps": [
+        "1. Clear all browser cache and cookies",
+        "2. Open browser DevTools (F12) and go to Network tab",
+        "3. Navigate to application and verify CSP header in response headers",
+        "4. Switch to Console tab and verify no CSP violation errors",
+        "5. Test all critical user journeys (login, checkout, forms, etc.)",
+        "6. Test across all supported browsers (Chrome, Firefox, Safari, Edge)",
+        "7. Test on mobile devices (iOS, Android)",
+        "8. Run automated Selenium/Playwright tests - all should pass",
+        "9. Use CSP Evaluator (csp-evaluator.withgoogle.com) - should score A+",
+        "10. Run Mozilla Observatory scan - CSP should score 100",
+        "11. Test third-party integrations (analytics, chat widgets, ads)",
+        "12. Monitor production for 24 hours after deployment for issues"
+      ],
+      "estimatedEffort": "4-6 hours"
+    }
+  }
+}

@@ -1,0 +1,23 @@
+To run the Test Automation using Maven
+    1) Open the autoamtion project within VSCode
+    2) Right click on the "Maven" and look for a popup option labled "Run Maven Commands"
+    3) Select "verify" which is the lifecycle phase that executes the automation and generate the Allure Report.
+    
+To launch Allure Report
+    1) Open up a terminal to the root directory for the project (e.g. Automation-JAV-SwagLabs)
+    2) Ensure the allure-report directory exist and that a Maven "verify" run has completed.
+    3) type 'allure open' and return
+    4) A Java instance should start and the Allure report should come up.
+    5) Press <Ctrl+C> to exit.
+
+To launch JavaDocs
+    1) Open up a terminal to the root directory for the project (e.g. Automation-JAV-SwagLabs)
+    2) Perfrom a Maven "site" run to generate the JavaDocs.
+    3) Within terminal type 'open -a "Google Chrome" target/site/index.html' and return.
+    4) A chrome instance should launch with the JavaDocs displayed.
+    5) Close Chrome when finished.
+
+============================
+Note:
+
+Utilize the Maven "clean" option to clear out all test reporting including historical data and JavaDocs.

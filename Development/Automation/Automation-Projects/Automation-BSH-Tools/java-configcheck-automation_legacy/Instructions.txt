@@ -1,0 +1,66 @@
+These instructions will help you utilize the "automation_config_check_vxx.sh"
+shell script. We've created this tool to ensure consistency across
+the various machines being used in the development and maintenance of
+test automation. This sustainability strategy is an important key
+to our success in keeping the team aligned and efficient.
+
+1) Ensure you have the latest version of the "automation_config_check_vxx.sh"
+   shell script on your Mac desktop.
+2) Open "Terminal" on your Mac
+3) Type "./Desktop/automation_config_check_v06.sh" (substitute v06.sh to match your version)
+4) Hit return
+5) The script will execute and provide a similar output as seen below.
+6) Resolve any failed verifications until all test pass.
+7) Re-run the shell script after each fix as necessary.
+
+================================================
+=   Automation Configuration Checker - Begin   =
+=            03-27-2020 10:30:43 AM            =
+================================================
+
+Validate $PATH
+------------------------------------
+$PATH '/Users/bob.smith/.asdf/shims:/Users/bob.smith/.asdf/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Users/bob.smith/bin'
+$PATH Length 127
+$PATH Value '/Users/*.*/.asdf/shims' found.
+$PATH Value '/Users/*.*/.asdf/bin' found.
+$PATH Value '/Users/*.*/bin' found.
+$PATH Value '/usr/local/bin' found.
+$PATH Value '/usr/bin' found.
+$PATH Value '/bin' found.
+$PATH Value '/usr/sbin' found.
+$PATH Value '/sbin' found.
+
+Validate Required Directories
+------------------------------------
+Directory '/Users/bob.smith' exists.
+Directory '/Users/bob.smith/Documents' exists.
+Directory '/Users/bob.smith/Documents/Automation' exists.
+Directory '/Users/bob.smith/Documents/Automation/Automation-Projects' exists.
+Directory '/Users/bob.smith/Documents/Automation/Automation-Projects' exists.
+
+Validate Required Applications
+------------------------------------
+Application 'zsh - Terminal' version 'zsh 5.7.1 (x86_64-apple-darwin18.2.0)' installed at '/usr/local/bin/zsh'
+Application 'Homebrew' version 'Homebrew 2.1.15 Homebrew/homebrew-core (git revision 93b0; last commit 2019-10-17)' installed at '/usr/local/bin/brew'
+Application 'ASDF' version 'v0.7.4' installed at '/Users/bob.smith/.asdf/bin/asdf'
+Application 'git' version 'git version 2.20.1 (Apple Git-117)' installed at '/usr/bin/git'
+Application 'Atom' version 'Atom : 1.45.0 Electron: 4.2.7 Chrome : 69.0.3497.128 Node : 10.11.0' installed at '/usr/local/bin/atom'
+Application 'RubyMine.app' installed at '/Applications/RubyMine.app'
+
+Validate Applications Not Installed
+------------------------------------
+Application 'RVM' not installed.
+
+Validate Required Language(s)
+------------------------------------
+Language 'Ruby' version 'ruby 2.6.3p62 (2019-04-16 revision 67580) [x86_64-darwin18]' installed at '/Users/bob.smith/.asdf/shims/ruby'
+
+Validate Operating System Version
+------------------------------------
+Mac OS Version '10.14.6'
+
+================================================
+=            03-27-2020 10:30:45 AM            =
+= Automation Configuration Checker - Completed =
+================================================
